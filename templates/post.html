@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - Social Justice Forum</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1><a href="{{ url_for('home') }}">Social Justice Forum</a></h1>
+        <a href="{{ url_for('new_post') }}">Create a New Post</a>
+    </header>
+
+    <main>
+        <article class="post">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+        </article>
+
+        <section class="comments">
+            <h3>Comments</h3>
+            {% for comment in post.comments %}
+                <div class="comment">
+                    <p>{{ comment.content }}</p>
+                </div>
+            {% else %}
+                <p>No comments yet. Be the first to comment!</p>
+            {% endfor %}
+        </section>
+
+        <section class="new-comment">
+            <h3>Add a Comment</h3>
+            <form action="{{ url_for('new_comment', post_id=post.id) }}" method="POST">
+                <textarea name="content" placeholder="Write your comment..." required></textarea>
+                <button type="submit">Post Comment</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
