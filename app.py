@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
+import sys  # Import sys module for writing to stdout
 
 app = Flask(__name__)
 
 # Set up the database connection
 DATABASE_URL = os.environ.get("DATABASE_URL")  # Render will set this environment variable automatically
-print(f"Database URL: {os.environ.get('DATABASE_URL')}")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://socialjustice_forum_db_user:ElrGSxOM9R8rGmrdcnNHfC359aHoRoPt@dpg-d06mcpbuibrs73eo40i0-a.oregon-postgres.render.com/socialjustice_forum_db'
+
+# Print the DATABASE_URL for debugging
+sys.stdout.write(f"DATABASE_URL: {DATABASE_URL}\n")  # Write to stdout to log the database URL
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL  # Use the DATABASE_URL from environment variable
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -18,6 +22,7 @@ class Post(db.Model):
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
     comments = db.relationship('Comment', backref='post', lazy=True)
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
