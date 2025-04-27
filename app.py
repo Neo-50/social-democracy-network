@@ -1,18 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
-import logging  # Import logging module
 
 app = Flask(__name__)
 
 # Set up the database connection
-DATABASE_URL = os.environ.get("DATABASE_URL")  # Render will set this environment variable automatically
+print(f"At startup: DATABASE_URL = {os.environ.get('DATABASE_URL')}")  # Will show in logs immediately
 
-# Set up Flask logging
-app.logger.setLevel(logging.INFO)  # Set log level to INFO
-app.logger.info(f"DATABASE_URL: {DATABASE_URL}")  # Log the DATABASE_URL
-
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL  # Use the DATABASE_URL from environment variable
+DATABASE_URL = os.environ.get("DATABASE_URL")  # Render should set this environment variable
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL  # use the env var directly
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -32,11 +28,11 @@ class Comment(db.Model):
 # Routes
 @app.route('/')
 def home():
-    posts = Post.query.order_by(Post.id.desc()).all()
+    posts = Post.query.all()
     return render_template('home.html', posts=posts)
 
 @app.route('/post/<int:post_id>')
-def view_post(post_id):
+def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', post=post)
 
@@ -51,7 +47,7 @@ def new_post():
         return redirect(url_for('home'))
     return render_template('new_post.html')
 
-@app.route('/comment/<int:post_id>', methods=['GET', 'POST'])
+@app.route('/post/<int:post_id>/comment', methods=['GET', 'POST'])
 def new_comment(post_id):
     post = Post.query.get_or_404(post_id)
     if request.method == 'POST':
@@ -59,9 +55,8 @@ def new_comment(post_id):
         new_comment = Comment(content=content, post=post)
         db.session.add(new_comment)
         db.session.commit()
-        return redirect(url_for('view_post', post_id=post.id))
+        return redirect(url_for('post', post_id=post.id))
     return render_template('new_comment.html', post=post)
 
-# Main
 if __name__ == '__main__':
     app.run(debug=True)
