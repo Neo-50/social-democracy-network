@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Set up the database connection
 DATABASE_URL = os.environ.get("DATABASE_URL")  # Render will set this environment variable automatically
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://Doug:1234@localhost:5432/social_democracy_network'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://socialjustice_forum_db_user:ElrGSxOM9R8rGmrdcnNHfC359aHoRoPt@dpg-d06mcpbuibrs73eo40i0-a.oregon-postgres.render.com/socialjustice_forum_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
