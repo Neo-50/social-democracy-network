@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
-import sys  # Import sys module for writing to stdout
+import logging  # Import logging module
 
 app = Flask(__name__)
 
 # Set up the database connection
 DATABASE_URL = os.environ.get("DATABASE_URL")  # Render will set this environment variable automatically
 
-# Print the DATABASE_URL for debugging
-sys.stdout.write(f"DATABASE_URL: {DATABASE_URL}\n")  # Write to stdout to log the database URL
+# Set up Flask logging
+app.logger.setLevel(logging.INFO)  # Set log level to INFO
+app.logger.info(f"DATABASE_URL: {DATABASE_URL}")  # Log the DATABASE_URL
 
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL  # Use the DATABASE_URL from environment variable
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -22,7 +23,6 @@ class Post(db.Model):
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
     comments = db.relationship('Comment', backref='post', lazy=True)
-
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
