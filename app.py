@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  # Make sure DATABASE_URL is set
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)  # Initialize db AFTER app
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,9 +28,9 @@ def create():
         return redirect(url_for('home'))
     return render_template('create.html')
 
-# Add this so the tables are created when the app starts
+# Make sure tables are created
 with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)  # or whatever port Render expects
+    app.run(host='0.0.0.0', port=10000)
