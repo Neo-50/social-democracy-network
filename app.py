@@ -3,41 +3,22 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-
-# Set up the database connection
-print(f"At startup: DATABASE_URL = {os.environ.get('DATABASE_URL')}")  # Will show in logs immediately
-
-DATABASE_URL = os.environ.get("DATABASE_URL")  # Render should set this environment variable
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL  # use the env var directly
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  # Make sure DATABASE_URL is set
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
-# Models
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    comments = db.relationship('Comment', backref='post', lazy=True)
 
-class Comment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-
-# Routes
 @app.route('/')
 def home():
-    posts = Post.query.all()
+    posts = Post.query.order_by(Post.id.desc()).all()
     return render_template('home.html', posts=posts)
 
-@app.route('/post/<int:post_id>')
-def post(post_id):
-    post = Post.query.get_or_404(post_id)
-    return render_template('post.html', post=post)
-
-@app.route('/new', methods=['GET', 'POST'])
-def new_post():
+@app.route('/create', methods=['GET', 'POST'])
+def create():
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
@@ -45,18 +26,11 @@ def new_post():
         db.session.add(new_post)
         db.session.commit()
         return redirect(url_for('home'))
-    return render_template('new_post.html')
+    return render_template('create.html')
 
-@app.route('/post/<int:post_id>/comment', methods=['GET', 'POST'])
-def new_comment(post_id):
-    post = Post.query.get_or_404(post_id)
-    if request.method == 'POST':
-        content = request.form['content']
-        new_comment = Comment(content=content, post=post)
-        db.session.add(new_comment)
-        db.session.commit()
-        return redirect(url_for('post', post_id=post.id))
-    return render_template('new_comment.html', post=post)
+# Add this so the tables are created when the app starts
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000)  # or whatever port Render expects
