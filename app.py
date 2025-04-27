@@ -6,12 +6,11 @@ app = Flask(__name__)
 
 # Set up the database connection
 DATABASE_URL = os.environ.get("DATABASE_URL")  # Render will set this environment variable automatically
+print(f"Database URL: {os.environ.get('DATABASE_URL')}")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://socialjustice_forum_db_user:ElrGSxOM9R8rGmrdcnNHfC359aHoRoPt@dpg-d06mcpbuibrs73eo40i0-a.oregon-postgres.render.com/socialjustice_forum_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
-print(f"Database URL: {os.environ.get('DATABASE_URL')}")
 
 # Models
 class Post(db.Model):
