@@ -11,6 +11,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+print(f"Database URL: {os.environ.get('DATABASE_URL')}")
+
 # Models
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
