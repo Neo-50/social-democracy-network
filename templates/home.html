@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+{% extends 'base.html' %}
+
+{% block content %}
     <header>
         <h1>Welcome to the Social Justice Forum</h1>
         <a href="{{ url_for('new_post') }}">Create a New Post</a>
@@ -25,3 +28,4 @@
             {% endfor %}
         </section>
     </main>
+{% endblock %}

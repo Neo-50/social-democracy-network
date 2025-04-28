@@ -19,6 +19,7 @@ class Post(db.Model):
     def __repr__(self):
         return f'<Post {self.title}>'
 
+# Routes for the app
 @app.route('/')
 def home():
     posts = Post.query.order_by(Post.id.desc()).all()
@@ -37,6 +38,25 @@ def new_post():
         return redirect(url_for('home'))
 
     return render_template('new_post.html')
+
+@app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/news')
+def news():
+    # Placeholder: Replace with actual news content
+    return render_template('news.html')
+
+@app.route('/environment')
+def environment():
+    # Placeholder: Replace with actual environment content
+    return render_template('environment.html')
+
+@app.route('/veganism')
+def veganism():
+    # Placeholder: Replace with actual veganism content
+    return render_template('veganism.html')
 
 # Create tables if they don't exist
 with app.app_context():
