@@ -39,10 +39,6 @@ def new_post():
 
     return render_template('new_post.html')
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
 @app.route('/news')
 def news():
     # Placeholder: Replace with actual news content
