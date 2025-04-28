@@ -6,11 +6,27 @@ body {
     padding: 0;
 }
 
+/* Center the navbar and give it some spacing */
+nav {
+    text-align: center;
+    margin-top: 20px; /* Adjust as needed */
+}
+
+nav a {
+    margin: 0 15px;  /* Space out the links evenly */
+}
+
 header {
     background-color: #2c3e50;
     color: white;
     padding: 1rem;
     text-align: center;
+    margin-bottom: 30px; /* Space between header and navbar */
+}
+
+
+header h1 {
+    margin-bottom: 15px; /* Adjust spacing between the title and the "Create a New Post" link */
 }
 
 header h1 a {
@@ -89,7 +105,6 @@ form button:hover {
     background-color: #2980b9;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
     header h1 {
         font-size: 1.5rem;
@@ -100,4 +115,7 @@ form button:hover {
     }
 
     form {
-        width
+        width: 100%; /* Adjust form width for mobile screens */
+    }
+}
+
