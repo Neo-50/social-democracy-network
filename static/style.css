@@ -26,7 +26,7 @@ header {
 
 
 header h1 {
-    margin-bottom: 15px; /* Adjust spacing between the title and the "Create a New Post" link */
+    margin-bottom: 20px; /* Adjust spacing between the title and the "Create a New Post" link */
 }
 
 header h1 a {
