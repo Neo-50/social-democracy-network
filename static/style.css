@@ -19,17 +19,19 @@ nav a {
 }
 
 header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: #2c3e50;
     color: white;
     padding: 1rem;
-    text-align: center;
-    margin-bottom: 40px; /* Space between header and navbar */
+    margin-bottom: 30px;  /* Space between the header and the navbar */
 }
-
 
 header h1 {
-    margin-bottom: 20px; /* Adjust spacing between the title and the "Create a New Post" link */
+    margin-bottom: 15px;  /* Space between title and "Create a New Post" link */
 }
+
 
 header h1 a {
     color: white;
