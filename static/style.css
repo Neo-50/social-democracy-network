@@ -10,10 +10,13 @@ body {
 nav {
     text-align: center;
     margin-top: 20px; /* Adjust as needed */
+    display: block;
 }
 
 nav a {
     margin: 0 15px;  /* Space out the links evenly */
+    display: inline-block;  /* Make links behave like block elements */
+    font-size: 1rem;  /* Adjust font size as needed */
 }
 
 header {
