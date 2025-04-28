@@ -54,6 +54,11 @@ def veganism():
     # Placeholder: Replace with actual veganism content
     return render_template('veganism.html')
 
+@app.route('/forum')
+def forum():
+    # Placeholder: Replace with actual forum content
+    return render_template('forum.html')
+
 # Create tables if they don't exist
 with app.app_context():
     db.create_all()
