@@ -22,8 +22,8 @@ class Post(db.Model):
 # Routes for the app
 @app.route('/')
 def home():
-    posts = Post.query.order_by(Post.id.desc()).all()
-    return render_template('home.html', posts=posts)
+    # Placeholder: Replace with actual homepage content
+    return render_template('home.html')
 
 @app.route('/new_post', methods=['GET', 'POST'])
 def new_post():
@@ -35,7 +35,7 @@ def new_post():
         db.session.add(new_post)
         db.session.commit()
         
-        return redirect(url_for('home'))
+        return redirect(url_for('forum'))
 
     return render_template('new_post.html')
 
@@ -56,8 +56,8 @@ def veganism():
 
 @app.route('/forum')
 def forum():
-    # Placeholder: Replace with actual forum content
-    return render_template('forum.html')
+    posts = Post.query.order_by(Post.id.desc()).all()
+    return render_template('forum.html', posts=posts)
 
 # Create tables if they don't exist
 with app.app_context():
