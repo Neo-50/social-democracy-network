@@ -101,6 +101,7 @@ main {
     grid-template-columns: 1fr 1fr 1fr;  /* 3 columns: left sidebar, main content, right sidebar */
     grid-gap: 30px;  /* Space between columns */
     padding: 2rem;
+    grid-template-rows: auto;
 }
 
 /* Left sidebar (news-left) */
@@ -145,7 +146,7 @@ main {
     text-align: left; /* Center the text */
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #f4f4f4;
+    background-color: #1f1f1f;
     border-radius: 8px;
 }
 
