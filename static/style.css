@@ -109,7 +109,7 @@ main {
 .news-page .news-right {
     display: flex;
     flex-direction: column;  /* Ensure items stack vertically */
-    justify-content: center; /* Center the content vertically */
+    justify-content: left; /* Center the content vertically */
     align-items: left;     /* Center the content horizontally */
     background-color: #0f4a4a;
     padding: 20px;
