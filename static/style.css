@@ -1,9 +1,23 @@
 /* Global Styles */
 body {
     font-family: Arial, sans-serif;
+    color: white;
     background-color: #0f4a4a;
     margin: 0;
     padding: 0;
+}
+
+/* Styling for all hyperlinks */
+a {
+    text-decoration: none;
+    color: #8feff2;  /* Change the default link color (unvisited) */
+    text-decoration: none;  /* Optional: Removes the underline */
+}
+
+/* Styling for visited hyperlinks */
+a:visited {
+    color: #8feff2;  /* Set a different color for visited links (e.g., light gray) */
+    text-decoration: none;
 }
 
 /* Center the navbar and give it some spacing */
@@ -78,7 +92,39 @@ main {
 }
 
 .post a:hover, .comment a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+}
+
+/* Styling for the news page only */
+.news-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;  /* 3 columns: left sidebar, main content, right sidebar */
+    grid-gap: 30px;  /* Space between columns */
+    padding: 2rem;
+}
+
+/* Left sidebar (optional) */
+.news-page .news-left {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Main content area for news articles */
+.news-page .news-center {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* News item styling */
+.news-page .news-right {
+    display: flex;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
 }
 
 /* Form styles */
