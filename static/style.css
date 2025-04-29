@@ -119,11 +119,20 @@ main {
 /* News item styling */
 .news-page .news-item {
     display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: left; /* Center items horizontally */
+    text-align: left; /* Center the text */
     margin-bottom: 20px;
-    align-items: left;
     padding: 15px;
     background-color: #f4f4f4;
     border-radius: 8px;
+}
+
+/* Styling for the description text */
+.news-item .news-text {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 10px; /* Optional: Space between description and next item */
 }
 
 /* Form styles */
