@@ -136,6 +136,7 @@ main {
     display: flex;
     flex-direction: column;  /* Stack items vertically within the right sidebar */
     align-items: flex-start;  /* Align items to the left */
+    min-height: 100%;
 }
 
 /* News item styling */
