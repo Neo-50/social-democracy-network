@@ -110,7 +110,7 @@ main {
     display: flex;
     flex-direction: column;  /* Ensure items stack vertically */
     justify-content: center; /* Center the content vertically */
-    align-items: center;     /* Center the content horizontally */
+    align-items: left;     /* Center the content horizontally */
     background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
@@ -120,6 +120,7 @@ main {
 .news-page .news-item {
     display: flex;
     margin-bottom: 20px;
+    align-items: left;
     padding: 15px;
     background-color: #f4f4f4;
     border-radius: 8px;
