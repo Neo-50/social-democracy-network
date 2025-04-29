@@ -2,11 +2,58 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <header>
-        <h1>News</h1>
-    </header>
+    <main class="news-page">  <!-- Added class 'news-page' -->
+        <header>
+            <h1>Latest News</h1>
+            <p>Stay updated with the latest news articles, videos, and updates!</p>
+        </header>
 
-    <main>
-        <p>Stay updated with the latest news!</p>
+        <!-- News Section -->
+        <section class="news-section">
+            <h2>Top News</h2>
+
+            <!-- News Item 1 -->
+            <div class="news-item">
+                <img src="https://example.com/news1-image.jpg" alt="News Image 1">
+                <div>
+                    <h3><a href="https://newswebsite.com/article1" target="_blank">Article Title 1</a></h3>
+                    <p>This is a short description or excerpt from the article...</p>
+                </div>
+            </div>
+
+            <!-- News Item 2 -->
+            <div class="news-item">
+                <img src="https://example.com/news2-image.jpg" alt="News Image 2">
+                <div>
+                    <h3><a href="https://newswebsite.com/article2" target="_blank">Article Title 2</a></h3>
+                    <p>This is a short description or excerpt from the article...</p>
+                </div>
+            </div>
+
+            <!-- Add more news items as needed -->
+        </section>
+
+        <!-- Breaking News Section -->
+        <section class="news-section">
+            <h2>Breaking News</h2>
+
+            <!-- News Item 3 -->
+            <div class="news-item">
+                <img src="https://example.com/news3-image.jpg" alt="Breaking News Image">
+                <div>
+                    <h3><a href="https://newswebsite.com/article3" target="_blank">Breaking News Title</a></h3>
+                    <p>This is a brief summary of the breaking news...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Righthand news pane -->
+        <section class="right-section">
+            <h2>More news stuff here</h2>
+            <div class="news-item">
+                <h2>News news news news</h2>
+            </div>
+            <!-- More video items if needed -->
+        </section>
     </main>
 {% endblock %}
