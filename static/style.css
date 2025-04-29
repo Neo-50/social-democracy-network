@@ -103,23 +103,21 @@ main {
     padding: 2rem;
 }
 
-/* Left sidebar (optional) */
-.news-page .news-left {
-    background-color: #f9f9f9;
+/* Styling for each column */
+.news-page .news-left,
+.news-page .news-center,
+.news-page .news-right {
+    display: flex;
+    flex-direction: column;  /* Ensure items stack vertically */
+    justify-content: center; /* Center the content vertically */
+    align-items: center;     /* Center the content horizontally */
+    background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
-}
-
-/* Main content area for news articles */
-.news-page .news-center {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* News item styling */
-.news-page .news-right {
+.news-page .news-item {
     display: flex;
     margin-bottom: 20px;
     padding: 15px;
