@@ -105,39 +105,36 @@ main {
 
 /* Left sidebar (news-left) */
 .news-page .news-left {
-    display: flex;
-    flex-direction: column;  /* Ensure items stack vertically */
-    justify-content: left; /* Center the content vertically */
-    align-items: left;     /* Center the content horizontally */
     background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
     grid-column: 1; /* Place in the first column (left column) */
+    display: flex;
+    flex-direction: column;  /* Stack items vertically within the left sidebar */
+    align-items: flex-start;  /* Align items to the left */
 }
 
 /* Center content area for news (news-center) */
 .news-page .news-center {
-    display: flex;
-    flex-direction: column;  /* Ensure items stack vertically */
-    justify-content: left; /* Center the content vertically */
-    align-items: left;     /* Center the content horizontally */
     background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     grid-column: 2; /* Place in the second column (main content) */
+    display: flex;
+    flex-direction: column;  /* Stack items vertically within the center content */
+    align-items: flex-start;  /* Align items to the left */
 }
 
 /* Right sidebar (news-right) */
 .news-page .news-right {
-    display: flex;
-    flex-direction: column;  /* Ensure items stack vertically */
-    justify-content: left; /* Center the content vertically */
-    align-items: left;     /* Center the content horizontally */
     background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
     grid-column: 3; /* Place in the third column (right column) */
+    display: flex;
+    flex-direction: column;  /* Stack items vertically within the right sidebar */
+    align-items: flex-start;  /* Align items to the left */
 }
 
 /* News item styling */
