@@ -168,6 +168,20 @@ main {
     margin-bottom: 10px; /* Optional: Space between description and next item */
 }
 
+.image-gallery {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Adds space between images */
+    padding: 20px;
+}
+
+.image-container img {
+    max-width: 100%;  /* Ensures images scale properly */
+    height: auto;     /* Maintains aspect ratio */
+    border-radius: 8px; /* Optional: adds rounded corners */
+}
+
+
 /* Form styles */
 form {
     display: flex;

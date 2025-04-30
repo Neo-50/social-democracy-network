@@ -3,7 +3,11 @@
 
 {% block content %}
 
-    <main>
-        <p>Welcome to the homepage for Social Democracy Network!</p>
-    </main>
+<main class="image-gallery">
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='images/image1.png') }}" alt="Image 1">
+        <img src="{{ url_for('static', filename='images/image2.png') }}" alt="Image 2">
+        <img src="{{ url_for('static', filename='images/image3.png') }}" alt="Image 3">
+    </div>
+</main>
 {% endblock %}
