@@ -176,7 +176,7 @@ main {
 }
 
 .image-container img {
-    max-width: 100%;  /* Ensures images scale properly */
+    max-width: 65%;  /* Ensures images scale properly */
     height: auto;     /* Maintains aspect ratio */
     border-radius: 8px; /* Optional: adds rounded corners */
 }
