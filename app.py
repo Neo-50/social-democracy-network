@@ -23,8 +23,7 @@ class Post(db.Model):
 # Routes for the app
 @app.route('/')
 def home():
-    current_time = datetime.now().strftime("%B %d, %Y %I:%M %p")  # Format it as "April 29, 2025 03:30 PM"
-    return render_template('home.html', current_time=current_time)
+    return render_template('home.html')
 
 @app.route('/new_post', methods=['GET', 'POST'])
 def new_post():
