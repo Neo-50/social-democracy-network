@@ -209,17 +209,17 @@ main {
 }
 
 #image1 img {
-    width:30%;      /* Scale the first image to 80% */
+    width:60%;      /* Scale the first image to 80% */
     height: auto;    /* Maintain aspect ratio */
 }
 
 #image2 img {
-    width: 30%;      /* Scale the second image to 50% */
+    width: 60%;      /* Scale the second image to 50% */
     height: auto;    /* Maintain aspect ratio */
 }
 
 #image3 img {
-    width: 30%;     /* Scale the third image to 100% */
+    width: 60%;     /* Scale the third image to 100% */
     height: auto;    /* Maintain aspect ratio */
 }
 
