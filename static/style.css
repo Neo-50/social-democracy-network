@@ -169,13 +169,6 @@ main {
 }
 
 .image-gallery {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px; /* Adds space between images */
-    padding: 20px;
-}
-
-.image-container {
     text-align: center;  /* Center the images in their containers */
     margin: 20px;        /* Add some space around the containers */
 }
