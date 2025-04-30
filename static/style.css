@@ -41,14 +41,15 @@ header {
     color: white;
     padding: 1rem;
     margin-bottom: 15px;
+    position: relative; /* Add relative positioning to allow absolute positioning within the header */
 }
 
 .header-date-time {
     position: absolute;
-    bottom: 10px;   /* Align to the bottom */
+    bottom: 10px;   /* Align to the bottom of the header */
     left: 10px;     /* Keep it on the left */
     font-size: 14px;
-    color: #000;
+    color: white;   /* Change text color to white */
     font-weight: bold;
 }
 
