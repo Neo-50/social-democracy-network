@@ -36,6 +36,7 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
     background-color: #0f4a4a;
     color: white;
     padding: 1rem;
@@ -66,12 +67,10 @@ header a:hover {
 }
 
 .header-date-time {
-    position: absolute;
-    top: 10px;
-    left: 10px;
     font-size: 14px;
     color: #000;
     font-weight: bold;
+    margin-right: 20px; /* Adds some space between the date/time and the title */
 }
 
 /* Main content styles */
