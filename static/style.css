@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
 /* Global Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     color: white;
-    background-color: #0f4a4a;
+    background-color: #706500;
     margin: 0;
     padding: 0;
 }
@@ -118,14 +120,14 @@ main {
 
 /* Ensure that the sections are correctly placed in the grid */
 .news-page .news-left {
-    background-color: #0f4a4a;
+    background-color: #706500;
     padding: 20px;
     border-radius: 8px;
     grid-column: 1;  /* Place in the first column (left column) */
 }
 
 .news-page .news-center {
-    background-color: #0f4a4a;
+    background-color: #706500;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -133,7 +135,7 @@ main {
 }
 
 .news-page .news-right {
-    background-color: #0f4a4a;
+    background-color: #706500;
     padding: 20px;
     border-radius: 8px;
     grid-column: 3;  /* Place in the third column (right column) */
