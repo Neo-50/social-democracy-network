@@ -4,7 +4,7 @@
 body {
     font-family: 'Inter', sans-serif;
     color: white;
-    background-color: #706500;
+    background-color: #ada76d;
     margin: 0;
     padding: 0;
 }
@@ -39,7 +39,7 @@ header {
     flex-direction: column;
     justify-content: center;   /* Center content vertically */
     align-items: center;       /* Center content horizontally */
-    background-color: #0f4a4a;
+    background-color: #ada76d;
     color: white;
     padding: 1rem;
     margin-bottom: 15px;
@@ -88,7 +88,7 @@ main {
 }
 
 .post, .comment {
-    background-color: #0f4a4a;
+    background-color: #ada76d;
     padding: 1rem;
     border-radius: 5px;
     margin-bottom: 1rem;
@@ -120,14 +120,14 @@ main {
 
 /* Ensure that the sections are correctly placed in the grid */
 .news-page .news-left {
-    background-color: #706500;
+    background-color: #ada76d;
     padding: 20px;
     border-radius: 8px;
     grid-column: 1;  /* Place in the first column (left column) */
 }
 
 .news-page .news-center {
-    background-color: #706500;
+    background-color: #ada76d;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
