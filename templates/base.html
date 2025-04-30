@@ -31,7 +31,8 @@
     <script>
         function updateDateTime() {
             const currentDate = new Date();
-            
+    
+            // Custom formatting for "11:26PM Tuesday, April 29, 2025"
             const options = {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -41,17 +42,21 @@
                 day: 'numeric',
                 year: 'numeric'
             };
+    
+            // Get the formatted time first, then day and date
+            const formattedTime = currentDate.toLocaleString('en-US', options);
             
-            // Get the formatted date and time
-            const formattedDate = currentDate.toLocaleString('en-US', options);
-            
+            // Format the string as "11:26PM Tuesday, April 29, 2025"
+            const formattedDate = formattedTime.replace(',', '').replace(' at', '');
+    
             // Set the content of the date-time div
             document.getElementById('date-time').textContent = formattedDate;
         }
-        
+    
         // Call the function to update the date and time when the page loads
         updateDateTime();
     </script>
+    
     
 </body>
 </html>
