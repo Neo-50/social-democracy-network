@@ -5,9 +5,11 @@
 
 <main class="image-gallery">
     <div class="image-container">
-        <img src="images/May 1st protest.png" alt="May 1st protest">
-        <img src="images/May 1st protest02.png" alt="May 1st protest">
-        <img src="images/May 1st protest03.png" alt="May 1st protest">
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='images/May 1st protest.png') }}" alt="May 1st protest">
+            <img src="{{ url_for('static', filename='images/May 1st protest02.png') }}" alt="May 1st protest 2">
+            <img src="{{ url_for('static', filename='images/May 1st protest03.png') }}" alt="May 1st protest 3">
+        </div>
     </div>
 </main>
 {% endblock %}
