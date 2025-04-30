@@ -169,12 +169,16 @@ main {
 }
 
 .image-gallery {
-    text-align: center;  /* Center the images in their containers */
-    margin: 20px;        /* Add some space around the containers */
+    display: flex;                /* Use Flexbox to arrange items side by side */
+    justify-content: space-between; /* Space the images evenly */
+    gap: 20px;                    /* Add space between the images */
+    flex-wrap: wrap;              /* Allow images to wrap on smaller screens */
+    margin: 20px;                 /* Add some space around the containers */
+    text-align: center;           /* Center the images within their individual containers */
 }
 
 #image1 img {
-    width:15%;      /* Scale the first image to 80% */
+    width:30%;      /* Scale the first image to 80% */
     height: auto;    /* Maintain aspect ratio */
 }
 
