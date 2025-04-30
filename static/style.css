@@ -104,39 +104,29 @@ main {
     grid-template-rows: auto;
 }
 
-/* Left sidebar (news-left) */
+
+/* Ensure that the sections are correctly placed in the grid */
 .news-page .news-left {
     background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
-    grid-column: 1; /* Place in the first column (left column) */
-    display: flex;
-    flex-direction: column;  /* Stack items vertically within the left sidebar */
-    align-items: flex-start;  /* Align items to the left */
+    grid-column: 1;  /* Place in the first column (left column) */
 }
 
-/* Center content area for news (news-center) */
 .news-page .news-center {
     background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    grid-column: 2; /* Place in the second column (main content) */
-    display: flex;
-    flex-direction: column;  /* Stack items vertically within the center content */
-    align-items: flex-start;  /* Align items to the left */
+    grid-column: 2;  /* Place in the second column (center column) */
 }
 
-/* Right sidebar (news-right) */
 .news-page .news-right {
     background-color: #0f4a4a;
     padding: 20px;
     border-radius: 8px;
-    grid-column: 3; /* Place in the third column (right column) */
-    display: flex;
-    flex-direction: column;  /* Stack items vertically within the right sidebar */
-    align-items: flex-start;  /* Align items to the left */
-    min-height: 100%;
+    grid-column: 3;  /* Place in the third column (right column) */
+    min-height: 100%;  /* Ensures the right column takes full height */
 }
 
 /* News item styling */
@@ -149,6 +139,13 @@ main {
     padding: 15px;
     background-color: #1f1f1f;
     border-radius: 8px;
+}
+
+.news-item img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px; /* Adds space below the image */
 }
 
 /* Styling for the description text */
