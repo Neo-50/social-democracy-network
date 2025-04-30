@@ -173,7 +173,7 @@ main {
 .home-page {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;  /* 3 columns: left sidebar, main content, right sidebar */
-    grid-gap: 30px;  /* Space between columns */
+    grid-gap: 10px;  /* Space between columns */
     padding: 2rem;
     grid-template-rows: auto;
 }
@@ -206,20 +206,21 @@ main {
     justify-content: center;      /* Centers the image horizontally within the container */
     align-items: center;          /* Centers the image vertically within the container */
     margin: 0 auto;               /* Optional: centers the image container itself */
+    box-shadow: none;
 }
 
 #image1 img {
-    width:60%;      /* Scale the first image to 80% */
+    width:70%;      /* Scale the first image to 80% */
     height: auto;    /* Maintain aspect ratio */
 }
 
 #image2 img {
-    width: 60%;      /* Scale the second image to 50% */
+    width: 70%;      /* Scale the second image to 50% */
     height: auto;    /* Maintain aspect ratio */
 }
 
 #image3 img {
-    width: 60%;     /* Scale the third image to 100% */
+    width: 70%;     /* Scale the third image to 100% */
     height: auto;    /* Maintain aspect ratio */
 }
 
