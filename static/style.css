@@ -175,12 +175,25 @@ main {
     padding: 20px;
 }
 
-.image-container img {
-    max-width: 65%;  /* Ensures images scale properly */
-    height: auto;     /* Maintains aspect ratio */
-    border-radius: 8px; /* Optional: adds rounded corners */
+.image-container {
+    text-align: center;  /* Center the images in their containers */
+    margin: 20px;        /* Add some space around the containers */
 }
 
+#image1 img {
+    width: 40%;      /* Scale the first image to 80% */
+    height: auto;    /* Maintain aspect ratio */
+}
+
+#image2 img {
+    width: 50%;      /* Scale the second image to 50% */
+    height: auto;    /* Maintain aspect ratio */
+}
+
+#image3 img {
+    width: 50%;     /* Scale the third image to 100% */
+    height: auto;    /* Maintain aspect ratio */
+}
 
 /* Form styles */
 form {
