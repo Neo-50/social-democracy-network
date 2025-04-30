@@ -181,17 +181,17 @@ main {
 }
 
 #image1 img {
-    width: 40%;      /* Scale the first image to 80% */
+    width:15%;      /* Scale the first image to 80% */
     height: auto;    /* Maintain aspect ratio */
 }
 
 #image2 img {
-    width: 50%;      /* Scale the second image to 50% */
+    width: 30%;      /* Scale the second image to 50% */
     height: auto;    /* Maintain aspect ratio */
 }
 
 #image3 img {
-    width: 50%;     /* Scale the third image to 100% */
+    width: 30%;     /* Scale the third image to 100% */
     height: auto;    /* Maintain aspect ratio */
 }
 
