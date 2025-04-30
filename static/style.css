@@ -174,21 +174,24 @@ main {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;  /* 3 columns: left sidebar, main content, right sidebar */
     grid-gap: 10px;  /* Space between columns */
-    padding: 2rem;
+    padding: 1rem;
     grid-template-rows: auto;
 }
 
 /* Ensure that the sections are correctly placed in the grid */
 .home-page .home-left {
     background-color: #578f4d;
-    padding: 20px;
+    padding: 0;
+    margin: 0;
     border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     grid-column: 1;  /* Place in the first column (left column) */
 }
 
 .home-page .home-center {
     background-color: #578f4d;
-    padding: 20px;
+    padding: 0;
+    margin: 0;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     grid-column: 2;  /* Place in the second column (center column) */
@@ -196,8 +199,10 @@ main {
 
 .home-page .home-right {
     background-color: #578f4d;
-    padding: 20px;
+    padding: 0;
+    margin: 0;
     border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     grid-column: 3;  /* Place in the third column (right column) */  /* Ensures the right column takes full height */
 }
 
