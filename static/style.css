@@ -3,6 +3,7 @@
 /* Global Styles */
 body {
     font-family: 'Inter', sans-serif;
+    font-weight: 400;
     color: white;
     background-color: #578f4d;
     margin: 0;
@@ -138,8 +139,7 @@ main {
     background-color: #578f4d;
     padding: 20px;
     border-radius: 8px;
-    grid-column: 3;  /* Place in the third column (right column) */
-    min-height: 100%;  /* Ensures the right column takes full height */
+    grid-column: 3;  /* Place in the third column (right column) */  /* Ensures the right column takes full height */
 }
 
 /* News item styling */
