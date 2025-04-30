@@ -168,13 +168,44 @@ main {
     margin-bottom: 10px; /* Optional: Space between description and next item */
 }
 
-.image-gallery {
-    display: flex;                /* Use Flexbox to arrange items side by side */
-    justify-content: space-between; /* Space the images evenly */
-    gap: 20px;                    /* Add space between the images */
-    flex-wrap: wrap;              /* Allow images to wrap on smaller screens */
-    margin: 20px;                 /* Add some space around the containers */
-    text-align: center;           /* Center the images within their individual containers */
+
+/* Styling for the home page only */
+.home-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;  /* 3 columns: left sidebar, main content, right sidebar */
+    grid-gap: 30px;  /* Space between columns */
+    padding: 2rem;
+    grid-template-rows: auto;
+}
+
+/* Ensure that the sections are correctly placed in the grid */
+.home-page .home-left {
+    background-color: #578f4d;
+    padding: 20px;
+    border-radius: 8px;
+    grid-column: 1;  /* Place in the first column (left column) */
+}
+
+.home-page .home-center {
+    background-color: #578f4d;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    grid-column: 2;  /* Place in the second column (center column) */
+}
+
+.home-page .home-right {
+    background-color: #578f4d;
+    padding: 20px;
+    border-radius: 8px;
+    grid-column: 3;  /* Place in the third column (right column) */  /* Ensures the right column takes full height */
+}
+
+.image-container {
+    display: flex;                /* Ensures the image is treated as a flex item */
+    justify-content: center;      /* Centers the image horizontally within the container */
+    align-items: center;          /* Centers the image vertically within the container */
+    margin: 0 auto;               /* Optional: centers the image container itself */
 }
 
 #image1 img {

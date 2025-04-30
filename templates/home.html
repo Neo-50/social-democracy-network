@@ -3,15 +3,22 @@
 
 {% block content %}
 
-<main class="image-gallery">
-    <div class="image-container" id="image1">
-        <img src="{{ url_for('static', filename='images/event01.png') }}" alt="Event 1">
-    </div>
-    <div class="image-container" id="image2">
-        <img src="{{ url_for('static', filename='images/event02.png') }}" alt="Event 2">
-    </div>
-    <div class="image-container" id="image3">
-        <img src="{{ url_for('static', filename='images/event03.png') }}" alt="Event 3">
-    </div>
+<main class="home-page">
+    <section class="home-left">
+        <div class="image-container" id="image1">
+            <img src="{{ url_for('static', filename='images/event01.png') }}" alt="Event 1">
+        </div>
+    </section>
+    <section class="home-center">
+        <div class="image-container" id="image2">
+            <img src="{{ url_for('static', filename='images/event02.png') }}" alt="Event 2">
+        </div>
+    </section>
+    <section class="home-right">
+        <div class="image-container" id="image3">
+            <img src="{{ url_for('static', filename='images/event03.png') }}" alt="Event 3">
+        </div>
+    </section>
 </main>
+
 {% endblock %}
