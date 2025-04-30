@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 import os
 
 app = Flask(__name__)
@@ -22,8 +23,8 @@ class Post(db.Model):
 # Routes for the app
 @app.route('/')
 def home():
-    # Placeholder: Replace with actual homepage content
-    return render_template('home.html')
+    current_time = datetime.now().strftime("%B %d, %Y %I:%M %p")  # Format it as "April 29, 2025 03:30 PM"
+    return render_template('home.html', current_time=current_time)
 
 @app.route('/new_post', methods=['GET', 'POST'])
 def new_post():
