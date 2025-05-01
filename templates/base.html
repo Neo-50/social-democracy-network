@@ -10,6 +10,9 @@
     <!-- General site-wide styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 
+    <!-- Header-specific styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+
     <!-- Page-specific styles -->
     {% if request.endpoint == 'home' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
@@ -17,21 +20,21 @@
 
     {% if request.endpoint == 'news' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
+    {% endif %}
 
     {% if request.endpoint == 'environment' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/environment.css') }}">
+    {% endif %}
 
     {% if request.endpoint == 'veganism' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/veganism.css') }}">
-
+    {% endif %}
+    
     {% if request.endpoint == 'forum' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
-{% endif %}
-{% endif %}
-{% endif %}
-{% endif %}
+    {% endif %}
 </head>
-<body>
+<body class="has-header">
     <header>
         <div class="header-date-time" id="date-time"></div>
         <h1>Welcome to the Social Democracy Network</h1>

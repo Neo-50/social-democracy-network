@@ -1,16 +1,5 @@
-/* Center the navbar and give it some spacing */
-nav {
-    display: flex;
-    justify-content: center;  /* Centers the links horizontally */
-    margin-top: 15px;          /* Add space above the navbar */
-}
-
-nav a {
-    margin: 0 15px;            /* Add space between the links */
-    font-size: 1rem;           /* Adjust font size as needed */
-}
-
-header {
+/* header.css: Only applies to the header section when inside base.html */
+body.has-header header {
     display: flex;
     flex-direction: column;
     justify-content: center;   /* Center content vertically */
@@ -20,6 +9,17 @@ header {
     padding: 1rem;
     margin-bottom: 15px;
     position: relative; /* Add relative positioning to allow absolute positioning within the header */
+}
+
+body.has-header header nav {
+    display: flex;
+    justify-content: center;  /* Centers the links horizontally */
+    margin-top: 15px;   
+}
+
+nav a {
+    margin: 0 15px;            /* Add space between the links */
+    font-size: 1rem;           /* Adjust font size as needed */
 }
 
 .header-date-time {
