@@ -11,7 +11,16 @@ body.has-header header {
     position: relative; /* Add relative positioning to allow absolute positioning within the header */
 }
 
-body.has-header header nav {
+.header-date-time {
+    position: absolute;
+    bottom: 10px;   /* Align to the bottom of the header */
+    left: 10px;     /* Keep it on the left */
+    font-size: 14px;
+    color: white;   /* Change text color to white */
+    font-weight: bold;
+}
+
+body.has-header nav {
     display: flex;
     justify-content: center;  /* Centers the links horizontally */
     margin-top: 15px;   
@@ -22,19 +31,9 @@ nav a {
     font-size: 1rem;           /* Adjust font size as needed */
 }
 
-.header-date-time {
-    position: absolute;
-    bottom: 10px;   /* Align to the bottom of the header */
-    left: 10px;     /* Keep it on the left */
-    font-size: 14px;
-    color: white;   /* Change text color to white */
-    font-weight: bold;
-}
-
 header h1 {
     margin: 0;  /* Space between title and "Create a New Post" link */
 }
-
 
 header h1 a {
     color: white;
