@@ -1,0 +1,59 @@
+/* Styling for the news page only */
+.news-page {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;  /* 3 columns: left sidebar, main content, right sidebar */
+    grid-gap: 30px;  /* Space between columns */
+    padding: 2rem;
+    grid-template-rows: auto;
+}
+
+
+/* Ensure that the sections are correctly placed in the grid */
+.news-page .news-left {
+    background-color: #578f4d;
+    padding: 20px;
+    border-radius: 8px;
+    grid-column: 1;  /* Place in the first column (left column) */
+}
+
+.news-page .news-center {
+    background-color: #578f4d;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    grid-column: 2;  /* Place in the second column (center column) */
+}
+
+.news-page .news-right {
+    background-color: #578f4d;
+    padding: 20px;
+    border-radius: 8px;
+    grid-column: 3;  /* Place in the third column (right column) */  /* Ensures the right column takes full height */
+}
+
+/* News item styling */
+.news-page .news-item {
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: left; /* Center items horizontally */
+    text-align: left; /* Center the text */
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #1f1f1f;
+    border-radius: 8px;
+}
+
+.news-item img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px; /* Adds space below the image */
+}
+
+/* Styling for the description text */
+.news-item .news-text {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 10px; /* Optional: Space between description and next item */
+}
+

@@ -1,0 +1,55 @@
+/* Center the navbar and give it some spacing */
+nav {
+    display: flex;
+    justify-content: center;  /* Centers the links horizontally */
+    margin-top: 15px;          /* Add space above the navbar */
+}
+
+nav a {
+    margin: 0 15px;            /* Add space between the links */
+    font-size: 1rem;           /* Adjust font size as needed */
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   /* Center content vertically */
+    align-items: center;       /* Center content horizontally */
+    background-color: #578f4d;
+    color: white;
+    padding: 1rem;
+    margin-bottom: 15px;
+    position: relative; /* Add relative positioning to allow absolute positioning within the header */
+}
+
+.header-date-time {
+    position: absolute;
+    bottom: 10px;   /* Align to the bottom of the header */
+    left: 10px;     /* Keep it on the left */
+    font-size: 14px;
+    color: white;   /* Change text color to white */
+    font-weight: bold;
+}
+
+header h1 {
+    margin: 0;  /* Space between title and "Create a New Post" link */
+}
+
+
+header h1 a {
+    color: white;
+    text-decoration: none;
+    font-size: 2rem;
+}
+
+header a {
+    color: white;
+    margin-top: 1rem;
+    display: inline-block;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+header a:hover {
+    text-decoration: underline;
+}

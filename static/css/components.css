@@ -1,0 +1,65 @@
+.posts, .comments {
+    margin-top: 2rem;
+}
+
+.post, .comment {
+    background-color: #578f4d;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.post h3, .comment p {
+    margin: 0;
+}
+
+.post a, .comment a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.post a:hover, .comment a:hover {
+    text-decoration: none;
+}
+/* Form styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form textarea, form input {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+form button {
+    padding: 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .post, .comment {
+        padding: 1rem;
+    }
+
+    form {
+        width: 100%; /* Adjust form width for mobile screens */
+    }
+}
