@@ -72,3 +72,17 @@
     height: auto;            /* Maintain the aspect ratio */
     aspect-ratio: 16 / 9;    /* Maintain a 16:9 aspect ratio */
 }
+
+/* Remove bullets and margin from the lists */
+.no-bullets {
+    list-style-type: none;   /* Removes bullet points */
+    padding-left: 0;         /* Removes default left padding */
+    margin-top: 0;           /* Removes margin before the list */
+    margin-bottom: 0;        /* Removes margin after the list */
+}
+
+/* Remove space between the heading and the list */
+.section-title {
+    margin-bottom: 0;        /* Removes space after the section title */
+    font-weight: bold;       /* Makes the section title bold */
+}
