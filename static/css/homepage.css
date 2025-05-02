@@ -58,17 +58,19 @@
 }
 
 .video-container {
-    display: block;              /* Stop centering with flex */
-    padding: 10px;
-    margin: 0;                   /* Remove auto centering */
-    max-width: 100%;             /* Let it fit the right column */
+    padding: 20px;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .video-container iframe {
-    width: 100%;             /* Make the iframe take up the full container width */
-    height: auto;            /* Maintain the aspect ratio */
-    aspect-ratio: 16 / 9;    /* Maintain a 16:9 aspect ratio */
+    width: 640px;
+    height: 360px;
+    max-width: 100%; /* Ensures it scales down on small screens */
+    aspect-ratio: 16 / 9;
+    display: block;
 }
+
 
 /* Remove bullets and margin from the lists */
 .no-bullets {
