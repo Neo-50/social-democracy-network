@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
+from news_system import NewsArticle, NewsComment
 # Post model
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,7 +20,21 @@ class Post(db.Model):
     def __repr__(self):
         return f'<Post {self.title}>'
 
-# Routes for the app
+# Routes for the news app
+@app.route('/news', methods=['GET', 'POST'])
+def news():
+    if request.method == 'POST':
+        url = request.form['url']
+        # We'll plug in metadata extraction here later
+        article = NewsArticle(url=url)
+        db.session.add(article)
+        db.session.commit()
+        return redirect(url_for('news'))
+
+    articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
+    return render_template('news.html', articles=articles)
+
+# Routes for the forum app
 @app.route('/')
 def home():
     return render_template('home.html')
