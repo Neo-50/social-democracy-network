@@ -1,7 +1,7 @@
 /* Styling for the news page only */
 .news-page {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;  /* 3 columns: left sidebar, main content, right sidebar */
+    grid-template-columns: auto auto auto;  /* 3 columns: left sidebar, main content, right sidebar */
     grid-gap: 30px;  /* Space between columns */
     padding: 2rem;
     grid-template-rows: auto;
