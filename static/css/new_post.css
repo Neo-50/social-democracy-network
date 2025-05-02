@@ -1,0 +1,77 @@
+body {
+    background-color: #578f4d; /* matches rest of site background */
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #578f4d;
+    padding: 15px 30px;
+    text-align: center;
+}
+
+header h1 a {
+    color: white;
+    text-decoration: none;
+    font-size: 28px;
+}
+
+header a {
+    color: #ccc;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+main {
+    padding: 30px;
+}
+
+.create-post {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.create-post h2 {
+    margin-bottom: 20px;
+    color: white;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #3a3a3a;
+    color: white;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+button[type="submit"] {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #3a3a3a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button[type="submit"]:hover {
+    background-color: #4a4a4a;
+}
