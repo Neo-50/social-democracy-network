@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from utils.metadata_scraper import extract_metadata
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -29,7 +30,15 @@ class Post(db.Model):
 def news():
     if request.method == 'POST':
         url = request.form['url']
-        article = NewsArticle(url=url)
+        metadata = extract_metadata(url)
+        
+        article = NewsArticle(
+            url=url,
+            title=metadata["title"],
+            description=metadata["description"],
+            image_url=metadata["image_url"],
+            authors=metadata["authors"]
+        )
         db.session.add(article)
         db.session.commit()
         return redirect(url_for('news'))
