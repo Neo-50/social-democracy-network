@@ -2,6 +2,5 @@ Flask
 Flask-SQLAlchemy
 psycopg2-binary
 gunicorn
-newspaper3k
-lxml[html_clean]
-nltk
+requests
+beautifulsoup4

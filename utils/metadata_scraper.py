@@ -1,57 +1,32 @@
-from newspaper import Article
 import requests
-import nltk
-import os
+from bs4 import BeautifulSoup
 
-# Setup: make sure punkt is available
-def setup_nltk():
-    try:
-        nltk_data_path = os.path.join(os.path.dirname(__file__), '..', 'nltk_data')
-        os.makedirs(nltk_data_path, exist_ok=True)
-
-        print(f"[SETUP] Downloading punkt to {nltk_data_path}")
-        nltk.download('punkt', download_dir=nltk_data_path)
-        nltk.data.path.append(nltk_data_path)
-
-    except Exception as e:
-        print(f"[ERROR] Failed to setup NLTK: {e}")
-
-setup_nltk()
-
-# Main metadata extraction function
 def extract_metadata(url):
     try:
-        article = Article(url)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:117.0) Gecko/20100101 Firefox/117.0"
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
 
-        # Spoof user-agent to avoid blocks
-        article.session = requests.Session()
-        article.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0'
-        })
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-        article.download()
-        article.parse()
+        def get_meta(property_name):
+            tag = soup.find("meta", property=property_name)
+            return tag["content"].strip() if tag and "content" in tag.attrs else None
 
-        # Try NLP (summary), but catch nltk errors separately
-        try:
-            article.nlp()
-            description = article.summary
-        except Exception as e:
-            print(f"[WARN] NLP failed: {e}")
-            description = None
-
-        result = {
-            "title": article.title,
-            "description": description,
-            "image_url": article.top_image,
-            "authors": ", ".join(article.authors)
+        metadata = {
+            "title": get_meta("og:title") or soup.title.string if soup.title else url,
+            "description": get_meta("og:description"),
+            "image_url": get_meta("og:image"),
+            "authors": get_meta("article:author") or get_meta("author")
         }
 
-        print(f"[DEBUG] Metadata extracted: {result}")
-        return result
+        print(f"[DEBUG] Metadata extracted for {url}: {metadata}")
+        return metadata
 
     except Exception as e:
-        print(f"[ERROR] Failed to extract metadata from {url}: {e}")
+        print(f"[ERROR] Metadata extraction failed for {url}: {e}")
         return {
             "title": None,
             "description": None,
