@@ -1,23 +1,24 @@
-from flask import Flask, render_template, request, redirect, url_for
-from utils.metadata_scraper import extract_metadata
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 import os
-import nltk
-nltk.download('punkt')
+from datetime import datetime
 
-from db_init import db  # Import db before anything that uses it
+from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+import nltk
+
+from utils.metadata_scraper import extract_metadata
+from db_init import db
 from news_system import NewsArticle, NewsComment
+
+# Set up NLTK download path
+nltk_data_path = os.path.join(os.path.dirname(__file__), 'nltk_data')
+nltk.download('punkt', download_dir=nltk_data_path)
+nltk.data.path.append(nltk_data_path)
 
 app = Flask(__name__)
-
-# Get the database URL from the environment (Render provides this)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db.init_app(app)
 
-from news_system import NewsArticle, NewsComment
 # Post model
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
