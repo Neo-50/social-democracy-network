@@ -3,6 +3,8 @@ from utils.metadata_scraper import extract_metadata
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+import nltk
+nltk.download('punkt')
 
 from db_init import db  # Import db before anything that uses it
 from news_system import NewsArticle, NewsComment
