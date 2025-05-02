@@ -1,7 +1,7 @@
 /* Styling for the home page only */
 .home-page {
     display: grid;
-    grid-template-columns: max-content max-content max-content;  /* 3 columns: left sidebar, main content, right sidebar */
+    grid-template-columns: auto auto auto;  /* 3 columns: left sidebar, main content, right sidebar */
     grid-gap: 10px;  /* Space between columns */
     padding: 1rem;
     grid-template-rows: auto;
