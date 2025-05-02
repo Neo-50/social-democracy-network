@@ -3,13 +3,17 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 
+from db_init import db  # Import db before anything that uses it
+from news_system import NewsArticle, NewsComment
+
 app = Flask(__name__)
 
 # Get the database URL from the environment (Render provides this)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db.init_app(app)
+
 from news_system import NewsArticle, NewsComment
 # Post model
 class Post(db.Model):
@@ -25,7 +29,6 @@ class Post(db.Model):
 def news():
     if request.method == 'POST':
         url = request.form['url']
-        # We'll plug in metadata extraction here later
         article = NewsArticle(url=url)
         db.session.add(article)
         db.session.commit()
@@ -52,11 +55,6 @@ def new_post():
         return redirect(url_for('forum'))
 
     return render_template('new_post.html')
-
-@app.route('/news')
-def news():
-    # Placeholder: Replace with actual news content
-    return render_template('news.html')
 
 @app.route('/environment')
 def environment():
