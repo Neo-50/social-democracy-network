@@ -3,7 +3,6 @@ from datetime import datetime
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-import nltk
 
 from utils.metadata_scraper import extract_metadata
 from db_init import db
