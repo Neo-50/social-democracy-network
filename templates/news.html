@@ -25,9 +25,11 @@
             {% endif %}
 
             {% if article.published %}
-            <p class="news-published">Published: {{ article.published }}</p>
+            <p class="news-published">
+                Published: {{ article.published[:10] }}
+            </p>
             {% endif %}
-
+        
             <h3 class="news-title">
                 <a href="{{ article.url }}" target="_blank">{{ article.title or article.url }}</a>
             </h3>
