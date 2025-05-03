@@ -42,8 +42,8 @@
 
 .news-submit input[type="url"] {
     width: 100%;
-    max-width: 500px;
-    min-width: 300px;           /* ✅ Add this line */
+    max-width: 300px;
+    min-width: 250px;           /* ✅ Add this line */
     padding: 12px 20px;
     background-color: #3a3a3a;
     color: white;
