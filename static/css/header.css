@@ -4,7 +4,7 @@ body.has-header header {
     flex-direction: column;
     justify-content: center;   /* Center content vertically */
     align-items: center;       /* Center content horizontally */
-    background-color: #578f4d;
+    background-color: #3d3d3d;
     color: white;
     padding: 1rem;
     margin-bottom: 15px;

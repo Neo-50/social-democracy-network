@@ -1,5 +1,5 @@
 body {
-    background-color: #578f4d; /* matches rest of site background */
+    background-color: #3d3d3d; /* matches rest of site background */
     color: white;
     font-family: Arial, sans-serif;
     margin: 0;
@@ -7,7 +7,7 @@ body {
 }
 
 header {
-    background-color: #578f4d;
+    background-color: #3d3d3d;
     padding: 15px 30px;
     text-align: center;
 }
