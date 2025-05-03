@@ -20,6 +20,14 @@
             <img src="{{ article.image_url }}" alt="Article image" class="news-image">
             {% endif %}
 
+            {% if article.source %}
+            <p class="news-source">Source: {{ article.source }}</p>
+            {% endif %}
+
+            {% if article.published %}
+            <p class="news-published">Published: {{ article.published }}</p>
+            {% endif %}
+
             <h3 class="news-title">
                 <a href="{{ article.url }}" target="_blank">{{ article.title or article.url }}</a>
             </h3>
