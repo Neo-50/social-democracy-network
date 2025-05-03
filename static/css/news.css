@@ -38,13 +38,6 @@
     border-radius: 8px;
 }
 
-.news-item img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px; /* Adds space below the image */
-}
-
 .news-submit input[type="url"] {
     width: 70%;
     max-width: 500px;
@@ -78,11 +71,12 @@
 }
 
 .news-image {
-    width: 100%;
+    max-width: 100%;
+    height: auto;
     max-height: 300px;
-    object-fit: cover;
+    display: block;
+    margin: 0 auto 10px auto;
     border-radius: 4px;
-    margin-bottom: 10px;
 }
 
 .news-title a {
