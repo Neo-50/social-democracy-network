@@ -24,7 +24,7 @@
     width: 100%;
 }
 
-.news-submit input[type="url"] {
+.news-left input[type="url"] {
     width: 100%;
     max-width: 400px;
     min-width: 300px;
@@ -37,7 +37,7 @@
     box-sizing: border-box;
 }
 
-.news-submit button {
+.news-left button {
     padding: 20px;
     margin-left: 10px;
     margin-top: 30px;
@@ -48,7 +48,7 @@
     cursor: pointer;
 }
 
-.news-submit button:hover {
+.news-left button:hover {
     background-color: #42f58d;
 }
 
