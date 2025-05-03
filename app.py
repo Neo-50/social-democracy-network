@@ -34,8 +34,11 @@ def news():
             title=metadata["title"],
             description=metadata["description"],
             image_url=metadata["image_url"],
-            authors=metadata["authors"]
+            authors=metadata["authors"],
+            published=metadata["published"],
+            source=metadata["source"]
         )
+
         db.session.add(article)
         db.session.commit()
         return redirect(url_for('news'))
