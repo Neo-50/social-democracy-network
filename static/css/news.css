@@ -8,18 +8,22 @@
 }
 
 /* Ensure that the sections are correctly placed in the grid */
-.news-page .news-left {
+.news-page .news-submit {
     background-color: #578f4d;
-    padding: 20px;
+    padding: 0;
+    margin: 0;
     border-radius: 8px;
+    box-shadow: none;
     grid-column: 1;  /* Place in the first column (left column) */
 }
 
-.news-page .news-right {
+.news-page .news-feed {
     background-color: #578f4d;
-    padding: 20px;
+    padding: 0;
+    margin: 0;
     border-radius: 8px;
-    grid-column: 2;  /* Place in the third column (right column) */  /* Ensures the right column takes full height */
+    box-shadow: none;
+    grid-column: 2;  /* Place in the second column (center column) */
 }
 
 /* News item styling */
@@ -39,23 +43,6 @@
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10px; /* Adds space below the image */
-}
-
-/* Styling for the description text */
-.news-item .news-text {
-    color: white;
-    font-size: 1rem;
-    margin-bottom: 10px; /* Optional: Space between description and next item */
-}
-.news-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.news-submit {
-    text-align: center;
-    margin-bottom: 40px;
 }
 
 .news-submit input[type="url"] {
