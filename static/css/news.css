@@ -1,13 +1,13 @@
 /* Styling for the news page only */
 .news-page {
     display: grid;
-    grid-template-columns: max-content max-content 1fr;
+    grid-template-columns: max-content 1fr;
     grid-gap: 30px;
     padding: 2rem;
     grid-template-rows: auto;
 }
 
-.news-left, .news-center, .news-right {
+.news-left, .news-right {
     background-color: #3d3d3d;
     padding: 0;
     margin: 0;

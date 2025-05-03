@@ -12,55 +12,53 @@
         </form>
     </section>
 
-    <!-- News Feed -->
-    <section class="news-center">
-        {% for article in articles %}
-        <div class="news-item">
-            {% if article.image_url %}
-            <img src="{{ article.image_url }}" alt="Article image" class="news-image">
-            {% endif %}
-
-            {% if article.source %}
-            <p class="news-source">Source: {{ article.source }}</p>
-            {% endif %}
-
-            {% if article.published %}
-            <p class="news-published">
-                Published: {{ article.published[:10] }}
-            </p>
-            {% endif %}
-        
-            <h3 class="news-title">
-                <a href="{{ article.url }}" target="_blank">{{ article.title or article.url }}</a>
-            </h3>
-
-            {% if article.authors %}
-            <p class="news-authors">By {{ article.authors }}</p>
-            {% endif %}
-
-            {% if article.description %}
-            <p class="news-description">{{ article.description }}</p>
-            {% endif %}
-        </div>
-        {% else %}
-        <p class="no-articles">No articles submitted yet.</p>
-        {% endfor %}
-    </section>
-
+    <!-- News Feed and Comments in unified right section -->
     <section class="news-right">
         {% for article in articles %}
-        <div class="comments-thread">
-            <h4>Discussion</h4>
-            {% for comment in article.comments %}
-                <div class="comment">
-                <p>{{ comment.content }}</p>
-                <small>Posted {{ comment.timestamp.strftime('%b %d %Y, %I:%M %p') }}</small>
-                </div>
-            {% endfor %}
-            <form action="{{ url_for('add_comment', article_id=article.id) }}" method="post">
-                <textarea name="content" placeholder="Write a comment..." required></textarea>
-                <button type="submit">Post</button>
-            </form>
+        <div class="news-row">
+            
+            <!-- Article content -->
+            <div class="news-item">
+                {% if article.image_url %}
+                <img src="{{ article.image_url }}" alt="Article image" class="news-image">
+                {% endif %}
+
+                {% if article.source %}
+                <p class="news-source">Source: {{ article.source }}</p>
+                {% endif %}
+
+                {% if article.published %}
+                <p class="news-published">Published: {{ article.published[:10] }}</p>
+                {% endif %}
+
+                <h3 class="news-title">
+                    <a href="{{ article.url }}" target="_blank">{{ article.title or article.url }}</a>
+                </h3>
+
+                {% if article.authors %}
+                <p class="news-authors">By {{ article.authors }}</p>
+                {% endif %}
+
+                {% if article.description %}
+                <p class="news-description">{{ article.description }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Comment thread -->
+            <div class="comments-thread">
+                <h4>Discussion</h4>
+                {% for comment in article.comments %}
+                    <div class="comment">
+                    <p>{{ comment.content }}</p>
+                    <small>Posted {{ comment.timestamp.strftime('%b %d %Y, %I:%M %p') }}</small>
+                    </div>
+                {% endfor %}
+                <form action="{{ url_for('add_comment', article_id=article.id) }}" method="post">
+                    <textarea name="content" placeholder="Write a comment..." required></textarea>
+                    <button type="submit">Post</button>
+                </form>
+            </div>
+
         </div>
         {% endfor %}
     </section>
