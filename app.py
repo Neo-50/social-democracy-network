@@ -13,7 +13,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
-# Post model
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -22,7 +21,6 @@ class Post(db.Model):
     def __repr__(self):
         return f'<Post {self.title}>'
 
-# Routes for the news app
 @app.route('/news', methods=['GET', 'POST'])
 def news():
     if request.method == 'POST':
@@ -46,7 +44,15 @@ def news():
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles)
 
-# Routes for the forum app
+@app.route('/comment/<int:article_id>', methods=['POST'])
+def add_comment(article_id):
+    content = request.form.get('content')
+    if content:
+        comment = NewsComment(content=content, article_id=article_id)
+        db.session.add(comment)
+        db.session.commit()
+    return redirect(url_for('news'))
+
 @app.route('/')
 def home():
     return render_template('home.html')

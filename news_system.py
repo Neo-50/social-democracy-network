@@ -14,7 +14,6 @@ class NewsArticle(db.Model):
 
     comments = db.relationship('NewsComment', backref='article', lazy=True)
 
-
 class NewsComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     article_id = db.Column(db.Integer, db.ForeignKey('news_article.id'), nullable=False)

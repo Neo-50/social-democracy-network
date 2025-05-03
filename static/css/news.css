@@ -1,28 +1,18 @@
 /* Styling for the news page only */
 .news-page {
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: max-content max-content 1fr;
     grid-gap: 30px;
     padding: 2rem;
     grid-template-rows: auto;
 }
 
-.news-page .news-submit {
+.news-left, .news-center, .news-right {
     background-color: #3d3d3d;
     padding: 0;
     margin: 0;
     border-radius: 8px;
     box-shadow: none;
-    grid-column: 1;
-}
-
-.news-page .news-feed {
-    background-color: #3d3d3d;
-    padding: 0;
-    margin: 0;
-    border-radius: 8px;
-    box-shadow: none;
-    grid-column: 2;
 }
 
 .news-item {
