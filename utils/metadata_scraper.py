@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 
 def extract_metadata(url):
     try:
@@ -19,7 +20,9 @@ def extract_metadata(url):
             "title": get_meta("og:title") or soup.title.string if soup.title else url,
             "description": get_meta("og:description"),
             "image_url": get_meta("og:image"),
-            "authors": get_meta("article:author") or get_meta("author")
+            "authors": get_meta("article:author") or get_meta("author"),
+            "published": get_meta("article:published_time") or get_meta("og:updated_time"),
+            "source": urlparse(url).netloc.replace("www.", "")
         }
 
         print(f"[DEBUG] Metadata extracted for {url}: {metadata}")
@@ -31,5 +34,7 @@ def extract_metadata(url):
             "title": None,
             "description": None,
             "image_url": None,
-            "authors": None
+            "authors": None,
+            "published": None,
+            "source": None
         }
