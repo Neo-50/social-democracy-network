@@ -68,7 +68,7 @@
 }
 
 .news-right button {
-    padding: 10px 16px;
+    padding: 30px;
     margin: 0; /* neutralize vertical misalignment */
     background-color: #1f1f1f;
     color: white;
@@ -77,6 +77,9 @@
     cursor: pointer;
 }
 
+.news-row {
+    margin-bottom: 40px; /* or 30px, depending on what looks best */
+}
 
 .news-image {
     max-width: 100%;
