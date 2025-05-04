@@ -39,8 +39,8 @@
 
 .news-left button[type="submit"]{
     padding: 20px;
-    margin-left: 10px;
-    margin-top: 30px;
+    margin-left: 0px;
+    margin-top: 10px;
     background-color: #1f1f1f;
     color: white;
     border: none;
@@ -63,8 +63,9 @@
 
 .news-right button {
     padding: 20px;
-    margin-left: 10px;
-    margin-top: 30px;
+    margin-left: 0px;
+    margin-top: 10px;
+    margin-bottom: 20px;
     background-color: #1f1f1f;
     color: white;
     border: none;
