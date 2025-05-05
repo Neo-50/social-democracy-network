@@ -7,6 +7,7 @@
     grid-template-rows: auto;
 }
 
+
 /* Ensure that the sections are correctly placed in the grid */
 .home-page .home-left {
     background-color: #3d3d3d;
@@ -34,6 +35,21 @@
     box-shadow: none;
     grid-column: 3;  /* Place in the third column (right column) */  /* Ensures the right column takes full height */
 }
+
+@media (max-width: 768px) {
+    .home-page {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .home-left,
+    .home-center,
+    .home-right {
+        width: 100%;
+    }
+}
+
 
 .image-container {
     display: flex;                /* Ensures the image is treated as a flex item */
