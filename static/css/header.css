@@ -22,11 +22,7 @@ body.has-header header {
 
 @media (max-width: 768px) {
     .header-date-time {
-        position: relative;
-        bottom: auto;
-        left: auto;
-        margin-top: 10px;
-        margin-left: 10px;
+        display: none;
     }
 }
 
