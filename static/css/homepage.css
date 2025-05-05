@@ -14,6 +14,7 @@
     padding: 0;
     margin: 0;
     border-radius: 8px;
+    text-align: left;
     box-shadow: none;
     grid-column: 1;  /* Place in the first column (left column) */
 }
@@ -23,6 +24,7 @@
     padding: 0;
     margin: 0;
     border-radius: 8px;
+    text-align: left;
     box-shadow: none;
     grid-column: 2;  /* Place in the second column (center column) */
 }
@@ -32,6 +34,7 @@
     padding: 0;
     margin: 0;
     border-radius: 8px;
+    text-align: left;
     box-shadow: none;
     grid-column: 3;  /* Place in the third column (right column) */  /* Ensures the right column takes full height */
 }
@@ -78,9 +81,9 @@
 .video-container {
     position: relative;
     width: 100%;
-    max-width: 640px;       /* <-- Limit max size on desktop */
-    margin: 0 auto;         /* <-- Center horizontally */
-    padding-bottom: 56.25%; /* 16:9 ratio */
+    max-width: 720px;       /* Consistent size on desktop */
+    margin: 0;              /* Align to the left edge */
+    padding-bottom: 56.25%; /* Maintain 16:9 ratio */
     height: 0;
     overflow: hidden;
 }
