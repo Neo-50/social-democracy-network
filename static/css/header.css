@@ -52,3 +52,27 @@ header a {
 header a:hover {
     text-decoration: underline;
 }
+
+.mobile-menu-icon {
+    display: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    nav#main-nav {
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    nav#main-nav.show {
+        display: flex;
+    }
+
+    .mobile-menu-icon {
+        display: block;
+    }
+}
+
