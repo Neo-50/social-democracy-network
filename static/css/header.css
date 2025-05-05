@@ -20,6 +20,16 @@ body.has-header header {
     font-weight: bold;
 }
 
+@media (max-width: 768px) {
+    .header-date-time {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+}
+
 body.has-header nav {
     display: flex;
     justify-content: center;  /* Centers the links horizontally */
