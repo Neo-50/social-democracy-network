@@ -72,6 +72,11 @@ nav#main-nav a:hover {
     background-color: #444;
 }
 
+.site-title {
+    font-size: 2rem;
+    text-align: center;
+}
+
 @media (max-width: 768px) {
     nav#main-nav {
         display: none;
@@ -85,6 +90,12 @@ nav#main-nav a:hover {
 
     .mobile-menu-icon {
         display: block;
+    }
+    
+    .site-title {
+        font-size: 1.5rem;
+        content: "Social Democracy Network";
+        white-space: normal;
     }
 }
 

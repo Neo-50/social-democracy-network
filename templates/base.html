@@ -43,7 +43,7 @@
 <body class="has-header">
     <header>
         <div class="header-date-time" id="date-time"></div>
-        <h1>Welcome to the Social Democracy Network</h1>
+        <h1 class="site-title">Welcome to the Social Democracy Network</h1>
     </header>
     
     <div class="mobile-menu-icon" onclick="toggleMobileMenu()">☰</div>
@@ -91,6 +91,14 @@
             const nav = document.getElementById('main-nav');
             nav.classList.toggle('show');
         }
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.innerWidth <= 768) {
+                const title = document.querySelector(".site-title");
+                if (title) {
+                    title.textContent = "Social Democracy Network";
+                }
+            }
+        });
     </script>
     
     
