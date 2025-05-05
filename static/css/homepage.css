@@ -43,13 +43,15 @@
         gap: 20px;
     }
 
-    .home-left,
+    .home-left {
+        display: none; /* Hide directory on mobile */
+    }
+
     .home-center,
     .home-right {
         width: 100%;
     }
 }
-
 
 .image-container {
     display: flex;                /* Ensures the image is treated as a flex item */
@@ -76,6 +78,8 @@
 .video-container {
     position: relative;
     width: 100%;
+    max-width: 640px;       /* <-- Limit max size on desktop */
+    margin: 0 auto;         /* <-- Center horizontally */
     padding-bottom: 56.25%; /* 16:9 ratio */
     height: 0;
     overflow: hidden;
@@ -89,7 +93,6 @@
     height: 100%;
     border: 0;
 }
-
 
 /* Remove bullets and margin from the lists */
 .no-bullets {

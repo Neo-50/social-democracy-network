@@ -26,6 +26,11 @@ body.has-header header {
     }
 }
 
+.site-title {
+    font-size: 2rem;
+    text-align: center;
+}
+
 body.has-header nav {
     display: flex;
     justify-content: center;  /* Centers the links horizontally */
@@ -78,9 +83,36 @@ nav#main-nav a:hover {
     background-color: #444;
 }
 
-.site-title {
-    font-size: 2rem;
+.directory-button {
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
     text-align: center;
+    font-size: 1rem;
+}
+
+.directory-button:hover {
+    background-color: #444;
+}
+
+.mobile-top-bar {
+    display: none;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+}
+
+@media (max-width: 768px) {
+    .mobile-top-bar {
+        display: flex;
+    }
+
+    nav#main-nav {
+        width: 100%;
+    }
 }
 
 @media (max-width: 768px) {
