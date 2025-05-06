@@ -83,6 +83,8 @@ nav#main-nav a:hover {
     background-color: #444;
 }
 
+/* Mobile-specific styles */
+
 .directory-button {
     display: none;
     padding: 10px;
@@ -108,25 +110,18 @@ nav#main-nav a:hover {
 
 @media (max-width: 768px) {
     .directory-button {
-        display: inline-block; /* Show on mobile only */
+        display: inline-block;
     }
-}
 
-@media (max-width: 768px) {
     .mobile-top-bar {
         display: flex;
     }
 
     nav#main-nav {
-        width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    nav#main-nav {
         display: none;
         flex-direction: column;
         gap: 10px;
+        width: 100%;
     }
 
     nav#main-nav.show {
@@ -136,11 +131,28 @@ nav#main-nav a:hover {
     .mobile-menu-icon {
         display: block;
     }
-    
+
     .site-title {
         font-size: 1.5rem;
-        content: "Social Democracy Network";
         white-space: normal;
+    }
+
+    .mobile-directory.show {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Default: hidden */
+.mobile-directory {
+    display: none;
+}
+
+/* Desktop override: force-hide mobile menu */
+@media (min-width: 769px) {
+    .directory-button,
+    .mobile-directory {
+        display: none !important;
     }
 }
 
