@@ -9,7 +9,7 @@
 
 /* Ensure that the sections are correctly placed in the grid */
 .home-page .home-left {
-    background-color: #e90b0b;
+    background-color: #1f1f1f;
     padding: 0;
     margin: 0;
     border-radius: 8px;
@@ -19,7 +19,7 @@
 }
 
 .home-page .home-center {
-    background-color: #1eff00;
+    background-color: #1f1f1f;
     padding: 0;
     margin: 0;
     border-radius: 8px;
@@ -29,7 +29,7 @@
 }
 
 .home-page .home-right {
-    background-color: #000dca;
+    background-color: #1f1f1f;
     padding: 0;
     margin: 0;
     border-radius: 8px;
