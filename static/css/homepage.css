@@ -81,12 +81,13 @@
 .video-container {
     position: relative;
     width: 100%;
-    max-width: 720px;       /* Consistent size on desktop */
-    margin: 0;              /* Align to the left edge */
-    padding-bottom: 56.25%; /* Maintain 16:9 ratio */
+    max-width: 720px;
+    margin: 0 auto;           /* Center on desktop */
+    padding-bottom: 56.25%;  /* Maintain 16:9 ratio */
     height: 0;
     overflow: hidden;
 }
+
 
 .video-container iframe {
     position: absolute;
