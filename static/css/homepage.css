@@ -1,12 +1,11 @@
 /* Styling for the home page only */
 .home-page {
     display: grid;
-    grid-template-columns: auto auto auto;  /* 3 columns: left sidebar, main content, right sidebar */
-    grid-gap: 10px;  /* Space between columns */
-    padding: 1rem;
-    grid-template-rows: auto;
+    grid-template-columns: 1fr 1fr 1fr; /* Equal-width columns */
+    gap: 20px;
+    max-width: 1920px;  /* Prevent layout from being ultra-wide */
+    margin: 0 auto;     /* Center the whole layout */
 }
-
 
 /* Ensure that the sections are correctly placed in the grid */
 .home-page .home-left {
@@ -80,10 +79,10 @@
 
 .video-container {
     position: relative;
+    margin: 0;
     width: 100%;
     max-width: 720px;
-    margin: 0 auto;           /* Center on desktop */
-    padding-bottom: 56.25%;  /* Maintain 16:9 ratio */
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
     height: 0;
     overflow: hidden;
 }
