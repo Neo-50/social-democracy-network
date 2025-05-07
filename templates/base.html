@@ -22,6 +22,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
     {% endif %}
 
+    {% if request.endpoint == 'activism' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/activism.css') }}">
+    {% endif %}
+
     {% if request.endpoint == 'environment' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/environment.css') }}">
     {% endif %}
@@ -52,6 +56,7 @@
     <nav id="main-nav">
         <a href="{{ url_for('home') }}">Home</a>
         <a href="{{ url_for('news') }}">News</a>
+        <a href="{{ url_for('activism') }}">Activism</a>
 	    <a href="{{ url_for('environment') }}">Environment</a>
 	    <a href="{{ url_for('veganism') }}">Veganism</a>
         <a href="{{ url_for('forum') }}">Forum</a>

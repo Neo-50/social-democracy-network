@@ -62,19 +62,18 @@
     margin: 0 auto;               /* Optional: centers the image container itself */
 }
 
-#image1 img {
-    width:70%;      /* Scale the first image to 80% */
-    height: auto;    /* Maintain aspect ratio */
+.responsive-image {
+    max-width: 100%;
+    height: auto;
+    width: 640px; /* Adjust to match your video width, e.g. 640px */
+    border-radius: 8px; /* Optional: gives rounded corners like videos might have */
 }
 
-#image2 img {
-    width: 70%;      /* Scale the second image to 50% */
-    height: auto;    /* Maintain aspect ratio */
-}
-
-#image3 img {
-    width: 70%;     /* Scale the third image to 100% */
-    height: auto;    /* Maintain aspect ratio */
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;  /* adds space above and below */
 }
 
 .video-container {
