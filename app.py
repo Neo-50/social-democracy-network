@@ -21,6 +21,10 @@ class Post(db.Model):
     def __repr__(self):
         return f'<Post {self.title}>'
 
+@app.route('/')
+def home():
+    return render_template('home.html')
+
 @app.route('/news', methods=['GET', 'POST'])
 def news():
     if request.method == 'POST':
@@ -44,32 +48,11 @@ def news():
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles)
 
-@app.route('/comment/<int:article_id>', methods=['POST'])
-def add_comment(article_id):
-    content = request.form.get('content')
-    if content:
-        comment = NewsComment(content=content, article_id=article_id)
-        db.session.add(comment)
-        db.session.commit()
-    return redirect(url_for('news'))
+@app.route('/activism')
+def activismt():
+    # Placeholder: Replace with actual environment content
+    return render_template('activism.html')
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
-@app.route('/new_post', methods=['GET', 'POST'])
-def new_post():
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-        
-        new_post = Post(title=title, content=content)
-        db.session.add(new_post)
-        db.session.commit()
-        
-        return redirect(url_for('forum'))
-
-    return render_template('new_post.html')
 
 @app.route('/environment')
 def environment():
@@ -85,6 +68,29 @@ def veganism():
 def forum():
     posts = Post.query.order_by(Post.id.desc()).all()
     return render_template('forum.html', posts=posts)
+
+@app.route('/comment/<int:article_id>', methods=['POST'])
+def add_comment(article_id):
+    content = request.form.get('content')
+    if content:
+        comment = NewsComment(content=content, article_id=article_id)
+        db.session.add(comment)
+        db.session.commit()
+    return redirect(url_for('news'))
+
+@app.route('/new_post', methods=['GET', 'POST'])
+def new_post():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        
+        new_post = Post(title=title, content=content)
+        db.session.add(new_post)
+        db.session.commit()
+        
+        return redirect(url_for('forum'))
+
+    return render_template('new_post.html')
 
 # Create tables if they don't exist
 with app.app_context():
