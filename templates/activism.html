@@ -1,11 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <header>
-        <h1>Activism</h1>
-    </header>
-
     <main>
-        
+        <h2>Protest 2-17-2025</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/2MWqhP859OA?si=EodKHIVOPVNCj4--" 
+            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        <h2>Protest 3-4-2025</h2>
+        <h2>Protest 3-21-2025</h2>
+        <h2>Protest 4-5-2025</h2>
+        <h2>Protest 4-19-2025</h2>
+        <h2>Protest 5-1-2025</h2>
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='images/NoKingsProtest.png') }}" alt="Descriptive text" class="responsive-image">
+        </div>
     </main>
 {% endblock %}
