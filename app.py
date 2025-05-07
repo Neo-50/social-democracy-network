@@ -49,7 +49,7 @@ def news():
     return render_template('news.html', articles=articles)
 
 @app.route('/activism')
-def activismt():
+def activism():
     # Placeholder: Replace with actual environment content
     return render_template('activism.html')
 
