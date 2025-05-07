@@ -1,4 +1,3 @@
-
 .home-page {
     display: grid;
     grid-template-columns: auto 1fr 1fr; /* Equal-width columns */
@@ -7,18 +6,27 @@
     margin: 0 auto;     /* Center the whole layout */
 }
 
+/* For grouping images side-by-side */
+.image-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
 .image-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px auto;  /* adds space above and below */
+    flex: 1 1 300px;  /* Allows wrapping and flexible width */
+    max-width: 640px;
 }
 
-/* Shared image style */
 .responsive-image {
     max-width: 100%;
     height: auto;
-    width: 640px; /* same as video width */
+    width: 100%;  /* Fills the container */
     border-radius: 8px;
 }
 
@@ -40,7 +48,6 @@
     border: 0;
 }
 
-
 .media-row {
     display: flex;
     flex-wrap: wrap;
@@ -49,10 +56,19 @@
     margin-bottom: 40px;
 }
 
-/* For smaller screens: stack vertically */
+/* Stack images/videos vertically on small screens */
 @media (max-width: 768px) {
     .video-container {
         height: auto;
         aspect-ratio: 16 / 9;
+    }
+
+    .image-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-container {
+        max-width: 90%;
     }
 }
