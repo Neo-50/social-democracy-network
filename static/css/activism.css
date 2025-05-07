@@ -22,7 +22,7 @@
 }
 
 .video-container {
-    position: relative;
+    position: left;
     margin: 0 auto 20px;
     width: 100%;
     max-width: 720px;
