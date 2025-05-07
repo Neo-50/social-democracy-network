@@ -8,8 +8,8 @@
 
 .image-container {
     display: flex;
-    justify-content: left;
-    align-items: left;
+    justify-content: center;
+    align-items: center;
     flex: 1 1 300px;
     max-width: 640px;
 }
@@ -22,7 +22,7 @@
 }
 
 .video-container {
-    position: left;
+    position: relative;
     margin: 0 auto 20px;
     width: 100%;
     max-width: 720px;
