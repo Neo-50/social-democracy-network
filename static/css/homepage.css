@@ -8,6 +8,11 @@
     margin: 0 auto;     /* Center the whole layout */
 }
 
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
 /* Ensure that the sections are correctly placed in the grid */
 .home-page .home-left {
     background-color: #3d3d3d;
@@ -66,8 +71,8 @@
 .responsive-image {
     max-width: 100%;
     height: auto;
-    width: 640px; /* Adjust to match your video width, e.g. 640px */
-    border-radius: 8px; /* Optional: gives rounded corners like videos might have */
+    width: 720px;
+    border-radius: 8px;
 }
 
 .image-container {
