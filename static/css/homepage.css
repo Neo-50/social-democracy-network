@@ -13,15 +13,19 @@ body, html {
     padding: 0;
 }
 
-/* Ensure that the sections are correctly placed in the grid */
 .home-page .home-left {
-    background-color: #3d3d3d;
     padding: 0;
     margin: 0;
-    border-radius: 8px;
+    border-radius: 0;
     text-align: left;
     box-shadow: none;
-    grid-column: 1;  /* Place in the first column (left column) */
+    grid-column: 1;
+    width: 100%;
+}
+
+.home-page .home-left > div {
+    padding-left: 0;
+    margin-left: 0;
 }
 
 .home-page .home-center {
@@ -106,6 +110,7 @@ body, html {
 .no-bullets {
     list-style-type: none;   /* Removes bullet points */
     padding-left: 0;         /* Removes default left padding */
+    margin-left: 0;
     margin-top: 0;           /* Removes margin before the list */
     margin-bottom: 0;        /* Removes margin after the list */
 }
