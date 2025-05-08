@@ -1,10 +1,10 @@
 /* Styling for the home page only */
 .home-page {
     display: grid;
-    grid-template-columns: auto 1fr 1fr; /* Equal-width columns */
+    grid-template-columns: max-content 1fr 1fr; /* Equal-width columns */
     padding-left: 0;
     gap: 20px;
-    max-width: 1920px;  /* Prevent layout from being ultra-wide */
+    width: fit-content;  /* Prevent layout from being ultra-wide */
     margin: 0 auto;     /* Center the whole layout */
 }
 
@@ -20,7 +20,7 @@ body, html {
     text-align: left;
     box-shadow: none;
     grid-column: 1;
-    width: 100%;
+    width: fit-content;
 }
 
 .home-page .home-left > div {
@@ -113,6 +113,7 @@ body, html {
     margin-left: 0;
     margin-top: 0;           /* Removes margin before the list */
     margin-bottom: 0;        /* Removes margin after the list */
+    width: fit-content;
 }
 
 /* Remove space between the heading and the list */
