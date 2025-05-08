@@ -7,13 +7,15 @@
     <title>Social Democracy Network</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
+    <!-- Site-wide styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 
     <!-- Header-specific styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
 
     <!-- Page-specific styles -->
     {% if request.endpoint == 'home' %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'news' %}
