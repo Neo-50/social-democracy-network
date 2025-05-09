@@ -1,17 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<main class="environment-page">
     <header class="environment-header">
         <h1>Environment</h1>
     </header>
-
-    <section class="environment-section">
+<main class="environment-page">
+    <section class="environment-left">
         <h2>Recent News and Rollbacks</h2>
         <ul class="environment-links">
             <li>
                 Inside Climate News –
-                <a href="https://insideclimatenews.org/news/2025/05/01/trump-administration-decommissions-sea-ice-data/" target="_blank">
+                <a href="https://insideclimatenews.org/news/07052025/trump-administration-cuts-sea-ice-data-center/" target="_blank">
                     Trump Administration Decommissions Sea Ice Data That Sounded an Alarm on Arctic Climate Change
                 </a>
             </li>
@@ -57,9 +56,6 @@
                     States sue over Trump’s ESG rollbacks</a>Paywall: <a href="https://archive.ph/gsVVE">archive</a>
             </li>
         </ul>
-    </section>
-
-    <section class="environment-section">
         <h2>Policy Trackers</h2>
         <ul class="environment-links">
             <li>
@@ -73,6 +69,9 @@
                 </a>
             </li>
         </ul>
+    </section>
+    <section class="environment-right">
+
     </section>
 </main>
 {% endblock %}
