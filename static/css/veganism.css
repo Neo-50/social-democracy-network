@@ -16,12 +16,6 @@
     flex: 1 1 300px;
 }
 
-/* Substack container */
-.substack-post-embed {
-    flex: 1 1 300px;
-    max-width: 640px;
-}
-
 @media (max-width: 768px) {
     .content-row {
         flex-direction: column;
