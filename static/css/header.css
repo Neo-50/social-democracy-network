@@ -112,7 +112,7 @@ nav#main-nav a:hover {
   }
   
   ul {
-    margin-top: 0; /* optional */
+    margin-top: 0;
   }
 
 @media (max-width: 768px) {
