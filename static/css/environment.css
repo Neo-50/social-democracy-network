@@ -59,7 +59,15 @@
 }
 
 .image-container {
-    display: flex;                /* Ensures the image is treated as a flex item */
-    justify-content: center;      /* Centers the image horizontally within the container */
-    align-items: center;          /* Centers the image vertically within the container */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 720px;
+}
+
+.image-container img {
+    width: 100%;     /* Makes the image responsive within the container */
+    height: auto;    /* Preserves aspect ratio */
+    max-width: 500px; /* Optional: caps image size */
+    border-radius: 6px; /* Optional: visual polish */
 }
