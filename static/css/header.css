@@ -107,13 +107,12 @@ nav#main-nav a:hover {
     padding: 10px;
 }
 
-.no-space {
-    margin-bottom: 0;
-  }
-  
-  ul {
-    margin-top: 0;
-  }
+.directory-section {
+    display: flex;
+    flex-direction: column;
+}
+
+
 
 @media (max-width: 768px) {
     .directory-button {
@@ -143,6 +142,12 @@ nav#main-nav a:hover {
         font-size: 1.5rem;
         white-space: normal;
     }
+
+    .mobile-directory ul {
+        padding-left: 1em;
+        margin-left: 0; 
+        list-style-type: disc;
+      }
 
     .mobile-directory.show {
         display: flex;
