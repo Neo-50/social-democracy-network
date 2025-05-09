@@ -30,11 +30,11 @@
 .environment-header h1 {
     text-align: center;
     font-size: 2rem;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     color: #8fd694;
 }
 
-.environment-section h2 {
+.environment-left h2 {
     font-size: 1.5rem;
     margin-bottom: 10px;
     color: #b4e197;
