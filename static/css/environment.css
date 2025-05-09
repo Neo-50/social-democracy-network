@@ -57,3 +57,9 @@
 .environment-links a:hover {
     text-decoration: none;
 }
+
+.image-container {
+    display: flex;                /* Ensures the image is treated as a flex item */
+    justify-content: center;      /* Centers the image horizontally within the container */
+    align-items: center;          /* Centers the image vertically within the container */
+}
