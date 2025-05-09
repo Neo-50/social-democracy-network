@@ -77,6 +77,18 @@ body, html {
     margin: 20px auto;  /* adds space above and below */
 }
 
+.link-with-icon {
+    display: flex;
+    align-items: center; /* centers icon and text vertically */
+    gap: 8px;             /* space between icon and text */
+    text-decoration: none;
+    color: inherit;
+}
+
+.icon {
+    flex-shrink: 0;
+}
+
 .video-container {
     position: relative;
     margin: 0;
