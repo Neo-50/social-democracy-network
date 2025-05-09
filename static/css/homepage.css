@@ -1,9 +1,9 @@
-/* Styling for the home page only */
 .home-page {
     display: grid;
     grid-template-columns: auto auto auto;
     column-gap: 20px;
     width: fit-content;
+    margin: 0 auto;
 }
 
 body, html {
