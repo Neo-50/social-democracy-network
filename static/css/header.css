@@ -147,6 +147,12 @@ nav#main-nav a:hover {
     .mobile-directory.show {
         display: flex;
         flex-direction: column;
+        gap: 10px;
+    }
+    
+    .mobile-directory.show > div {
+        display: flex;
+        flex-direction: column;
     }
 }
 
