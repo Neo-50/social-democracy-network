@@ -1,9 +1,30 @@
 .environment-page {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: 20px;
+    width: fit-content;
     padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
     font-family: 'Inter', sans-serif;
     color: white;
+}
+
+.environment-page .environment-left {
+    background-color: #1a1a1a;
+    padding: 10px 20px 10px 20px;
+    margin: 10px 0 10px 0;
+    border-radius: 8px;
+    text-align: left;
+    grid-column: 1;
+    width: fit-content;
+}
+
+.environment-page .environment-right {
+    background-color: #1a1a1a;
+    padding: 40px 20px 10px 20px;
+    margin: 10px 0 10px 0;
+    border-radius: 8px;
+    text-align: left;
+    grid-column: 2;
 }
 
 .environment-header h1 {
@@ -11,10 +32,6 @@
     font-size: 2rem;
     margin-bottom: 20px;
     color: #8fd694;
-}
-
-.environment-section {
-    margin-bottom: 30px;
 }
 
 .environment-section h2 {
