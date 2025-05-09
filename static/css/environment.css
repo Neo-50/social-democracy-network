@@ -1,0 +1,42 @@
+.environment-page {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+    color: white;
+}
+
+.environment-header h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #8fd694;
+}
+
+.environment-section {
+    margin-bottom: 30px;
+}
+
+.environment-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #b4e197;
+}
+
+.environment-links {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.environment-links li {
+    margin-bottom: 10px;
+}
+
+.environment-links a {
+    color: #add8ff;
+    text-decoration: underline;
+}
+
+.environment-links a:hover {
+    text-decoration: none;
+}
