@@ -95,6 +95,8 @@ body, html {
     gap: 8px;             /* space between icon and text */
     text-decoration: none;
     color: inherit;
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-weight: bold;
 }
 
