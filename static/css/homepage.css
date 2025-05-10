@@ -89,6 +89,15 @@ body, html {
     color: #c7c7c7;
 }
 
+.discord-title {
+    display: flex;
+    align-items: center; /* centers icon and text vertically */
+    gap: 8px;             /* space between icon and text */
+    text-decoration: none;
+    color: inherit;
+    font-weight: bold;
+}
+
 .icon {
     flex-shrink: 0;
 }
