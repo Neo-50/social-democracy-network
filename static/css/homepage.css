@@ -85,6 +85,10 @@ body, html {
     color: inherit;
 }
 
+.link-with-icon:hover {
+    color: #444444;
+}
+
 .icon {
     flex-shrink: 0;
 }
