@@ -119,6 +119,10 @@ body, html {
     width: fit-content;
 }
 
+.no-bullets li {
+    margin-bottom: 6px; /* or 8px, adjust to taste */
+}
+
 /* Remove space between the heading and the list */
 .section-title {
     margin-bottom: 0;        /* Removes space after the section title */
