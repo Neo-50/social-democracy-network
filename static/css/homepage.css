@@ -1,6 +1,6 @@
 .home-page {
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: auto minmax(300px, 720px) auto;
     column-gap: 20px;
     width: fit-content;
     margin: 0 auto;
