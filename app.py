@@ -70,7 +70,7 @@ def forum():
     return render_template('forum.html', posts=posts)
 
 @app.route('/about')
-def veganism():
+def about():
     # Placeholder: Replace with actual veganism content
     return render_template('about.html')
 
