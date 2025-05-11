@@ -38,6 +38,10 @@
     {% if request.endpoint == 'forum' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
     {% endif %}
+
+    {% if request.endpoint == 'about' %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+    {% endif %}
 </head>
 <script>
     function toggleMobileMenu() {

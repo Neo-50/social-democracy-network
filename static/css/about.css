@@ -1,0 +1,22 @@
+.about-page {
+    background-color: #1a1a1a;
+    padding: 30px 40px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 800px;
+    color: #e0e0e0;
+}
+
+.about-section p {
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.about-section a {
+    color: #00bfff;
+    text-decoration: none;
+}
+
+.about-section a:hover {
+    text-decoration: underline;
+}

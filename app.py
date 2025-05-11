@@ -69,6 +69,11 @@ def forum():
     posts = Post.query.order_by(Post.id.desc()).all()
     return render_template('forum.html', posts=posts)
 
+@app.route('/about')
+def veganism():
+    # Placeholder: Replace with actual veganism content
+    return render_template('about.html')
+
 @app.route('/comment/<int:article_id>', methods=['POST'])
 def add_comment(article_id):
     content = request.form.get('content')
