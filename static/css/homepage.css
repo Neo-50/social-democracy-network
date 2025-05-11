@@ -70,13 +70,6 @@ body, html {
     border-radius: 8px;
 }
 
-.image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto;  /* adds space above and below */
-}
-
 .link-with-icon {
     display: flex;
     align-items: center; /* centers icon and text vertically */
@@ -106,14 +99,11 @@ body, html {
 
 .video-container {
     position: relative;
-    margin: 0;
-    width: 100%;
-    max-width: 720px;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
+    width: 720px;
+    height: 405px; /* 720 * 9 / 16 */
+    margin: 20px auto; /* space and center horizontally */
     overflow: hidden;
 }
-
 
 .video-container iframe {
     position: absolute;
