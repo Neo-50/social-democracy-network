@@ -11,12 +11,3 @@
     line-height: 1.7;
     margin-bottom: 16px;
 }
-
-.about-section a {
-    color: #00bfff;
-    text-decoration: none;
-}
-
-.about-section a:hover {
-    text-decoration: underline;
-}
