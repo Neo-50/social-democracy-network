@@ -153,14 +153,18 @@ def register():
 @login_required
 def add_comment(article_id):
     content = request.form.get('content')
+    parent_id = request.form.get('parent_id')  # optional
+
     if content:
         comment = NewsComment(
             content=content,
             article_id=article_id,
-            user_id=session['user_id']  # ✅ Save who posted it
+            user_id=session['user_id'],
+            parent_id=parent_id if parent_id else None
         )
         db.session.add(comment)
         db.session.commit()
+
     return redirect(url_for('news'))
 
 @app.route('/new_post', methods=['GET', 'POST'])
