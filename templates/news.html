@@ -53,10 +53,14 @@
                     <small>Posted {{ comment.timestamp.strftime('%b %d %Y, %I:%M %p') }}</small>
                     </div>
                 {% endfor %}
+                {% if session.get('user_id') %}
                 <form action="{{ url_for('add_comment', article_id=article.id) }}" method="post">
                     <textarea name="content" placeholder="Write a comment..." required></textarea>
                     <button type="submit">Post</button>
                 </form>
+                {% else %}
+                    <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
+                {% endif %}
             </div>
 
         </div>

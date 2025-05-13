@@ -78,7 +78,6 @@ def about():
     return render_template('about.html')
 
 @app.route('/news', methods=['GET', 'POST'])
-@login_required
 def news():
     if request.method == 'POST':
         url = request.form['url']
