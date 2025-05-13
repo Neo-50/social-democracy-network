@@ -8,8 +8,8 @@ class NewsArticle(db.Model):
     description = db.Column(db.Text, nullable=True)
     image_url = db.Column(db.String(500), nullable=True)
     authors = db.Column(db.String(200), nullable=True)
-    published = db.Column(db.String(100), nullable=True)  # ✅ new
-    source = db.Column(db.String(100), nullable=True)     # ✅ new
+    published = db.Column(db.String(100), nullable=True)
+    source = db.Column(db.String(100), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     comments = db.relationship('NewsComment', backref='article', lazy=True)
@@ -19,7 +19,8 @@ class NewsComment(db.Model):
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    article_id = db.Column(db.Integer, db.ForeignKey('news_article.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     user = db.relationship('User', backref='comments')
+
