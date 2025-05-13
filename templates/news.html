@@ -15,64 +15,51 @@
     <!-- News Feed and Comments in unified right section -->
     <section class="news-right">
         {% for article in articles %}
-        <div class="news-row">
-            
-            <!-- Article content -->
-            <div class="news-item">
-                {% if article.image_url %}
-                <img src="{{ article.image_url }}" alt="Article image" class="news-image">
-                {% endif %}
+        <div class="news-article">
+            <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+            <p>{{ article.description }}</p>
+            <p><em>Source: {{ article.source }}</em></p>
+            <p><em>Published: {{ article.published }}</em></p>
+            <img src="{{ article.image_url }}" alt="Article image" width="100%">
 
-                {% if article.source %}
-                <p class="news-source">Source: {{ article.source }}</p>
-                {% endif %}
-
-                {% if article.published %}
-                <p class="news-published">Published: {{ article.published[:10] }}</p>
-                {% endif %}
-
-                <h3 class="news-title">
-                    <a href="{{ article.url }}" target="_blank">{{ article.title or article.url }}</a>
-                </h3>
-
-                {% if article.authors %}
-                <p class="news-authors">By {{ article.authors }}</p>
-                {% endif %}
-
-                {% if article.description %}
-                <p class="news-description">{{ article.description }}</p>
-                {% endif %}
-            </div>
-
-            <!-- Comment thread -->
             <div class="comments-thread">
-            <h4>Discussion</h4>
+                <h4>Discussion</h4>
 
-            {% for comment in article.comments if comment.parent_id is none %}
-            <div class="comment">
-                <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>:
-                <p>{{ comment.content }}</p>
+                {% for comment in article.comments if comment.parent_id is none %}
+                <div class="comment">
+                    <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>:
+                    <p>{{ comment.content }}</p>
+
+                    {% if session.get('user_id') %}
+                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <textarea name="content" placeholder="Write a reply..." required></textarea>
+                        <button type="submit">Reply</button>
+                    </form>
+                    {% endif %}
+
+                    <div class="replies" style="margin-left: 20px;">
+                        {% for reply in comment.replies %}
+                        <div class="reply">
+                            <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>:
+                            <p>{{ reply.content }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
 
                 {% if session.get('user_id') %}
                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                    <textarea name="content" placeholder="Write a reply..." required></textarea>
-                    <button type="submit">Reply</button>
+                    <textarea name="content" placeholder="Write a comment..." required></textarea>
+                    <button type="submit">Post Comment</button>
                 </form>
+                {% else %}
+                <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
                 {% endif %}
-
-                <!-- Replies -->
-                <div class="replies" style="margin-left: 20px;">
-                    {% for reply in comment.replies %}
-                    <div class="reply">
-                        <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>:
-                        <p>{{ reply.content }}</p>
-                    </div>
-                    {% endfor %}
-                </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </section>
 
 </main>
