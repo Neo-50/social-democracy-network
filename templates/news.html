@@ -46,26 +46,33 @@
 
             <!-- Comment thread -->
             <div class="comments-thread">
-                <h4>Discussion</h4>
-                {% for comment in article.comments %}
-                    <div class="comment">
-                    <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>:
-                    <p>{{ comment.content }}</p>
-                    <small>Posted {{ comment.timestamp.strftime('%b %d %Y, %I:%M %p') }}</small>
-                    </div>
-                {% endfor %}
-                {% if session.get('user_id') %}
-                <form action="{{ url_for('add_comment', article_id=article.id) }}" method="post">
-                    <textarea name="content" placeholder="Write a comment..." required></textarea>
-                    <button type="submit">Post</button>
-                </form>
-                {% else %}
-                    <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
-                {% endif %}
-            </div>
+            <h4>Discussion</h4>
 
+            {% for comment in article.comments if comment.parent_id is none %}
+            <div class="comment">
+                <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>:
+                <p>{{ comment.content }}</p>
+
+                {% if session.get('user_id') %}
+                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                    <textarea name="content" placeholder="Write a reply..." required></textarea>
+                    <button type="submit">Reply</button>
+                </form>
+                {% endif %}
+
+                <!-- Replies -->
+                <div class="replies" style="margin-left: 20px;">
+                    {% for reply in comment.replies %}
+                    <div class="reply">
+                        <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>:
+                        <p>{{ reply.content }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </section>
 
 </main>

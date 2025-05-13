@@ -106,3 +106,16 @@
     text-align: center;
     color: #888;
 }
+
+.comment {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-left: 3px solid #555;
+}
+
+.replies {
+    margin-top: 10px;
+    padding-left: 10px;
+    border-left: 2px solid #333;
+}
+
