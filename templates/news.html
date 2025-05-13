@@ -49,6 +49,7 @@
                 <h4>Discussion</h4>
                 {% for comment in article.comments %}
                     <div class="comment">
+                    <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>:
                     <p>{{ comment.content }}</p>
                     <small>Posted {{ comment.timestamp.strftime('%b %d %Y, %I:%M %p') }}</small>
                     </div>

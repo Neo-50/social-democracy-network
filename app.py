@@ -47,6 +47,17 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post {self.title}>'
+    
+class NewsComment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    user = db.relationship('User', backref='comments')
+
 
 @app.route('/')
 def home():
@@ -154,7 +165,11 @@ def register():
 def add_comment(article_id):
     content = request.form.get('content')
     if content:
-        comment = NewsComment(content=content, article_id=article_id)
+        comment = NewsComment(
+            content=content,
+            article_id=article_id,
+            user_id=session['user_id']  # ✅ Save who posted it
+        )
         db.session.add(comment)
         db.session.commit()
     return redirect(url_for('news'))
