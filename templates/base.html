@@ -58,6 +58,15 @@
         <div class="mobile-menu-icon" onclick="toggleMobileMenu()">☰</div>
         <button class="directory-button" onclick="toggleDirectory()">Directory</button>
     </div>
+    <div class="user-bar">
+    {% if session.get('user_id') %}
+        Logged in as {{ session.username }} |
+        <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Login</a> |
+        <a href="{{ url_for('register') }}">Register</a>
+    {% endif %}
+    </div>
     <nav id="main-nav">
         <a href="{{ url_for('home') }}">Home</a>
         <a href="{{ url_for('news') }}">News</a>

@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 
+from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 
@@ -11,6 +12,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-default-key')
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash("Please log in to continue.")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
@@ -41,7 +52,33 @@ class Post(db.Model):
 def home():
     return render_template('home.html')
 
+@app.route('/activism')
+def activism():
+    # Placeholder: Replace with actual environment content
+    return render_template('activism.html')
+
+@app.route('/environment')
+def environment():
+    # Placeholder: Replace with actual environment content
+    return render_template('environment.html')
+
+@app.route('/veganism')
+def veganism():
+    # Placeholder: Replace with actual veganism content
+    return render_template('veganism.html')
+
+@app.route('/forum')
+def forum():
+    posts = Post.query.order_by(Post.id.desc()).all()
+    return render_template('forum.html', posts=posts)
+
+@app.route('/about')
+def about():
+    # Placeholder: Replace with actual veganism content
+    return render_template('about.html')
+
 @app.route('/news', methods=['GET', 'POST'])
+@login_required
 def news():
     if request.method == 'POST':
         url = request.form['url']
@@ -63,32 +100,6 @@ def news():
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles)
-
-@app.route('/activism')
-def activism():
-    # Placeholder: Replace with actual environment content
-    return render_template('activism.html')
-
-
-@app.route('/environment')
-def environment():
-    # Placeholder: Replace with actual environment content
-    return render_template('environment.html')
-
-@app.route('/veganism')
-def veganism():
-    # Placeholder: Replace with actual veganism content
-    return render_template('veganism.html')
-
-@app.route('/forum')
-def forum():
-    posts = Post.query.order_by(Post.id.desc()).all()
-    return render_template('forum.html', posts=posts)
-
-@app.route('/about')
-def about():
-    # Placeholder: Replace with actual veganism content
-    return render_template('about.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -140,6 +151,7 @@ def register():
     return render_template('register.html')
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
+@login_required
 def add_comment(article_id):
     content = request.form.get('content')
     if content:
