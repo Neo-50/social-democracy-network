@@ -36,29 +36,7 @@ class Post(db.Model):
     def __repr__(self):
         return f'<Post {self.title}>'
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
 
-        # Check if user exists
-        if User.query.filter((User.username == username) | (User.email == email)).first():
-            flash('Username or email already taken.')
-            return redirect(url_for('register'))
-
-        user = User(username=username, email=email)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-
-        session['user_id'] = user.id
-        session['username'] = user.username
-        flash('Registration successful!')
-        return redirect(url_for('news'))
-
-    return render_template('register.html')
 
 @app.route('/')
 def home():
@@ -112,6 +90,55 @@ def forum():
 def about():
     # Placeholder: Replace with actual veganism content
     return render_template('about.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.check_password(password):
+            session['user_id'] = user.id
+            session['username'] = user.username
+            flash('Logged in successfully!')
+            return redirect(url_for('news'))
+
+        flash('Invalid email or password')
+        return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Logged out.')
+    return redirect(url_for('news'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Check if user exists
+        if User.query.filter((User.username == username) | (User.email == email)).first():
+            flash('Username or email already taken.')
+            return redirect(url_for('register'))
+
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        session['user_id'] = user.id
+        session['username'] = user.username
+        flash('Registration successful!')
+        return redirect(url_for('news'))
+
+    return render_template('register.html')
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
 def add_comment(article_id):
