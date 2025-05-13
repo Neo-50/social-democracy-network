@@ -47,17 +47,6 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post {self.title}>'
-    
-class NewsComment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-    article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    user = db.relationship('User', backref='comments')
-
 
 @app.route('/')
 def home():
