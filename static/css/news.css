@@ -153,6 +153,11 @@
     margin-left: 20px;
 }
 
+.reply-content {
+    display: flex;
+    flex-direction: column;
+}
+
 .reply::before {
     content: '';
     position: absolute;
