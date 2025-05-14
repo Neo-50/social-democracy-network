@@ -38,14 +38,23 @@
                         </form>
                         {% endif %}
                     </div>
+                    <div class="comment-toolbar">
+                        <button class="vote-button upvote">▲</button>
+                        <span class="vote-count">0</span>
+                        <button class="vote-button downvote">▼</button>
 
-                    {% if session.get('user_id') %}
-                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                        <textarea name="content" placeholder="Write a reply..." required></textarea>
-                        <button type="submit">Reply</button>
-                    </form>
-                    {% endif %}
+                        <button class="reply-toggle">Reply</button>
+
+                        <div class="reply-drawer" style="display: none;">
+                            <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                <textarea name="content" placeholder="Write a reply..." required></textarea>
+                                <button type="submit">Submit</button>
+                                <button type="button" class="cancel-reply">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="replies" style="margin-left: 20px;">
                     {% for reply in comment.replies %}
@@ -59,6 +68,22 @@
                             <button type="submit" onclick="return confirm('Delete this reply?')" class="delete-button">🗑 Delete</button>
                         </form>
                         {% endif %}
+                        
+                        <div class="comment-toolbar">
+                            <button class="vote-button upvote">▲</button>
+                            <span class="vote-count">0</span>
+                            <button class="vote-button downvote">▼</button>
+
+                            <button class="reply-toggle">Reply</button>
+
+                            <div class="reply-drawer" style="display: none;">
+                            <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                                <input type="hidden" name="parent_id" value="{{ reply.id }}">
+                                <textarea name="content" placeholder="Write a reply..." required></textarea>
+                                <button type="submit">Submit</button>
+                                <button type="button" class="cancel-reply">Cancel</button>
+                            </form>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -82,6 +107,22 @@
         </div>
         {% endfor %}
     </section>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.reply-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const drawer = button.nextElementSibling;
+            drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+        });
+    });
 
+    document.querySelectorAll('.cancel-reply').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const drawer = e.target.closest('.reply-drawer');
+            drawer.style.display = 'none';
+        });
+    });
+});
+</script>
 </main>
 {% endblock %}
