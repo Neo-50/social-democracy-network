@@ -152,8 +152,7 @@
 
 .reply {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
     position: relative;
     padding-left: 15px;
     margin-left: 20px;
@@ -201,7 +200,7 @@
     background-color: #1f1f1f;
     border: none;
     color: #ccc;
-    padding: 4px 8px;
+    padding: 3px 6px;
     font-size: 0.9em;
     cursor: pointer;
     border-radius: 4px;
