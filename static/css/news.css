@@ -123,3 +123,49 @@
     border-left: 2px solid #333;
 }
 
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-form {
+    margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete-button {
+    background-color: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 0;
+}
+
+.reply {
+    position: relative;
+    margin-left: 20px;
+    padding-left: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.reply strong {
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.reply::before {
+    content: '';
+    position: absolute;
+    top: 0.75em;
+    left: -15px;
+    width: 15px;
+    height: 20px;
+    border-left: 2px solid lightgray;
+    border-bottom: 2px solid lightgray;
+    border-bottom-left-radius: 5px;
+}
+

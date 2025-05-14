@@ -22,25 +22,22 @@
             <p><em>Published: {{ article.published }}</em></p>
             <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
             
-            {% if is_admin() %}
-            <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
-                <button type="submit" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
-            </form>
-            {% endif %}
+
 
             <div class="comments-thread">
                 <h4>Discussion</h4>
 
                 {% for comment in article.comments if comment.parent_id is none %}
                 <div class="comment">
-                    <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>:
+                    <div class="comment-header">
+                        <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>
+                        {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}
+                        <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="delete-form">
+                            <button type="submit" onclick="return confirm('Delete this comment?')" class="delete-button">🗑 Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
                     <p>{{ comment.content }}</p>
-
-                    {% if is_admin() %}
-                    <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" style="display:inline;">
-                        <button type="submit" onclick="return confirm('Delete this comment?')">🗑 Delete</button>
-                    </form>
-                    {% endif %}
 
                     {% if session.get('user_id') %}
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
@@ -49,21 +46,19 @@
                         <button type="submit">Reply</button>
                     </form>
                     {% endif %}
-
-                    <div class="replies" style="margin-left: 20px;">
-                        {% for reply in comment.replies %}
-                        <div class="reply">
-                            <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>:
-                            <p>{{ reply.content }}</p>
-                        </div>
-                        {% if is_admin() %}
-                        <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" style="display:inline;">
-                            <button type="submit" onclick="return confirm('Delete this reply?')">🗑 Delete</button>
+                </div>
+                <div class="replies" style="margin-left: 20px;">
+                    {% for reply in comment.replies %}
+                    <div class="reply">
+                        <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>:
+                        {% if current_user.is_authenticated and (current_user.id == reply.user_id or current_user.is_admin) %}
+                        <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" class="delete-form">
+                            <button type="submit" onclick="return confirm('Delete this reply?')" class="delete-button">🗑 Delete</button>
                         </form>
                         {% endif %}
-
-                        {% endfor %}
+                        <p>{{ reply.content }}</p>
                     </div>
+                    {% endfor %}
                 </div>
                 {% endfor %}
 
@@ -76,6 +71,12 @@
                 <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
                 {% endif %}
             </div>
+
+        {% if is_admin() %}
+        <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+            <button type="submit" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
+        </form>
+        {% endif %}
         </div>
         {% endfor %}
     </section>
