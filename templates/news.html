@@ -29,7 +29,7 @@
 
                 {% for comment in article.comments if comment.parent_id is none %}
                 <div class="comment">
-                    <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>
+                    <strong class="username">{{ comment.user.username if comment.user else 'Anonymous' }}</strong>
                     <div class="comment-header">
                         <p>{{ comment.content }}</p>
                         {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
@@ -51,7 +51,7 @@
                     {% for reply in comment.replies %}
                     <div class="reply">
                         <div class="reply-content">
-                            <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>
+                            <strong class="username">{{ reply.user.username if reply.user else 'Anonymous' }}</strong>
                             <p>{{ reply.content }}</p>
                         </div>
                         {% if session.get('user_id') and (session['user_id'] == reply.user_id or is_admin()) %}

@@ -130,6 +130,11 @@
     margin-bottom: 0;
 }
 
+.username {
+    color: #3d3d3d; /* light blue – adjust to your theme */
+    font-weight: bold;
+}
+
 .delete-form {
     margin-left: auto;
     display: flex;
