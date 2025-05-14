@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_sqlalchemy import SQLAlchemy
 
 from utils.metadata_scraper import extract_metadata
@@ -104,17 +104,16 @@ def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+@login_required
 def delete_comment(comment_id):
-    if not is_admin():
-        flash("Access denied.")
-        return redirect(url_for('news'))
-
     comment = NewsComment.query.get_or_404(comment_id)
+
+    if session['user_id'] != comment.user_id and not is_admin():
+        abort(403)  # forbidden
+
     db.session.delete(comment)
     db.session.commit()
-    flash("Comment deleted.")
     return redirect(url_for('news'))
-
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
 def delete_article(article_id):
