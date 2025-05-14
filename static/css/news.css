@@ -112,7 +112,7 @@
 }
 
 .comment {
-    margin-bottom: 0px;
+    margin-bottom: 0;
     padding: 10px;
     border-left: 3px solid #555;
 }
@@ -127,6 +127,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0;
 }
 
 .delete-form {
