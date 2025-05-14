@@ -100,6 +100,35 @@ def news():
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles)
 
+def is_admin():
+    return session.get('user_id') and User.query.get(session['user_id']).is_admin
+
+@app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    if not is_admin():
+        flash("Access denied.")
+        return redirect(url_for('news'))
+
+    comment = NewsComment.query.get_or_404(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    flash("Comment deleted.")
+    return redirect(url_for('news'))
+
+
+@app.route('/delete_article/<int:article_id>', methods=['POST'])
+def delete_article(article_id):
+    if not is_admin():
+        flash("Access denied.")
+        return redirect(url_for('news'))
+
+    article = NewsArticle.query.get_or_404(article_id)
+    db.session.delete(article)
+    db.session.commit()
+    flash("Article deleted.")
+    return redirect(url_for('news'))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

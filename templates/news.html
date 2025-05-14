@@ -21,7 +21,13 @@
             <p><em>Source: {{ article.source }}</em></p>
             <p><em>Published: {{ article.published }}</em></p>
             <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
-
+            
+            {% if is_admin() %}
+            <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                <button type="submit" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
+            </form>
+            {% endif %}
+            
             <div class="comments-thread">
                 <h4>Discussion</h4>
 
@@ -29,6 +35,12 @@
                 <div class="comment">
                     <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>:
                     <p>{{ comment.content }}</p>
+
+                    {% if is_admin() %}
+                    <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Delete this comment?')">🗑 Delete</button>
+                    </form>
+                    {% endif %}
 
                     {% if session.get('user_id') %}
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
