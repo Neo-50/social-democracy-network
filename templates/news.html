@@ -31,7 +31,7 @@
                 <div class="comment">
                     <div class="comment-header">
                         <strong>{{ comment.user.username if comment.user else 'Anonymous' }}</strong>
-                        {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}
+                        {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
                         <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="delete-form">
                             <button type="submit" onclick="return confirm('Delete this comment?')" class="delete-button">🗑 Delete</button>
                         </form>
@@ -51,7 +51,7 @@
                     {% for reply in comment.replies %}
                     <div class="reply">
                         <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>:
-                        {% if current_user.is_authenticated and (current_user.id == reply.user_id or current_user.is_admin) %}
+                        {% if session.get('user_id') and (session['user_id'] == reply.user_id or is_admin()) %}
                         <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" class="delete-form">
                             <button type="submit" onclick="return confirm('Delete this reply?')" class="delete-button">🗑 Delete</button>
                         </form>
