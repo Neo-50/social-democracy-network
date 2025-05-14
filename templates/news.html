@@ -27,7 +27,7 @@
                 <button type="submit" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
             </form>
             {% endif %}
-            
+
             <div class="comments-thread">
                 <h4>Discussion</h4>
 
@@ -56,6 +56,12 @@
                             <strong>{{ reply.user.username if reply.user else 'Anonymous' }}</strong>:
                             <p>{{ reply.content }}</p>
                         </div>
+                        {% if is_admin() %}
+                        <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" style="display:inline;">
+                            <button type="submit" onclick="return confirm('Delete this reply?')">🗑 Delete</button>
+                        </form>
+                        {% endif %}
+
                         {% endfor %}
                     </div>
                 </div>
