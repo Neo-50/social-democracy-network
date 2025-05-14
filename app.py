@@ -98,7 +98,7 @@ def news():
         return redirect(url_for('news'))
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
-    return render_template('news.html', articles=articles)
+    return render_template('news.html', articles=articles, is_admin=is_admin)
 
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
