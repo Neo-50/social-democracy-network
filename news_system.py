@@ -23,7 +23,7 @@ class NewsComment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     parent_id = db.Column(db.Integer, db.ForeignKey('news_comment.id'))
-    replies = db.relationship('NewsComment', backref=db.backref('parent', remote_side=[id]), lazy='dynamic')
+    replies = db.relationship('NewsComment', backref=db.backref('parent', remote_side=[id]), lazy='selectin')
 
     replies = db.relationship(
     'NewsComment',
