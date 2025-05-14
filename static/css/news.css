@@ -183,29 +183,37 @@
 }
 
 .reply p {
-    margin: 0;
+    margin-bottom: 20px;
 }
 
 .comment-toolbar {
     display: flex;
     align-items: center;
-    gap: 10px;
+    flex-wrap: wrap; /* allows wrapping instead of overflow */
+    gap: 8px;
     margin-top: 5px;
     font-size: 0.9em;
     color: #ccc;
 }
 
-.vote-button {
-    background: none;
+.vote-button,
+.reply-toggle {
+    background-color: #1f1f1f;
     border: none;
+    color: #ccc;
+    padding: 4px 8px;
+    font-size: 0.9em;
     cursor: pointer;
-    font-size: 1.2em;
-    color: #888;
+    border-radius: 4px;
+    transition: background 0.2s;
 }
 
-.vote-button:hover {
+.vote-button:hover,
+.reply-toggle:hover {
     color: #fff;
+    background-color: #333;
 }
+
 
 .vote-count {
     min-width: 20px;
@@ -215,5 +223,3 @@
 .reply-drawer {
     margin-top: 10px;
 }
-
-
