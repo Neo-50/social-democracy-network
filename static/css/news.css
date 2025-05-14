@@ -145,13 +145,12 @@
 }
 
 .reply {
-    position: relative;
-    margin-left: 20px;
-    padding-left: 15px;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 10px;
+    position: relative;
+    padding-left: 15px;
+    margin-left: 20px;
 }
 
 .reply::before {
