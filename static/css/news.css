@@ -149,7 +149,21 @@
     margin-left: 20px;
     padding-left: 15px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.reply::before {
+    content: '';
+    position: absolute;
+    top: 1em;
+    left: -15px;
+    width: 15px;
+    height: 15px;
+    border-left: 2px solid lightgray;
+    border-bottom: 2px solid lightgray;
+    border-bottom-left-radius: 5px;
 }
 
 .reply strong {
@@ -157,15 +171,7 @@
     margin-bottom: 4px;
 }
 
-.reply::before {
-    content: '';
-    position: absolute;
-    top: 0.75em;
-    left: -15px;
-    width: 15px;
-    height: 20px;
-    border-left: 2px solid lightgray;
-    border-bottom: 2px solid lightgray;
-    border-bottom-left-radius: 5px;
+.reply p {
+    margin: 0;
 }
 
