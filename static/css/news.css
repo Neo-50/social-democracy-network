@@ -59,7 +59,7 @@
 }
 
 .news-right button {
-    font-size: 1em;
+    font-size: 1.2em;
     padding: 5px;
     margin: 0; /* neutralize vertical misalignment */
     background-color: #1f1f1f;
@@ -146,8 +146,17 @@
     border: none;
     color: #888;
     cursor: pointer;
-    font-size: 1em;
-    padding: 0;
+    font-size: 1.2em;
+    padding: 5px;
+}
+.delete-button:hover {
+    color: #fff;
+    background-color: #333;
+}
+
+.post-comment:hover {
+    background-color: #333;
+    color: #fff;
 }
 
 .reply {
@@ -197,7 +206,7 @@
     flex-wrap: wrap; /* allows wrapping instead of overflow */
     gap: 8px;
     margin-top: 5px;
-    font-size: 0.9em;
+    font-size: 1.2em;
     color: #ccc;
 }
 
@@ -207,7 +216,7 @@
     border: none;
     color: #ccc;
     padding: 3px 6px !important;
-    font-size: 1em;
+    font-size: 1.2em;
     cursor: pointer;
     border-radius: 4px;
     transition: background 0.2s;

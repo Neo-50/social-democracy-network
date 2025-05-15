@@ -102,7 +102,7 @@
                 {% if session.get('user_id') %}
                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                     <textarea name="content" placeholder="Write a comment..." required></textarea>
-                    <button type="submit">Post Comment</button>
+                    <button type="submit" class="post-comment">Post Comment</button>
                 </form>
                 {% else %}
                 <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
@@ -111,7 +111,7 @@
 
         {% if is_admin() %}
         <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
-            <button type="submit" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
+            <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
         </form>
         {% endif %}
         </div>
