@@ -163,8 +163,9 @@
     flex-direction: column;
 }
 
-.reply-content p {
-    margin-bottom: 2px;
+.reply-content {
+    display: flex;
+    flex-direction: column;
 }
 
 .reply::before {
