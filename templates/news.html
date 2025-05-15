@@ -28,14 +28,18 @@
                 <h4>Discussion</h4>
 
                 {% for comment in article.comments if comment.parent_id is none %}
-                <div class="comment"  data-comment-id="{{ comment.id }}">
+                <div class="comment" data-comment-id="{{ comment.id }}">
                     <strong class="username">
-                        {{ comment.user.username if comment.user else 'Anonymous' }}
-                        {% if comment.user and comment.user.is_admin %}
-                            <span class="admin-badge" title="Admin">🛡️</span>
+                        {% if comment.user %}
+                            <a href="{{ url_for('profile', username=comment.user.username) }}">{{ comment.user.username }}</a>
+                            {% if comment.user.is_admin %}
+                                <span class="admin-badge" title="Admin">🛡️</span>
+                            {% endif %}
+                        {% else %}
+                            Anonymous
                         {% endif %}
                     </strong>
-
+                
                     <div class="comment-header">
                         <p>{{ comment.content }}</p>
                     </div>
@@ -63,15 +67,20 @@
                 </div>
                 <div class="replies" style="margin-left: 20px;">
                     {% for reply in comment.replies %}
-                    <div class="reply"  data-comment-id="{{ reply.id }}">
+                    <div class="reply" data-comment-id="{{ reply.id }}">
                         <div class="reply-content">
                             <strong class="username">
-                                {{ comment.user.username if comment.user else 'Anonymous' }}
-                                {% if comment.user and comment.user.is_admin %}
-                                    <span class="admin-badge" title="Admin">🛡️</span>
+                                {% if reply.user %}
+                                    <a href="{{ url_for('profile', username=reply.user.username) }}">{{ reply.user.username }}</a>
+                                    {% if reply.user.is_admin %}
+                                        <span class="admin-badge" title="Admin">🛡️</span>
+                                    {% endif %}
+                                {% else %}
+                                    Anonymous
                                 {% endif %}
                             </strong>
                             <p>{{ reply.content }}</p>
+
                             
                             <div class="comment-toolbar">
                                 <button class="vote-button upvote">▲</button>

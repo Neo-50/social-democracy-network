@@ -35,6 +35,9 @@ class User(db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     email_verified = db.Column(db.Boolean, default=False)
+    avatar_url = db.Column(db.String(500), nullable=True)
+    bio = db.Column(db.Text, nullable=True)
+
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -244,6 +247,25 @@ def new_post():
         return redirect(url_for('forum'))
 
     return render_template('new_post.html')
+
+@app.route('/profile/<username>')
+def profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('profile.html', user=user)
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    user = User.query.get(session['user_id'])
+
+    if request.method == 'POST':
+        user.avatar_url = request.form['avatar_url']
+        user.bio = request.form['bio']
+        db.session.commit()
+        flash('Profile updated!')
+        return redirect(url_for('profile', username=user.username))
+
+    return render_template('edit_profile.html', user=user)
 
 # Create tables if they don't exist
 with app.app_context():

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="edit-profile-page">
+    <h2>Edit Profile</h2>
+
+    <form method="POST">
+        <label>Avatar URL:</label><br>
+        <input type="url" name="avatar_url" value="{{ user.avatar_url or '' }}" placeholder="https://example.com/avatar.jpg" style="width: 100%;"><br><br>
+
+        <label>Bio:</label><br>
+        <textarea name="bio" rows="4" style="width: 100%;">{{ user.bio or '' }}</textarea><br><br>
+
+        <button type="submit">Save</button>
+    </form>
+</main>
+{% endblock %}
