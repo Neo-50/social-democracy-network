@@ -1,0 +1,23 @@
+[project]
+name = "social-democracy-network"
+version = "0.1.0"
+description = "Social Democracy Network"
+authors = [
+    {name = "Doug",email = "drowlands02@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask (>=3.1.1,<4.0.0)",
+    "flask-sqlalchemy (>=3.1.1,<4.0.0)",
+    "flask-migrate (>=4.1.0,<5.0.0)",
+    "requests (>=2.32.3,<3.0.0)",
+    "beautifulsoup4 (>=4.13.4,<5.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

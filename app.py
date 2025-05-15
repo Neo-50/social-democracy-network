@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -178,6 +178,38 @@ def register():
         return redirect(url_for('news'))
 
     return render_template('register.html')
+
+@app.route('/vote', methods=['POST'])
+@login_required
+def vote():
+    data = request.get_json()
+    comment_id = data.get('comment_id')
+    value = data.get('value')  # Should be +1 or -1
+    user_id = session['user_id']
+
+    if value not in [1, -1]:
+        return jsonify({'error': 'Invalid vote value'}), 400
+
+    existing_vote = Vote.query.filter_by(user_id=user_id, comment_id=comment_id).first()
+
+    if existing_vote:
+        if existing_vote.value == value:
+            # Unvote (toggle off)
+            db.session.delete(existing_vote)
+        else:
+            # Switch vote
+            existing_vote.value = value
+    else:
+        # New vote
+        new_vote = Vote(user_id=user_id, comment_id=comment_id, value=value)
+        db.session.add(new_vote)
+
+    db.session.commit()
+
+    # Return new total score
+    total_score = db.session.query(db.func.sum(Vote.value)).filter_by(comment_id=comment_id).scalar() or 0
+    return jsonify({'score': total_score})
+
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required
