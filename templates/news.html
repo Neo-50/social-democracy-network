@@ -29,7 +29,13 @@
 
                 {% for comment in article.comments if comment.parent_id is none %}
                 <div class="comment">
-                    <strong class="username">{{ comment.user.username if comment.user else 'Anonymous' }}</strong>
+                    <strong class="username">
+                        {{ comment.user.username if comment.user else 'Anonymous' }}
+                        {% if comment.user and comment.user.is_admin %}
+                            <span class="admin-badge" title="Admin">🛡️</span>
+                        {% endif %}
+                    </strong>
+
                     <div class="comment-header">
                         <p>{{ comment.content }}</p>
                     </div>
@@ -59,7 +65,12 @@
                     {% for reply in comment.replies %}
                     <div class="reply">
                         <div class="reply-content">
-                            <strong class="username">{{ reply.user.username if reply.user else 'Anonymous' }}</strong>
+                            <strong class="username">
+                                {{ comment.user.username if comment.user else 'Anonymous' }}
+                                {% if comment.user and comment.user.is_admin %}
+                                    <span class="admin-badge" title="Admin">🛡️</span>
+                                {% endif %}
+                            </strong>
                             <p>{{ reply.content }}</p>
                             
                             <div class="comment-toolbar">
