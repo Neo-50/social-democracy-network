@@ -37,24 +37,23 @@
                             <button type="submit" onclick="return confirm('Delete this comment?')" class="delete-button">🗑 Delete</button>
                         </form>
                         {% endif %}
-                    </div>
-                    <div class="comment-toolbar">
-                        <button class="vote-button upvote">▲</button>
-                        <span class="vote-count">0</span>
-                        <button class="vote-button downvote">▼</button>
+                        <div class="comment-toolbar">
+                            <button class="vote-button upvote">▲</button>
+                            <span class="vote-count">0</span>
+                            <button class="vote-button downvote">▼</button>
 
-                        <button class="reply-toggle">Reply</button>
+                            <button class="reply-toggle">Reply</button>
 
-                        <div class="reply-drawer" style="display: none;">
-                            <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                                <textarea name="content" placeholder="Write a reply..." required></textarea>
-                                <button type="submit">Submit</button>
-                                <button type="button" class="cancel-reply">Cancel</button>
-                            </form>
+                            <div class="reply-drawer" style="display: none;">
+                                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                    <textarea name="content" placeholder="Write a reply..." required></textarea>
+                                    <button type="submit">Submit</button>
+                                    <button type="button" class="cancel-reply">Cancel</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-
                 </div>
                 <div class="replies" style="margin-left: 20px;">
                     {% for reply in comment.replies %}
