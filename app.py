@@ -1,13 +1,12 @@
 import os
 from datetime import datetime
-
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 from utils.metadata_scraper import extract_metadata
 from db_init import db
-from news_system import NewsArticle, NewsComment
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -22,9 +21,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+
+from news_system import NewsArticle, NewsComment, Vote
+migrate = Migrate(app, db)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
