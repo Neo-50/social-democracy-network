@@ -230,8 +230,8 @@
 }
 
 .admin-badge {
-    font-size: 0.85em;
+    font-size: 1.2em;
     color: #66ccff;
-    margin-left: 2px;
+    margin-left: 0;
     vertical-align: middle;
 }
