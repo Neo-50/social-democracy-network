@@ -112,18 +112,24 @@
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reply-toggle').forEach(button => {
         button.addEventListener('click', () => {
-            const drawer = button.nextElementSibling;
-            drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+            const wrapper = button.closest('.comment, .reply');
+            const drawer = wrapper.querySelector('.reply-drawer');
+            if (drawer) {
+                drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+            }
         });
     });
 
     document.querySelectorAll('.cancel-reply').forEach(button => {
         button.addEventListener('click', (e) => {
             const drawer = e.target.closest('.reply-drawer');
-            drawer.style.display = 'none';
+            if (drawer) {
+                drawer.style.display = 'none';
+            }
         });
     });
 });
 </script>
+
 </main>
 {% endblock %}
