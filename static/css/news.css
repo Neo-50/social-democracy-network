@@ -136,9 +136,8 @@
 }
 
 .delete-form {
-    margin-left: auto;
-    display: flex;
-    justify-content: flex-end;
+    display: inline;
+    margin: 0;
 }
 
 .delete-button {
@@ -162,6 +161,10 @@
 .reply-content {
     display: flex;
     flex-direction: column;
+}
+
+.reply-content p {
+    margin-bottom: 2px;
 }
 
 .reply::before {

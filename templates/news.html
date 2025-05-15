@@ -62,19 +62,18 @@
                         <div class="reply-content">
                             <strong class="username">{{ reply.user.username if reply.user else 'Anonymous' }}</strong>
                             <p>{{ reply.content }}</p>
-                        
-                            {% if session.get('user_id') and (session['user_id'] == reply.user_id or is_admin()) %}
-                            <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" class="delete-form">
-                                <button type="submit" onclick="return confirm('Delete this reply?')" class="delete-button">🗑 Delete</button>
-                            </form>
-                            {% endif %}
                             
                             <div class="comment-toolbar">
                                 <button class="vote-button upvote">▲</button>
                                 <span class="vote-count">0</span>
                                 <button class="vote-button downvote">▼</button>
-
                                 <button class="reply-toggle">Reply</button>
+
+                                {% if session.get('user_id') and (session['user_id'] == reply.user_id or is_admin()) %}
+                                <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" class="delete-form">
+                                    <button type="submit" onclick="return confirm('Delete this reply?')" class="delete-button">🗑 Delete</button>
+                                </form>
+                                {% endif %}
 
                                 <div class="reply-drawer" style="display: none;">
                                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
