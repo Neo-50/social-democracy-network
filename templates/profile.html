@@ -11,7 +11,7 @@
     </h2>
 
     <div class="profile-container">
-        <p><strong>Bio:</strong> {{ user.bio or 'No bio yet.' }}</p>
+        <p><strong>Bio:</strong> {{ current_user.bio or 'No bio yet.' }}</p>
     </div>
 
     <form method="POST" enctype="multipart/form-data">
@@ -19,7 +19,7 @@
         <input type="file" name="avatar" accept="image/*" required>
 
         <label for="bio">Bio:</label>
-        <textarea name="bio">{{ user.bio or '' }}</textarea>
+        <textarea name="bio">{{ current_user.bio or '' }}</textarea>
 
         <button type="submit">Save</button>
     </form>
