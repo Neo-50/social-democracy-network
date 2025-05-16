@@ -5,6 +5,7 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    border: 2px solid yellow;
 }
 
 body, html {
@@ -45,6 +46,11 @@ body, html {
     border-radius: 8px;
     text-align: left;
     grid-column: 3;
+}
+
+.home-left,
+.home-right {
+    min-width: 200px;
 }
 
 @media (max-width: 768px) {
