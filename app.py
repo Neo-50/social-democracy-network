@@ -140,6 +140,7 @@ def profile():
             path = os.path.join('/mnt/storage/avatars', filename)
             file.save(path)
             user.avatar_filename = filename
+            db.session.commit()
 
         elif file and file.filename:
             flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
