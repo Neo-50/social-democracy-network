@@ -75,13 +75,16 @@ body, html {
     justify-content: center;
     align-items: center;
     margin: 0 auto;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 .responsive-image {
-    max-width: 100%;
-    min-width: 450px;
+    width: 100%;          /* fills parent */
+    max-width: 720px;     /* but doesn’t exceed this */
+    min-width: 0;         /* allow shrinking if needed */
     height: auto;
-    width: 720px;
     border-radius: 8px;
 }
 
