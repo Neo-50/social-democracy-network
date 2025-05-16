@@ -45,6 +45,7 @@ class User(db.Model):
     email_verified = db.Column(db.Boolean, default=False)
     avatar_url = db.Column(db.String(500), nullable=True)
     bio = db.Column(db.Text, nullable=True)
+    avatar_filename = db.Column(db.String(120))
 
 
     def set_password(self, password):
