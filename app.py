@@ -108,6 +108,13 @@ def news():
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
 
+@app.context_processor
+def inject_user():
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        return dict(current_user=user)
+    return dict(current_user=None)
+
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
