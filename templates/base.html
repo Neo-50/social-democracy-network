@@ -60,7 +60,6 @@
     </div>
     <div class="user-bar">
         {% if session.get('user_id') %}
-        {% set current_user = User.query.get(session['user_id']) %}
         <div class="user-nav">
             <span class="username">{{ current_user.username }}</span>
             <div class="avatar-dropdown">
