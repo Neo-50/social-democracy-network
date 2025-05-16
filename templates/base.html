@@ -71,8 +71,14 @@
                 </div>
             </div>
         </div>
-        {% endif %}
+        {% else %}
+        <div class="user-nav">
+            <a href="{{ url_for('login') }}">Login</a> | 
+            <a href="{{ url_for('register') }}">Sign Up</a>
+        </div>
+        {% endif %} 
     </div>
+
     <nav id="main-nav">
         <a href="{{ url_for('home') }}">Home</a>
         <a href="{{ url_for('news') }}">News</a>
