@@ -61,6 +61,10 @@ class Post(db.Model):
 
     def __repr__(self):
         return f'<Post {self.title}>'
+    
+@app.route('/media/<path:filename>')
+def media(filename):
+    return send_from_directory('mnt/storage', filename)
 
 @app.route('/')
 def home():
@@ -308,10 +312,6 @@ def new_post():
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     return render_template('edit_profile.html')
-
-@app.route('/media/<path:filename>')
-def media(filename):
-    return send_from_directory('mnt/storage', filename)
 
 # Create tables if they don't exist
 with app.app_context():
