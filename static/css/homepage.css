@@ -6,6 +6,8 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    overflow: hidden;
+    outline: 3px dashed yellow;
 }
 
 body, html {
@@ -25,7 +27,7 @@ body, html {
 
 .home-page .home-center {
     background-color: #1a1a1a;
-    padding: 10px 20px 10px 20px;
+    padding: 10px 20px;
     margin: 10px 0;
     border-radius: 8px;
     text-align: left;
@@ -35,12 +37,10 @@ body, html {
     flex-direction: column;
     align-items: center;
 
-    width: 100%;
-    max-width: 100%;
+    width: auto;               /* Don't stretch wider than grid column */
+    max-width: 100%;           /* Ensure no overflow */
     box-sizing: border-box;
-    overflow: hidden;
 }
-
 
 .home-page .home-right {
     background-color: #1a1a1a;
