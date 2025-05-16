@@ -15,122 +15,122 @@
     <!-- News Feed and Comments in unified right section -->
     <section class="news-right">
         {% for article in articles %}
-        <div class="news-article">
-            <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
-            <p>{{ article.description }}</p>
-            <p><em>Source: {{ article.source }}</em></p>
-            <p><em>Published: {{ article.published }}</em></p>
-            <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
-            
+            <div class="news-article">
+                <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                <p>{{ article.description }}</p>
+                <p><em>Source: {{ article.source }}</em></p>
+                <p><em>Published: {{ article.published }}</em></p>
+                <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
 
+                <div class="comments-thread">
+                    <h4>Discussion</h4>
 
-            <div class="comments-thread">
-                <h4>Discussion</h4>
+                    {% for comment in article.comments if comment.parent_id is none %}
+                        <div class="comment" data-comment-id="{{ comment.id }}">
+                            {% if current_user %}
+                                <img src="{{ current_user.avatar_url or url_for('static', filename='icons/default_avatar.png') }}" alt="Avatar" class="avatar-inline">
+                            {% endif %}
 
-                {% for comment in article.comments if comment.parent_id is none %}
-                    <div class="comment" data-comment-id="{{ comment.id }}">
-                        {% if current_user %}
-                            <img src="{{ current_user.avatar_url or url_for('static', filename='icons/default_avatar.png') }}" alt="Avatar" class="avatar-inline">
-                        {% endif %}
-
-                        <strong class="username">
-                            {% if comment.user %}
-                                {{ comment.user.username }}
-                                {% if comment.user.is_admin %}
-                                    <span class="admin-badge" title="Admin">🛡️</span>
+                            <strong class="username">
+                                {% if comment.user %}
+                                    {{ comment.user.username }}
+                                    {% if comment.user.is_admin %}
+                                        <span class="admin-badge" title="Admin">🛡️</span>
+                                    {% endif %}
+                                {% else %}
+                                    Anonymous
                                 {% endif %}
-                            {% else %}
-                                Anonymous
-                            {% endif %}
-                        </strong>
-                    
-                        <div class="comment-header">
-                            <p>{{ comment.content }}</p>
-                        </div>
+                            </strong>
                         
-                        <div class="comment-toolbar">
-                            <button class="vote-button upvote">▲</button>
-                            <span class="vote-count">0</span>
-                            <button class="vote-button downvote">▼</button>
-                            <button class="reply-toggle">Reply</button>
+                            <div class="comment-header">
+                                <p>{{ comment.content }}</p>
+                            </div>
+                            
+                            <div class="comment-toolbar">
+                                <button class="vote-button upvote">▲</button>
+                                <span class="vote-count">0</span>
+                                <button class="vote-button downvote">▼</button>
+                                <button class="reply-toggle">Reply</button>
 
-                            {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
-                            <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="delete-form">
-                                <button type="submit" onclick="return confirm('Delete this comment?')" class="delete-button">🗑 Delete</button>
+                                {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
+                                <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="delete-form">
+                                    <button type="submit" onclick="return confirm('Delete this comment?')" class="delete-button">🗑 Delete</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="reply-drawer" style="display: none;">
+                                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                    <textarea name="content" placeholder="Write a reply..." required></textarea>
+                                    <button type="submit">Submit</button>
+                                    <button type="button" class="cancel-reply">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="replies" style="margin-left: 20px;">
+                            {% for reply in comment.replies %}
+                                <div class="reply" data-comment-id="{{ reply.id }}">
+                                    <div class="reply-header">
+                                        {% if current_user %}
+                                            <img src="{{ reply.user.avatar_url or url_for('static', filename='icons/default_avatar.png') }}" class="avatar-inline">
+                                        {% endif %}
+
+                                        <strong class="username">
+                                            {% if reply.user %}
+                                                {{ reply.user.username }}
+                                                {% if reply.user.is_admin %}
+                                                    <span class="admin-badge" title="Admin">🛡️</span>
+                                                {% endif %}
+                                            {% else %}
+                                                Anonymous
+                                            {% endif %}
+                                        </strong>
+                                    </div>
+                                    <div class="reply-content">
+                                        <p>{{ reply.content }}</p>
+                                    </div>
+                                    <div class="comment-toolbar">
+                                        <button class="vote-button upvote">▲</button>
+                                        <span class="vote-count">0</span>
+                                        <button class="vote-button downvote">▼</button>
+                                        <button class="reply-toggle">Reply</button>
+
+                                        {% if session.get('user_id') and (session['user_id'] == reply.user_id or is_admin()) %}
+                                        <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" class="delete-form">
+                                            <button type="submit" onclick="return confirm('Delete this reply?')" class="delete-button">🗑 Delete</button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                    <div class="reply-drawer" style="display: none;">
+                                        <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                                            <input type="hidden" name="parent_id" value="{{ reply.id }}">
+                                            <textarea name="content" placeholder="Write a reply..." required></textarea>
+                                            <button type="submit">Submit</button>
+                                            <button type="button" class="cancel-reply">Cancel</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            {% if session.get('user_id') %}
+                            <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                                <textarea name="content" placeholder="Write a comment..." required></textarea>
+                                <button type="submit" class="post-comment">Post Comment</button>
                             </form>
+                            {% else %}
+                            <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
                             {% endif %}
                         </div>
-                        <div class="reply-drawer" style="display: none;">
-                            <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                                <textarea name="content" placeholder="Write a reply..." required></textarea>
-                                <button type="submit">Submit</button>
-                                <button type="button" class="cancel-reply">Cancel</button>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="replies" style="margin-left: 20px;">
-                        {% for reply in comment.replies %}
-                            <div class="reply" data-comment-id="{{ reply.id }}">
-                                <div class="reply-header">
-                                    {% if current_user %}
-                                        <img src="{{ reply.user.avatar_url or url_for('static', filename='icons/default_avatar.png') }}" class="avatar-inline">
-                                    {% endif %}
-
-                                    <strong class="username">
-                                        {% if reply.user %}
-                                            {{ reply.user.username }}
-                                            {% if reply.user.is_admin %}
-                                                <span class="admin-badge" title="Admin">🛡️</span>
-                                            {% endif %}
-                                        {% else %}
-                                            Anonymous
-                                        {% endif %}
-                                    </strong>
-                                </div>
-                                <div class="reply-content">
-                                    <p>{{ reply.content }}</p>
-                                </div>
-                                <div class="comment-toolbar">
-                                    <button class="vote-button upvote">▲</button>
-                                    <span class="vote-count">0</span>
-                                    <button class="vote-button downvote">▼</button>
-                                    <button class="reply-toggle">Reply</button>
-
-                                    {% if session.get('user_id') and (session['user_id'] == reply.user_id or is_admin()) %}
-                                    <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" class="delete-form">
-                                        <button type="submit" onclick="return confirm('Delete this reply?')" class="delete-button">🗑 Delete</button>
-                                    </form>
-                                    {% endif %}
-                                </div>
-                                <div class="reply-drawer" style="display: none;">
-                                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                                        <input type="hidden" name="parent_id" value="{{ reply.id }}">
-                                        <textarea name="content" placeholder="Write a reply..." required></textarea>
-                                        <button type="submit">Submit</button>
-                                        <button type="button" class="cancel-reply">Cancel</button>
-                                    </form>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-                <div>
-                    {% if session.get('user_id') %}
-                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                        <textarea name="content" placeholder="Write a comment..." required></textarea>
-                        <button type="submit" class="post-comment">Post Comment</button>
-                    </form>
-                    {% else %}
-                    <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
-                    {% endif %}
+                    {% endfor %}
                 </div>
-            {% if is_admin() %}
-            <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
-                <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
-            </form>
-            {% endif %}
-        </div>
+                {% if is_admin() %}
+                    <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                        <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete Article</button>
+                    </form>
+                {% endif %}
+            </div>
         {% endfor %}
     </section>
 <script>
