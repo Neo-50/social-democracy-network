@@ -168,6 +168,12 @@
     margin-bottom: 20px;
 }
 
+.reply-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
 .reply-content {
     display: flex;
     flex-direction: column;
