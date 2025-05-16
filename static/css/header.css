@@ -177,7 +177,7 @@ nav#main-nav a:hover {
     display: block;
     padding: 4px 12px;
     color: white;
-    text-decoration: none;
+    text-decoration: none !important;
 }
 
 .dropdown-menu a:hover {
