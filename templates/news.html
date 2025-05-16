@@ -29,9 +29,11 @@
 
                 {% for comment in article.comments if comment.parent_id is none %}
                 <div class="comment" data-comment-id="{{ comment.id }}">
+                    <img src="{{ comment.user.avatar_url or url_for('static', filename='default-avatar.png') }}"
+                    alt="Avatar" class="avatar-inline">
                     <strong class="username">
                         {% if comment.user %}
-                            <a href="{{ url_for('profile', username=comment.user.username) }}">{{ comment.user.username }}</a>
+                            {{ comment.user.username }}
                             {% if comment.user.is_admin %}
                                 <span class="admin-badge" title="Admin">🛡️</span>
                             {% endif %}
@@ -69,9 +71,11 @@
                     {% for reply in comment.replies %}
                     <div class="reply" data-comment-id="{{ reply.id }}">
                         <div class="reply-content">
+                            <img src="{{ reply.user.avatar_url or url_for('static', filename='default-avatar.png') }}"
+                            alt="Avatar" class="avatar-inline">
                             <strong class="username">
                                 {% if reply.user %}
-                                    <a href="{{ url_for('profile', username=reply.user.username) }}">{{ reply.user.username }}</a>
+                                    {{ reply.user.username }}
                                     {% if reply.user.is_admin %}
                                         <span class="admin-badge" title="Admin">🛡️</span>
                                     {% endif %}

@@ -130,6 +130,55 @@ nav#main-nav a:hover {
     text-decoration: underline;
 }
 
+.user-nav {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.username {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.avatar-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.avatar-dropdown {
+    position: relative;
+}
+
+.avatar-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 42px;
+    right: 0;
+    background: #222;
+    padding: 8px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 4px 12px;
+    color: white;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background: #444;
+}
+
 @media (max-width: 768px) {
     .directory-button {
         display: inline-block;
