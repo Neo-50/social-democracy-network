@@ -35,7 +35,10 @@ body, html {
     flex-direction: column;
     align-items: center;
 
-    width: auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
     max-width: 720px;
 }
 
