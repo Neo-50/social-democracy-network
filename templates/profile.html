@@ -4,10 +4,11 @@
 <main class="profile-page">
 
     <h2>
-        <img src="{{ url_for('media', filename='avatars/' ~ (user.avatar_filename or 'default_avatar.png')) }}"
+        <img src="{{ url_for('media', filename='avatars/' ~ (user.avatar_filename if user.avatar_filename else 'default_avatar.png')) }}"
             class="avatar" alt="User Avatar" style="width: 120px; border-radius: 50%;">
         {{ user.username }}
     </h2>
+
 
     <div class="profile-container">
         <p><strong>Bio:</strong> {{ current_user.bio or 'No bio yet.' }}</p>
