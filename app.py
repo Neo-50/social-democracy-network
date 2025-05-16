@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -273,6 +273,10 @@ def edit_profile():
         return redirect(url_for('profile', username=user.username))
 
     return render_template('edit_profile.html', user=user)
+
+@app.route('/media/<path:filename>')
+def media(filename):
+    return send_from_directory('mnt/storage', filename)
 
 # Create tables if they don't exist
 with app.app_context():
