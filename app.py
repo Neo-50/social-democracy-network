@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from utils.metadata_scraper import extract_metadata
 from db_init import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-default-key')
@@ -24,6 +25,13 @@ def login_required(f):
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+
+# Constants
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
+
+# Flask config (optional fallback, not enforced unless you hook into it)
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
 from news_system import NewsArticle, NewsComment, Vote
 migrate = Migrate(app, db)
@@ -104,6 +112,46 @@ def news():
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles, is_admin=is_admin)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = db.session.get(User, session['user_id'])
+
+    if request.method == 'POST':
+        # Handle avatar upload
+        file = request.files.get('avatar')
+        if file and allowed_file(file.filename):
+            file.seek(0, os.SEEK_END)
+            file_size = file.tell()
+            file.seek(0)
+            if file_size > MAX_FILE_SIZE:
+                flash("Avatar image is too large (max 2MB).")
+                return redirect(request.url)
+
+            ext = file.filename.rsplit('.', 1)[1].lower()
+            filename = f"{user.username}.{ext}"
+            path = os.path.join('/mnt/storage/avatars', filename)
+            file.save(path)
+            user.avatar_filename = filename
+
+        elif file and file.filename:
+            flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
+            return redirect(request.url)
+
+        # Update bio
+        user.bio = request.form.get('bio', '')
+        db.session.commit()
+        flash("Profile updated.")
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html', user=user)
 
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
