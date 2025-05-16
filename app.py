@@ -67,6 +67,12 @@ def media(filename):
     print("Serving from /mnt/storage:", filename)
     return send_from_directory('mnt/storage', filename)
 
+@app.route('/media/avatars/<filename>')
+def avatar(filename):
+    print("Serving avatar:", filename)
+    return send_from_directory('/mnt/storage/avatars', filename)
+
+
 @app.route('/')
 def home():
     return render_template('home.html')
