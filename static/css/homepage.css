@@ -2,7 +2,8 @@
     display: grid;
     grid-template-columns: auto minmax(300px, 720px) auto;
     column-gap: 20px;
-    width: fit-content;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
