@@ -303,24 +303,9 @@ def new_post():
 
     return render_template('new_post.html')
 
-@app.route('/profile/<username>')
-def profile(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    return render_template('profile.html', user=user)
-
 @app.route('/edit_profile', methods=['GET', 'POST'])
-@login_required
 def edit_profile():
-    user = User.query.get(session['user_id'])
-
-    if request.method == 'POST':
-        user.avatar_url = request.form['avatar_url']
-        user.bio = request.form['bio']
-        db.session.commit()
-        flash('Profile updated!')
-        return redirect(url_for('profile', username=user.username))
-
-    return render_template('edit_profile.html', user=user)
+    return render_template('edit_profile.html')
 
 @app.route('/media/<path:filename>')
 def media(filename):
