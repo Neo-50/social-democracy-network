@@ -50,7 +50,7 @@ body, html {
 
 .home-left,
 .home-right {
-    min-width: 200px;
+    min-width: 400px;
 }
 
 @media (max-width: 768px) {
@@ -81,11 +81,11 @@ body, html {
 }
 
 .responsive-image {
-    width: 100%;          /* fills parent */
-    max-width: 720px;     /* but doesn’t exceed this */
-    min-width: 0;         /* allow shrinking if needed */
+    width: 100%;            /* Fill container */
+    max-width: 100%;        /* No artificial limit */
     height: auto;
     border-radius: 8px;
+    box-sizing: border-box;
 }
 
 .link-with-icon {
@@ -117,11 +117,12 @@ body, html {
 
 .video-container {
     position: relative;
-    width: 100%;
-    max-width: 720px;
-    min-width: 450px;
+    width: 100%;             /* Take full width of parent */
+    max-width: 100%;         /* Prevent overflow */
+    min-width: 0;            /* Allow shrinking */
     aspect-ratio: 16 / 9;
     margin: 20px auto;
+    box-sizing: border-box;  /* Ensure padding/margin doesn't add width */
 }
 
 .video-container iframe {
@@ -129,6 +130,8 @@ body, html {
     height: 100%;
     border: 0;
     display: block;
+    max-width: 100%;   /* Enforce no overflow */
+    box-sizing: border-box;
 }
 
 /* Remove bullets and margin from the lists */
