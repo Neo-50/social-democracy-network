@@ -27,7 +27,7 @@
 
                     {% for comment in article.comments if comment.parent_id is none %}
                         <div class="comment" data-comment-id="{{ comment.id }}">
-                            <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
+                            <img src="{{ url_for('avatar', filename=comment.user.avatar_filename or 'default_avatar.png') }}"
                             class="avatar-inline" alt="User Avatar">
 
                             <strong class="username">
@@ -71,7 +71,7 @@
                             {% for reply in comment.replies %}
                                 <div class="reply" data-comment-id="{{ reply.id }}">
                                     <div class="reply-header">
-                                        <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
+                                        <img src="{{ url_for('avatar', filename=reply.user.avatar_filename or 'default_avatar.png') }}"
                                         class="avatar-inline" alt="User Avatar">
 
                                         <strong class="username">
