@@ -23,6 +23,10 @@ a:visited {
     text-decoration: none;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .avatar-inline {
     width: 28px;
     height: 28px;
