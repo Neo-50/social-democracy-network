@@ -39,8 +39,8 @@ body, html {
     max-width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-    max-width: 720px;
 }
+
 
 .home-page .home-right {
     background-color: #1a1a1a;
