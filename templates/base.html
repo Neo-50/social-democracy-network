@@ -73,8 +73,9 @@
         </div>
         {% else %}
         <div class="user-nav">
-            <a href="{{ url_for('login') }}">Login</a> | 
-            <a href="{{ url_for('register') }}">Sign Up</a>
+            <a href="{{ url_for('login') }}" class="user-link">Login</a>
+            <span class="divider">|</span>
+            <a href="{{ url_for('register') }}" class="user-link">Sign Up</a>
         </div>
         {% endif %} 
     </div>

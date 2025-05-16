@@ -121,9 +121,14 @@ nav#main-nav a:hover {
 }
 
 .user-bar a {
-    color: #00c8ff;
+    color: #8feff2;
     text-decoration: none;
     margin-left: 10px;
+}
+
+.divider {
+    color: #aaa;
+    padding: 0 4px;
 }
 
 .user-bar a:hover {
