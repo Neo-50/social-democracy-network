@@ -64,6 +64,7 @@ class Post(db.Model):
     
 @app.route('/media/<path:filename>')
 def media(filename):
+    print("Serving from /mnt/storage:", filename)
     return send_from_directory('mnt/storage', filename)
 
 @app.route('/')
