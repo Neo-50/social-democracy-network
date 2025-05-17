@@ -26,11 +26,3 @@ a:visited {
 * {
   box-sizing: border-box;
 }
-
-.avatar-inline {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    margin-right: 0;
-    vertical-align: middle;
-}

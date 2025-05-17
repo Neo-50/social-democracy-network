@@ -184,6 +184,14 @@ nav#main-nav a:hover {
     background: #444;
 }
 
+.avatar-inline {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
 @media (max-width: 768px) {
     .directory-button {
         display: inline-block;
