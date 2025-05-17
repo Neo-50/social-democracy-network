@@ -5,10 +5,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
+from sqlalchemy import Boolean, Column
 from utils.metadata_scraper import extract_metadata
 from db_init import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from utils.email import confirm_verification_token
 
 app = Flask(__name__)
 
@@ -187,6 +189,24 @@ def test_email():
     mail.send(msg)
     return "Email sent!"
 
+@app.route('/verify/<token>')
+def verify_email(token):
+    email = confirm_verification_token(token)
+    if not email:
+        flash('Invalid or expired verification link.', 'danger')
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=email).first_or_404()
+
+    if user.email_verified:
+        flash('Your email is already verified. You can log in.', 'info')
+    else:
+        user.email_verified = True
+        db.session.commit()
+        flash('Email verified successfully! You may now log in.', 'success')
+
+    return redirect(url_for('login'))
+
 @app.context_processor
 def inject_user():
     if 'user_id' in session:
@@ -218,7 +238,6 @@ def delete_article(article_id):
     flash("Article deleted.")
     return redirect(url_for('news'))
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -227,6 +246,10 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and user.check_password(password):
+            if not user.email_verified:
+                flash('Please verify your email before logging in.', 'warning')
+                return redirect(url_for('login'))
+
             session['user_id'] = user.id
             session['username'] = user.username
             flash('Logged in successfully!')
@@ -260,6 +283,9 @@ def register():
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
+
+        from utils.email import send_verification_email
+        send_verification_email(user, mail)
 
         session['user_id'] = user.id
         session['username'] = user.username
