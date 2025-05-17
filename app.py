@@ -182,7 +182,7 @@ def is_admin():
 @app.route("/test-email")
 def test_email():
     msg = Message("Hello from Social Democracy Network",
-                  recipients=["your_email@example.com"])
+                  recipients=["drowlands02@gmail.com"])
     msg.body = "This is a test email sent via Zoho SMTP!"
     mail.send(msg)
     return "Email sent!"
