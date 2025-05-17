@@ -66,9 +66,11 @@
         {% if messages %}
             <div class="flashes">
             {% for category, message in messages %}
+                {% if message %}
                 <div class="flash-message flash-{{ category }}">
-                {{ message }}
+                    {{ message }}
                 </div>
+                {% endif %}
             {% endfor %}
             </div>
         {% endif %}
@@ -203,7 +205,10 @@
             dir.style.display = (dir.style.display === "flex") ? "none" : "flex";
         }
     </script>
-    
-    
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll('.flash-message').forEach(el => el.remove());
+        }, 4000);
+    </script>
 </body>
 </html>
