@@ -1,10 +1,11 @@
 .home-page {
     display: grid;
-    grid-template-columns: 260px minmax(300px, 720px) 320px;
+    grid-template-columns: 260px minmax(300px, 720px) 360px;
     column-gap: 20px;
     width: 100%;
-    max-width: 1300px;
+    max-width: 1340px;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
 body, html {
@@ -12,6 +13,7 @@ body, html {
     padding: 0;
 }
 
+/* Left, center, and right columns */
 .home-page .home-left,
 .home-page .home-center,
 .home-page .home-right {
@@ -23,17 +25,14 @@ body, html {
     box-sizing: border-box;
 }
 
-.home-page .home-left {
-    grid-column: 1;
-}
-
+/* Grid placement */
+.home-page .home-left { grid-column: 1; }
 .home-page .home-center {
     grid-column: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-
 .home-page .home-right {
     grid-column: 3;
     display: flex;
@@ -41,18 +40,17 @@ body, html {
     align-items: center;
 }
 
-/* Ensure left/right columns stay wide enough but flexible */
+/* Directory column width control */
 .home-left, .home-right {
     min-width: 260px;
 }
 
-/* Responsive layout */
+/* Mobile layout */
 @media (max-width: 768px) {
     .home-page {
         display: flex;
         flex-direction: column;
         gap: 20px;
-        max-width: 100%;
         padding: 0 10px;
     }
 
@@ -66,30 +64,35 @@ body, html {
     }
 }
 
-/* Image layout */
+/* =======================
+   Media Styles
+   ======================= */
+
+/* Image block */
 .image-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto;
+    margin: 0 auto 20px auto;
     width: 100%;
     box-sizing: border-box;
 }
 
 .responsive-image {
     width: 100%;
-    max-width: 720px;
-    min-width: 360px;
+    max-width: 100%;
+    min-width: 300px;
     height: auto;
     border-radius: 8px;
     box-sizing: border-box;
 }
 
-/* Video layout */
+/* Video embed block */
 .video-container {
     position: relative;
     width: 100%;
-    max-width: 720px;
+    max-width: 100%;
+    min-width: 300px;
     aspect-ratio: 16 / 9;
     margin: 20px auto;
     box-sizing: border-box;
@@ -103,13 +106,15 @@ body, html {
     box-sizing: border-box;
 }
 
-/* Clean lists */
+/* =======================
+   Utilities
+   ======================= */
+
+/* Bulletless list */
 .no-bullets {
     list-style-type: none;
     padding-left: 0;
-    margin-left: 0;
-    margin-top: 0;
-    margin-bottom: 0;
+    margin: 0;
 }
 
 .no-bullets li {
