@@ -9,15 +9,31 @@ body {
     margin: 20px auto;
     padding: 20px;
     border-radius: 10px;
-    max-width: 600px;
-    size: fit-content;
+    width: fit-content;
+    display: inline-block;
     text-align: center;
 }
 
 .profile-actions {
-    display: flex;
+    max-width: 450px;
+    display: inline-block;
     justify-content: left;
     margin-left: 10px;
+}
+
+.profile-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Stack vertically on small screens */
+@media (max-width: 768px) {
+    .profile-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
 }
 
 .profile-avatar {
@@ -72,8 +88,11 @@ input[type="file"]::file-selector-button {
     cursor: pointer;
 }
 
-input[type="file"]:hover,
 button[type="submit"]:hover {
+    background-color: #444;
+}
+
+input[type="file"]::file-selector-button:hover {
     background-color: #444;
 }
 
