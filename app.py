@@ -240,9 +240,9 @@ def resend_verification_email():
             send_verification_email(user, mail)
             flash('Verification email resent.', 'success')
 
-        return redirect(url_for('resend_verification_email'))
+        return redirect(url_for('register.html'))
 
-    return render_template('resend_verification.html')
+    return render_template('register.html')
 
 @app.context_processor
 def inject_user():
