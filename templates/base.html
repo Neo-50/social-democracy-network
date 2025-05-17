@@ -62,6 +62,18 @@
     }
 </script>    
 <body class="has-header">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flashes">
+            {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <header>
         <div class="header-date-time" id="date-time"></div>
         <h1 class="site-title">Welcome to the Social Democracy Network</h1>
