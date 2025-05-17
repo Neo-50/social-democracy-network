@@ -6,8 +6,6 @@
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    overflow: hidden;
-    outline: 3px dashed yellow;
 }
 
 body, html {
@@ -27,7 +25,7 @@ body, html {
 
 .home-page .home-center {
     background-color: #1a1a1a;
-    padding: 10px 20px;
+    padding: 10px 20px 10px 20px;
     margin: 10px 0;
     border-radius: 8px;
     text-align: left;
@@ -37,9 +35,8 @@ body, html {
     flex-direction: column;
     align-items: center;
 
-    width: auto;               /* Don't stretch wider than grid column */
-    max-width: 100%;           /* Ensure no overflow */
-    box-sizing: border-box;
+    width: auto;
+    max-width: 720px;
 }
 
 .home-page .home-right {
@@ -74,21 +71,17 @@ body, html {
 }
 
 .image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    width: 100%;
-    padding: 0 10px;
-    box-sizing: border-box;
+    display: flex;                /* Ensures the image is treated as a flex item */
+    justify-content: center;      /* Centers the image horizontally within the container */
+    align-items: center;          /* Centers the image vertically within the container */
+    margin: 0 auto;               /* Optional: centers the image container itself */
 }
 
 .responsive-image {
-    width: 100%;            /* Fill container */
-    max-width: 100%;        /* No artificial limit */
+    max-width: 100%;
     height: auto;
+    width: 720px;
     border-radius: 8px;
-    box-sizing: border-box;
 }
 
 .link-with-icon {
@@ -120,12 +113,10 @@ body, html {
 
 .video-container {
     position: relative;
-    width: 100%;             /* Take full width of parent */
-    max-width: 100%;         /* Prevent overflow */
-    min-width: 0;            /* Allow shrinking */
+    width: 100%;
+    max-width: 720px;
     aspect-ratio: 16 / 9;
     margin: 20px auto;
-    box-sizing: border-box;  /* Ensure padding/margin doesn't add width */
 }
 
 .video-container iframe {
@@ -133,8 +124,6 @@ body, html {
     height: 100%;
     border: 0;
     display: block;
-    max-width: 100%;   /* Enforce no overflow */
-    box-sizing: border-box;
 }
 
 /* Remove bullets and margin from the lists */
