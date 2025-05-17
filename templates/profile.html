@@ -11,7 +11,7 @@
 
         <p><strong>Bio:</strong> {{ current_user.bio or 'No bio yet.' }}</p>
     </div>
-
+    <div class="profile-actions">
     <form method="POST" enctype="multipart/form-data">
         <label for="avatar">Upload Avatar:</label>
         <input type="file" name="avatar" accept="image/*" required>
@@ -21,6 +21,6 @@
 
         <button type="submit">Save</button>
     </form>
-
+    </div>
 </main>
 {% endblock %}
