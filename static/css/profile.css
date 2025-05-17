@@ -10,6 +10,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     max-width: 600px;
+    size: fit-content;
     text-align: center;
 }
 
