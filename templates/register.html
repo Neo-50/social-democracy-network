@@ -17,8 +17,7 @@
 
         <button type="submit">Register</button>
     </form>
-
-<hr>
+<br><br>
 <p>Didn't receive the verification email?</p>
 <form method="POST" action="{{ url_for('resend_verification_email') }}">
     <input type="email" name="email" placeholder="Enter your email" required>
