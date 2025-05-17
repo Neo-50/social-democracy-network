@@ -4,13 +4,23 @@ from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
+from flask_mail import Mail, Message
 from utils.metadata_scraper import extract_metadata
 from db_init import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+app.config['MAIL_SERVER'] = 'smtp.zoho.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
+app.config['MAIL_PASSWORD'] = 'your_app_password'  # use Zoho app password here
+app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
+
+mail = Mail(app)
+
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-default-key')
 
 def login_required(f):
@@ -168,6 +178,14 @@ def profile():
 
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
+
+@app.route("/test-email")
+def test_email():
+    msg = Message("Hello from Social Democracy Network",
+                  recipients=["your_email@example.com"])
+    msg.body = "This is a test email sent via Zoho SMTP!"
+    mail.send(msg)
+    return "Email sent!"
 
 @app.context_processor
 def inject_user():
