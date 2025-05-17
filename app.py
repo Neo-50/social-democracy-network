@@ -187,6 +187,11 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('register'))
 
         # Check if user exists
         if User.query.filter((User.username == username) | (User.email == email)).first():
