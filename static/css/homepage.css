@@ -1,6 +1,6 @@
 .home-page {
     display: grid;
-    grid-template-columns: 260px minmax(300px, 720px) 360px;
+    grid-template-columns: 260px minmax(300px, 720px) minmax(300px, 720px);
     column-gap: 20px;
     width: 100%;
     max-width: 1340px;
