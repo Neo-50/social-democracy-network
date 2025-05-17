@@ -2,25 +2,27 @@
 
 {% block content %}
 <main class="profile-page">
-    <div class="profile-container">
-        <h2>
-            <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
-            class="avatar" alt="User Avatar" style="width: 120px; border-radius: 50%;">
-            {{ user.username }}
-        </h2>
+    <div class="profile-wrapper">
+        <div class="profile-container">
+            <h2>
+                <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
+                class="avatar" alt="User Avatar" style="width: 120px; border-radius: 50%;">
+                {{ user.username }}
+            </h2>
 
-        <p><strong>Bio:</strong> {{ current_user.bio or 'No bio yet.' }}</p>
-    </div>
-    <div class="profile-actions">
-    <form method="POST" enctype="multipart/form-data">
-        <label for="avatar">Upload Avatar:</label>
-        <input type="file" name="avatar" accept="image/*" required>
+            <p><strong>Bio:</strong> {{ current_user.bio or 'No bio yet.' }}</p>
+        </div>
+        <div class="profile-actions">
+            <form method="POST" enctype="multipart/form-data">
+                <label for="avatar">Upload Avatar:</label>
+                <input type="file" name="avatar" accept="image/*" required>
 
-        <label for="bio">Bio:</label>
-        <textarea name="bio"></textarea>
+                <label for="bio">Bio:</label>
+                <textarea name="bio"></textarea>
 
-        <button type="submit">Save</button>
-    </form>
+                <button type="submit">Save</button>
+            </form>
+        </div>
     </div>
 </main>
 {% endblock %}
