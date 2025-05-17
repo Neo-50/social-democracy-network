@@ -1,10 +1,9 @@
 .home-page {
     display: grid;
-    /* grid-template-columns: auto minmax(300px, 720px) auto; */
-    grid-template-columns: 260px minmax(300px, 720px) 300px;
+    grid-template-columns: 260px minmax(300px, 720px) 320px;
     column-gap: 20px;
-    width: auto;
-    max-width: 1200px;
+    width: 100%;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
@@ -13,52 +12,48 @@ body, html {
     padding: 0;
 }
 
-.home-page .home-left {
+.home-page .home-left,
+.home-page .home-center,
+.home-page .home-right {
     background-color: #1a1a1a;
-    padding: 10px 20px 10px 20px;
-    margin: 10px 0 10px 0;
+    padding: 10px 20px;
+    margin: 10px 0;
     border-radius: 8px;
     text-align: left;
-    width: auto;
+    box-sizing: border-box;
+}
+
+.home-page .home-left {
     grid-column: 1;
 }
 
 .home-page .home-center {
-    background-color: #1a1a1a;
-    padding: 10px 20px 10px 20px;
-    margin: 10px 0;
-    border-radius: 8px;
-    text-align: left;
+    grid-column: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: auto;
-    grid-column: 2;
 }
 
 .home-page .home-right {
-    background-color: #1a1a1a;
-    padding: 20px 20px 10px 20px;
-    margin: 10px 0 10px 0;
-    border-radius: 8px;
-    text-align: left;
+    grid-column: 3;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: auto;
-    grid-column: 3;
 }
 
-.home-left,
-.home-right {
-    min-width: 400px;
+/* Ensure left/right columns stay wide enough but flexible */
+.home-left, .home-right {
+    min-width: 260px;
 }
 
+/* Responsive layout */
 @media (max-width: 768px) {
     .home-page {
         display: flex;
         flex-direction: column;
         gap: 20px;
+        max-width: 100%;
+        padding: 0 10px;
     }
 
     .home-left {
@@ -71,24 +66,67 @@ body, html {
     }
 }
 
+/* Image layout */
 .image-container {
-    display: flex;                /* Ensures the image is treated as a flex item */
-    justify-content: center;      /* Centers the image horizontally within the container */
-    align-items: center;          /* Centers the image vertically within the container */
-    margin: 0 auto;               /* Optional: centers the image container itself */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .responsive-image {
-    max-width: 100%;
+    width: 100%;
+    max-width: 720px;
+    min-width: 360px;
     height: auto;
-    width: 720px;
     border-radius: 8px;
+    box-sizing: border-box;
 }
 
+/* Video layout */
+.video-container {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    aspect-ratio: 16 / 9;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    box-sizing: border-box;
+}
+
+/* Clean lists */
+.no-bullets {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.no-bullets li {
+    margin-bottom: 6px;
+}
+
+/* Section headers */
+.section-title {
+    margin-bottom: 0;
+    font-weight: bold;
+}
+
+/* Icon links */
 .link-with-icon {
     display: flex;
-    align-items: center; /* centers icon and text vertically */
-    gap: 8px;             /* space between icon and text */
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
     color: inherit;
 }
@@ -99,8 +137,8 @@ body, html {
 
 .discord-title {
     display: flex;
-    align-items: center; /* centers icon and text vertically */
-    gap: 8px;             /* space between icon and text */
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
     color: inherit;
     margin-top: 10px;
@@ -110,39 +148,4 @@ body, html {
 
 .icon {
     flex-shrink: 0;
-}
-
-.video-container {
-    position: relative;
-    width: 100%;
-    max-width: 720px;
-    aspect-ratio: 16 / 9;
-    margin: 20px auto;
-}
-
-.video-container iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-}
-
-/* Remove bullets and margin from the lists */
-.no-bullets {
-    list-style-type: none;   /* Removes bullet points */
-    padding-left: 0;         /* Removes default left padding */
-    margin-left: 0;
-    margin-top: 0;           /* Removes margin before the list */
-    margin-bottom: 0;        /* Removes margin after the list */
-    width: fit-content;
-}
-
-.no-bullets li {
-    margin-bottom: 6px; /* or 8px, adjust to taste */
-}
-
-/* Remove space between the heading and the list */
-.section-title {
-    margin-bottom: 0;        /* Removes space after the section title */
-    font-weight: bold;       /* Makes the section title bold */
 }
