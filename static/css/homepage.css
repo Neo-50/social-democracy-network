@@ -3,7 +3,7 @@
     /* grid-template-columns: auto minmax(300px, 720px) auto; */
     grid-template-columns: 260px minmax(300px, 720px) 300px;
     column-gap: 20px;
-    width: 100%;
+    width: auto;
     max-width: 1200px;
     margin: 0 auto;
 }
