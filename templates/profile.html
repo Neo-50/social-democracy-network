@@ -17,7 +17,7 @@
         <input type="file" name="avatar" accept="image/*" required>
 
         <label for="bio">Bio:</label>
-        <textarea name="bio">{{ current_user.bio or '' }}</textarea>
+        <input name="bio" type="text">{{ current_user.bio or '' }}</textarea>
 
         <button type="submit">Save</button>
     </form>

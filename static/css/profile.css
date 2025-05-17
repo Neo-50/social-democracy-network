@@ -1,5 +1,5 @@
 body {
-    background-color: #2b2b2b;
+    background-color: #3d3d3d;
     color: white;
     font-family: Arial, sans-serif;
 }
@@ -25,8 +25,7 @@ label {
 }
 
 input[type="text"],
-input[type="email"],
-input[type="password"] {
+input[type="file"] {
     padding: 10px;
     background-color: #1a1a1a;
     color: white;
