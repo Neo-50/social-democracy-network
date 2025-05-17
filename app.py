@@ -10,7 +10,7 @@ from utils.metadata_scraper import extract_metadata
 from db_init import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from utils.email import confirm_verification_token
+from utils.email import confirm_verification_token, send_verification_email
 
 app = Flask(__name__)
 
@@ -181,13 +181,32 @@ def profile():
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
 
-@app.route("/test-email")
-def test_email():
-    msg = Message("Hello from Social Democracy Network",
-                  recipients=["drowlands02@gmail.com"])
-    msg.body = "This is a test email sent via Zoho SMTP!"
-    mail.send(msg)
-    return "Email sent!"
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        # Check if user exists
+        if User.query.filter((User.username == username) | (User.email == email)).first():
+            flash('Username or email already taken.')
+            return redirect(url_for('register'))
+
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        from utils.email import send_verification_email
+        send_verification_email(user, mail)
+
+        session['user_id'] = user.id
+        session['username'] = user.username
+        flash('Registration successful, verification email sent.')
+        return redirect(url_for('register'))
+
+    return render_template('register.html')
 
 @app.route('/verify/<token>')
 def verify_email(token):
@@ -206,6 +225,24 @@ def verify_email(token):
         flash('Email verified successfully! You may now log in.', 'success')
 
     return redirect(url_for('login'))
+
+@app.route('/resend_verification_email', methods=['GET', 'POST'])
+def resend_verification_email():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash('No account found with that email.', 'danger')
+        elif user.email_verified:
+            flash('Email is already verified.', 'info')
+        else:
+            send_verification_email(user, mail)
+            flash('Verification email resent.', 'success')
+
+        return redirect(url_for('resend_verification_email'))
+
+    return render_template('resend_verification.html')
 
 @app.context_processor
 def inject_user():
@@ -265,34 +302,6 @@ def logout():
     session.clear()
     flash('Logged out.')
     return redirect(url_for('news'))
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-
-        # Check if user exists
-        if User.query.filter((User.username == username) | (User.email == email)).first():
-            flash('Username or email already taken.')
-            return redirect(url_for('register'))
-
-        user = User(username=username, email=email)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-
-        from utils.email import send_verification_email
-        send_verification_email(user, mail)
-
-        session['user_id'] = user.id
-        session['username'] = user.username
-        flash('Registration successful!')
-        return redirect(url_for('news'))
-
-    return render_template('register.html')
 
 @app.route('/vote', methods=['POST'])
 @login_required
