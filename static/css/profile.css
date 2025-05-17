@@ -4,29 +4,28 @@ body {
     font-family: Arial, sans-serif;
 }
 
+.profile-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;  /* Align left */
+    gap: 10px;                    /* Small gap between containers */
+    margin-left: 10px;            /* Optional: offset from page edge */
+}
+
 .profile-container {
     background-color: #1a1a1a;
-    margin: 20px auto;
     padding: 20px;
     border-radius: 10px;
     width: fit-content;
     display: inline-block;
-    text-align: center;
+    text-align: left;
 }
 
 .profile-actions {
     max-width: 450px;
     display: inline-block;
-    justify-content: left;
-    margin-left: 10px;
 }
 
-.profile-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-}
 
 /* Stack vertically on small screens */
 @media (max-width: 768px) {
