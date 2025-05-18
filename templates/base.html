@@ -101,28 +101,25 @@
         </div>
 
         <div class="header-right">
-            <div class="user-bar">
+            <div class="user-nav">
                 {% if session.get('user_id') %}
-                <div class="user-nav">
                     <span class="username">{{ current_user.username }}</span>
                     <div class="avatar-dropdown">
                         <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
-                        class="avatar-inline" alt="User Avatar">
+                            class="avatar-inline" alt="User Avatar">
                         <div class="dropdown-menu">
                             <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
                             <a href="{{ url_for('logout') }}">Logout</a>
                         </div>
                     </div>
-                </div>
                 {% else %}
-                <div class="user-nav">
                     <a href="{{ url_for('login') }}" class="user-link">Login</a>
                     <span class="divider">|</span>
                     <a href="{{ url_for('register') }}" class="user-link">Sign Up</a>
-                </div>
-                {% endif %} 
+                {% endif %}
             </div>
         </div>
+        
     <div id="mobile-directory" class="mobile-directory">
         <div class="directory-section">
             <strong>Links</strong>
