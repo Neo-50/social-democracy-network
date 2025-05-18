@@ -45,10 +45,10 @@
                                 <p>{{ comment.content }}</p>
                             </div>
                             
-                            <div class="comment-toolbar">
-                                <button class="vote-button upvote">▲</button>
-                                <span class="vote-count">0</span>
-                                <button class="vote-button downvote">▼</button>
+                            <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
+                                <button class="vote-button upvote {% if user_votes[comment.id] == 1 %}active{% endif %}">▲</button>
+                                <span class="vote-count">{{ comment.total_score }}</span>
+                                <button class="vote-button downvote {% if user_votes[comment.id] == -1 %}active{% endif %}">▼</button>
                                 <button class="reply-toggle">Reply</button>
 
                                 {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
@@ -56,8 +56,8 @@
                                     <button type="submit" onclick="return confirm('Delete this comment?')" class="delete-button">🗑 Delete</button>
                                 </form>
                                 {% endif %}
-                            </div>
-                            
+                            </div>                            
+
                             <div class="reply-drawer" style="display: none;">
                                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                                     <input type="hidden" name="parent_id" value="{{ comment.id }}">
@@ -188,6 +188,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+<script>
+    document.querySelectorAll('.vote-button').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const toolbar = button.closest('.comment-toolbar');
+            const commentId = toolbar.dataset.commentId;
+            const isUpvote = button.classList.contains('upvote');
+            const value = isUpvote ? 1 : -1;
+
+            const response = await fetch('/vote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ comment_id: commentId, value: value })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Update score
+                toolbar.querySelector('.vote-count').textContent = data.score;
+
+                // Toggle classes
+                toolbar.querySelector('.upvote').classList.remove('active');
+                toolbar.querySelector('.downvote').classList.remove('active');
+                if (data.score !== null && data.user_vote === value) {
+                    button.classList.add('active');
+                }
+            } else {
+                alert(data.error || 'Vote failed.');
+            }
+        });
+    });
+</script>
+    
 
 </main>
 {% endblock %}
