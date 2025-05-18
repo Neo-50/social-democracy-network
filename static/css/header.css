@@ -1,7 +1,8 @@
 .top-bar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
+    position: relative;
     background-color: #3d3d3d;
     color: white;
     padding: 1rem;
@@ -11,10 +12,12 @@
 
 /* Left: time + mobile buttons */
 .header-left {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 1rem;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    flex: 0 0 auto;
 }
 
 /* Center: logo and nav */
@@ -26,13 +29,15 @@
     flex: 1 1 auto;
 }
 
-/* Right: user bar */
+/* Right: user menu */
 .header-right {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    text-align: right;
-    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
 }
 
 /* Logo styling */
@@ -55,7 +60,7 @@
     background-color: #1a1a1a;
     color: white;
     text-decoration: none;
-    padding: 20px;
+    padding: 12px;
     border-radius: 4px;
     font-weight: 600;
 }
@@ -84,9 +89,10 @@
     position: absolute;
     background-color: #1a1a1a;
     border: 1px solid #444;
+    border-radius: 8px;
     padding: 10px;
     z-index: 10;
-    margin-top: 5px;
+    margin-top: 0;
 }
 
 .avatar-dropdown:hover .dropdown-menu {
