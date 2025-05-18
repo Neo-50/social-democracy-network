@@ -58,6 +58,10 @@
     height: auto;
 }
 
+.header-date-time {
+    padding-bottom: 20px;
+}
+
 /* Navigation bar */
 #main-nav {
     display: flex;
@@ -81,7 +85,7 @@
 }
 
 /* User navigation */
-.user-bar {
+.user-nav {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
@@ -93,6 +97,7 @@
     height: 32px;
     border-radius: 50%;
     cursor: pointer;
+    display: inline-block;
 }
 
 .dropdown-menu {
