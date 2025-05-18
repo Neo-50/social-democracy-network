@@ -68,10 +68,9 @@
     }
 
     #main-nav {
-        display: none;
+        display: none !important;
     }
 }
-
 
 /* Navigation bar */
 #main-nav {
