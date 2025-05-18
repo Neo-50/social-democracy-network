@@ -51,6 +51,19 @@
     gap: 8px;
 }
 
+.user-link {
+    color: #00e3ea;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background-color: #1a1a1a;
+}
+
+.user-link:hover {
+    color: #c7c7c7;
+}
+
 /* Logo styling */
 .title-image {
     max-width: 600px;
@@ -68,7 +81,7 @@
     }
 
     #main-nav {
-        display: none !important;
+        display: none;
     }
 }
 

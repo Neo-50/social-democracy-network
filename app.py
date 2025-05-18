@@ -119,6 +119,13 @@ def news():
     if request.method == 'POST':
         url = request.form['url']
         metadata = extract_metadata(url)
+        comments = NewsComment.query.all()
+
+        # Get current user's votes as a dict: {comment_id: value}
+        user_votes = {}
+        if 'user_id' in session:
+            votes = Vote.query.filter_by(user_id=session['user_id']).all()
+            user_votes = {vote.comment_id: vote.value for vote in votes}
         
         article = NewsArticle(
             url=url,
@@ -132,7 +139,7 @@ def news():
 
         db.session.add(article)
         db.session.commit()
-        return redirect(url_for('news'))
+        return render_template('news.html', comments=comments, user_votes=user_votes)
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles, is_admin=is_admin)
