@@ -72,7 +72,8 @@
 }
 
 .header-date-time {
-    padding-bottom: 20px;
+    color: #1a1a1a;
+    padding-bottom: 10px;
 }
 
 @media (max-width: 768px) {
