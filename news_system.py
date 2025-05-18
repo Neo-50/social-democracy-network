@@ -23,14 +23,18 @@ class NewsComment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     parent_id = db.Column(db.Integer, db.ForeignKey('news_comment.id'))
-    replies = db.relationship('NewsComment', backref=db.backref('parent', remote_side=[id]), lazy='selectin')
 
     replies = db.relationship(
-    'NewsComment',
-    backref=db.backref('parent', remote_side=[id]),
-    cascade='all, delete-orphan'
+        'NewsComment',
+        backref=db.backref('parent', remote_side=[id]),
+        cascade='all, delete-orphan'
     )
+
     user = db.relationship('User', backref='comments')
+
+    @property
+    def total_score(self):
+        return sum(v.value for v in self.votes)
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
