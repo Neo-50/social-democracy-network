@@ -1,12 +1,12 @@
 /* header.css: Only applies to the header section when inside base.html */
 body.has-header header {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     background-color: #3d3d3d;
     color: white;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     margin-bottom: 15px;
     position: relative;
 }
@@ -16,7 +16,7 @@ body.has-header header {
     bottom: 10px;
     left: 10px;
     font-size: 14px;
-    color: white;
+    color: #444;
     font-weight: bold;
 }
 
