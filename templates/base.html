@@ -56,14 +56,6 @@
     {% endif %}
 </head>
 
-
-<script>
-    function toggleMobileMenu() {
-        const nav = document.getElementById('main-nav');
-        nav.classList.toggle('show');
-    }
-</script>
-
 <body class="has-header">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -120,6 +112,12 @@
                 {% endif %}
             </div>
         </div>
+    </header>
+
+    <main id="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
 
     <div id="mobile-directory" class="mobile-directory">
         <div class="directory-section">
@@ -160,6 +158,12 @@
         </div>
     </div>
 
+    <script>
+    function toggleMobileMenu() {
+        const nav = document.getElementById('main-nav');
+        nav.classList.toggle('show');
+    }
+    </script>
     <script>
         function updateDateTime() {
             const currentDate = new Date();
