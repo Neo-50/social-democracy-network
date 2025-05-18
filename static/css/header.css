@@ -109,10 +109,23 @@
     padding: 10px;
     z-index: 10;
     margin-top: 0;
+    right: 0;
 }
 
 .avatar-dropdown:hover .dropdown-menu {
     display: block;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px;
+    color: #00e3ea;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.dropdown-menu a:hover {
+    background-color: #444;
 }
 
 /* Mobile controls */
