@@ -55,12 +55,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
     {% endif %}
 </head>
+
+
 <script>
     function toggleMobileMenu() {
         const nav = document.getElementById('main-nav');
         nav.classList.toggle('show');
     }
-</script>    
+</script>
+
 <body class="has-header">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -75,82 +78,87 @@
             </div>
         {% endif %}
     {% endwith %}
-
-    <header>
-        <div class="header-date-time" id="date-time"></div>
-        <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">
-    </header>
-    <div class="mobile-top-bar">
-        <div class="mobile-menu-icon" onclick="toggleMobileMenu()">☰</div>
-        <button class="directory-button" onclick="toggleDirectory()">Directory</button>
-    </div>
-    <div class="user-bar">
-        {% if session.get('user_id') %}
-        <div class="user-nav">
-            <span class="username">{{ current_user.username }}</span>
-            <div class="avatar-dropdown">
-                <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
-                class="avatar-inline" alt="User Avatar">
-                <div class="dropdown-menu">
-                    <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
-                    <a href="{{ url_for('logout') }}">Logout</a>
+    <header class="top-bar">
+        <div class="header-left">
+            <div class="header-date-time" id="date-time"></div>
+                <div class="mobile-top-bar">
+                    <div class="mobile-menu-icon" onclick="toggleMobileMenu()">☰</div>
+                    <button class="directory-button" onclick="toggleDirectory()">Directory</button>
                 </div>
+        </div>
+
+        <div class="header-center">
+            <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">
+            <nav id="main-nav">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('news') }}">News</a>
+                <a href="{{ url_for('activism') }}">Activism</a>
+                <a href="{{ url_for('environment') }}">Environment</a>
+                <a href="{{ url_for('veganism') }}">Veganism</a>
+                <a href="{{ url_for('forum') }}">Forum</a>
+                <a href="{{ url_for('about') }}">About</a>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            <div class="user-bar">
+                {% if session.get('user_id') %}
+                <div class="user-nav">
+                    <span class="username">{{ current_user.username }}</span>
+                    <div class="avatar-dropdown">
+                        <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
+                        class="avatar-inline" alt="User Avatar">
+                        <div class="dropdown-menu">
+                            <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
+                            <a href="{{ url_for('logout') }}">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="user-nav">
+                    <a href="{{ url_for('login') }}" class="user-link">Login</a>
+                    <span class="divider">|</span>
+                    <a href="{{ url_for('register') }}" class="user-link">Sign Up</a>
+                </div>
+                {% endif %} 
             </div>
         </div>
-        {% else %}
-        <div class="user-nav">
-            <a href="{{ url_for('login') }}" class="user-link">Login</a>
-            <span class="divider">|</span>
-            <a href="{{ url_for('register') }}" class="user-link">Sign Up</a>
-        </div>
-        {% endif %} 
-    </div>
-
-    <nav id="main-nav">
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('news') }}">News</a>
-        <a href="{{ url_for('activism') }}">Activism</a>
-	    <a href="{{ url_for('environment') }}">Environment</a>
-	    <a href="{{ url_for('veganism') }}">Veganism</a>
-        <a href="{{ url_for('forum') }}">Forum</a>
-        <a href="{{ url_for('about') }}">About</a>
-    </nav>
     <div id="mobile-directory" class="mobile-directory">
         <div class="directory-section">
-        <strong>Links</strong>
-        <ul>
-            <li><a href="https://www.fiftyfifty.one/" target="_blank">50501 Movement</a></li>
-            <li><a href="https://indivisible.org/" target="_blank">Indivisible</a></li>
-            <li><a href="https://indivisiblecolorado.net/" target="_blank">Indivisible Colorado</a></li>
-            <li><a href="https://www.democracynow.org" target="_blank">Democracy Now</a></li>
-            <li><a href="https://www.statuscoup.com/" target="_blank">Status Coup</a></li>
-            <li><a href="https://electiontruthalliance.org/" target="_blank">Election Truth Alliance</a></li>
-            <li><a href="https://www.propublica.org/" target="_blank">ProPublica</a></li>
-            <li><a href="https://www.citizen.org/" target="_blank">Public Citizen</a></li>
-            <li><a href="https://www.npr.org/" target="_blank">National Public Radio (NPR)</a></li>
-            <li><a href="https://www.democracydocket.com/" target="_blank">Democracy Docket</a></li>
-            <li><a href="https://www.aclu.org/" target="_blank">ACLU</a></li>
-            <li><a href="https://www.amnesty.org/en/" target="_blank">Amnesty International</a></li>
-            <li><a href="https://www.hrw.org/" target="_blank">Human Rights Watch</a></li>
-            <li><a href="https://www.btselem.org/" target="_blank">B'Tselem</a></li>
-            <li><a href="https://www.opensecrets.org/" target="_blank">Open Secrets</a></li>
-            <li><a href="https://www.trackaipac.com/" target="_blank">AIPAC Tracker</a></li>
-            <li><a href="https://www.pewresearch.org/" target="_blank">Pew Research Center</a></li>
-            <li><a href="https://insideclimatenews.org/" target="_blank">Inside Climate News</a></li>
-            <li><a href="https://www.brennancenter.org/" target="_blank">Brennan Center For Justice</a></li>
-            <li><a href="https://www.splcenter.org/" target="_blank">Southern Poverty Law Center</a></li>
-            <li><a href="https://www.poliscore.us" target="_blank">Poliscore</a></li>
-        </ul>
+            <strong>Links</strong>
+            <ul>
+                <li><a href="https://www.fiftyfifty.one/" target="_blank">50501 Movement</a></li>
+                <li><a href="https://indivisible.org/" target="_blank">Indivisible</a></li>
+                <li><a href="https://indivisiblecolorado.net/" target="_blank">Indivisible Colorado</a></li>
+                <li><a href="https://www.democracynow.org" target="_blank">Democracy Now</a></li>
+                <li><a href="https://www.statuscoup.com/" target="_blank">Status Coup</a></li>
+                <li><a href="https://electiontruthalliance.org/" target="_blank">Election Truth Alliance</a></li>
+                <li><a href="https://www.propublica.org/" target="_blank">ProPublica</a></li>
+                <li><a href="https://www.citizen.org/" target="_blank">Public Citizen</a></li>
+                <li><a href="https://www.npr.org/" target="_blank">National Public Radio (NPR)</a></li>
+                <li><a href="https://www.democracydocket.com/" target="_blank">Democracy Docket</a></li>
+                <li><a href="https://www.aclu.org/" target="_blank">ACLU</a></li>
+                <li><a href="https://www.amnesty.org/en/" target="_blank">Amnesty International</a></li>
+                <li><a href="https://www.hrw.org/" target="_blank">Human Rights Watch</a></li>
+                <li><a href="https://www.btselem.org/" target="_blank">B'Tselem</a></li>
+                <li><a href="https://www.opensecrets.org/" target="_blank">Open Secrets</a></li>
+                <li><a href="https://www.trackaipac.com/" target="_blank">AIPAC Tracker</a></li>
+                <li><a href="https://www.pewresearch.org/" target="_blank">Pew Research Center</a></li>
+                <li><a href="https://insideclimatenews.org/" target="_blank">Inside Climate News</a></li>
+                <li><a href="https://www.brennancenter.org/" target="_blank">Brennan Center For Justice</a></li>
+                <li><a href="https://www.splcenter.org/" target="_blank">Southern Poverty Law Center</a></li>
+                <li><a href="https://www.poliscore.us" target="_blank">Poliscore</a></li>
+            </ul>
         </div>
         <div class="directory-section">
-        <strong>Discord</strong>
-        <ul>
-            <li><a href="https://disboard.org/server/522729862469910528" target="_blank">Social Democracy Network</a></li>
-            <li><a href="https://discord.gg/50501">50501 Movement</a></li>
-            <li><a href="https://discord.com/invite/DZcYXhy" target="_blank">David Pakman Show</a></li>
-            <li><a href="https://discord.gg/VYdA43v" target="_blank">Secular Talk</a></li>
-            <li><a href="http://majoritydiscord.com/" target="_blank">Majority Report</a></li>
-        </ul>
+            <strong>Discord</strong>
+            <ul>
+                <li><a href="https://disboard.org/server/522729862469910528" target="_blank">Social Democracy Network</a></li>
+                <li><a href="https://discord.gg/50501">50501 Movement</a></li>
+                <li><a href="https://discord.com/invite/DZcYXhy" target="_blank">David Pakman Show</a></li>
+                <li><a href="https://discord.gg/VYdA43v" target="_blank">Secular Talk</a></li>
+                <li><a href="http://majoritydiscord.com/" target="_blank">Majority Report</a></li>
+            </ul>
         </div>
     </div>
 
