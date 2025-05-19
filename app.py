@@ -116,12 +116,6 @@ def about():
 
 @app.route('/news', methods=['GET', 'POST'])
 def news():
-    # Get current user's votes as a dict: {comment_id: value}
-    user_votes = {}
-    if 'user_id' in session:
-        votes = Vote.query.filter_by(user_id=session['user_id']).all()
-        user_votes = {vote.comment_id: vote.value for vote in votes}
-
     if request.method == 'POST':
         url = request.form['url']
         metadata = extract_metadata(url)
@@ -137,10 +131,10 @@ def news():
         )
         db.session.add(article)
         db.session.commit()
-        return render_template('news.html', comments=comments, user_votes=user_votes)
+        return render_template('news.html', comments=comments)
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
-    return render_template('news.html', articles=articles, is_admin=is_admin, user_votes=user_votes)
+    return render_template('news.html', articles=articles, is_admin=is_admin)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -311,38 +305,6 @@ def logout():
     session.clear()
     flash('Logged out.')
     return redirect(url_for('news'))
-
-@app.route('/vote', methods=['POST'])
-@login_required
-def vote():
-    data = request.get_json()
-    comment_id = data.get('comment_id')
-    value = data.get('value')  # Should be +1 or -1
-    user_id = session['user_id']
-
-    if value not in [1, -1]:
-        return jsonify({'error': 'Invalid vote value'}), 400
-
-    existing_vote = Vote.query.filter_by(user_id=user_id, comment_id=comment_id).first()
-
-    if existing_vote:
-        if existing_vote.value == value:
-            # Unvote (toggle off)
-            db.session.delete(existing_vote)
-        else:
-            # Switch vote
-            existing_vote.value = value
-    else:
-        # New vote
-        new_vote = Vote(user_id=user_id, comment_id=comment_id, value=value)
-        db.session.add(new_vote)
-
-    db.session.commit()
-
-    # Return new total score
-    total_score = db.session.query(db.func.sum(Vote.value)).filter_by(comment_id=comment_id).scalar() or 0
-    return jsonify({'score': total_score})
-
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required
