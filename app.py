@@ -146,14 +146,14 @@ def profile():
         return redirect(url_for('login'))
 
     user = db.session.get(User, session['user_id'])
+    file = request.files.get('avatar')
 
-    if request.method == 'POST':
-        # Handle avatar upload
-        file = request.files.get('avatar')
-        if file and allowed_file(file.filename):
+    if file and file.filename:
+        if allowed_file(file.filename):
             file.seek(0, os.SEEK_END)
             file_size = file.tell()
             file.seek(0)
+
             if file_size > MAX_FILE_SIZE:
                 flash("Avatar image is too large (max 2MB).")
                 return redirect(request.url)
@@ -163,13 +163,11 @@ def profile():
             path = os.path.join('/mnt/storage/avatars', filename)
             file.save(path)
             user.avatar_filename = filename
-            db.session.commit()
-
-        elif file and file.filename:
+        else:
             flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
             return redirect(request.url)
 
-        # Update bio
+        # Always update the bio (even if no image was uploaded)
         user.bio = request.form.get('bio', '')
         db.session.commit()
         flash("Profile updated.")
