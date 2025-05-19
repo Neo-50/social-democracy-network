@@ -48,13 +48,16 @@
     background-color: #1a1a1a;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 999px;
     font-size: 16px;
     box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s ease;
 }
 
 .news-left button[type="submit"]{
     padding: 5px 15px;
+    font-weight: 600;
     margin-left: 0px;
     margin-top: 10px;
     background-color: #1a1a1a;
