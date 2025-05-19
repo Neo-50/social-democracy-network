@@ -85,17 +85,21 @@
 
 .news-right button {
     font-size: 1em;
-    padding: 5px;
-    margin: 0; /* neutralize vertical misalignment */
-    background-color: #1f1f1f;
-    color: white;
+    padding: 10px;
+    margin: 0;
+    background-color: #1a1a1a;
+    color: 00e3ea;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
+.news-right button:hover {
+    color: #c7c7c7;
+}
+
 .news-row {
-    margin-bottom: 40px; /* or 30px, depending on what looks best */
+    margin-bottom: 40px;
 }
 
 .news-title a {
