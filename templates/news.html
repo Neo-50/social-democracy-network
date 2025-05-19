@@ -46,7 +46,7 @@
                             </div>
                             
                             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                                <button class="newsfeed-button">Reply</button>
+                                <button class="newsfeed-button reply-toggle">Reply</button>
 
                                 {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
                                 <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="delete-form">
