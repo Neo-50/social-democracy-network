@@ -83,21 +83,6 @@
     box-sizing: border-box;
 }
 
-.news-right button {
-    font-size: 1em;
-    padding: 10px;
-    margin: 0;
-    background-color: #1a1a1a;
-    color: #00e3ea;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.news-right button:hover {
-    color: #c7c7c7;
-}
-
 .news-row {
     margin-bottom: 40px;
 }
@@ -218,24 +203,18 @@
     color: #ccc;
 }
 
-.vote-button,
 .reply-toggle {
-    background-color: #1f1f1f;
-    border: none;
-    color: #ccc;
-    padding: 5px !important;
+    background-color: #1a1a1a;
+    border: 2px solid #00e3ea;
+    color: #00e3ea;
+    padding: 20px;
     font-size: 1em;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.2s;
+    border-radius: 8px;
 }
 
-.vote-button:hover,
 .reply-toggle:hover {
-    color: #fff;
-    background-color: #333;
+    color: #FFFCC1;
 }
-
 
 .vote-count {
     min-width: 20px;
