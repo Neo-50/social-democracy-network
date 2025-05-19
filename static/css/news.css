@@ -210,7 +210,7 @@
     color: #ccc;
 }
 
-.reply-toggle {
+.newsfeed-button {
     background-color: #1a1a1a;
     border: 3px solid #00e3ea;
     color: #00e3ea;
@@ -223,7 +223,7 @@
     display: inline-block;
 }
 
-.reply-toggle:hover {
+.newsfeed-button:hover {
     color: white;
 }
 

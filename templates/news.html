@@ -46,7 +46,7 @@
                             </div>
                             
                             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                                <button class="reply-toggle">Reply</button>
+                                <button class="newsfeed-button">Reply</button>
 
                                 {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
                                 <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}" class="delete-form">
@@ -59,7 +59,7 @@
                                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                                     <input type="hidden" name="parent_id" value="{{ comment.id }}">
                                     <textarea name="content" placeholder="Write a reply..." required></textarea>
-                                    <button type="submit">Submit</button>
+                                    <button type="submit" class="newsfeed-button">Submit</button>
                                     <button type="button" class="cancel-reply">Cancel</button>
                                 </form>
                             </div>
@@ -86,7 +86,7 @@
                                         <p>{{ reply.content }}</p>
                                     </div>
                                     <div class="comment-toolbar">
-                                        <button class="reply-toggle">Reply</button>
+                                        <button class="newsfeed-button reply-toggle">Reply</button>
 
                                         {% if session.get('user_id') and (session['user_id'] == reply.user_id or is_admin()) %}
                                         <form method="POST" action="{{ url_for('delete_comment', comment_id=reply.id) }}" class="delete-form">
@@ -98,8 +98,8 @@
                                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                                             <input type="hidden" name="parent_id" value="{{ reply.id }}">
                                             <textarea name="content" placeholder="Write a reply..." required></textarea>
-                                            <button class="reply-toggle">Submit</button>
-                                            <button class="reply-toggle" class="cancel-reply">Cancel</button>
+                                            <button class="newsfeed-button">Submit</button>
+                                            <button class="newsfeed-button cancel-reply">Cancel</button>
                                         </form>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                             <button type="submit" class="post-comment">Post Comment</button>
                         </form>
                         {% else %}
-                        <p><a href="{{ url_for('login') }}" class="reply-toggle">Log in</a> to comment.</p>
+                        <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
                         {% endif %}
                     </div>
                 </div>
