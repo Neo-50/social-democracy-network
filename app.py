@@ -211,10 +211,9 @@ def register():
         from utils.email import send_verification_email
         send_verification_email(user, mail)
 
-        session['user_id'] = user.id
-        session['username'] = user.username
-        flash('Registration successful, verification email sent.')
-        return redirect(url_for('register'))
+
+        flash('Registration successful. Please check your email to verify your account.', 'info')
+        return redirect(url_for('login'))
 
     return render_template('register.html')
 
