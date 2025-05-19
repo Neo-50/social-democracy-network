@@ -45,7 +45,7 @@ MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 # Flask config (optional fallback, not enforced unless you hook into it)
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
-from news_system import NewsArticle, NewsComment, Vote
+from news_system import NewsArticle, NewsComment
 migrate = Migrate(app, db)
 
 class User(db.Model):
