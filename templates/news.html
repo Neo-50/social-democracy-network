@@ -46,7 +46,7 @@
                             </div>
                             
                             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                                <button class="vote-button upvote {% if user_votes[comment.id] == 1 %}active{% endif %}">▲</button>
+                                <button class="vote-button upvote {% if user_votes.get(comment.id) == 1 %}active{% endif %}">▲</button>
                                 <span class="vote-count">{{ comment.total_score }}</span>
                                 <button class="vote-button downvote {% if user_votes[comment.id] == -1 %}active{% endif %}">▼</button>
                                 <button class="reply-toggle">Reply</button>
@@ -154,72 +154,52 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.vote-button').forEach(button => {
-        button.addEventListener('click', async () => {
-            const isUpvote = button.classList.contains('upvote');
-            const wrapper = button.closest('.comment, .reply');
-            const commentId = wrapper.dataset.commentId;
-            const voteValue = isUpvote ? 1 : -1;
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.vote-button').forEach(button => {
+            button.addEventListener('click', async () => {
+                const toolbar = button.closest('.comment-toolbar');
+                const wrapper = button.closest('.comment, .reply');
+                const commentId = wrapper.dataset.commentId || toolbar.dataset.commentId;
+                const isUpvote = button.classList.contains('upvote');
+                const value = isUpvote ? 1 : -1;
 
-            try {
-                const response = await fetch('/vote', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        comment_id: commentId,
-                        value: voteValue
-                    })
-                });
+                try {
+                    const response = await fetch('/vote', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            comment_id: commentId,
+                            value: value
+                        })
+                    });
 
-                const result = await response.json();
+                    const data = await response.json();
 
-                if (response.ok) {
-                    wrapper.querySelector('.vote-count').textContent = result.score;
-                } else if (result.error) {
-                    alert(result.error);  // e.g. "Invalid vote value"
+                    if (response.ok) {
+                        // Update score
+                        wrapper.querySelector('.vote-count').textContent = data.score;
+
+                        // Toggle active state
+                        toolbar.querySelector('.upvote').classList.remove('active');
+                        toolbar.querySelector('.downvote').classList.remove('active');
+
+                        if (data.user_vote === 1) {
+                            toolbar.querySelector('.upvote').classList.add('active');
+                        } else if (data.user_vote === -1) {
+                            toolbar.querySelector('.downvote').classList.add('active');
+                        }
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                } catch (error) {
+                    alert("Please log in to vote.");
                 }
-            } catch (error) {
-                alert("Please log in to vote.");
-            }
-        });
-    });
-});
-</script>
-<script>
-    document.querySelectorAll('.vote-button').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            const toolbar = button.closest('.comment-toolbar');
-            const commentId = toolbar.dataset.commentId;
-            const isUpvote = button.classList.contains('upvote');
-            const value = isUpvote ? 1 : -1;
-
-            const response = await fetch('/vote', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ comment_id: commentId, value: value })
             });
-
-            const data = await response.json();
-            if (response.ok) {
-                // Update score
-                toolbar.querySelector('.vote-count').textContent = data.score;
-
-                // Toggle classes
-                toolbar.querySelector('.upvote').classList.remove('active');
-                toolbar.querySelector('.downvote').classList.remove('active');
-                if (data.score !== null && data.user_vote === value) {
-                    button.classList.add('active');
-                }
-            } else {
-                alert(data.error || 'Vote failed.');
-            }
         });
     });
-</script>
-    
+</script>    
 
 </main>
 {% endblock %}
