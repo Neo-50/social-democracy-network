@@ -73,7 +73,7 @@
     
     <header class="top-bar">
         <div class="header-left">
-            <div class="header-date-time" id="date-time"></div>
+            <div class="header-date-time" id="date"></div>
             <div class="mobile-top-bar">
                 <div class="mobile-menu-icon" onclick="toggleMobileMenu()">☰</div>
                 <button class="directory-button" onclick="toggleDirectory()">Directory</button>
@@ -158,51 +158,42 @@
     </div>
 
     <script>
-    function toggleMobileMenu() {
-        const nav = document.getElementById('main-nav');
-        nav.classList.toggle('show');
-    }
+        function toggleMobileMenu() {
+            const nav = document.getElementById('main-nav');
+            nav.classList.toggle('show');
+        }
     </script>
     <script>
-        function updateDateTime() {
+        function updateDate() {
             const currentDate = new Date();
-    
-            // Custom formatting for "11:26PM Tuesday, April 29, 2025"
+
+            // Format: "Tuesday, April 29, 2025"
             const options = {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric'
             };
-    
-            // Get the formatted time first, then day and date
-            const formattedTime = currentDate.toLocaleString('en-US', options);
-            
-            // Format the string as "11:26PM Tuesday, April 29, 2025"
-            const formattedDate = formattedTime.replace(',', '').replace(' at', '');
-    
-            // Set the content of the date-time div
-            document.getElementById('date-time').textContent = formattedDate;
+
+            const formattedDate = currentDate.toLocaleString('en-US', options);
+            document.getElementById('date').textContent = formattedDate;
         }
-    
-        // Call the function to update the date and time when the page loads
-        updateDateTime();
+        
+            // Call the function to update the date when the page loads
+            updateDate();
 
         function toggleMobileMenu() {
             const nav = document.getElementById('main-nav');
             nav.classList.toggle('show');
         }
-        document.addEventListener("DOMContentLoaded", function () {
-            if (window.innerWidth <= 768) {
-                const title = document.querySelector(".site-title");
-                if (title) {
-                    title.textContent = "Social Democracy Network";
+            document.addEventListener("DOMContentLoaded", function () {
+                if (window.innerWidth <= 768) {
+                    const title = document.querySelector(".site-title");
+                    if (title) {
+                        title.textContent = "Social Democracy Network";
+                    }
                 }
-            }
-        });
+            });
 
         function toggleDirectory() {
             const dir = document.getElementById('mobile-directory');
