@@ -55,8 +55,8 @@
     color: #00e3ea;
     text-decoration: none;
     font-weight: 600;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
+    padding: 5px 15px;
+    border-radius: 999px;
     background-color: #1a1a1a;
 }
 
@@ -105,8 +105,8 @@
     background-color: #1a1a1a;
     color: white;
     text-decoration: none;
-    padding: 12px;
-    border-radius: 4px;
+    padding: 5px 15px;
+    border-radius: 999px;
     font-weight: 600;
 }
 

@@ -54,7 +54,7 @@
 }
 
 .news-left button[type="submit"]{
-    padding: 15px;
+    padding: 5px 15px;
     margin-left: 0px;
     margin-top: 10px;
     background-color: #1a1a1a;
@@ -211,7 +211,7 @@
     background-color: #1a1a1a;
     border: 4px solid #00e3ea;
     color: #00e3ea;
-    padding: 20px;
+    padding: 5px 15px;
     font-size: 1em;
     border-radius: 999px;
     cursor: pointer;
