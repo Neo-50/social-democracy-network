@@ -98,8 +98,8 @@
                                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                                             <input type="hidden" name="parent_id" value="{{ reply.id }}">
                                             <textarea name="content" placeholder="Write a reply..." required></textarea>
-                                            <button type="reply-toggle">Submit</button>
-                                            <button type="reply-toggle" class="cancel-reply">Cancel</button>
+                                            <button class="reply-toggle">Submit</button>
+                                            <button class="reply-toggle" class="cancel-reply">Cancel</button>
                                         </form>
                                     </div>
                                 </div>
