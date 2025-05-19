@@ -21,6 +21,7 @@ class NewsComment(db.Model):
 
     article_id = db.Column(db.Integer, db.ForeignKey('news_article.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    votes = db.relationship('Vote', backref='comment', cascade='all, delete-orphan', passive_deletes=True)
 
     parent_id = db.Column(db.Integer, db.ForeignKey('news_comment.id'))
 
@@ -39,7 +40,7 @@ class NewsComment(db.Model):
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    comment_id = db.Column(db.Integer, db.ForeignKey('news_comment.id'), nullable=False)
+    comment_id = db.Column(db.Integer, db.ForeignKey('news_comment.id', ondelete='CASCADE'), nullable=False)
     value = db.Column(db.Integer, nullable=False)  # +1 for upvote, -1 for downvote
 
     user = db.relationship('User', backref='votes')
