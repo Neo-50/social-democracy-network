@@ -10,7 +10,7 @@
                 {{ user.username }}
             </h2>
 
-            <p><strong>Bio:</strong> {{ current_user.bio or 'No bio yet.' }}</p>
+            <p><strong>Bio:</strong> {{ user.bio or 'No bio yet.' }}</p>
         </div>
         <div class="profile-actions">
             <form method="POST" enctype="multipart/form-data">
