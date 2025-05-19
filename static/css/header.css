@@ -51,6 +51,12 @@
     gap: 8px;
 }
 
+.username {
+    color: #8a8a8a;
+    font-weight: 600;
+    font-size: 14pt;
+}
+
 .user-link {
     color: #00e3ea;
     text-decoration: none;
