@@ -98,8 +98,8 @@
                                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                                             <input type="hidden" name="parent_id" value="{{ reply.id }}">
                                             <textarea name="content" placeholder="Write a reply..." required></textarea>
-                                            <button type="submit">Submit</button>
-                                            <button type="button" class="cancel-reply">Cancel</button>
+                                            <button type="reply-toggle">Submit</button>
+                                            <button type="reply-toggle" class="cancel-reply">Cancel</button>
                                         </form>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                             <button type="submit" class="post-comment">Post Comment</button>
                         </form>
                         {% else %}
-                        <p><a href="{{ url_for('login') }}">Log in</a> to comment.</p>
+                        <p><a href="{{ url_for('login') }}" class="reply-toggle">Log in</a> to comment.</p>
                         {% endif %}
                     </div>
                 </div>
