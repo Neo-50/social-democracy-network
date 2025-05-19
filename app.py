@@ -142,7 +142,7 @@ def news():
         return render_template('news.html', comments=comments, user_votes=user_votes)
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
-    return render_template('news.html', articles=articles, is_admin=is_admin)
+    return render_template('news.html', articles=articles, is_admin=is_admin, user_votes=user_votes)
 
 def allowed_file(filename):
     return '.' in filename and \
