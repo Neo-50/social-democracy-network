@@ -58,6 +58,7 @@
 
 .news-left button[type="submit"]{
     padding: 10px 20px;
+    font-size: 12pt;
     font-weight: 600;
     margin-left: 10px;
     margin-top: 10px;
@@ -129,11 +130,6 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0;
-}
-
-.username {
-    color: #8a8a8a; /* light blue – adjust to your theme */
-    font-weight: bold;
 }
 
 .delete-form {
