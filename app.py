@@ -148,24 +148,25 @@ def profile():
     user = db.session.get(User, session['user_id'])
     file = request.files.get('avatar')
 
-    if file and file.filename:
-        if allowed_file(file.filename):
-            file.seek(0, os.SEEK_END)
-            file_size = file.tell()
-            file.seek(0)
+    if request.method == 'POST':
+        if file and file.filename:
+            if allowed_file(file.filename):
+                file.seek(0, os.SEEK_END)
+                file_size = file.tell()
+                file.seek(0)
 
-            if file_size > MAX_FILE_SIZE:
-                flash("Avatar image is too large (max 2MB).")
+                if file_size > MAX_FILE_SIZE:
+                    flash("Avatar image is too large (max 2MB).")
+                    return redirect(request.url)
+
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"{user.username}.{ext}"
+                path = os.path.join('/mnt/storage/avatars', filename)
+                file.save(path)
+                user.avatar_filename = filename
+            else:
+                flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
                 return redirect(request.url)
-
-            ext = file.filename.rsplit('.', 1)[1].lower()
-            filename = f"{user.username}.{ext}"
-            path = os.path.join('/mnt/storage/avatars', filename)
-            file.save(path)
-            user.avatar_filename = filename
-        else:
-            flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
-            return redirect(request.url)
 
         # Always update the bio (even if no image was uploaded)
         user.bio = request.form.get('bio', '')
@@ -173,7 +174,7 @@ def profile():
         flash("Profile updated.")
         return redirect(url_for('profile'))
 
-    return render_template('profile.html', user=user)
+    return render_template('profile.html', user=user)  # <== Needed for GET
 
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
