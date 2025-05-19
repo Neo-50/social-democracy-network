@@ -60,6 +60,10 @@
     background-color: #1a1a1a;
 }
 
+.user-link:first-of-type {
+    margin-right: 8px;
+}
+
 .user-link:hover {
     color: #c7c7c7;
 }
