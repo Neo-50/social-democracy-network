@@ -55,7 +55,7 @@
     color: #00e3ea;
     text-decoration: none;
     font-weight: 600;
-    padding: 5px 15px;
+    padding: 10px 20px;
     border-radius: 999px;
     background-color: #1a1a1a;
 }
@@ -78,7 +78,7 @@
 .header-date-time {
     color: black;
     font-weight: 600;
-    font-size: 10pt;
+    font-size: 12pt;
     padding-bottom: 40px;
 }
 
@@ -105,7 +105,7 @@
     background-color: #1a1a1a;
     color: white;
     text-decoration: none;
-    padding: 5px 15px;
+    padding: 10px 20px;
     border-radius: 999px;
     font-weight: 600;
 }
