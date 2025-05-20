@@ -10,6 +10,7 @@ from utils.metadata_scraper import extract_metadata
 from db_init import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import RequestEntityTooLarge
 from utils.email import confirm_verification_token, send_verification_email
 
 app = Flask(__name__)
@@ -20,6 +21,9 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
 app.config['MAIL_PASSWORD'] = 'fluFfy4ferrEt$areNice9'  # use Zoho app password here
 app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
+
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2 MB limit
+
 
 mail = Mail(app)
 
@@ -151,14 +155,6 @@ def profile():
     if request.method == 'POST':
         if file and file.filename:
             if allowed_file(file.filename):
-                file.seek(0, os.SEEK_END)
-                file_size = file.tell()
-                file.seek(0)
-
-                if file_size > MAX_FILE_SIZE:
-                    flash("Avatar image is too large (max 2MB).")
-                    return redirect(request.url)
-
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"{user.username}.{ext}"
                 path = os.path.join('/mnt/storage/avatars', filename)
@@ -168,13 +164,17 @@ def profile():
                 flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
                 return redirect(request.url)
 
-        # Always update the bio (even if no image was uploaded)
         user.bio = request.form.get('bio', '')
         db.session.commit()
         flash("Profile updated.")
         return redirect(url_for('profile'))
 
     return render_template('profile.html', user=user)  # <== Needed for GET
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_large_file(e):
+    flash("File is too large. Max size is 2MB.")
+    return redirect(request.url)
 
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
