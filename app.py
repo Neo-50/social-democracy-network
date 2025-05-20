@@ -22,7 +22,7 @@ app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
 app.config['MAIL_PASSWORD'] = 'fluFfy4ferrEt$areNice9'  # use Zoho app password here
 app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
 
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2 MB limit
+app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
 
 
 mail = Mail(app)
@@ -139,6 +139,10 @@ def news():
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles, is_admin=is_admin)
+
+@app.before_request
+def log_incoming_request():
+    print("Request received:", request.method, request.path)
 
 def allowed_file(filename):
     return '.' in filename and \
