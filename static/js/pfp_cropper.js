@@ -40,20 +40,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             cropBox.style.borderRadius = '50%';
                             viewBox.style.borderRadius = '50%';
                         }
-                        const zoomSlider = document.getElementById("zoomSlider");
-                        if (zoomSlider) {
-                            zoomSlider.addEventListener("input", () => {
-                                const zoomLevel = parseFloat(zoomSlider.value);
-                                cropper.zoomTo(zoomLevel);
-                            });
-                        }
-
                     }
                 });
 
             };
             reader.readAsDataURL(file);
-            zoomSlider.value = 1;
         }
     });
 
