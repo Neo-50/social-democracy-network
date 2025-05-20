@@ -158,6 +158,14 @@ def profile():
 
     if request.method == 'POST':
         if file and file.filename:
+            file.seek(0, os.SEEK_END)
+            file_size = file.tell()
+            file.seek(0)
+
+            if file_size > MAX_FILE_SIZE:
+                flash("Avatar image is too large (max 2MB).")
+                return redirect(request.url)
+
             if allowed_file(file.filename):
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"{user.username}.{ext}"
