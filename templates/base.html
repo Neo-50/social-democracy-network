@@ -1,6 +1,7 @@
 <!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,24 +54,27 @@
 
     {% if request.endpoint == 'profile' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cropper.min.css') }}">
     {% endif %}
+
+
 </head>
 
 <body class="has-header">
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="flashes">
-            {% for category, message in messages %}
-                {% if message %}
-                <div class="flash-message flash-{{ category }}">
-                    {{ message }}
-                </div>
-                {% endif %}
-            {% endfor %}
-            </div>
+    {% if messages %}
+    <div class="flashes">
+        {% for category, message in messages %}
+        {% if message %}
+        <div class="flash-message flash-{{ category }}">
+            {{ message }}
+        </div>
         {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
     {% endwith %}
-    
+
     <header class="top-bar">
         <div class="header-left">
             <div class="header-date-time" id="date"></div>
@@ -96,18 +100,18 @@
         <div class="header-right">
             <div class="user-nav">
                 {% if session.get('user_id') %}
-                    <span class="username">{{ current_user.username }}</span>
-                    <div class="avatar-dropdown">
-                        <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
-                            class="avatar-inline" alt="User Avatar">
-                        <div class="dropdown-menu">
-                            <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
-                            <a href="{{ url_for('logout') }}">Logout</a>
-                        </div>
+                <span class="username">{{ current_user.username }}</span>
+                <div class="avatar-dropdown">
+                    <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
+                        class="avatar-inline" alt="User Avatar">
+                    <div class="dropdown-menu">
+                        <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
+                        <a href="{{ url_for('logout') }}">Logout</a>
                     </div>
+                </div>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="user-link">Login</a>
-                    <a href="{{ url_for('register') }}" class="user-link">Sign Up</a>
+                <a href="{{ url_for('login') }}" class="user-link">Login</a>
+                <a href="{{ url_for('register') }}" class="user-link">Sign Up</a>
                 {% endif %}
             </div>
         </div>
@@ -148,7 +152,8 @@
         <div class="directory-section">
             <strong>Discord</strong>
             <ul>
-                <li><a href="https://disboard.org/server/522729862469910528" target="_blank">Social Democracy Network</a></li>
+                <li><a href="https://disboard.org/server/522729862469910528" target="_blank">Social Democracy
+                        Network</a></li>
                 <li><a href="https://discord.gg/50501">50501 Movement</a></li>
                 <li><a href="https://discord.com/invite/DZcYXhy" target="_blank">David Pakman Show</a></li>
                 <li><a href="https://discord.gg/VYdA43v" target="_blank">Secular Talk</a></li>
@@ -178,22 +183,22 @@
             const formattedDate = currentDate.toLocaleString('en-US', options);
             document.getElementById('date').textContent = formattedDate;
         }
-        
-            // Call the function to update the date when the page loads
-            updateDate();
+
+        // Call the function to update the date when the page loads
+        updateDate();
 
         function toggleMobileMenu() {
             const nav = document.getElementById('main-nav');
             nav.classList.toggle('show');
         }
-            document.addEventListener("DOMContentLoaded", function () {
-                if (window.innerWidth <= 768) {
-                    const title = document.querySelector(".site-title");
-                    if (title) {
-                        title.textContent = "Social Democracy Network";
-                    }
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.innerWidth <= 768) {
+                const title = document.querySelector(".site-title");
+                if (title) {
+                    title.textContent = "Social Democracy Network";
                 }
-            });
+            }
+        });
 
         function toggleDirectory() {
             const dir = document.getElementById('mobile-directory');
@@ -206,4 +211,5 @@
         }, 4000);
     </script>
 </body>
+
 </html>
