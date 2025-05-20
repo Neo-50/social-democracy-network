@@ -25,17 +25,35 @@ document.addEventListener("DOMContentLoaded", function () {
                     aspectRatio: 1,
                     viewMode: 1,
                     dragMode: 'move',
-                    guides: false,
-                    center: true,
-                    highlight: false,
+                    autoCropArea: 1,
+                    responsive: true,
                     background: false,
+                    guides: false,
+                    highlight: false,
                     cropBoxMovable: false,
-                    cropBoxResizable: false,
-                    movable: true,
-                    zoomable: true
+                    cropBoxResizable: true,
+                    ready() {
+                        // Add a circular mask via CSS
+                        const cropBox = document.querySelector('.cropper-crop-box');
+                        const viewBox = document.querySelector('.cropper-view-box');
+                        if (cropBox && viewBox) {
+                            cropBox.style.borderRadius = '50%';
+                            viewBox.style.borderRadius = '50%';
+                        }
+                        const zoomSlider = document.getElementById("zoomSlider");
+                        if (zoomSlider) {
+                            zoomSlider.addEventListener("input", () => {
+                                const zoomLevel = parseFloat(zoomSlider.value);
+                                cropper.zoomTo(zoomLevel);
+                            });
+                        }
+
+                    }
                 });
+
             };
             reader.readAsDataURL(file);
+            zoomSlider.value = 1;
         }
     });
 
