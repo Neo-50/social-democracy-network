@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
@@ -40,6 +40,7 @@ def login_required(f):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 db.init_app(app)
 
 # Constants
@@ -300,7 +301,7 @@ def login():
             if not user.email_verified:
                 flash('Please verify your email before logging in.', 'warning')
                 return redirect(url_for('login'))
-
+            session.permanent = True
             session['user_id'] = user.id
             session['username'] = user.username
             flash('Logged in successfully!')
