@@ -1,93 +1,38 @@
-// static/js/pfp_cropper.js
-
-// Ensure DOM is fully loaded
-window.addEventListener('DOMContentLoaded', () => {
-    const avatarInput = document.querySelector('input[name="avatar"]');
-
-    if (!avatarInput) return;
-
-    avatarInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = () => openCropModal(reader.result);
-        reader.readAsDataURL(file);
-    });
-});
-
-function openCropModal(imageSrc) {
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlay.id = 'cropper-overlay';
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100vw';
-    overlay.style.height = '100vh';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.75)';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.zIndex = 9999;
-
-    // Create modal content
-    const modal = document.createElement('div');
-    modal.style.background = '#222';
-    modal.style.padding = '20px';
-    modal.style.borderRadius = '12px';
-    modal.style.boxShadow = '0 0 10px rgba(0,0,0,0.5)';
-    modal.innerHTML = `
-        <h2 style="color:white; text-align:center; margin-bottom:10px;">Adjust Your Profile Picture</h2>
-        <img id="crop-image" src="${imageSrc}" style="max-width:300px; max-height:300px; display:block; margin:0 auto; border-radius:50%;" />
-        <div style="text-align:center; margin-top:15px;">
-            <button id="crop-confirm" style="margin-right:10px; padding:6px 12px;">Confirm</button>
-            <button id="crop-cancel" style="padding:6px 12px;">Cancel</button>
-        </div>
-    `;
-
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    document.getElementById('crop-cancel').addEventListener('click', () => {
-        document.body.removeChild(overlay);
-    });
-
-    document.getElementById('crop-confirm').addEventListener('click', () => {
-        // In real implementation, you'd extract cropped image here
-        document.body.removeChild(overlay);
-        alert('Crop confirmed! (Not implemented yet)');
-    });
-}
+let cropper;
 
 document.addEventListener("DOMContentLoaded", function () {
     const avatarInput = document.querySelector('input[name="avatar"]');
-    const cropModal = document.getElementById("CropperModal");
-    const cropperImage = document.getElementById("CropperImage");
-    const cropBtn = document.getElementById("CroppercropBtn");
-    const cancelBtn = document.getElementById("CropperCancelBtn");
+    const cropModal = document.getElementById("cropperModal");
+    const cropperImage = document.getElementById("cropperImage");
+    const cropBtn = document.getElementById("cropButton");
+    const cancelBtn = document.getElementById("cancelCropButton");
 
-    let cropper = null;
-
-    avatarInput.addEventListener("change", function (e) {
-        const file = e.target.files[0];
-        if (file && /^image\//.test(file.type)) {
+    avatarInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file && /^image\/(png|jpeg|jpg|gif)$/.test(file.type)) {
             const reader = new FileReader();
-            reader.onload = function (event) {
-                cropperImage.src = event.target.result;
+            reader.onload = function (e) {
+                cropperImage.src = e.target.result;
                 cropModal.style.display = "flex";
+
+                // Destroy existing cropper if any
                 if (cropper) {
                     cropper.destroy();
                 }
+
+                // Initialize Cropper.js
                 cropper = new Cropper(cropperImage, {
                     aspectRatio: 1,
                     viewMode: 1,
-                    background: false,
-                    dragMode: "move",
+                    dragMode: 'move',
                     guides: false,
-                    scalable: false,
-                    zoomable: true,
-                    rotatable: false,
+                    center: true,
+                    highlight: false,
+                    background: false,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
+                    movable: true,
+                    zoomable: true
                 });
             };
             reader.readAsDataURL(file);
@@ -96,32 +41,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
     cropBtn.addEventListener("click", function () {
         if (cropper) {
-            cropper.getCroppedCanvas({ width: 256, height: 256 }).toBlob((blob) => {
-                const formData = new FormData(document.querySelector("form"));
+            cropper.getCroppedCanvas({ width: 256, height: 256 }).toBlob(blob => {
+                const form = document.querySelector("form");
+                const formData = new FormData(form);
                 formData.set("avatar", blob, "cropped_avatar.png");
 
                 fetch("/profile", {
                     method: "POST",
-                    body: formData,
+                    body: formData
                 })
-                    .then((response) => {
+                    .then(response => {
                         if (response.redirected) {
                             window.location.href = response.url;
                         }
                     })
-                    .catch((error) => {
+                    .catch(error => {
                         console.error("Upload failed:", error);
+                    })
+                    .finally(() => {
+                        cropper.destroy();
+                        cropModal.style.display = "none";
                     });
             });
         }
     });
 
     cancelBtn.addEventListener("click", function () {
-        cropModal.style.display = "none";
         if (cropper) {
             cropper.destroy();
-            cropper = null;
         }
-        avatarInput.value = "";
+        cropModal.style.display = "none";
+        avatarInput.value = ""; // reset file input
     });
 });
