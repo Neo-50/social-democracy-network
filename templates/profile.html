@@ -6,7 +6,7 @@
         <div class="profile-container">
             <h2>
                 <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
-                class="avatar" alt="User Avatar" style="width: 120px; border-radius: 50%;">
+                    class="avatar" alt="User Avatar" style="width: 120px; border-radius: 50%;">
                 {{ user.username }}
             </h2>
 
@@ -17,7 +17,7 @@
                 <label for="avatar">Upload Avatar (max 2MB):</label>
                 <input type="file" name="avatar" accept="image/*">
 
-                <label for="bio">Bio:</label>
+                <label for="bio">About Me:</label>
                 <textarea name="bio"></textarea>
 
                 <button type="submit">Save</button>
