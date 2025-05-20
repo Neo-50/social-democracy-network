@@ -144,6 +144,11 @@ def news():
 def log_incoming_request():
     print("Request received:", request.method, request.path)
 
+@app.errorhandler(RequestEntityTooLarge)
+def handle_large_file(e):
+    flash("File is too large. Max size is 2MB.")
+    return redirect(request.url)
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -155,7 +160,7 @@ def profile():
 
     user = db.session.get(User, session['user_id'])
     file = request.files.get('avatar')
-
+    
     if request.method == 'POST':
         if file and file.filename:
             file.seek(0, os.SEEK_END)
@@ -181,12 +186,7 @@ def profile():
         flash("Profile updated.")
         return redirect(url_for('profile'))
 
-    return render_template('profile.html', user=user)  # <== Needed for GET
-
-@app.errorhandler(RequestEntityTooLarge)
-def handle_large_file(e):
-    flash("File is too large. Max size is 2MB.")
-    return redirect(request.url)
+    return render_template('profile.html', user=user)
 
 def is_admin():
     return session.get('user_id') and User.query.get(session['user_id']).is_admin
