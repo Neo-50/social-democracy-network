@@ -5,11 +5,11 @@
     <div class="profile-wrapper">
         <div class="profile-container">
             <h2>
-                <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
-                    class="profile-avatar" alt="User Avatar" {{ user.username }}>
+                {{ user.username }}>
             </h2>
-
-            <p>{{ user.bio or 'No bio yet.' }}</p>
+            <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
+                class="profile-avatar" alt="User Avatar">
+            <p>About Me: {{ user.bio or 'No bio yet.' }}</p>
         </div>
         <div class="profile-actions">
             <form method="POST" enctype="multipart/form-data">
