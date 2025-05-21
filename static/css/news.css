@@ -130,6 +130,16 @@
     margin-bottom: 0;
 }
 
+.comment-body::before {
+  content: '';
+  position: absolute;
+  top: 24px; /* tweak as needed for avatar alignment */
+  left: -20px;
+  width: 20px;
+  height: 2px;
+  background-color: rgb(255 255 255 / 70%);
+}
+
 .delete-form {
     display: inline;
     margin: 0;
@@ -190,24 +200,6 @@
     margin-left: 8px;
     margin-top: 0;
 }
-
-/* Vertical connector line for all replies */
-.thread-connector::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 6px;
-    width: 2px;
-    background-color: rgb(255 255 255 / 70%);
-}
-
-/* Trim vertical connector depending on nesting depth */
-.thread-connector.last.depth-0::before { bottom: 64px; }
-.thread-connector.last.depth-1::before { bottom: 72px; }
-.thread-connector.last.depth-2::before { bottom: 80px; }
-.thread-connector.last.depth-3::before { bottom: 88px; }
-
 
 /* Curved elbow */
 .thread-connector::after {
