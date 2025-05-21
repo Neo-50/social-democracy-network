@@ -217,7 +217,7 @@
 
 /* Shorten vertical line if it's the last reply */
 .thread-connector.last::before {
-    bottom: 48px;
+    bottom: 64px;
 }
 
 .comment-toolbar {
