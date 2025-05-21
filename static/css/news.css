@@ -189,12 +189,20 @@
     position: relative;
     padding-left: 16px;
     margin-left: 8px;
-    margin-bottom: 0; /* changed */
+    margin-top: -4px;
 }
 
-
-/* Vertical line */
 .thread-connector::before {
+    content: '';
+    position: absolute;
+    top: 20px; /* aligns with elbow */
+    left: 0;
+    width: 12px;
+    height: 2px;
+    background-color: white;
+}
+
+.thread-connector::after {
     content: '';
     position: absolute;
     top: 0;
@@ -206,8 +214,8 @@
 }
 
 /* Shorten line if it's the last reply */
-.thread-connector.last::before {
-    bottom: 24px; /* stops early before elbow */
+.thread-connector.last::after {
+    bottom: 20px; /* stops early before elbow */
 }
 
 /* Elbow connector */
@@ -218,16 +226,6 @@
 
 .replies > .reply {
     margin-top: 12px;
-}
-
-.replies::before {
-    content: '';
-    position: absolute;
-    top: 20px;
-    left: 0;
-    width: 12px;
-    height: 2px;
-    background-color: white;
 }
 
 .comment-toolbar {
