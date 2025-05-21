@@ -31,18 +31,3 @@ class NewsComment(db.Model):
     )
 
     user = db.relationship('User', backref='comments')
-
-'''
-class Vote(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    comment_id = db.Column(db.Integer, db.ForeignKey('news_comment.id', ondelete='CASCADE'), nullable=False)
-    value = db.Column(db.Integer, nullable=False)  # +1 for upvote, -1 for downvote
-
-    user = db.relationship('User', backref='votes')
-    comment = db.relationship('NewsComment', back_populates='votes')
-
-    __table_args__ = (
-        db.UniqueConstraint('user_id', 'comment_id', name='unique_vote_per_user_per_comment'),
-    )
-'''
