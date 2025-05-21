@@ -203,10 +203,10 @@
 }
 
 /* Trim vertical connector depending on nesting depth */
-.thread-connector.last.depth-0::before { bottom: 40px; }
-.thread-connector.last.depth-1::before { bottom: 48px; }
-.thread-connector.last.depth-2::before { bottom: 56px; }
-.thread-connector.last.depth-3::before { bottom: 64px; }
+.thread-connector.last.depth-0::before { bottom: 64px; }
+.thread-connector.last.depth-1::before { bottom: 72px; }
+.thread-connector.last.depth-2::before { bottom: 80px; }
+.thread-connector.last.depth-3::before { bottom: 88px; }
 
 
 /* Curved elbow */
