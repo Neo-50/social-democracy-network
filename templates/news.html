@@ -48,12 +48,13 @@
         {% endif %}
 
         {% if comment.replies %}
-            <div class="replies" style="margin-left: 20px;">
-                {% for reply in comment.replies %}
+            {% for reply in comment.replies %}
+                <div class="replies" style="margin-left: 20px;">
                     {{ render_comment(reply, article, depth + 1) }}
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         {% endif %}
+
     </div>
 {% endmacro %}
 
