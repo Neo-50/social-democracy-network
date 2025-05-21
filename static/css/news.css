@@ -217,7 +217,7 @@
 
 /* Shorten vertical line if it's the last reply */
 .thread-connector.last::before {
-    bottom: 34px; /* matches elbow's top + a little buffer */
+    bottom: 48px;
 }
 
 .comment-toolbar {
