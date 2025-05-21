@@ -50,9 +50,7 @@
         {% if comment.replies %}
             {% for reply in comment.replies %}
                 <div class="thread-connector{% if loop.last %} last{% endif %}">
-                    <div class="replies" style="margin-left: 20px;">
-                        {{ render_comment(reply, article, depth + 1) }}
-                    </div>
+                    {{ render_comment(reply, article, depth + 1) }}
                 </div>
             {% endfor %}
         {% endif %}
