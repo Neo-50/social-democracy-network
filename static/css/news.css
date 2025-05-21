@@ -188,7 +188,7 @@
     position: relative;
     padding-left: 16px;
     margin-left: 8px;
-    margin-top: 0; /* neutral spacing */
+    margin-top: 0;
 }
 
 /* Vertical line */
@@ -202,23 +202,22 @@
     background-color: rgb(255 255 255 / 70%);
 }
 
-/* Horizontal elbow */
+/* Curved elbow */
 .thread-connector::after {
     content: '';
     position: absolute;
-    top: 24px;        /* aligns with middle of avatar/reply block */
-    left: 8px;        /* aligns flush with vertical line */
-    width: 22px;      /* longer elbow line to reach reply body */
-    height: 12px;     /* enough to make a curved corner */
+    top: 24px;
+    left: 8px;
+    width: 22px;
+    height: 12px;
     border-left: 2px solid white;
     border-bottom: 2px solid white;
     border-bottom-left-radius: 6px;
 }
 
-
-/* Chop the vertical line if last reply */
+/* Shorten vertical line if it's the last reply */
 .thread-connector.last::before {
-    bottom: 24px;
+    bottom: 34px; /* matches elbow's top + a little buffer */
 }
 
 /* Shorten vertical line if this is the last reply in a group */
