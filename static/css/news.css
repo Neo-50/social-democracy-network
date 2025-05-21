@@ -220,11 +220,6 @@
     bottom: 34px; /* matches elbow's top + a little buffer */
 }
 
-/* Shorten vertical line if this is the last reply in a group */
-.thread-connector.last::after {
-    bottom: 32px;
-}
-
 .comment-toolbar {
     display: flex;
     align-items: center;
