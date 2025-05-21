@@ -189,13 +189,6 @@
     position: relative;
     padding-left: 16px;
     margin-left: 8px;
-    margin-top: -4px;
-}
-
-.thread-connector {
-    position: relative;
-    padding-left: 16px;
-    margin-left: 8px;
     margin-top: 8px;  /* restores space between stacked replies */
 }
 
