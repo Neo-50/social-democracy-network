@@ -25,18 +25,22 @@
     align-items: flex-start;
     gap: 10px;
     max-width: 720px;
+
     /* New: cap the article width */
     width: 100%;
+
     /* Ensures it scales on smaller screens */
 }
 
 .news-image {
     width: 100%;
+
     /* Fill the container width */
     height: auto;
+
     /* Maintain aspect ratio */
     display: block;
-    margin: 0 auto 10px auto;
+    margin: 0 auto 10px;
     border-radius: 4px;
 }
 
@@ -119,12 +123,6 @@
     border-left: 3px solid #555;
 }
 
-.replies {
-    margin-top: 10px;
-    padding-left: 10px;
-    border-left: 2px solid #333;
-}
-
 .comment-header {
     display: flex;
     justify-content: space-between;
@@ -145,6 +143,7 @@
     font-size: 1em;
     padding: 5px;
 }
+
 .delete-button:hover {
     color: #fff;
     background-color: #333;
@@ -189,16 +188,16 @@
     position: relative;
     padding-left: 16px;
     margin-left: 8px;
-    margin-top: 8px;  /* restores space between stacked replies */
+    margin-top: 12px; /* spacing between replies */
 }
 
-/* Horizontal elbow */
+/* Elbow line (horizontal) */
 .thread-connector::before {
     content: '';
     position: absolute;
-    top: 22px;
+    top: 32px; /* aligns with center of avatar/reply */
     left: 0;
-    width: 16px;  /* extended from 12px */
+    width: 16px;
     height: 2px;
     background-color: white;
 }
@@ -211,27 +210,17 @@
     bottom: 0;
     left: 6px;
     width: 2px;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgb(255 255 255 / 70%);
     border-radius: 4px;
 }
 
+/* Shorten vertical line if this is the last reply in a group */
 .thread-connector.last::after {
-    bottom: 20px;  /* shortens the vertical line before elbow */
-}
-
-/* Elbow connector */
-.replies {
-    position: relative;
-    padding-left: 16px;
-}
-
-.replies > .reply {
-    margin-top: 12px;
+    bottom: 32px;
 }
 
 .comment-toolbar {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     flex-wrap: wrap; /* allows wrapping instead of overflow */
     gap: 8px;
@@ -269,7 +258,7 @@
 
 .admin-badge {
     font-size: 1.2em;
-    color: #66ccff;
+    color: #6cf;
     margin-left: 0;
     vertical-align: middle;
 }
