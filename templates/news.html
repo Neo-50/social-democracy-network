@@ -1,8 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<main class="news-page">
+{% macro render_comment(comment, depth=0) %}
+    <div class="{% if depth == 0 %}comment{% else %}reply{% endif %}" data-comment-id="{{ comment.id }}">
+        <div class="reply-header">
+            <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
+                class="avatar-inline" alt="User Avatar">
+            <strong class="username">
+                {% if comment.user %}
+                    {{ comment.user.username }}
+                    {% if comment.user.is_admin %}
+                    <span class="admin-badge" title="Admin">🛡️</span>
+                {% endif %}
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </strong>
+        </div>
 
+        <div class="comment-header">
+            <p>{{ comment.content }}</p>
+        </div>
+
+        <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
+            {% if depth < 3 %}
+                <button class="newsfeed-button reply-toggle">Reply</button>
+            {% endif %}
+
+            {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
+            <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
+                class="delete-form">
+                <button type="submit" onclick="return confirm('Delete this comment?')"
+                    class="delete-button">🗑 Delete</button>
+            </form>
+            {% endif %}
+        </div>
+
+        {% if depth < 3 %}
+            <div class="reply-drawer" style="display: none;">
+                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                    <textarea name="content" placeholder="Write a reply..." required></textarea>
+                    <button type="submit" class="newsfeed-button">Submit</button>
+                    <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                </form>
+            </div>
+        {% endif %}
+
+        {% if comment.replies %}
+            <div class="replies" style="margin-left: 20px;">
+                {% for reply in comment.replies %}
+                    {{ render_comment(reply, depth + 1) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+<main class="news-page">
     <!-- Submission Form -->
     <section class="news-left">
         <h2>Submit a News Link</h2>
@@ -15,91 +70,38 @@
     <!-- News Feed and Comments in unified right section -->
     <section class="news-right">
         {% for article in articles %}
-        <div class="news-article">
-            <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
-            <p>{{ article.description }}</p>
-            <p><em>Source: {{ article.source }}</em></p>
-            <p><em>Published: {{ article.published }}</em></p>
-            <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
+            <div class="news-article">
+                <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                <p>{{ article.description }}</p>
+                <p><em>Source: {{ article.source }}</em></p>
+                <p><em>Published: {{ article.published }}</em></p>
+                <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
 
-            <div class="comments-thread">
-                <h4>Discussion</h4>
-
-                {% macro render_comment(comment, depth=0) %}
-                <div class="{% if depth == 0 %}comment{% else %}reply{% endif %}" data-comment-id="{{ comment.id }}">
-                    <div class="reply-header">
-                        <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
-                            class="avatar-inline" alt="User Avatar">
-                        <strong class="username">
-                            {% if comment.user %}
-                            {{ comment.user.username }}
-                            {% if comment.user.is_admin %}
-                            <span class="admin-badge" title="Admin">🛡️</span>
-                            {% endif %}
-                            {% else %}
-                            Anonymous
-                            {% endif %}
-                        </strong>
-                    </div>
-
-                    <div class="comment-header">
-                        <p>{{ comment.content }}</p>
-                    </div>
-
-                    <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                        {% if depth < 3 %} <button class="newsfeed-button reply-toggle">Reply</button>
-                            {% endif %}
-
-                            {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
-                            <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
-                                class="delete-form">
-                                <button type="submit" onclick="return confirm('Delete this comment?')"
-                                    class="delete-button">🗑 Delete</button>
-                            </form>
-                            {% endif %}
-                    </div>
-
-                    {% if depth < 3 %} <div class="reply-drawer" style="display: none;">
+                <div class="comments-thread">
+                    <h4>Discussion</h4>
+                {% for comment in article.comments if comment.parent_id is none %}
+                    {{ render_comment(comment) }}
+                {% endfor %}
+                </div>
+                
+                <div>
+                    {% if session.get('user_id') %}
                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                            <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                            <textarea name="content" placeholder="Write a reply..." required></textarea>
-                            <button type="submit" class="newsfeed-button">Submit</button>
-                            <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                            <textarea name="content" placeholder="Write a comment..." required></textarea>
+                            <button type="submit" class="newsfeed-button post-comment">Post Comment</button>
                         </form>
+                    {% else %}
+                        <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
+                    {% endif %}
                 </div>
-                {% endif %}
-
-                {% if comment.replies %}
-                <div class="replies" style="margin-left: 20px;">
-                    {% for reply in comment.replies %}
-                    {{ render_comment(reply, depth + 1) }}
-                    {% endfor %}
-                </div>
+                {% if is_admin() %}
+                    <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                        <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
+                            Article</button>
+                    </form>
                 {% endif %}
             </div>
-            {% endmacro %}
-
-            {% for comment in article.comments if comment.parent_id is none %}
-            {{ render_comment(comment) }}
-            {% endfor %}
-
-            <div>
-                {% if session.get('user_id') %}
-                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                    <textarea name="content" placeholder="Write a comment..." required></textarea>
-                    <button type="submit" class="newsfeed-button post-comment">Post Comment</button>
-                </form>
-                {% else %}
-                <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
-                {% endif %}
-            </div>
-            {% if is_admin() %}
-            <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
-                <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
-                    Article</button>
-            </form>
-            {% endif %}
-        </div>
+        {% endfor %}
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
