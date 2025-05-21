@@ -192,16 +192,25 @@
     margin-top: -4px;
 }
 
+.thread-connector {
+    position: relative;
+    padding-left: 16px;
+    margin-left: 8px;
+    margin-top: 8px;  /* restores space between stacked replies */
+}
+
+/* Horizontal elbow */
 .thread-connector::before {
     content: '';
     position: absolute;
-    top: 20px; /* aligns with elbow */
+    top: 22px;
     left: 0;
-    width: 12px;
+    width: 16px;  /* extended from 12px */
     height: 2px;
     background-color: white;
 }
 
+/* Vertical line */
 .thread-connector::after {
     content: '';
     position: absolute;
@@ -213,9 +222,8 @@
     border-radius: 4px;
 }
 
-/* Shorten line if it's the last reply */
 .thread-connector.last::after {
-    bottom: 20px; /* stops early before elbow */
+    bottom: 20px;  /* shortens the vertical line before elbow */
 }
 
 /* Elbow connector */
