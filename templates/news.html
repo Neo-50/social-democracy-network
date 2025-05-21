@@ -80,7 +80,7 @@
                 <div class="comments-thread">
                     <h4>Discussion</h4>
                 {% for comment in article.comments if comment.parent_id is none %}
-                    {{ render_comment(comment) }}
+                    {{ render_comment(comment, article) }}
                 {% endfor %}
                 </div>
                 
