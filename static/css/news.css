@@ -130,13 +130,33 @@
     margin-bottom: 0;
 }
 
+.comment-body {
+  position: relative; /* ← required for ::before elbow */
+  padding-left: 12px;
+}
+
 .comment-body::before {
   content: '';
   position: absolute;
-  top: 24px; /* tweak as needed for avatar alignment */
+  top: 24px; /* adjust if needed for vertical centering */
   left: -20px;
   width: 20px;
   height: 2px;
+  background-color: rgb(255 255 255 / 70%);
+}
+
+.comment-wrapper {
+  display: flex;
+  position: relative; /* ← required for ::before line positioning */
+}
+
+.vertical-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 6px;
+  width: 2px;
   background-color: rgb(255 255 255 / 70%);
 }
 
