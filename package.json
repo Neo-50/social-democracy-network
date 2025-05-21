@@ -1,0 +1,24 @@
+{
+  "name": "social-democracy-network",
+  "version": "1.0.0",
+  "description": "A political discussion and news aggregation platform built with Flask and PostgreSQL.  \r This site aims to amplify independent media, support activism, and provide a space for community discussion.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neo-50/social-democracy-network.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Neo-50/social-democracy-network/issues"
+  },
+  "homepage": "https://github.com/Neo-50/social-democracy-network#readme",
+  "devDependencies": {
+    "stylelint": "^16.19.1",
+    "stylelint-config-standard": "^38.0.0"
+  }
+}
