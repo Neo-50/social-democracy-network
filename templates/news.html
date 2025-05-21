@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                        {% if depth < 2 %} <button class="newsfeed-button reply-toggle">Reply</button>
+                        {% if depth < 3 %} <button class="newsfeed-button reply-toggle">Reply</button>
                             {% endif %}
 
                             {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
@@ -59,7 +59,7 @@
                             {% endif %}
                     </div>
 
-                    {% if depth < 2 %} <div class="reply-drawer" style="display: none;">
+                    {% if depth < 3 %} <div class="reply-drawer" style="display: none;">
                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                             <input type="hidden" name="parent_id" value="{{ comment.id }}">
                             <textarea name="content" placeholder="Write a reply..." required></textarea>
@@ -93,17 +93,13 @@
                 <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
                 {% endif %}
             </div>
+            {% if is_admin() %}
+            <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
+                    Article</button>
+            </form>
+            {% endif %}
         </div>
-
-        </div>
-        {% if is_admin() %}
-        <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
-            <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
-                Article</button>
-        </form>
-        {% endif %}
-        </div>
-        {% endfor %}
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
