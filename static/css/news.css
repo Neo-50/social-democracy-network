@@ -195,6 +195,35 @@
 .reply p {
     margin-bottom: 20px;
 }
+.thread-connector {
+    position: relative;
+    margin-left: 20px;
+    padding-left: 12px;
+}
+
+.thread-connector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background-color: white;
+}
+
+.thread-connector.last::before {
+    height: 24px; /* shorter vertical line on last reply */
+}
+
+.replies::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 0;
+    width: 12px;
+    height: 2px;
+    background-color: white;
+}
 
 .comment-toolbar {
     display: flex;
