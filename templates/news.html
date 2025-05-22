@@ -2,10 +2,7 @@
 
 {% block content %}
 {% macro render_comment(comment, article) %}
-    <div class="comment-wrapper">
-        <div class="vertical-line"></div>
-
-        <div class="comment-body">
+    <div class="comment thread-connector {% if loop.last %}last{% endif %}">
         <div class="reply-header">
             <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
                 class="avatar-inline" alt="User Avatar">
@@ -36,26 +33,24 @@
             {% endif %}
         </div>
 
-            <div class="reply-drawer" style="display: none;">
+        <div class="reply-drawer" style="display: none;">
             <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
                 <textarea name="content" placeholder="Write a reply..." required></textarea>
                 <button type="submit" class="newsfeed-button">Submit</button>
                 <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
             </form>
-            </div>
+        </div>
 
         {% if comment.replies %}
-            <div class="replies" style="margin-left: 20px;">
+        <div class="replies" style="margin-left: 20px;">
             {% for reply in comment.replies %}
                 {{ render_comment(reply, article) }}
             {% endfor %}
-            </div>
-        {% endif %}
         </div>
+        {% endif %}
     </div>
 {% endmacro %}
-
 
 <main class="news-page">
     <!-- Submission Form -->
@@ -83,7 +78,7 @@
                     {{ render_comment(comment, article) }}
                 {% endfor %}
                 </div>
-                
+
                 <div>
                     {% if session.get('user_id') %}
                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
@@ -107,7 +102,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.reply-toggle').forEach(button => {
                 button.addEventListener('click', () => {
-                    const wrapper = button.closest('.comment, .reply');
+                    const wrapper = button.closest('.comment');
                     const drawer = wrapper.querySelector('.reply-drawer');
                     if (drawer) {
                         drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
@@ -125,6 +120,5 @@
             });
         });
     </script>
-
 </main>
 {% endblock %}
