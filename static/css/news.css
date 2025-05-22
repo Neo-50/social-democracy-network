@@ -184,46 +184,36 @@
     margin-bottom: 20px;
 }
 
-.thread-connector {
-    position: relative;
-    padding-left: 16px;
-    margin-left: 8px;
-    margin-top: 0; /* neutral spacing */
+/* Updated thread connector: vertical stem + curved elbow */
+.comment.thread-connector {
+  position: relative;
+  margin-left: 24px;
+  padding-left: 16px;
 }
 
 /* Vertical line */
-.thread-connector::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 6px;
-    width: 2px;
-    background-color: rgb(255 255 255 / 70%);
+.comment.thread-connector::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12px;
+  width: 2px;
+  background-color: rgb(255 255 255 / 30%);
 }
 
-/* Horizontal elbow */
-.thread-connector::after {
-    content: '';
-    position: absolute;
-    top: 24px;        /* aligns with middle of avatar/reply block */
-    left: 8px;        /* aligns flush with vertical line */
-    width: 22px;      /* longer elbow line to reach reply body */
-    height: 12px;     /* enough to make a curved corner */
-    border-left: 2px solid white;
-    border-bottom: 2px solid white;
-    border-bottom-left-radius: 6px;
-}
-
-
-/* Chop the vertical line if last reply */
-.thread-connector.last::before {
-    bottom: 24px;
-}
-
-/* Shorten vertical line if this is the last reply in a group */
-.thread-connector.last::after {
-    bottom: 32px;
+/* Curved elbow for last reply */
+.comment.thread-connector.last::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -12px;
+  width: 24px;
+  height: 24px;
+  border-left: 2px solid rgb(255 255 255 / 30%);
+  border-bottom: 2px solid rgb(255 255 255 / 30%);
+  border-radius: 0 0 0 24px;
+  background: transparent;
 }
 
 .comment-toolbar {
