@@ -2,21 +2,8 @@
 
 {% block content %}
 {% macro render_comment(comment, article, depth=0, loop=None) %}
-{% set line_height = 80 + (comment.content | length / 1.5) + (comment.replies | length * 60) %}
     <div class="{% if depth == 0 %}comment{% else %}reply{% endif %} thread-connector depth-{{ depth }} 
     {% if loop and loop.last %}last{% endif %}" data-comment-id="{{ comment.id }}">
-        {% if depth > 0 %}
-        {% set offset = depth * 24 %}
-        <svg class="thread-line" width="{{ offset + 40 }}" height="{{ line_height }}" style="position:absolute; left:0; top:0;">
-        <path d="M{{ offset }},0 
-                V{{ line_height - 20 }} 
-                Q{{ offset + 5 }},{{ line_height - 5 }} {{ offset + 40 }},{{ line_height }}"
-                stroke="rgb(255 255 255 / 30%)"
-                stroke-width="2"
-                fill="none"/>
-        </svg>
-
-        {% endif %}
 
         <div class="reply-header">
             <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
