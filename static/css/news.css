@@ -158,9 +158,10 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    padding-left: 10px;
     margin-left: 30px;
     margin-bottom: 5px;
-    margin-top: 5px;
+    margin-top: 10px;
 }
 
 .replies {
@@ -173,14 +174,13 @@
     margin-bottom: 4px;
 }
 
-/* Vertical thread line */
 .reply::before {
   content: '';
   position: absolute;
-  top: 0;
+  top: 6px;
+  left: 0;
+  width: 4px;
   bottom: 0;
-  left: 0; /* aligns with left edge of .reply */
-  width: 2px;
   background-color: #333;
 }
 
