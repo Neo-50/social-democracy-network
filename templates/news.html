@@ -1,8 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% macro render_comment(comment, article, depth=0) %}
-    <div class="{% if depth == 0 %}comment{% else %}reply{% endif %}" data-comment-id="{{ comment.id }}">
+{% macro render_comment(comment, article, depth=0, loop=None) %}
+    <div class="{% if depth == 0 %}comment{% else %}reply{% endif %} thread-connector depth-{{ depth }} 
+    {% if loop and loop.last %}last{% endif %}" data-comment-id="{{ comment.id }}">
+        {% if depth > 0 %}
+            <svg class="thread-line" width="24" height="80" style="position:absolute; left:0; top:0;">
+            <path d="M12,0 V60 A12,12 0 0 0 24,72"
+                    stroke="rgb(255 255 255 / 30%)"
+                    stroke-width="2"
+                    fill="none"/>
+            </svg>
+        {% endif %}
+
         <div class="reply-header">
             <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
                 class="avatar-inline" alt="User Avatar">
@@ -49,11 +59,7 @@
 
         {% if comment.replies %}
             {% for reply in comment.replies %}
-                <div class="thread-connector{% if loop.last %} last{% endif %}">
-                    <div class="replies" style="margin-left: 20px;">
-                        {{ render_comment(reply, article, depth + 1) }}
-                    </div>
-                </div>
+                {{ render_comment(reply, article, depth + 1, loop=loop) }}
             {% endfor %}
         {% endif %}
 
