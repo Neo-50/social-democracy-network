@@ -184,6 +184,11 @@
 }
 
 .thread-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 24px;
   overflow: visible;
   pointer-events: none;
   z-index: 0;

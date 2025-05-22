@@ -5,11 +5,11 @@
     <div class="{% if depth == 0 %}comment{% else %}reply{% endif %} thread-connector depth-{{ depth }} 
     {% if loop and loop.last %}last{% endif %}" data-comment-id="{{ comment.id }}">
         {% if depth > 0 %}
-            <svg class="thread-line" width="24" height="80" style="position:absolute; left:0; top:0;">
-            <path d="M12,0 V40 A12,12 0 0 0 24,52"
-                    stroke="rgb(255 255 255 / 30%)"
-                    stroke-width="2"
-                    fill="none"/>
+            <svg class="thread-line" width="24" height="100%" style="position:absolute; left:0; top:0;">
+                <path d="M12,0 V100 A12,12 0 0 0 24,112"
+                        stroke="rgb(255 255 255 / 30%)"
+                        stroke-width="2"
+                        fill="none"/>
             </svg>
         {% endif %}
 
