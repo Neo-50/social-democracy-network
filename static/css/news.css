@@ -120,7 +120,7 @@
 .comment {
     margin-bottom: 0;
     padding: 10px;
-    border-left: 3px solid #555;
+    border-left: 4px solid #555;
 }
 
 .comment-header {
@@ -165,13 +165,13 @@
 }
 
 .reply::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;                   /* aligns with the left edge of .reply */
-    width: 4px;
-    background-color: #444;
+  content: '';
+  position: absolute;
+  top: 6px;               /* Align with top of avatar */
+  left: 0;
+  width: 4px;
+  height: 100%;           /* Extends only to the height of .reply's content */
+  background-color: #444;
 }
 
 .reply-header {
