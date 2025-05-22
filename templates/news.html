@@ -2,14 +2,15 @@
 
 {% block content %}
 {% macro render_comment(comment, article, depth=0, loop=None) %}
+{% set line_height = 40 + (comment.content | length / 1.5) + (comment.replies | length * 40) %}
     <div class="{% if depth == 0 %}comment{% else %}reply{% endif %} thread-connector depth-{{ depth }} 
     {% if loop and loop.last %}last{% endif %}" data-comment-id="{{ comment.id }}">
         {% if depth > 0 %}
-            <svg class="thread-line" width="24" height="100%" style="position:absolute; left:0; top:0;">
-                <path d="M12,0 V100 A12,12 0 0 0 24,112"
-                        stroke="rgb(255 255 255 / 30%)"
-                        stroke-width="2"
-                        fill="none"/>
+            <svg class="thread-line" width="24" height="{{ line_height }}" style="position:absolute; left:0; top:0;">
+                <path d="M12,0 V{{ line_height - 20 }} A12,12 0 0 0 24,{{ line_height }}"
+                stroke="rgb(255 255 255 / 30%)"
+                stroke-width="2"
+                fill="none"/>
             </svg>
         {% endif %}
 
