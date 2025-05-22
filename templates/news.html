@@ -50,7 +50,6 @@
         {% if comment.replies %}
             {% for reply in comment.replies %}
                 <div class="reply">
-                    <div class="thread-line"></div>
                     {{ render_comment(reply, article, depth + 1) }}
                 </div>
             {% endfor %}
