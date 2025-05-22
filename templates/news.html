@@ -1,10 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% macro render_comment(comment, article, depth=0, loop=None) %}
-    <div class="{% if depth == 0 %}comment{% else %}reply{% endif %} thread-connector depth-{{ depth }} 
-    {% if loop and loop.last %}last{% endif %}" data-comment-id="{{ comment.id }}">
-
+{% macro render_comment(comment, article, depth=0) %}
+    <div class="{% if depth == 0 %}comment{% else %}reply{% endif %}" data-comment-id="{{ comment.id }}">
         <div class="reply-header">
             <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
                 class="avatar-inline" alt="User Avatar">
@@ -48,13 +46,15 @@
                 </form>
             </div>
         {% endif %}
-        <div class="reply">
-            {% if comment.replies %}
-                {% for reply in comment.replies %}
-                    {{ render_comment(reply, article, depth + 1, loop=loop) }}
-                {% endfor %}
-            {% endif %}
-        </div>
+
+        {% if comment.replies %}
+            {% for reply in comment.replies %}
+                <div class="replies" style="margin-left: 20px;">
+                    {{ render_comment(reply, article, depth + 1) }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
     </div>
 {% endmacro %}
 
@@ -78,7 +78,7 @@
                 <p><em>Published: {{ article.published }}</em></p>
                 <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
 
-                <div id="comment-thread" class="comment-thread loading">
+                <div class="comments-thread">
                     <h4>Discussion</h4>
                 {% for comment in article.comments if comment.parent_id is none %}
                     {{ render_comment(comment, article) }}
@@ -128,12 +128,4 @@
     </script>
 
 </main>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  requestAnimationFrame(() => {
-    document.getElementById('comment-thread')?.classList.remove('loading');
-    // Optional: trigger drawConnectors() here if needed
-  });
-});
-</script>
 {% endblock %}
