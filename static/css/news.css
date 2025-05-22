@@ -158,19 +158,18 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    padding-left: 16px;        /* creates space between line and avatar/text */
+    padding-left: 10px;        /* creates space between line and avatar/text */
     margin-left: 40px;         /* controls nesting depth */
     margin-bottom: 5px;
     margin-top: 10px;
 }
 
-.reply::before {
-  content: '';
+.thread-line {
   position: absolute;
-  top: 6px;               /* Align with top of avatar */
   left: 0;
+  top: 6px;
+  bottom: 38px; /* ends just above the bottom button */
   width: 4px;
-  height: 100%;           /* Extends only to the height of .reply's content */
   background-color: #444;
 }
 
