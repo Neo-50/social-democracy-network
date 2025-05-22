@@ -174,14 +174,9 @@
     background-color: #444;
 }
 
-.replies {
-    border-left: 10px solid #333;
-}
-
 .reply-header {
     display: flex;
     align-items: center;
-    margin-bottom: 4px;
 }
 
 .reply strong {
@@ -190,7 +185,7 @@
 }
 
 .reply p {
-    margin-bottom: 5px;
+    margin-bottom: 2px;
 }
 
 .comment-toolbar {
