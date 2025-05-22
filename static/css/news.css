@@ -178,26 +178,6 @@
     margin-bottom: 20px;
 }
 
-.thread-connector {
-  position: relative;
-  padding-left: 30px;
-}
-
-.thread-line {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 24px;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.depth-1 { margin-left: 24px; }
-.depth-2 { margin-left: 48px; }
-.depth-3 { margin-left: 72px; }
-
 .comment-toolbar {
     display: flex;
     align-items: center;
