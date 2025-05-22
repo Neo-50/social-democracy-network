@@ -6,12 +6,16 @@
     <div class="{% if depth == 0 %}comment{% else %}reply{% endif %} thread-connector depth-{{ depth }} 
     {% if loop and loop.last %}last{% endif %}" data-comment-id="{{ comment.id }}">
         {% if depth > 0 %}
-            <svg class="thread-line" width="24" height="{{ line_height }}" style="position:absolute; left:0; top:0;">
-                <path d="M12,0 V{{ line_height - 20 }} A12,12 0 0 0 24,{{ line_height }}"
+        {% set offset = depth * 24 %}
+        <svg class="thread-line" width="{{ offset + 40 }}" height="{{ line_height }}" style="position:absolute; left:0; top:0;">
+        <path d="M{{ offset }},0 
+                V{{ line_height - 20 }} 
+                Q{{ offset }},{{ line_height }} {{ offset + 20 }},{{ line_height }}"
                 stroke="rgb(255 255 255 / 30%)"
                 stroke-width="2"
                 fill="none"/>
-            </svg>
+        </svg>
+
         {% endif %}
 
         <div class="reply-header">
@@ -87,7 +91,7 @@
                 <p><em>Published: {{ article.published }}</em></p>
                 <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
 
-                <div class="comments-thread">
+                <div id="comment-thread" class="comment-thread loading">
                     <h4>Discussion</h4>
                 {% for comment in article.comments if comment.parent_id is none %}
                     {{ render_comment(comment, article) }}
@@ -137,4 +141,12 @@
     </script>
 
 </main>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  requestAnimationFrame(() => {
+    document.getElementById('comment-thread')?.classList.remove('loading');
+    // Optional: trigger drawConnectors() here if needed
+  });
+});
+</script>
 {% endblock %}

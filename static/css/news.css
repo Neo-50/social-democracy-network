@@ -208,6 +208,14 @@
     color: #ccc;
 }
 
+.comment-thread.loading {
+  visibility: hidden;
+}
+
+.comment-thread:not(.loading) {
+  visibility: visible;
+}
+
 .newsfeed-button {
     background-color: #1a1a1a;
     border: 3px solid #00e3ea;
