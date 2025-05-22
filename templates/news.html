@@ -48,13 +48,13 @@
                 </form>
             </div>
         {% endif %}
-
-        {% if comment.replies %}
-            {% for reply in comment.replies %}
-                {{ render_comment(reply, article, depth + 1, loop=loop) }}
-            {% endfor %}
-        {% endif %}
-
+        <div class="reply">
+            {% if comment.replies %}
+                {% for reply in comment.replies %}
+                    {{ render_comment(reply, article, depth + 1, loop=loop) }}
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
 {% endmacro %}
 
