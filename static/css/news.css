@@ -185,14 +185,14 @@
 }
 
 /* Updated thread connector: vertical stem + curved elbow */
-.comment.thread-connector {
+.thread-connector {
   position: relative;
   margin-left: 24px;
   padding-left: 16px;
 }
 
 /* Vertical line */
-.comment.thread-connector::before {
+.thread-connector::before {
   content: '';
   position: absolute;
   top: 0;
@@ -203,7 +203,7 @@
 }
 
 /* Curved elbow for last reply */
-.comment.thread-connector.last::after {
+.thread-connector.last::after {
   content: '';
   position: absolute;
   bottom: 0;
