@@ -184,11 +184,15 @@
     margin-bottom: 20px;
 }
 
-/* Updated thread connector: vertical stem + curved elbow */
 .thread-connector {
   position: relative;
-  margin-left: 24px;
-  padding-left: 16px;
+  padding-left: 30px;
+}
+
+.thread-line {
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Vertical line */
