@@ -2,7 +2,7 @@
 
 {% block content %}
 {% macro render_comment(comment, article, depth=0) %}
-    <div class="{% if depth == 0 %}comment{% else %}reply{% endif %}" data-comment-id="{{ comment.id }}">
+    <div class="reply-container" data-comment-id="{{ comment.id }}">
         <div class="reply-header">
             <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
                 class="avatar-inline" alt="User Avatar">
