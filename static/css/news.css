@@ -155,7 +155,7 @@
 }
 
 .reply-container {
-    position: relative;  /* You already have this, keep it */
+    position: relative;
     padding-left: 5px;
     margin-left: 50px;
     margin-bottom: 0;
@@ -169,12 +169,19 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding-left: 10px;
     border-left: 4px solid #333;
 }
 
 .reply strong {
     display: inline-block;
     margin-bottom: 2px;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .reply p {

@@ -4,18 +4,20 @@
 {% macro render_comment(comment, article, depth=0) %}
     <div class="comments-thread" data-comment-id="{{ comment.id }}">
         <div class="comment-container">
-            <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
-                class="avatar-inline" alt="User Avatar">
-            <strong class="username">
-                {% if comment.user %}
-                    {{ comment.user.username }}
-                    {% if comment.user.is_admin %}
-                    <span class="admin-badge" title="Admin">🛡️</span>
-                {% endif %}
-                {% else %}
-                    Anonymous
-                {% endif %}
-            </strong>
+            <div class="comment-header">
+                <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
+                    class="avatar-inline" alt="User Avatar">
+                <strong class="username">
+                    {% if comment.user %}
+                        {{ comment.user.username }}
+                        {% if comment.user.is_admin %}
+                        <span class="admin-badge" title="Admin">🛡️</span>
+                    {% endif %}
+                    {% else %}
+                        Anonymous
+                    {% endif %}
+                </strong>
+            </div>
 
             <div class="comment-content">
                 <p>{{ comment.content }}</p>
@@ -106,7 +108,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.reply-toggle').forEach(button => {
                 button.addEventListener('click', () => {
-                    const wrapper = button.closest('.reply-container');
+                    const wrapper = button.closest('.comment-container');
                     const drawer = wrapper.querySelector('.reply-drawer');
                     if (drawer) {
                         drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
