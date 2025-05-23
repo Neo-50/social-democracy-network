@@ -42,17 +42,17 @@
                     {{ render_comment(reply, article, depth + 1) }}
                 {% endfor %}
             {% endif %}
-            
-            {% if depth < 3 %} <div class="reply-drawer" style="display: none;">
+        </div>
+        {% if depth < 3 %} 
+            <div class="reply-drawer" style="display: none;">
                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                     <input type="hidden" name="parent_id" value="{{ comment.id }}">
                     <textarea name="content" placeholder="Write a reply..." required></textarea>
                     <button type="submit" class="newsfeed-button">Submit</button>
                     <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
                 </form>
-                </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
 {% endmacro %}
 
