@@ -182,7 +182,7 @@
 .reply-drawer {
     margin-top: 5px;
     margin-left: 5ppx;
-    border: 4px solid #333;
+    border: 4px solid rgb(175, 0, 29);
 }
 
 .comment-toolbar {
@@ -193,7 +193,6 @@
     margin-top: 2px;
     font-size: 1em;
     color: #ccc;
-    border: 4px solid #333;
 }
 
 .newsfeed-button {
