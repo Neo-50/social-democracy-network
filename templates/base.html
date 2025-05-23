@@ -99,7 +99,7 @@
 
         <div class="header-right">
             <div class="user-nav">
-                {% if session.get('user_id') %}
+                {% if current_user.is_authenticated %}
                 <span class="username">{{ current_user.username }}</span>
                 <div class="avatar-dropdown">
                     <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
