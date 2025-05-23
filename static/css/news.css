@@ -165,7 +165,7 @@
     border: 4px solid #333;
 }
 
-.reply-header {
+.comment-container {
     display: flex;
     align-items: center;
 }
