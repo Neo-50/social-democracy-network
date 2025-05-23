@@ -84,7 +84,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div>
+                <div class="post-comment-container">
                     {% if session.get('user_id') %}
                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                             <textarea name="content" placeholder="Write a comment..." required></textarea>
