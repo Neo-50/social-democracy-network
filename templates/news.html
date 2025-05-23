@@ -46,15 +46,13 @@
                 </form>
             </div>
         {% endif %}
-
-        {% if comment.replies %}
-            {% for reply in comment.replies %}
-                <div class="reply-container">
-                    {{ render_comment(reply, article, depth + 1) }}
-                </div>
-            {% endfor %}
-        {% endif %}
-
+        <div class="reply-container">
+            {% if comment.replies %}
+                {% for reply in comment.replies %}
+                        {{ render_comment(reply, article, depth + 1) }}
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
 {% endmacro %}
 
