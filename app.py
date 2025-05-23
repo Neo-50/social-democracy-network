@@ -334,13 +334,25 @@ def logout():
 @app.route('/delete_account', methods=['POST'])
 @login_required
 def delete_account():
+    print("🔍 Deletion initiated")
     if current_user.is_anonymous:
+        print("❌ current_user is anonymous")
         flash("You're not logged in.", "error")
         return redirect(url_for('login'))
 
     user = current_user._get_current_object()
-    db.session.delete(user)
-    db.session.commit()
+    print(f"👤 User object: {user}, ID: {user.id}, Username: {user.username}")
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        print("✅ User deleted successfully from database")
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Failed to delete user: {e}")
+        flash("Something went wrong while deleting your account.", "error")
+        return redirect(url_for('profile', username=current_user.username))
+
     logout_user()
     session.clear()
     flash("Your account has been deleted.", "success")
