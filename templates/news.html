@@ -110,7 +110,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.reply-toggle').forEach(button => {
                 button.addEventListener('click', () => {
-                    const wrapper = button.closest('.comment, .reply');
+                    const wrapper = button.closest('.comment-container');
                     const drawer = wrapper.querySelector('.reply-drawer');
                     if (drawer) {
                         drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
