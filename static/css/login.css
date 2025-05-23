@@ -23,7 +23,7 @@ input[type="password"] {
     background-color: #1a1a1a;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 999px;
 }
 
 input[type="text"]::placeholder,
@@ -37,7 +37,7 @@ button[type="submit"] {
     background-color: #1a1a1a;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 999px;
     cursor: pointer;
 }
 

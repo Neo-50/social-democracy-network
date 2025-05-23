@@ -18,12 +18,13 @@ label {
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="confirm_password"] {
     padding: 10px;
     background-color: #1a1a1a;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 999px;
 }
 
 input[type="text"]::placeholder,
@@ -37,7 +38,7 @@ button[type="submit"] {
     background-color: #1a1a1a;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 999px;
     cursor: pointer;
 }
 
