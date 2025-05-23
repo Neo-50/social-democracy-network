@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory
-from flask_login import current_user, login_user, logout_user, LoginManager
+from flask_login import current_user, login_user, login_required, logout_user, LoginManager, UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
@@ -62,7 +62,7 @@ app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 from news_system import NewsArticle, NewsComment
 migrate = Migrate(app, db)
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -83,9 +83,14 @@ class User(db.Model):
     @property
     def is_active(self):
         return self.email_verified
+    
+    @property
+    def is_admin_user(self):
+        return self.is_admin
 
     def get_id(self):
         return str(self.id)
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -325,7 +330,11 @@ def login():
             session.permanent = True
             login_user(user)
             flash('Logged in successfully!')
-            return redirect(url_for('news'))
+            print(">>> Login successful")
+            print(">>> session user_id:", session.get('user_id'))
+            print(">>> current_user.is_authenticated:", current_user.is_authenticated)
+
+            return redirect(url_for('home'))
 
         flash('Invalid email or password')
         return redirect(url_for('login'))
