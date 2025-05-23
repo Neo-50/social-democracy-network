@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory
-from flask_login import current_user, logout_user, LoginManager
+from flask_login import current_user, login_user, logout_user, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
@@ -316,8 +316,7 @@ def login():
                 flash('Please verify your email before logging in.', 'warning')
                 return redirect(url_for('login'))
             session.permanent = True
-            session['user_id'] = user.id
-            session['username'] = user.username
+            login_user(user)
             flash('Logged in successfully!')
             return redirect(url_for('news'))
 
