@@ -334,15 +334,18 @@ def logout():
 @app.route('/delete_account', methods=['POST'])
 @login_required
 def delete_account():
-    user = db.session.get(User, current_user.id)
-    if user:
-        db.session.delete(user)
-        db.session.commit()
+    if current_user.is_anonymous:
+        flash("You're not logged in.", "error")
+        return redirect(url_for('login'))
 
-    logout_user()        # Flask-Login logout
-    session.clear()      # Clear session keys manually
+    user = current_user._get_current_object()
+    db.session.delete(user)
+    db.session.commit()
+    logout_user()
+    session.clear()
     flash("Your account has been deleted.", "success")
-    return redirect(url_for('home'))  # Or 'login' if preferred
+    return redirect(url_for('home'))
+
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required
