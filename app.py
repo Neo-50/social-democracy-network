@@ -13,6 +13,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 from utils.email import confirm_verification_token, send_verification_email
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 
