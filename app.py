@@ -29,7 +29,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
 
 mail = Mail(app)
 
-app.secret_key = os.environ.get('SECRET_KEY', 'dev-default-key')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-default-key')
 
 def login_required(f):
     @wraps(f)
@@ -334,6 +334,9 @@ def logout():
 @app.route('/delete_account', methods=['POST'])
 @login_required
 def delete_account():
+    if current_user.is_anonymous:
+        flash("You're not logged in.", "error")
+        return redirect(url_for('login'))
     user = current_user._get_current_object()
     logout_user()  # Log out before deleting
     db.session.delete(user)
