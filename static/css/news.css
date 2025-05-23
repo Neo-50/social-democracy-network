@@ -171,6 +171,7 @@
     align-items: flex-start;
     padding-left: 10px;
     border-left: 4px solid #333;
+    background-color: #444
 }
 
 .reply strong {
