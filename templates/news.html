@@ -27,7 +27,17 @@
                 {% if depth < 3 %}
                     <button class="newsfeed-button reply-toggle">Reply</button>
                 {% endif %}
-            
+            </div>
+            {% if depth < 3 %} 
+                <div class="reply-drawer" style="display: none;">
+                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <textarea name="content" placeholder="Write a reply..." required></textarea>
+                        <button type="submit" class="newsfeed-button">Submit</button>
+                        <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                    </form>
+                </div>
+            {% endif %}
 
                 {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
@@ -43,16 +53,6 @@
                 {% for reply in comment.replies %}
                     {{ render_comment(reply, article, depth + 1) }}
                 {% endfor %}
-            {% endif %}
-            {% if depth < 3 %} 
-                <div class="reply-drawer" style="display: none;">
-                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                        <textarea name="content" placeholder="Write a reply..." required></textarea>
-                        <button type="submit" class="newsfeed-button">Submit</button>
-                        <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
-                    </form>
-                </div>
             {% endif %}
         </div>
 
