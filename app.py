@@ -79,6 +79,13 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    @property
+    def is_active(self):
+        return self.email_verified
+
+    def get_id(self):
+        return str(self.id)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -303,13 +310,6 @@ def delete_article(article_id):
     db.session.commit()
     flash("Article deleted.")
     return redirect(url_for('news'))
-
-@property
-def is_active(self):
-    return self.email_verified
-
-def get_id(self):
-    return str(self.id)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
