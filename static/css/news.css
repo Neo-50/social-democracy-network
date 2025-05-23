@@ -167,7 +167,7 @@
 
 .comment-container {
     display: inline-flex;
-    max-width: 100%
+    max-width: 100%;
     flex-direction: column;
     align-items: flex-start;
     padding-left: 10px;
