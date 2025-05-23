@@ -156,7 +156,8 @@
 
 .reply-container {
     position: relative;
-    padding-left: 5px;
+    padding-left: 10px;
+    margin-left: 60px;
     margin-bottom: 0;
     margin-top: 4px;
     display: flex;
@@ -167,7 +168,6 @@
 .comment-container {
     display: flex;
     flex-direction: column;
-    margin-left: 30px;
     align-items: flex-start;
     padding-left: 10px;
     border-left: 4px solid #333;
@@ -196,7 +196,7 @@
 .comment-toolbar {
     display: flex;
     align-items: center;
-    flex-wrap: wrap; /* allows wrapping instead of overflow */
+    gap: 8px;
     margin-top: 0;
     font-size: 1em;
     color: #ccc;
