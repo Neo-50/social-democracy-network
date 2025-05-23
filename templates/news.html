@@ -3,56 +3,56 @@
 {% block content %}
 {% macro render_comment(comment, article, depth=0) %}
     <div class="comments-thread" data-comment-id="{{ comment.id }}">
-        <div class="reply-header">
-            <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
-                class="avatar-inline" alt="User Avatar">
-            <strong class="username">
-                {% if comment.user %}
-                    {{ comment.user.username }}
-                    {% if comment.user.is_admin %}
-                    <span class="admin-badge" title="Admin">🛡️</span>
+        <div class="comment-container">
+            <div class="reply-header">
+                <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
+                    class="avatar-inline" alt="User Avatar">
+                <strong class="username">
+                    {% if comment.user %}
+                        {{ comment.user.username }}
+                        {% if comment.user.is_admin %}
+                        <span class="admin-badge" title="Admin">🛡️</span>
+                    {% endif %}
+                    {% else %}
+                        Anonymous
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="comment-header">
+                <p>{{ comment.content }}</p>
+            </div>
+
+            <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
+                {% if depth < 3 %}
+                    <button class="newsfeed-button reply-toggle">Reply</button>
                 {% endif %}
-                {% else %}
-                    Anonymous
+
+                {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
+                    <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
+                        class="delete-form">
+                        <button type="submit" onclick="return confirm('Delete this comment?')"
+                        class="delete-button">🗑 Delete</button>
+                    </form>
                 {% endif %}
-            </strong>
         </div>
-
-        <div class="comment-header">
-            <p>{{ comment.content }}</p>
-        </div>
-
-        <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-            {% if depth < 3 %}
-                <button class="newsfeed-button reply-toggle">Reply</button>
-            {% endif %}
-
-            {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
-            <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
-                class="delete-form">
-                <button type="submit" onclick="return confirm('Delete this comment?')"
-                    class="delete-button">🗑 Delete</button>
-            </form>
-            {% endif %}
+        <div class="reply-container">
             {% if comment.replies %}
                 {% for reply in comment.replies %}
-                    <div class="reply-container">
-                        {{ render_comment(reply, article, depth + 1) }}
-                    </div>
+                    {{ render_comment(reply, article, depth + 1) }}
                 {% endfor %}
             {% endif %}
-        </div>
-
-        {% if depth < 3 %}
-            <div class="reply-drawer" style="display: none;">
+            
+            {% if depth < 3 %} <div class="reply-drawer" style="display: none;">
                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                     <input type="hidden" name="parent_id" value="{{ comment.id }}">
                     <textarea name="content" placeholder="Write a reply..." required></textarea>
                     <button type="submit" class="newsfeed-button">Submit</button>
                     <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
                 </form>
-            </div>
-        {% endif %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 {% endmacro %}
 
