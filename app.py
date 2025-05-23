@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timedelta
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory
+from flask_login import current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
@@ -321,6 +322,16 @@ def logout():
     session.clear()
     flash('Logged out.')
     return redirect(url_for('news'))
+
+@app.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    user = current_user
+    logout_user()  # Log out before deleting
+    db.session.delete(user)
+    db.session.commit()
+    flash('Your account has been deleted.', 'success')
+    return redirect(url_for('home'))
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required
