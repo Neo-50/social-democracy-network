@@ -136,6 +136,12 @@
     background-color: #333;
 }
 
+.post-comment-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .post-comment:hover {
     background-color: #333;
     color: #fff;
@@ -172,6 +178,7 @@
     align-items: flex-start;
     padding-left: 10px;
     border-left: 4px solid #333;
+    border-radius: 999px;
     background-color: #444
 }
 
