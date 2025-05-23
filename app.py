@@ -337,11 +337,13 @@ def delete_account():
     if current_user.is_anonymous:
         flash("You're not logged in.", "error")
         return redirect(url_for('login'))
+
     user = current_user._get_current_object()
-    logout_user()  # Log out before deleting
     db.session.delete(user)
-    db.session.commit()
-    flash('Your account has been deleted.', 'success')
+    db.session.commit()  # ✅ Finish deletion while user is still active
+    logout_user()        # ✅ Now it's safe to log out
+    session.clear()
+    flash("Your account has been deleted.", "success")
     return redirect(url_for('home'))
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
