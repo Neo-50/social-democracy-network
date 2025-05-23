@@ -39,14 +39,13 @@
                 </div>
             {% endif %}
 
-                {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
-                    <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
-                        class="delete-form">
-                        <button type="submit" onclick="return confirm('Delete this comment?')"
-                        class="delete-button">🗑 Delete</button>
-                    </form>
-                {% endif %}
-            </div>
+            {% if session.get('user_id') and (session['user_id'] == comment.user_id or is_admin()) %}
+                <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
+                    class="delete-form">
+                    <button type="submit" onclick="return confirm('Delete this comment?')"
+                    class="delete-button">🗑 Delete</button>
+                </form>
+            {% endif %}
         </div>
         <div class="reply-container">
             {% if comment.replies %}
