@@ -122,6 +122,9 @@ def about():
 @app.route('/news', methods=['GET', 'POST'])
 def news():
     if request.method == 'POST':
+        if not session.get('user_id'):
+            flash("You must be logged in to post an article.", "danger")
+            return redirect(url_for('news'))
         url = request.form['url']
         metadata = extract_metadata(url)
         comments = NewsComment.query.all()
