@@ -139,7 +139,8 @@ def news():
         )
         db.session.add(article)
         db.session.commit()
-        return render_template('news.html', comments=comments)
+        flash("Article submitted successfully!", "success")
+        return redirect(url_for('news'))
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     return render_template('news.html', articles=articles, is_admin=is_admin)
