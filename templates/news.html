@@ -43,17 +43,18 @@
                     {{ render_comment(reply, article, depth + 1) }}
                 {% endfor %}
             {% endif %}
+            {% if depth < 3 %} 
+                <div class="reply-drawer" style="display: none;">
+                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <textarea name="content" placeholder="Write a reply..." required></textarea>
+                        <button type="submit" class="newsfeed-button">Submit</button>
+                        <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                    </form>
+                </div>
+            {% endif %}
         </div>
-        {% if depth < 3 %} 
-            <div class="reply-drawer" style="display: none;">
-                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                    <textarea name="content" placeholder="Write a reply..." required></textarea>
-                    <button type="submit" class="newsfeed-button">Submit</button>
-                    <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
-                </form>
-            </div>
-        {% endif %}
+
     </div>
 {% endmacro %}
 
@@ -108,7 +109,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.reply-toggle').forEach(button => {
                 button.addEventListener('click', () => {
-                    const wrapper = button.closest('.comment-container');
+                    const wrapper = button.closest('.reply-container');
                     const drawer = wrapper.querySelector('.reply-drawer');
                     if (drawer) {
                         drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
