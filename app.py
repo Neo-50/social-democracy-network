@@ -334,7 +334,7 @@ def logout():
 @app.route('/delete_account', methods=['POST'])
 @login_required
 def delete_account():
-    user = current_user
+    user = current_user._get_current_object()
     logout_user()  # Log out before deleting
     db.session.delete(user)
     db.session.commit()
