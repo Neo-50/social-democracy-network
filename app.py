@@ -304,6 +304,13 @@ def delete_article(article_id):
     flash("Article deleted.")
     return redirect(url_for('news'))
 
+@property
+def is_active(self):
+    return self.email_verified
+
+def get_id(self):
+    return str(self.id)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
