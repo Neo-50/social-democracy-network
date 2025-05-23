@@ -147,7 +147,7 @@
     border-left: 4px solid #555;
 }
 
-.comment-header {
+.comment-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -157,20 +157,19 @@
 .reply-container {
     position: relative;  /* You already have this, keep it */
     padding-left: 5px;
-    margin-left: 35px;
+    margin-left: 50px;
     margin-bottom: 0;
     margin-top: 4px;
     display: flex;
     flex-direction: column;
-    align-items: left;
-    border: 4px solid blue;
+    align-items: flex-start;
 }
 
 .comment-container {
     display: flex;
     flex-direction: column;
-    align-items: left;
-    border: 4px solid red;
+    align-items: flex-start;
+    border-left: 4px solid #333;
 }
 
 .reply strong {
@@ -191,8 +190,7 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap; /* allows wrapping instead of overflow */
-    gap: 2px;
-    margin-top: 2px;
+    margin-top: 0;
     font-size: 1em;
     color: #ccc;
 }

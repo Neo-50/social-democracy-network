@@ -4,22 +4,20 @@
 {% macro render_comment(comment, article, depth=0) %}
     <div class="comments-thread" data-comment-id="{{ comment.id }}">
         <div class="comment-container">
-            <div class="reply-header">
-                <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
-                    class="avatar-inline" alt="User Avatar">
-                <strong class="username">
-                    {% if comment.user %}
-                        {{ comment.user.username }}
-                        {% if comment.user.is_admin %}
-                        <span class="admin-badge" title="Admin">🛡️</span>
-                    {% endif %}
-                    {% else %}
-                        Anonymous
-                    {% endif %}
-                </strong>
-            </div>
+            <img src="{{ url_for('avatar', filename=comment.user.avatar_filename if comment.user else 'default_avatar.png') }}"
+                class="avatar-inline" alt="User Avatar">
+            <strong class="username">
+                {% if comment.user %}
+                    {{ comment.user.username }}
+                    {% if comment.user.is_admin %}
+                    <span class="admin-badge" title="Admin">🛡️</span>
+                {% endif %}
+                {% else %}
+                    Anonymous
+                {% endif %}
+            </strong>
 
-            <div class="comment-header">
+            <div class="comment-content">
                 <p>{{ comment.content }}</p>
             </div>
 
