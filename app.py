@@ -168,6 +168,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/profile', methods=['GET', 'POST'])
+@login_required
 def profile():
     if 'user_id' not in session:
         return redirect(url_for('login'))
@@ -334,25 +335,18 @@ def logout():
 @app.route('/delete_account', methods=['POST'])
 @login_required
 def delete_account():
-    print("🔍 Deletion initiated")
     if current_user.is_anonymous:
-        print("❌ current_user is anonymous")
         flash("You're not logged in.", "error")
         return redirect(url_for('login'))
 
-    user = current_user._get_current_object()
-    print(f"👤 User object: {user}, ID: {user.id}, Username: {user.username}")
-
-    try:
-        db.session.delete(user)
-        db.session.commit()
-        print("✅ User deleted successfully from database")
-    except Exception as e:
-        db.session.rollback()
-        print(f"❌ Failed to delete user: {e}")
-        flash("Something went wrong while deleting your account.", "error")
+    user_id_from_form = request.form.get('user_id')
+    if str(current_user.id) != user_id_from_form:
+        flash("Invalid request.", "error")
         return redirect(url_for('profile', username=current_user.username))
 
+    user = current_user._get_current_object()
+    db.session.delete(user)
+    db.session.commit()
     logout_user()
     session.clear()
     flash("Your account has been deleted.", "success")
@@ -392,10 +386,6 @@ def new_post():
         return redirect(url_for('forum'))
 
     return render_template('new_post.html')
-
-@app.route('/edit_profile', methods=['GET', 'POST'])
-def edit_profile():
-    return render_template('edit_profile.html')
 
 # Create tables if they don't exist
 with app.app_context():
