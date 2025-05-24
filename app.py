@@ -18,6 +18,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback_dev_key')
 app.config['SESSION_COOKIE_SECURE'] = True  # Required for HTTPS-only cookies
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Good default for login forms
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevents JavaScript from accessing session cookie
@@ -32,7 +33,6 @@ app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
 app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
 
 mail = Mail(app)
-
 basedir = os.path.abspath(os.path.dirname(__file__))
 if os.environ.get("FLASK_ENV") == "production":
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
