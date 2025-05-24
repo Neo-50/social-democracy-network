@@ -5,7 +5,7 @@
 
 <main class="home-page">
     <section class="home-left">
-        <h2>Directory</h2>
+        <h2 class="directory">Directory</h2>
         <ul class="no-bullets">
             <li><a href="https://www.fiftyfifty.one/" target="_blank" class="link-with-icon">
                     <img class="icon" src="{{ url_for('media', filename='icons/50501.png') }}" alt="50501 Movement">
@@ -143,6 +143,10 @@
             <iframe src="https://pepfar.impactcounter.com/embed/simple?source=embed" 
             style="border: none; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);" 
             title="PEPFAR Impact Counter Trackers"></iframe>
+        </div>
+        <div class="image-container">
+            <img src="{{ url_for('media', filename='home/gaza_info.jpg') }}" alt="gaza_info.jpg"
+                class="responsive-image">
         </div>
         <h2>Mayday Protest Denver</h2>
         <div class="video-container">
