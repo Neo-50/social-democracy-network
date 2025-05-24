@@ -18,6 +18,10 @@ load_dotenv()
 
 app = Flask(__name__)
 
+app.config['SESSION_COOKIE_SECURE'] = True  # Required for HTTPS-only cookies
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Good default for login forms
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevents JavaScript from accessing session cookie
+
 app.config['MAIL_SERVER'] = 'smtp.zoho.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
