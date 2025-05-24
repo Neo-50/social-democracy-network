@@ -26,7 +26,7 @@ app.config['MAIL_SERVER'] = 'smtp.zoho.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
-app.config['MAIL_PASSWORD'] = 'fluFfy4ferrEt$areNice9'  # use Zoho app password here
+app.config['MAIL_PASSWORD'] = 'fLuffy2feRret$arENice7'  # use Zoho app password here
 app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
 
 app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
@@ -79,7 +79,7 @@ class User(db.Model, UserMixin):
     avatar_url = db.Column(db.String(500), nullable=True)
     bio = db.Column(db.Text, nullable=True)
     avatar_filename = db.Column(db.String(120))
-
+    comments = db.relationship("Comment", backref="user", cascade="all, delete-orphan")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
