@@ -20,8 +20,7 @@ class NewsComment(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
     article_id = db.Column(db.Integer, db.ForeignKey('news_article.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE', name='fk_news_comment_user_id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('news_comment.id'))
 
     replies = db.relationship(
