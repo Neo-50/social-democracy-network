@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory, current_app
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager, UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -33,7 +33,11 @@ app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
 
 mail = Mail(app)
 
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-default-key')
+basedir = os.path.abspath(os.path.dirname(__file__))
+if os.environ.get("FLASK_ENV") == "production":
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'site.db')
 
 def login_required(f):
     @wraps(f)
@@ -44,7 +48,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 db.init_app(app)
@@ -114,8 +117,15 @@ def media(filename):
 
 @app.route('/media/avatars/<filename>')
 def avatar(filename):
-    print("Serving avatar:", filename)
-    return send_from_directory('/mnt/storage/avatars', filename)
+    if os.environ.get('FLASK_ENV') == 'development':
+        # Local path resolution
+        base_path = os.path.join(current_app.root_path, 'mnt', 'storage', 'avatars')
+    else:
+        # Production hardcoded path
+        base_path = '/mnt/storage/avatars'
+    
+    print("Serving avatar from:", os.path.join(base_path, filename))
+    return send_from_directory(base_path, filename)
 
 
 @app.route('/')

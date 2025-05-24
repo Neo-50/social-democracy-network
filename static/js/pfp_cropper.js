@@ -1,4 +1,4 @@
-let cropper;
+var cropper;
 
 document.addEventListener("DOMContentLoaded", function () {
     const avatarInput = document.querySelector('input[name="avatar"]');
