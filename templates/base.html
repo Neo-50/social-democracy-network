@@ -61,6 +61,17 @@
 </head>
 
 <body class="has-header">
+    <!-- DEBUG SESSION -->
+    {% if current_user.is_authenticated %}
+    <div style="background:#111;color:#0f0;padding:4px;font-size:12px">
+        ✅ Logged in as {{ current_user.username }} | ID: {{ current_user.get_id() }}
+    </div>
+    {% else %}
+    <div style="background:#111;color:#f00;padding:4px;font-size:12px">
+        ❌ Not logged in
+    </div>
+    {% endif %}
+    
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="flashes">
