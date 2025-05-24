@@ -337,6 +337,7 @@ def login():
                 return redirect(url_for('login'))
             session.permanent = True
             login_user(user)
+            session['user_id'] = user.id
             flash('Logged in successfully!')
             print(">>> Login successful")
             print(">>> session user_id:", session.get('user_id'))
