@@ -29,4 +29,5 @@ class NewsComment(db.Model):
         cascade='all, delete-orphan'
     )
 
-    user = db.relationship('User')
+    user = db.relationship('User', back_populates='comments')
+

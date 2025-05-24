@@ -79,7 +79,7 @@ class User(db.Model, UserMixin):
     avatar_url = db.Column(db.String(500), nullable=True)
     bio = db.Column(db.Text, nullable=True)
     avatar_filename = db.Column(db.String(120))
-    comments = db.relationship("NewsComment", backref="user", cascade="all, delete-orphan")
+    comments = db.relationship('NewsComment', back_populates='user', cascade='all, delete-orphan')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
