@@ -189,10 +189,10 @@ def allowed_file(filename):
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    if 'user_id' not in session:
+    if not current_user.is_authenticated:
         return redirect(url_for('login'))
 
-    user = db.session.get(User, session['user_id'])
+    user = current_user
     file = request.files.get('avatar')
     
     if request.method == 'POST':
@@ -223,7 +223,8 @@ def profile():
     return render_template('profile.html', user=user)
 
 def is_admin():
-    return session.get('user_id') and User.query.get(session['user_id']).is_admin
+    return current_user.is_authenticated and current_user.is_admin
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -295,7 +296,7 @@ def resend_verification_email():
 @app.context_processor
 def inject_user():
     if 'user_id' in session:
-        user = User.query.get(session['user_id'])
+        user = User.query.get(current_user.id)
         return dict(current_user=user)
     return dict(current_user=None)
 
@@ -304,7 +305,7 @@ def inject_user():
 def delete_comment(comment_id):
     comment = NewsComment.query.get_or_404(comment_id)
 
-    if session['user_id'] != comment.user_id and not is_admin():
+    if current_user.id != comment.user_id and not is_admin():
         abort(403)  # forbidden
 
     db.session.delete(comment)
@@ -387,7 +388,7 @@ def add_comment(article_id):
         comment = NewsComment(
             content=content,
             article_id=article_id,
-            user_id=session['user_id'],
+            user_id=current_user.id,
             parent_id=parent_id if parent_id else None
         )
         db.session.add(comment)
