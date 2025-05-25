@@ -34,7 +34,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
 
 mail = Mail(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
-if os.environ.get("FLASK_ENV") == "production":
+if os.environ.get("FLASK_ENV") != "production":
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'site.db')
@@ -117,14 +117,14 @@ def media(filename):
 
 @app.route('/media/avatars/<filename>')
 def avatar(filename):
-    if os.environ.get('FLASK_ENV') == 'development':
-        # Local path resolution
+    if os.environ.get('FLASK_ENV') != 'production':
         base_path = os.path.join(current_app.root_path, 'mnt', 'storage', 'avatars')
     else:
-        # Production hardcoded path
         base_path = '/mnt/storage/avatars'
-    
-    print("Serving avatar from:", os.path.join(base_path, filename))
+
+    full_path = os.path.join(base_path, filename)
+    print(">>> Attempting to serve avatar from:", full_path)
+
     return send_from_directory(base_path, filename)
 
 
@@ -181,6 +181,11 @@ def news():
         return redirect(url_for('news'))
 
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
+    print("Articles:", articles)
+    print("Type of first article:", type(articles[0]) if articles else "No articles")
+    print("Current user ID:", current_user.id)
+    for article in articles:
+        print("Article ID:", article.id, "User ID:", article.user_id)
     return render_template('news.html', articles=articles, is_admin=is_admin)
 
 @app.before_request
@@ -323,16 +328,19 @@ def delete_comment(comment_id):
     return redirect(url_for('news'))
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
+@login_required
 def delete_article(article_id):
-    if not is_admin():
+    article = NewsArticle.query.get_or_404(article_id)
+
+    if not (is_admin() or article.user_id == current_user.id):
         flash("Access denied.")
         return redirect(url_for('news'))
 
-    article = NewsArticle.query.get_or_404(article_id)
     db.session.delete(article)
     db.session.commit()
     flash("Article deleted.")
     return redirect(url_for('news'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -426,4 +434,7 @@ with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    print("Registered endpoints:", [rule.endpoint for rule in app.url_map.iter_rules()])
+    from waitress import serve
+    serve(app, host='0.0.0.0', port=5000)
+    # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
