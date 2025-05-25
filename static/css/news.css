@@ -19,26 +19,35 @@
     background-color: #1a1a1a;
     padding: 20px;
     margin: 20px 0;
-    border-radius: 8px;
+    border-radius: 24px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    max-width: 720px;
-
-    /* New: cap the article width */
+    max-width: 640px;
     width: 100%;
+}
 
-    /* Ensures it scales on smaller screens */
+h2 {
+    margin-top: 10px;
+    margin-bottom: 18px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+h2 a:hover {
+    color: #666;
+}
+
+p {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
 }
 
 .news-image {
     width: 100%;
-
-    /* Fill the container width */
     height: auto;
-
-    /* Maintain aspect ratio */
     display: block;
     margin: 0 auto 10px;
     border-radius: 4px;
@@ -60,10 +69,9 @@
     transition: box-shadow 0.2s ease;
 }
 
-.news-left button[type="submit"]{
+.submit-article {
     padding: 10px 20px;
-    font-size: 12pt;
-    font-weight: 600;
+    font-size: 1em;
     margin-left: 10px;
     margin-top: 10px;
     background-color: #1a1a1a;
@@ -73,7 +81,7 @@
     cursor: pointer;
 }
 
-.news-left button[type="submit"]:hover {
+.submit-article:hover {
     background-color: #444;
 }
 
@@ -83,7 +91,7 @@
     gap: 10px; /* space between textarea and button */
 }
 
-.news-right textarea[name="content"] {
+.news-left textarea[name="content"] {
     width: 100%;
     max-width: 400px;
     min-width: 300px;
@@ -96,25 +104,10 @@
     box-sizing: border-box;
 }
 
-.news-row {
-    margin-bottom: 40px;
-}
-
-.news-title a {
-    color: white;
-    font-size: 20px;
-    text-decoration: none;
-}
-
 .news-authors,
 .news-description {
     color: #ccc;
     margin-top: 5px;
-}
-
-.no-articles {
-    text-align: center;
-    color: #888;
 }
 
 .delete-form {
@@ -127,7 +120,7 @@
     border: none;
     color: #888;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em;
     padding: 5px;
 }
 
@@ -142,22 +135,47 @@
     gap: 8px;
 }
 
-.post-comment:hover {
-    background-color: #333;
-    color: #fff;
+.post-comment {
+    background-color: #1a1a1a;
+    border: 3px solid #00e3ea;
+    color: #00e3ea;
+    padding: 5px 15px;
+    font-size: 1em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 
-.comment {
-    margin-bottom: 0;
-    padding: 10px;
-    border-left: 4px solid #555;
+.post-comment:hover {
+    background-color: #333;
+    color: white;
+}
+
+.newsfeed-button {
+    background-color: #1a1a1a;
+    border: 3px solid #00e3ea;
+    color: #00e3ea;
+    padding: 3px 12px;
+    font-size: 0.9em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.newsfeed-button:hover {
+    background-color: #333;
+    color: white;
 }
 
 .comment-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0;
+    margin-bottom: 4px;
 }
 
 .reply-container {
@@ -165,7 +183,7 @@
     padding-left: 10px;
     margin-left: 60px;
     margin-bottom: 0;
-    margin-top: 4px;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -176,9 +194,10 @@
     max-width: 100%;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 4px;
+    margin-top: 6px;
+    margin-bottom: 6px;
     padding-left: 10px;
-    border-left: 4px solid #333;
+    border-left: 6px solid #333;
 }
 
 .reply strong {
@@ -208,28 +227,6 @@
     margin-top: 0;
     font-size: 1em;
     color: #ccc;
-}
-
-.newsfeed-button {
-    background-color: #1a1a1a;
-    border: 3px solid #00e3ea;
-    color: #00e3ea;
-    padding: 5px 15px;
-    font-size: 1em;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.newsfeed-button:hover {
-    color: white;
-}
-
-.vote-count {
-    min-width: 20px;
-    text-align: center;
 }
 
 .admin-badge {

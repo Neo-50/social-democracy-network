@@ -63,25 +63,22 @@
 <main class="news-page">
     <!-- Submission Form -->
     <section class="news-left">
-        <h2>Submit a News Link</h2>
         <form method="POST" action="{{ url_for('news') }}">
             <input type="url" name="url" placeholder="Paste news article URL here..." required>
-            <br><button type="submit">Submit</button>
+            <br><button type="submit" class="submit-article">Submit</button>
         </form>
-    </section>
-
-    <!-- News Feed and Comments in unified right section -->
-    <section class="news-right">
         {% for article in articles %}
             <div class="news-article">
-                <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
-                <p>{{ article.description }}</p>
-                <p><em>Source: {{ article.source }}</em></p>
-                <p><em>Published: {{ article.published }}</em></p>
+                <div class="article-info">
+                    <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                    <p>{{ article.description }}</p>
+                    <p><em>Source: {{ article.source }}</em></p>
+                    <p><em>Published: {{ article.published }}</em></p>
+                </div>
                 <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
 
                 <div class="comments-wrapper">
-                    <h4>Discussion</h4>
+                    <h2>Discussion</h2>
                     <div class="comments-thread">
                         {% for comment in article.comments if comment.parent_id is none %}
                             {{ render_comment(comment, article) }}
@@ -92,7 +89,7 @@
                     {% if session.get('user_id') %}
                         <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                             <textarea name="content" placeholder="Write a comment..." required></textarea>
-                            <button type="submit" class="newsfeed-button post-comment">Post Comment</button>
+                            <button type="submit" class="post-comment">Post Comment</button>
                         </form>
                     {% else %}
                         <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
@@ -106,6 +103,10 @@
                 {% endif %}
             </div>
         {% endfor %}
+    </section>
+
+    <section class="news-right">
+
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
