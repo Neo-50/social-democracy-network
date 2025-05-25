@@ -64,8 +64,10 @@
     <!-- Submission Form -->
     <section class="news-left">
         <form method="POST" action="{{ url_for('news') }}">
-            <input type="url" name="url" placeholder="Paste news article URL here..." required>
-            <br><button type="submit" class="submit-article">Submit</button>
+            <div class="submit-article-container">
+                <input type="url" name="url" placeholder="Paste news article URL here..." required>
+                <button type="submit" class="submit-article">Submit</button>
+            </div>
         </form>
         {% for article in articles %}
             <div class="news-article">
@@ -106,7 +108,6 @@
     </section>
 
     <section class="news-right">
-
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
