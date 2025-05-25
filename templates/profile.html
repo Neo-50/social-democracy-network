@@ -4,7 +4,7 @@
 <main class="profile-page">
     <div class="profile-wrapper">
         <div class="profile-container">
-            <img src="{{ url_for('avatar', filename=current_user.avatar_filename or 'default_avatar.png') }}"
+            <img src="{{ url_for('avatar', filename=current_user_obj.avatar_filename or 'default_avatar.png') }}"
                 class="profile-avatar" alt="User Avatar">
             <h2>{{ user.username }}</h2>
             <p>About Me: {{ user.bio or 'No bio yet.' }}</p>

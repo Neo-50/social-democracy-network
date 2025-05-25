@@ -64,7 +64,7 @@
     <!-- DEBUG SESSION 
     {% if current_user.is_authenticated %}
     <div style="background:#111;color:#0f0;padding:4px;font-size:12px">
-        ✅ Logged in as {{ current_user.username }} | ID: {{ current_user.get_id() }}
+        ✅ Logged in as {{ current_user_obj.username }} | ID: {{ current_user.get_id() }}
     </div>
     {% else %}
     <div style="background:#111;color:#f00;padding:4px;font-size:12px">
@@ -111,12 +111,12 @@
         <div class="header-right">
             <div class="user-nav">
                 {% if current_user.is_authenticated %}
-                <span class="username">{{ current_user.username }}</span>
+                <span class="username">{{ current_user_obj.username }}</span>
                 <div class="avatar-dropdown">
-                    {% set avatar_file = current_user.avatar_filename if current_user.avatar_filename else 'default_avatar.png' %}
+                    {% set avatar_file = current_user_obj.avatar_filename if current_user_obj.avatar_filename else 'default_avatar.png' %}
                     <img src="{{ url_for('avatar', filename=avatar_file) }}" class="avatar-inline" alt="User Avatar">
                     <div class="dropdown-menu">
-                        <a href="{{ url_for('profile', username=current_user.username) }}">Profile</a>
+                        <a href="{{ url_for('profile', username=current_user_obj.username) }}">Profile</a>
                         <a href="{{ url_for('logout') }}">Logout</a>
                     </div>
                 </div>

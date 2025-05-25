@@ -310,10 +310,10 @@ def resend_verification_email():
 
 @app.context_processor
 def inject_user():
-    if 'user_id' in session:
+    if current_user.is_authenticated:
         user = User.query.get(current_user.id)
-        return dict(current_user=user)
-    return dict(current_user=None)
+        return dict(current_user_obj=user)
+    return dict(current_user_obj=None)
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
