@@ -31,7 +31,7 @@
                 {% if depth < 3 %}
                     <button class="newsfeed-button reply-toggle">Reply</button>
                 {% endif %}
-                {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user.is_admin) %}
+                {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user_obj.is_admin) %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
                         class="delete-form">
                         <button type="submit" onclick="return confirm('Delete this comment?')"
