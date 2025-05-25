@@ -16,3 +16,6 @@ __pycache__/
 Thumbs.db
 
 node_modules/
+
+*.db
+migrations/
