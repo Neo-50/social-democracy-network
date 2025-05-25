@@ -11,7 +11,7 @@
     height: 140px;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .top-bar {
         min-height: auto;
         flex-direction: column;
@@ -54,7 +54,7 @@
 .username {
     color: #8a8a8a;
     font-weight: 600;
-    font-size: 14pt;
+    font-size: 1.1em;
 }
 
 .user-link {
@@ -88,7 +88,7 @@
     padding-bottom: 40px;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .header-date-time {
         display: none;
     }
@@ -204,7 +204,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .top-bar {
         flex-direction: column;
         align-items: center;

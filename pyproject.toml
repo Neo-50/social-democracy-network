@@ -18,6 +18,7 @@ flask-mail = "^0.10.0"
 flask-login = "^0.6.3"
 python-dotenv = "^1.1.0"
 waitress = "^3.0.2"
+watchdog = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
