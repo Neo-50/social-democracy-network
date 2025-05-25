@@ -15,14 +15,17 @@ class NewsArticle(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user = db.relationship('User', backref='articles')
-    comments = db.relationship('NewsComment', backref='article', lazy=True)
+    comments = db.relationship('NewsComment', backref='article', cascade='all, delete-orphan', lazy=True)
 
 class NewsComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-    article_id = db.Column(db.Integer, db.ForeignKey('news_article.id'), nullable=False)
+    article_id = db.Column(
+    db.Integer,
+    db.ForeignKey('news_article.id', ondelete='CASCADE', name='fk_news_comment_article_id'),
+    nullable=False
+    )
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE', name='fk_news_comment_user_id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('news_comment.id'))
 
