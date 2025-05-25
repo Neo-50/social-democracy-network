@@ -127,6 +127,12 @@ def avatar(filename):
 
     return send_from_directory(base_path, filename)
 
+@app.template_filter('datetimeformat')
+def datetimeformat(value, format="%B %d, %Y"):
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").strftime(format)
+    except (ValueError, TypeError):
+        return value  # fallback if malformed
 
 @app.route('/')
 def home():
@@ -166,13 +172,14 @@ def news():
         url = request.form['url']
         metadata = extract_metadata(url)
         comments = NewsComment.query.all()
+
         article = NewsArticle(
             url=url,
             title=metadata["title"],
             description=metadata["description"],
             image_url=metadata["image_url"],
             authors=metadata["authors"],
-            published=metadata["published"],
+            published=metadata.get("published", ""),
             source=metadata["source"],
             user_id=session.get('user_id')
         )
