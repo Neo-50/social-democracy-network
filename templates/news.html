@@ -75,7 +75,9 @@
                     <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
                     <p>{{ article.description }}</p>
                     <p><em>Source: {{ article.source }}</em></p>
-                    <p><em>Published: {{ article.published }}</em></p>
+                    {% if article.published %}
+                        <p><em>Published: {{ article.published[:10] | datetimeformat("%B %d, %Y") }}</em></p>
+                    {% endif %}
                 </div>
                 <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
 
