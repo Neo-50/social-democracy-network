@@ -183,7 +183,7 @@ def news():
     articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
     print("Articles:", articles)
     print("Type of first article:", type(articles[0]) if articles else "No articles")
-    print("Current user ID:", current_user.id)
+    print("Current user ID:", current_user.get_id())
     for article in articles:
         print("Article ID:", article.id, "User ID:", article.user_id)
     return render_template('news.html', articles=articles, is_admin=is_admin)
@@ -310,8 +310,8 @@ def resend_verification_email():
 
 @app.context_processor
 def inject_user():
-    if current_user.is_authenticated:
-        user = User.query.get(current_user.id)
+    if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
+        user = User.query.get(current_user.get_id())
         return dict(current_user_obj=user)
     return dict(current_user_obj=None)
 
@@ -320,7 +320,7 @@ def inject_user():
 def delete_comment(comment_id):
     comment = NewsComment.query.get_or_404(comment_id)
 
-    if current_user.id != comment.user_id and not is_admin():
+    if current_user.get_id() != comment.user_id and not is_admin():
         abort(403)  # forbidden
 
     db.session.delete(comment)
@@ -332,7 +332,7 @@ def delete_comment(comment_id):
 def delete_article(article_id):
     article = NewsArticle.query.get_or_404(article_id)
 
-    if not (is_admin() or article.user_id == current_user.id):
+    if not (is_admin() or article.user_id == current_user.get_id()):
         flash("Access denied.")
         return redirect(url_for('news'))
 
@@ -382,7 +382,7 @@ def delete_account():
         return redirect(url_for('login'))
 
     user_id_from_form = request.form.get('user_id')
-    if str(current_user.id) != user_id_from_form:
+    if str(current_user.get_id()) != user_id_from_form:
         flash("Invalid request.", "error")
         return redirect(url_for('profile', username=current_user.username))
 
@@ -407,7 +407,7 @@ def add_comment(article_id):
         comment = NewsComment(
             content=content,
             article_id=article_id,
-            user_id=current_user.id,
+            user_id=current_user.get_id(),
             parent_id=parent_id if parent_id else None
         )
         db.session.add(comment)
