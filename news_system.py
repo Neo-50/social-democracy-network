@@ -3,6 +3,7 @@ from datetime import datetime
 
 class NewsArticle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     url = db.Column(db.String(300), nullable=False)
     title = db.Column(db.String(200), nullable=True)
     description = db.Column(db.Text, nullable=True)
@@ -12,6 +13,8 @@ class NewsArticle(db.Model):
     source = db.Column(db.String(100), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    user = db.relationship('User', backref='articles')
     comments = db.relationship('NewsComment', backref='article', lazy=True)
 
 class NewsComment(db.Model):
