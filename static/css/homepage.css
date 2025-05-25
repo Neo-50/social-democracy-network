@@ -48,12 +48,16 @@ h2  {
 }
 
 /* Directory column width control */
-.home-left, .home-right {
+.home-page home-left {
+    min-width: 260px;
+}
+
+.home-page home-right {
     min-width: 260px;
 }
 
 /* Mobile layout */
-@media (max-width: 768px) {
+@media (width <= 800px) {
     .home-page {
         display: flex;
         flex-direction: column;
@@ -80,7 +84,7 @@ h2  {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px auto 20px;
+    margin: 20px auto;
     width: 100%;
     box-sizing: border-box;
 }

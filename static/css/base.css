@@ -12,7 +12,6 @@ body {
 
 /* Styling for all hyperlinks */
 a {
-    text-decoration: none;
     color: #8feff2;  /* Change the default link color (unvisited) */
     text-decoration: none;  /* Optional: Removes the underline */
 }
@@ -34,7 +33,14 @@ a:visited {
   font-weight: bold;
 }
 
-.flash-success { background-color: #4CAF50; color: white; }
-.flash-danger { background-color: #f44336; color: white; }
-.flash-warning { background-color: #ff9800; color: black; }
-.flash-info { background-color: #2196F3; color: white; }
+.flash-success { background-color: #4CAF50; 
+                 color: white; }
+
+.flash-danger { background-color: #f44336;
+                color: white; }
+            
+.flash-warning { background-color: #ff9800; 
+                 color: black; }
+
+.flash-info { background-color: #2196F3; 
+              color: white; }

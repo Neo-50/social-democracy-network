@@ -173,7 +173,8 @@ def news():
             image_url=metadata["image_url"],
             authors=metadata["authors"],
             published=metadata["published"],
-            source=metadata["source"]
+            source=metadata["source"],
+            user_id=session.get('user_id')
         )
         db.session.add(article)
         db.session.commit()
@@ -328,11 +329,15 @@ def delete_comment(comment_id):
     return redirect(url_for('news'))
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
-@login_required
 def delete_article(article_id):
-    article = NewsArticle.query.get_or_404(article_id)
+    if 'user_id' not in session:
+        flash("Access denied.")
+        return redirect(url_for('news'))
 
-    if not (is_admin() or article.user_id == current_user.get_id()):
+    article = NewsArticle.query.get_or_404(article_id)
+    user = User.query.get(session['user_id'])
+
+    if not (user.is_admin or article.user_id == user.id):
         flash("Access denied.")
         return redirect(url_for('news'))
 
@@ -340,7 +345,6 @@ def delete_article(article_id):
     db.session.commit()
     flash("Article deleted.")
     return redirect(url_for('news'))
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
