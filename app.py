@@ -34,8 +34,8 @@ app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
 
 mail = Mail(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
-if os.environ.get("FLASK_ENV") != "production":
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///dev.db')
+if os.environ.get("FLASK_ENV") == "production":
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'site.db')
 
@@ -429,12 +429,7 @@ def new_post():
 
     return render_template('new_post.html')
 
-# Create tables if they don't exist
-with app.app_context():
-    db.create_all()
-
 if __name__ == '__main__':
-    print("Registered endpoints:", [rule.endpoint for rule in app.url_map.iter_rules()])
     from waitress import serve
-    serve(app, host='0.0.0.0', port=5000)
-    # app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    serve(app, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
