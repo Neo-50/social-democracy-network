@@ -90,8 +90,8 @@
         <div class="header-left">
             <div class="header-date-time" id="date"></div>
             <div class="mobile-top-bar">
-                <div class="mobile-menu-icon" onclick="toggleMobileMenu()">☰</div>
-                <button class="directory-button" onclick="toggleDirectory()">Directory</button>
+                <button id="hamburger-icon" class="hamburger-icon" onclick="toggleMobileMenu()">☰</div>
+                <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Directory</button>
             </div>
         </div>
 
@@ -132,6 +132,16 @@
         {% block content %}
         {% endblock %}
     </main>
+
+    <nav id="mobile-nav" class="mobile-nav">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('news') }}">News</a>
+        <a href="{{ url_for('activism') }}">Activism</a>
+        <a href="{{ url_for('environment') }}">Environment</a>
+        <a href="{{ url_for('veganism') }}">Veganism</a>
+        <a href="{{ url_for('forum') }}">Forum</a>
+        <a href="{{ url_for('about') }}">About</a>
+    </nav>
 
     <div id="mobile-directory" class="mobile-directory">
         <div class="directory-section">
@@ -174,46 +184,33 @@
     </div>
 
     <script>
-        function toggleMobileMenu() {
-            const nav = document.getElementById('main-nav');
-            nav.classList.toggle('show');
-        }
-    </script>
-    <script>
         function updateDate() {
             const currentDate = new Date();
-
-            // Format: "Tuesday, April 29, 2025"
             const options = {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric'
             };
-
             const formattedDate = currentDate.toLocaleString('en-US', options);
             document.getElementById('date').textContent = formattedDate;
         }
-
-        // Call the function to update the date when the page loads
         updateDate();
 
         function toggleMobileMenu() {
-            const nav = document.getElementById('main-nav');
-            nav.classList.toggle('show');
-        }
-        document.addEventListener("DOMContentLoaded", function () {
-            if (window.innerWidth <= 768) {
-                const title = document.querySelector(".site-title");
-                if (title) {
-                    title.textContent = "Social Democracy Network";
-                }
+            const nav = document.getElementById('mobile-nav');
+            if (nav) {
+                nav.classList.toggle('show');
+            } else {
+                console.log('❌ mobile-nav not found');
             }
-        });
+            }
 
         function toggleDirectory() {
-            const dir = document.getElementById('mobile-directory');
-            dir.style.display = (dir.style.display === "flex") ? "none" : "flex";
+            const nav = document.getElementById('mobile-directory');
+            if (nav) {
+                nav.classList.toggle('show');
+            }
         }
     </script>
     <script>

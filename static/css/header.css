@@ -11,15 +11,6 @@
     height: 140px;
 }
 
-@media (width <= 768px) {
-    .top-bar {
-        min-height: auto;
-        flex-direction: column;
-        align-items: center;
-        padding: 0.5rem;
-    }
-}
-
 /* Left: time + mobile buttons */
 .header-left {
     position: absolute;
@@ -88,15 +79,6 @@
     padding-bottom: 40px;
 }
 
-@media (width <= 768px) {
-    .header-date-time {
-        display: none;
-    }
-
-    #main-nav {
-        display: none;
-    }
-}
 
 /* Navigation bar */
 #main-nav {
@@ -164,32 +146,11 @@
     display: inline-block;
 }
 
-/* Mobile controls */
+/* ========== Mobile Controls ========== */
 
-#mobile-directory {
+.directory-button,
+.hamburger-icon {
     display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 60px;
-    right: 10px;
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    padding: 1rem;
-    z-index: 100;
-    border-radius: 8px;
-    max-width: 300px;
-}
-
-.mobile-top-bar {
-    display: none;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.mobile-menu-icon,
-.directory-button {
     background-color: #1a1a1a;
     color: white;
     border: none;
@@ -198,16 +159,59 @@
     cursor: pointer;
 }
 
-.mobile-menu-icon:hover,
-.directory-button:hover {
+#mobile-directory {
+    display: none;
+    background-color: #1a1a1a;
+    position: absolute;
+    top: 60px;
+    left: 150px;
+    padding: 5px;
+    border: 1px solid #444;
+    border-radius: 20px;
+    max-width: 300px;
+}
+
+#mobile-directory.show {
+  display: flex;
+}
+
+.directory-button:hover,
+.hamburger-icon:hover {
     background-color: #444;
 }
 
-/* Responsive adjustments */
+.mobile-top-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+
+/* ========== Responsive Adjustments (≤ 768px) ========== */
 @media (width <= 768px) {
+    .header-date-time,
+    #main-nav {
+        display: none;
+    }
+
     .top-bar {
+        min-height: auto;
         flex-direction: column;
         align-items: center;
+        padding: 0.5rem;
+    }
+
+    #mobile-nav {
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        background-color: #111;
+        padding: 10px;
+    }
+
+    #mobile-nav.show {
+        display: flex;
     }
 
     .header-left,
@@ -216,12 +220,9 @@
         text-align: center;
     }
 
+    #directory-button,
+    #hamburger-icon,
     .mobile-top-bar {
         display: flex;
-    }
-
-    #main-nav {
-        flex-direction: column;
-        gap: 5px;
     }
 }
