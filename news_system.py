@@ -12,6 +12,7 @@ class NewsArticle(db.Model):
     published = db.Column(db.String(100), nullable=True)
     source = db.Column(db.String(100), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    category = db.Column(db.String(50), nullable=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user = db.relationship('User', backref='articles')

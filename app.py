@@ -169,32 +169,61 @@ def news():
         if not session.get('user_id'):
             flash("You must be logged in to post an article.", "danger")
             return redirect(url_for('news'))
+
         url = request.form['url']
+        category = request.form.get('category', '').strip()
         metadata = extract_metadata(url)
-        comments = NewsComment.query.all()
 
         article = NewsArticle(
             url=url,
+            category=category,
             title=metadata["title"],
             description=metadata["description"],
             image_url=metadata["image_url"],
             authors=metadata["authors"],
             published=metadata.get("published", ""),
             source=metadata["source"],
-            user_id=session.get('user_id')
+            user_id=session.get("user_id")
         )
         db.session.add(article)
         db.session.commit()
         flash("Article submitted successfully!", "success")
-        return redirect(url_for('news'))
 
-    articles = NewsArticle.query.order_by(NewsArticle.timestamp.desc()).all()
-    print("Articles:", articles)
-    print("Type of first article:", type(articles[0]) if articles else "No articles")
-    print("Current user ID:", current_user.get_id())
-    for article in articles:
-        print("Article ID:", article.id, "User ID:", article.user_id)
-    return render_template('news.html', articles=articles, is_admin=is_admin)
+        return redirect(url_for('news'))  # 🚨 Prevent falling through to render
+
+    # GET logic
+    selected_category = request.args.get('category')
+
+    if selected_category:
+        articles = NewsArticle.query \
+            .filter_by(category=selected_category) \
+            .order_by(NewsArticle.timestamp.desc()) \
+            .all()
+    else:
+        articles = NewsArticle.query \
+            .order_by(NewsArticle.timestamp.desc()) \
+            .all()
+
+    return render_template(
+        'news.html',
+        articles=articles,
+        is_admin=is_admin,
+        selected_category=selected_category
+    )
+
+@app.route('/update_category/<int:article_id>', methods=['POST'])
+@login_required
+def update_article_category(article_id):
+    if not current_user.is_admin:
+        abort(403)
+
+    new_category = request.form.get('new-category', '').strip()
+    article = NewsArticle.query.get_or_404(article_id)
+    article.category = new_category
+    db.session.commit()
+    flash('Category updated successfully.', 'success')
+    print(f"New category submitted: {new_category}")
+    return redirect(url_for('news'))
 
 @app.before_request
 def log_incoming_request():
