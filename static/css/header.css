@@ -173,12 +173,11 @@
     gap: 10px;
 }
 
-#mobile-nav,
-#mobile-directory {
+#mobile-nav {
     display: none;
     position: absolute;
-    top: 60px;
-    left: 80px;
+    top: 90px;
+    left: 0;
     padding: 10px;
     background-color: #111;
     border: 1px solid #444;
@@ -187,6 +186,31 @@
     z-index: 1000;
     flex-direction: column;
     gap: 10px;
+}
+
+#mobile-nav a:hover {
+    color: white;
+    background-color: #444;
+}
+
+#mobile-directory {
+    display: none;
+    position: absolute;
+    top: 80px;
+    left: 140px;
+    padding: 10px;
+    background-color: #111;
+    border: 1px solid #444;
+    border-radius: 10px;
+    max-width: 300px;
+    z-index: 1000;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#mobile-directory a:hover {
+    color: white;
+    background-color: #444;
 }
 
 #mobile-nav.show,
@@ -201,11 +225,17 @@
         display: none;
     }
 
+    .main-content {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
     .top-bar {
-        min-height: auto;
+        height: auto;
         flex-direction: column;
         align-items: flex-start;
-        padding: .5rem;
+        padding-top: 10px;
+        padding-bottom: 0;
         margin-bottom: 0;
     }
 
@@ -216,8 +246,49 @@
     }
 
     #directory-button,
-    #hamburger-icon,
+    #hamburger-icon {
+        display: flex;
+        background-color: #111;
+        border-radius: 16px;
+        margin-top: 2px;
+    }
+
     .mobile-nav-buttons {
         display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        padding: 0;
+        justify-content: flex-start;
+        align-self: flex-start;
     }
+
+    .user-nav {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        margin-top: 30px;
+        gap: 5px;
+    }
+
+    .header-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        gap: 4px;
+    }
+
+    .title-image {
+        display: block;
+        margin: 0 auto;
+        padding: 0;
+        max-width: 100%;
+    }
+
+/*
+    * {
+        outline: 1px solid red;
+    }
+*/
 }
