@@ -96,12 +96,12 @@
                 <a href="{{ url_for('forum') }}">Forum</a>
                 <a href="{{ url_for('about') }}">About</a>
             </nav>
-        </div>
-        <div class="mobile-nav-buttons">
-            <button id="hamburger-icon" class="hamburger-icon" onclick="toggleMobileMenu()">☰
-            <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Directory</button>
-        </div>
         
+            <div class="mobile-nav-buttons">
+                <button id="hamburger-icon" class="hamburger-icon" onclick="toggleMobileMenu()">☰
+                <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Directory</button>
+            </div>
+        </div>
         <div class="mobile-nav-container">
             <nav id="mobile-nav" class="mobile-nav">
                 <a href="{{ url_for('home') }}">Home</a>
@@ -176,11 +176,12 @@
             </div>
         </div>
     </header>
-
-    <main id="main-content">
-        {% block content %}
-        {% endblock %}
-    </main>
+    <div class="main-div">
+        <main id="main-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
 
     <script>
         function updateDate() {
