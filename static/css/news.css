@@ -35,10 +35,6 @@ h2 {
     font-weight: 600;
 }
 
-h2 a:hover {
-    color: #666;
-}
-
 p {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -54,9 +50,7 @@ p {
 }
 
 .news-left input[type="url"] {
-    width: 100%;
-    max-width: 400px;
-    min-width: 300px;
+    width: 300px;
     padding: 12px 20px;
     margin-left: 5px;
     background-color: #1a1a1a;
@@ -69,17 +63,33 @@ p {
     transition: box-shadow 0.2s ease;
 }
 
+#category {
+    width: 300px;
+    padding: 12px 20px;
+    margin-left: 5px;
+    background-color: #1a1a1a;
+    color: #ccc;
+    border: none;
+    border-radius: 999px;
+    font-size: 1em;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+    margin-bottom: 30px;
+}
+
 .submit-article-container {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
+    margin-left: 0;
     gap: 5px;
 }
 
 .submit-article {
     padding: 11px 20px;
     font-size: 1em;
-    margin-left: 0;
+    margin-left: 5px;
     margin-top: 2px;
     background-color: #1a1a1a;
     color: white;
@@ -92,13 +102,67 @@ p {
     background-color: #444;
 }
 
+.category-links {
+    display: block;
+    width: fit-content;
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+}
+
+.category-links a {
+    display: block;
+    box-sizing: border-box;
+    padding: 12px;
+    background-color: #1a1a1a;
+    border: 1px solid #8feff2;
+}
+
+.category-links a:hover {
+    color: white;
+    background-color: #333;
+}
+
+.category-links ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.new-category-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 30px;
+}
+
+#new-category {
+    width: 100%;
+    max-width: 300px;
+    min-width: 100px;
+    padding: 5px 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    background-color: #1f1f1f;
+    color: #999;
+    border: none;
+    font-size: 1em;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
 .comments-thread form {
     display: flex;
     align-items: flex-end;
-    gap: 10px; /* space between textarea and button */
+    gap: 10px;
 }
 
-.news-left textarea[name="content"] {
+.news-right h2 a:hover {
+    color: #666;
+}
+
+.news-right textarea[name="content"] {
     width: 100%;
     max-width: 400px;
     min-width: 300px;
@@ -147,6 +211,7 @@ p {
     border: 3px solid #00e3ea;
     color: #00e3ea;
     padding: 5px 15px;
+    margin-left: 5px;
     font-size: 1em;
     border-radius: 999px;
     cursor: pointer;
@@ -165,6 +230,7 @@ p {
     border: 3px solid #00e3ea;
     color: #00e3ea;
     padding: 3px 12px;
+    margin-left: 0;
     font-size: 0.9em;
     border-radius: 999px;
     cursor: pointer;

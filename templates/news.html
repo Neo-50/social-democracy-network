@@ -10,7 +10,7 @@
                     alt="User Avatar">
                 {% else %}
                 <img src="{{ url_for('avatar', filename='default_avatar.png') }}" class="avatar-inline" alt="User Avatar">
-                {% endif %}              
+                {% endif %}
                 <strong class="username">
                     {% if comment.user %}
                         {{ comment.user.username }}
@@ -39,7 +39,7 @@
                     </form>
                 {% endif %}
             </div>
-            {% if depth < 3 %} 
+            {% if depth < 3 %}
                 <div class="reply-drawer" style="display: none;">
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                         <input type="hidden" name="parent_id" value="{{ comment.id }}">
@@ -61,22 +61,56 @@
 {% endmacro %}
 
 <main class="news-page">
-    <!-- Submission Form -->
     <section class="news-left">
         <form method="POST" action="{{ url_for('news') }}">
             <div class="submit-article-container">
                 <input type="url" name="url" placeholder="Paste news article URL here..." required>
                 <button type="submit" class="submit-article">Submit</button>
             </div>
+            <select name="category" id="category">
+                <option value="">Uncategorized</option>
+                <option value="War Military & Conflict">War Military & Conflict</option>
+                <option value="ICE & Immigration">ICE Raids & Immigration</option>
+                <option value="Political Corruption">US Political Corruption</option>
+                <option value="Protests & Activism">Protests & Activism</option>
+                <option value="Climate & Environment">Climate & Environment</option>
+                <option value="Science & Technology">Science & Technology</option>
+                <option value="Economy & Finance">Economy & Finance</option>
+            </select>
+            <div class="category-links">
+                <ul>
+                    <li><a href="{{ url_for('news') }}">All</a></li>
+                    <li><a href="{{ url_for('news', category='War & Military') }}">War Military & Conflict</a></li>
+                    <li><a href="{{ url_for('news', category='ICE & Immigration') }}">Immigration ICE Raids & Abductions</a></li>
+                    <li><a href="{{ url_for('news', category='Political Corruption') }}">US Political Corruption</a></li>
+                    <li><a href="{{ url_for('news', category='Protests & Activism') }}">Protests & Activism</a></li>
+                    <li><a href="{{ url_for('news', category='Climate & Environment') }}">Climate & Environment</a></li>
+                    <li><a href="{{ url_for('news', category='Science & Technology') }}">Science & Technology</a></li>
+                    <li><a href="{{ url_for('news', category='Economy & Finance') }}">Economy & Finance</a></li>
+                </ul>
+            </div>
         </form>
+
+    </section>
+
+    <section class="news-right">
+        {% if selected_category %}
+            <h2>{{ selected_category }}</h2>
+        {% else %}
+            <h2>All Categories</h2>
+        {% endif %}
+
         {% for article in articles %}
             <div class="news-article">
                 <div class="article-info">
                     <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
                     <p>{{ article.description }}</p>
-                    <p><em>Source: {{ article.source }}</em></p>
+                    <p>Source: {{ article.source }}</p>
                     {% if article.published %}
-                        <p><em>Published: {{ article.published[:10] | datetimeformat("%B %d, %Y") }}</em></p>
+                        <p>Published: {{ article.published[:10] | datetimeformat("%B %d, %Y") }}</p>
+                    {% endif %}
+                    {% if article.category %}
+                        <p>Category: {{ article.category }}</p>
                     {% endif %}
                 </div>
                 <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
@@ -89,16 +123,33 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="post-comment-container">
-                    {% if session.get('user_id') %}
-                        <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                            <textarea name="content" placeholder="Write a comment..." required></textarea>
-                            <button type="submit" class="post-comment">Post Comment</button>
-                        </form>
-                    {% else %}
-                        <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
-                    {% endif %}
-                </div>
+                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                    <div class="post-comment-container">
+                        {% if session.get('user_id') %}
+                                <textarea name="content" placeholder="Write a comment..." required></textarea>
+                                <button type="submit" class="post-comment">Post Comment</button>
+                        {% else %}
+                            <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
+                        {% endif %}
+                    </div>
+                </form>
+                <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
+                    <div class="new-category-container">
+                        {% if is_admin %}
+                            <select name="new-category" id="new-category">
+                                <option value="">Uncategorized</option>
+                                <option value="War Military & Conflict">War Military & Conflict</option>
+                                <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
+                                <option value="Political Corruption">US Political Corruption</option>
+                                <option value="Protests & Activism">Protests & Activism</option>
+                                <option value="Climate & Environment">Climate & Environment</option>
+                                <option value="Science & Technology">Science & Technology</option>
+                                <option value="Economy & Finance">Economy & Finance</option>
+                            </select>
+                            <button type="submit" class="newsfeed-button">Update</button>
+                        {% endif %}
+                    </div>
+                </form>
                 {% if is_admin() or current_user_obj.id == article.user_id %}
                     <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
                         <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
@@ -107,9 +158,6 @@
                 {% endif %}
             </div>
         {% endfor %}
-    </section>
-
-    <section class="news-right">
     </section>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
