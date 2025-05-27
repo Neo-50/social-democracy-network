@@ -4,30 +4,49 @@ body {
     font-family: Arial, sans-serif;
 }
 
+h2 {
+    font-size: 20px;
+    margin-bottom: 0;
+}
+
 .profile-wrapper {
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 24px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;  /* Align left */
-    gap: 10px;                    /* Small gap between containers */
-    margin-left: 10px;            /* Optional: offset from page edge */
+    flex-direction: column;
+    align-items: flex-start;
+    width: min-content;
+    height: min-content;
+}
+
+.update-profile {
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: min-content;
+    height: min-content;
+    border: 2px solid #00e3ea;
 }
 
 .profile-container {
     background-color: #1a1a1a;
     padding: 20px;
-    border-radius: 10px;
-    width: fit-content;
-    display: inline-block;
-    text-align: left;
-}
-
-.profile-actions {
-    max-width: 700px;
-    display: inline-block;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 640px;
+    width: 100%;
+    border: 2px solid #00e3ea;
 }
 
 /* Stack vertically on small screens */
-@media (max-width: 768px) {
+@media (width < 768px) {
     .profile-wrapper {
         flex-direction: column;
         align-items: center;
@@ -42,16 +61,10 @@ body {
     margin-bottom: 10px;
 }
 
-.profile-username {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.profile-bio {
-    font-style: italic;
-    color: #ccc;
-    margin-bottom: 20px;
+.bio-text {
+    width: 300px;
+    height: 100px;
+    background-color: #444;
 }
 
 form {
@@ -59,30 +72,50 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
 }
 
 label {
     font-weight: bold;
 }
 
-button[type="submit"] {
-    padding: 6px 20px;
-    background-color: #1a1a1a;
-    color: white;
-    border: none;
+button[type="delete-account"] {
+    background-color: rgb(161 83 83);
+    border: 3px solid #00e3ea;
+    color: #00e3ea;
+    padding: 6px 12px;
+    margin-left: 0;
+    margin-top: 20px;
+    font-size: .8em;
     border-radius: 999px;
     cursor: pointer;
-    width: 100%;
-    max-width: 300px;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+button[type="submit"] {
+    background-color: #1a1a1a;
+    border: 3px solid #00e3ea;
+    color: #00e3ea;
+    padding: 3px 12px;
+    margin-left: 0;
+    font-size: 1.1em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
 }
 
 input[type="file"]::file-selector-button {
-    padding: 6px 20px;
     background-color: #1a1a1a;
-    color: white;
-    border: none;
+    border: 3px solid #00e3ea;
+    color: #00e3ea;
+    padding: 3px 12px;
+    margin-left: 0;
+    margin-bottom: 20px;
+    font-size: 1.1em;
     border-radius: 999px;
+    transition: color 0.2s ease;
+    text-decoration: none;
     cursor: pointer;
 }
 
