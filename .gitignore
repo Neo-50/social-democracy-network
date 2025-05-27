@@ -18,4 +18,4 @@ Thumbs.db
 node_modules/
 
 *.db
-migrations/
+# migrations/
