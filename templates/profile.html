@@ -6,56 +6,53 @@
         <div class="profile-container">
             <img src="{{ url_for('avatar', filename=current_user_obj.avatar_filename or 'default_avatar.png') }}"
                 class="profile-avatar" alt="User Avatar">
-            <h2>{{ user.username }}</h2>
+            <h2 class="profile-username">{{ user.username }}</h2>
             <p>About Me: {{ user.bio or 'No bio yet.' }}</p>
         </div>
-        <div class="profile-actions">
-            <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="update-profile">
                 <label for="avatar">Upload Avatar (max 2MB):</label>
                 <input type="file" name="avatar" accept="image/*">
 
                 <label for="bio">About Me:</label>
-                <textarea name="bio"></textarea>
+                <textarea name="bio" class="bio-text"></textarea>
 
                 <button type="submit">Save</button>
-            </form>
-            <div id="cropperModal" class="modal"
-                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.75); z-index: 9999; align-items: center; justify-content: center;">
-                <div style="background: #222; padding: 20px; border-radius: 8px; max-width: 90vw; max-height: 90vh;">
-                    <h2 style="color: white; text-align: center;">Adjust your profile picture</h2>
-                    <div style="max-width: 400px; max-height: 400px; margin: auto;">
-                        <img id="cropperImage" style="max-width: 100%; max-height: 100%; display: block;" />
-                    </div>
-                    <div style="margin-top: 20px; text-align: center;">
-                        <button id="cropButton" class="btn">Crop & Save</button>
-                        <button id="cancelCropButton" class="btn" style="margin-left: 10px;">Cancel</button>
-                    </div>
-                </div>
-            </div>
-            <div class="delete-account">
                 <form action="{{ url_for('delete_account') }}" method="POST">
                     <input type="hidden" name="user_id" value="{{ current_user.id }}">
-                    <button type="submit" class="btn btn-danger">Delete Account</button>
-                </form>
+                    <button type="delete-account" class="btn btn-danger">Delete Account</button>
+                </form>   
             </div>
-
-            <style>
-                .btn {
-                    background: #444;
-                    color: white;
-                    border: none;
-                    padding: 8px 16px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: background 0.3s ease;
-                }
-
-                .btn:hover {
-                    background: #666;
-                }
-            </style>
-
+        </form>
+        <div id="cropperModal" class="modal"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.75); z-index: 9999; align-items: center; justify-content: center;">
+            <div style="background: #222; padding: 20px; border-radius: 8px; max-width: 90vw; max-height: 90vh;">
+                <h2 style="color: white; text-align: center;">Adjust your profile picture</h2>
+                <div style="max-width: 400px; max-height: 400px; margin: auto;">
+                    <img id="cropperImage" style="max-width: 100%; max-height: 100%; display: block;" />
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button id="cropButton" class="btn">Crop & Save</button>
+                    <button id="cancelCropButton" class="btn" style="margin-left: 10px;">Cancel</button>
+                </div>
+            </div>
         </div>
+        <style>
+            .btn {
+                background: #444;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+
+            .btn:hover {
+                background: #666;
+            }
+        </style>
     </div>
 </main>
 <script src="{{ url_for('static', filename='js/cropper.min.js') }}"></script>
