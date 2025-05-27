@@ -189,16 +189,16 @@ def news():
 
     # GET logic
     selected_category = request.args.get('category')
+    sort_order = request.args.get('sort', 'desc')
+    order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
 
     if selected_category:
         articles = NewsArticle.query \
             .filter_by(category=selected_category) \
-            .order_by(NewsArticle.timestamp.desc()) \
+            .order_by(order_func) \
             .all()
     else:
-        articles = NewsArticle.query \
-            .order_by(NewsArticle.timestamp.desc()) \
-            .all()
+        articles = NewsArticle.query.order_by(order_func).all()
 
     return render_template(
         'news.html',

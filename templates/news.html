@@ -99,6 +99,17 @@
         {% else %}
             <h2>All Categories</h2>
         {% endif %}
+        
+        <form method="get" class="sort-form" style="margin-bottom: 1em;">
+            {% if selected_category %}
+                <input type="hidden" name="category" value="{{ selected_category }}">
+            {% endif %}
+            <label for="sort">Sort by:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Newest First</option>
+                <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
+            </select>
+        </form>
 
         {% for article in articles %}
             <div class="news-article">
