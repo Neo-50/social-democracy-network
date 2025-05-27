@@ -130,8 +130,8 @@ def avatar(filename):
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
     try:
-        return datetime.strptime(value, "%Y-%m-%d").strftime(format)
-    except (ValueError, TypeError):
+        return value.strftime(format)
+    except (AttributeError, ValueError, TypeError):
         return value
 
 @app.route('/')
