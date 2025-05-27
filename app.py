@@ -1,5 +1,6 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+import pytz
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory, current_app
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager, UserMixin
@@ -471,6 +472,10 @@ def add_comment(article_id):
         db.session.commit()
 
     return redirect(url_for('news'))
+
+@app.context_processor
+def inject_timezone():
+    return {'timezone': timezone}
 
 @app.route('/new_post', methods=['GET', 'POST'])
 def new_post():
