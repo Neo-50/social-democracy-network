@@ -132,7 +132,7 @@ def datetimeformat(value, format="%B %d, %Y"):
     try:
         return datetime.strptime(value, "%Y-%m-%d").strftime(format)
     except (ValueError, TypeError):
-        return value  # fallback if malformed
+        return value
 
 @app.route('/')
 def home():
@@ -140,17 +140,14 @@ def home():
 
 @app.route('/activism')
 def activism():
-    # Placeholder: Replace with actual environment content
     return render_template('activism.html')
 
 @app.route('/environment')
 def environment():
-    # Placeholder: Replace with actual environment content
     return render_template('environment.html')
 
 @app.route('/veganism')
 def veganism():
-    # Placeholder: Replace with actual veganism content
     return render_template('veganism.html')
 
 @app.route('/forum')
@@ -160,7 +157,6 @@ def forum():
 
 @app.route('/about')
 def about():
-    # Placeholder: Replace with actual veganism content
     return render_template('about.html')
 
 @app.route('/news', methods=['GET', 'POST'])
@@ -237,6 +233,27 @@ def handle_large_file(e):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/edit_article/<int:article_id>', methods=['POST'])
+@login_required
+def edit_article(article_id):
+    if not is_admin():
+        abort(403)
+
+    article = NewsArticle.query.get_or_404(article_id)
+    article.title = request.form.get('title') or article.title
+    article.source = request.form.get('source') or article.source
+    article.description = request.form.get('description') or article.description
+    pub = request.form.get('published')
+    if pub:
+        try:
+            article.published = datetime.strptime(pub, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format. Use YYYY-MM-DD.", "danger")
+
+    db.session.commit()
+    flash("Article updated.", "success")
+    return redirect(url_for('news'))
 
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required
