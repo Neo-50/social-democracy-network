@@ -375,11 +375,12 @@ def inject_user():
 def delete_comment(comment_id):
     comment = NewsComment.query.get_or_404(comment_id)
 
-    if current_user.get_id() != comment.user_id and not is_admin():
-        abort(403)  # forbidden
+    if int(current_user.get_id()) != comment.user_id and not is_admin():
+        abort(403)
 
     db.session.delete(comment)
     db.session.commit()
+    flash("Comment deleted successfully.", "success")
     return redirect(url_for('news'))
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
@@ -470,7 +471,7 @@ def add_comment(article_id):
         )
         db.session.add(comment)
         db.session.commit()
-
+    flash("Comment posted successfully.", "success")
     return redirect(url_for('news'))
 
 @app.context_processor
