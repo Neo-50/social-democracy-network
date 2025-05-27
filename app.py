@@ -200,12 +200,20 @@ def news():
             .all()
     else:
         articles = NewsArticle.query.order_by(order_func).all()
+    
+    category = request.args.get('category')
+    if category:
+        articles = NewsArticle.query.filter_by(category=category).all()
+    else:
+        articles = NewsArticle.query.all()
+    count = len(articles)
 
     return render_template(
         'news.html',
         articles=articles,
         is_admin=is_admin,
-        selected_category=selected_category
+        selected_category=selected_category,
+        count=count
     )
 
 @app.route('/update_category/<int:article_id>', methods=['POST'])

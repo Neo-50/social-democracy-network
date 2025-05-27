@@ -153,9 +153,8 @@ p {
 }
 
 .sort-form {
-  margin-top: 10px;
-  margin-bottom: 20px;
-  font-size: 1em;
+    font-size: 0.9rem;
+    color: rgb(255 255 255 / 70%);
 }
 
 .sort-form select {
@@ -291,6 +290,13 @@ p {
 .newsfeed-button:hover {
     background-color: #333;
     color: white;
+}
+
+.article-count {
+    margin-left: 0;
+    margin-bottom: 14px;
+    font-size: 1.2rem;
+    color: rgb(255 255 255 / 70%);
 }
 
 .comment-content {
