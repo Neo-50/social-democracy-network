@@ -135,7 +135,7 @@
                 </form>
                 <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
                     <div class="new-category-container">
-                        {% if is_admin %}
+                        {% if is_admin() or current_user_obj.id == article.user_id %}
                             <select name="new-category" id="new-category">
                                 <option value="">Uncategorized</option>
                                 <option value="War Military & Conflict">War Military & Conflict</option>
