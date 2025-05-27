@@ -227,6 +227,13 @@ p {
     margin: 0;
 }
 
+.comment-timestamp {
+  font-size: 0.75em;
+  margin-left: 0;
+  margin-top: 0;
+  color:#888
+}
+
 .delete-button {
     background-color: transparent;
     border: none;
@@ -290,7 +297,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 0;
 }
 
 .reply-container {

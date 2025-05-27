@@ -1,5 +1,5 @@
 from db_init import db
-from datetime import datetime, date
+from datetime import datetime, timezone
 
 class NewsArticle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,7 +11,7 @@ class NewsArticle(db.Model):
     authors = db.Column(db.String(200), nullable=True)
     published = db.Column(db.Date, nullable=True)
     source = db.Column(db.String(100), nullable=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     category = db.Column(db.String(50), nullable=True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
@@ -21,7 +21,7 @@ class NewsArticle(db.Model):
 class NewsComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     article_id = db.Column(
     db.Integer,
     db.ForeignKey('news_article.id', ondelete='CASCADE', name='fk_news_comment_article_id'),
