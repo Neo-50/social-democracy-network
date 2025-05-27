@@ -28,6 +28,9 @@
             </div>
 
             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
+                <span class="comment-timestamp">
+                    {{ comment.timestamp | datetimeformat("%b %d, %Y %I:%M %p") }}
+                </span>
                 {% if depth < 3 %}
                     <button class="newsfeed-button reply-toggle">Reply</button>
                 {% endif %}
@@ -99,7 +102,7 @@
         {% else %}
             <h2>All Categories</h2>
         {% endif %}
-        
+
         <form method="get" class="sort-form" style="margin-bottom: 1em;">
             {% if selected_category %}
                 <input type="hidden" name="category" value="{{ selected_category }}">
