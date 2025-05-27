@@ -1,5 +1,5 @@
 from db_init import db
-from datetime import datetime
+from datetime import datetime, date
 
 class NewsArticle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -9,7 +9,7 @@ class NewsArticle(db.Model):
     description = db.Column(db.Text, nullable=True)
     image_url = db.Column(db.String(500), nullable=True)
     authors = db.Column(db.String(200), nullable=True)
-    published = db.Column(db.String(100), nullable=True)
+    published = db.Column(db.Date, nullable=True)
     source = db.Column(db.String(100), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     category = db.Column(db.String(50), nullable=True)

@@ -167,12 +167,40 @@ p {
     max-width: 400px;
     min-width: 300px;
     padding: 12px 20px;
+    margin-bottom: 20px;
     background-color: #1f1f1f;
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 16px;
     box-sizing: border-box;
+}
+
+.article-edit-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  gap: 8px;
+  margin-top: 0;
+}
+
+.article-edit-form input,
+.article-edit-form textarea {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 6px;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.article-edit-form input[type="date"] {
+  width: 180px;
+}
+
+.article-edit-form button {
+  align-self: flex-start;
 }
 
 .news-authors,
@@ -203,6 +231,7 @@ p {
 .post-comment-container {
     display: inline-flex;
     align-items: center;
+    margin-bottom: 0;
     gap: 8px;
 }
 
