@@ -17,44 +17,48 @@
 
     <!-- Page-specific styles -->
     {% if request.endpoint == 'home' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'news' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'activism' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/activism.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/activism.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'environment' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/environment.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/environment.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'veganism' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/veganism.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/veganism.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'forum' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'about' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'login' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'register' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'profile' %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cropper.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/cropper.min.css') }}">
+    {% endif %}
+
+    {% if request.endpoint == 'admin_tools' %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_tools.css') }}">
     {% endif %}
 </head>
 
@@ -167,6 +171,9 @@
                     <div class="dropdown-menu">
                         <a href="{{ url_for('profile', username=current_user_obj.username) }}">Profile</a>
                         <a href="{{ url_for('logout') }}">Logout</a>
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                            <a href="{{ url_for('admin_tools') }}">Admin Tools</a>
+                        {% endif %}
                     </div>
                 </div>
                 {% else %}

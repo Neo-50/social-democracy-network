@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main class="admin-tools-page">
+    <div class="content-row">
+        <h1>Admin Tools</h1>
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Session Active</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.last_login or 'N/A' }}</td>
+                    <td>
+                        <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST"
+                        style="display:inline;" onsubmit="return confirm('Delete {{ user.username }}?');">
+                            <button type="submit" class="delete-btn" title="Delete Account">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}
