@@ -15,8 +15,8 @@
                     {% if comment.user %}
                         {{ comment.user.username }}
                         {% if comment.user.is_admin %}
-                        <span class="admin-badge" title="Admin">🛡️</span>
-                    {% endif %}
+                            <span class="admin-badge" title="Admin">🛡️</span>
+                        {% endif %}
                     {% else %}
                         Anonymous
                     {% endif %}

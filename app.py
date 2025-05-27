@@ -363,6 +363,12 @@ def resend_verification_email():
 
     return render_template('register.html')
 
+@app.route('/admin_tools')
+@login_required
+def admin_tools():
+    users = User.query.all()
+    return render_template('admin_tools.html', users=users)
+
 @app.context_processor
 def inject_user():
     if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
@@ -453,6 +459,23 @@ def delete_account():
     flash("Your account has been deleted.", "success")
     return redirect(url_for('home'))
 
+@app.route('/admin_delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def admin_delete_user(user_id):
+    if not current_user.is_admin:
+        abort(403)
+
+    user = User.query.get_or_404(user_id)
+
+    # Optional: prevent admins from deleting themselves
+    # if user.id == current_user.id:
+    #     flash("You can't delete your own account from the admin panel.", "error")
+    #     return redirect(url_for('admin_tools'))
+
+    db.session.delete(user)
+    db.session.commit()
+    flash(f"User '{user.username}' has been deleted.", "success")
+    return redirect(url_for('admin_tools'))
 
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required

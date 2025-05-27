@@ -1,0 +1,41 @@
+.user-table {
+    width: 60%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 1rem;
+    border: 1px solid #555;
+}
+
+.user-table th,
+.user-table td {
+    padding: 12px 16px;
+    border: 1px solid #555;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.user-table th {
+    background-color: #3a3a3a;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-table tbody tr:hover {
+    background-color: #404040;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    color: red;
+    transform: scale(1.1);
+}
