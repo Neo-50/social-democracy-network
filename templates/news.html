@@ -28,9 +28,10 @@
             </div>
 
             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                <span class="comment-timestamp">
-                    {{ comment.timestamp | datetimeformat("%b %d, %Y %I:%M %p") }}
+                <span class="comment-timestamp" data-timestamp="{{ comment.timestamp.isoformat() }}Z">
+                    {{ comment.timestamp.strftime('%B %d, %Y %I:%M %p') }}
                 </span>
+
                 {% if depth < 3 %}
                     <button class="newsfeed-button reply-toggle">Reply</button>
                 {% endif %}
@@ -204,6 +205,24 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const timestampElements = document.querySelectorAll('.comment-timestamp');
+            timestampElements.forEach(el => {
+                const utcIso = el.dataset.timestamp;
+                if (!utcIso) return;
 
+                const date = new Date(utcIso);
+                const options = {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: 'numeric', minute: 'numeric',
+                    hour12: true,
+                };
+                const localTime = new Intl.DateTimeFormat(undefined, options).format(date);
+                el.textContent = localTime;
+                console.log("Timestamp:", utcIso, "→", date.toString());
+            });
+        });
+    </script>
 </main>
 {% endblock %}
