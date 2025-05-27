@@ -98,12 +98,13 @@
     </section>
 
     <section class="news-right">
-        {% if selected_category %}
-            <h2>{{ selected_category }}</h2>
-        {% else %}
-            <h2>All Categories</h2>
-        {% endif %}
-
+        <div class="article-count">
+                {% if selected_category %}
+                    {{ selected_category }} ({{ count }} articles)
+                {% else %}
+                    All Categories ({{ count }} articles)
+                {% endif %}
+        </div>
         <form method="get" class="sort-form" style="margin-bottom: 1em;">
             {% if selected_category %}
                 <input type="hidden" name="category" value="{{ selected_category }}">
@@ -114,7 +115,7 @@
                 <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
             </select>
         </form>
-
+        
         {% for article in articles %}
             <div class="news-article">
                 <div class="article-info">
