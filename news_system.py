@@ -1,5 +1,6 @@
 from db_init import db
 from datetime import datetime, timezone
+import html
 
 class NewsArticle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,6 +14,12 @@ class NewsArticle(db.Model):
     source = db.Column(db.String(100), nullable=True)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     category = db.Column(db.String(50), nullable=True)
+
+    def formatted_description(self):
+        if self.description:
+            safe = html.escape(self.description)
+            return safe.replace('\n', '<br />')
+        return ''
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user = db.relationship('User', backref='articles')
@@ -29,6 +36,10 @@ class NewsComment(db.Model):
     )
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE', name='fk_news_comment_user_id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('news_comment.id'))
+
+    def formatted_content(self):
+        safe = html.escape(self.content)
+        return safe.replace('\n', '<br />')
 
     replies = db.relationship(
         'NewsComment',

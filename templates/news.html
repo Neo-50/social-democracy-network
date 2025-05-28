@@ -30,7 +30,7 @@
             </div>
 
             <div class="comment-content">
-                <p>{{ comment.content }}</p>
+                <p>{{ comment.formatted_content() | safe }}</p>
             </div>
 
             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
@@ -133,7 +133,7 @@
             <div class="news-article">
                 <div class="article-info">
                     <h2><a href="{{ article.url }}" target="_blank">{{ article.title or 'None' }}</a></h2>
-                    <p>Description: {{ article.description or 'None' }}</p>
+                    <div class="formatted-description"><strong>Description: </strong>{{ article.formatted_description() | safe }}</div>
                     <p>Source: {{ article.source or 'None' }}</p>
                     {% if article.published %}
                         <p>Published: {{ article.published | datetimeformat("%B %d, %Y") or 'None' }}</p>
