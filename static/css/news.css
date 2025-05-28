@@ -5,7 +5,6 @@
     grid-gap: 30px;
     padding: 0.5rem;
     grid-template-rows: auto;
-    border: 2px solid blue;
 }
 
 .news-left, .news-right {
@@ -14,7 +13,6 @@
     margin: 0;
     border-radius: 8px;
     box-shadow: none;
-    border: 2px solid green;
 }
 
 .news-article {
