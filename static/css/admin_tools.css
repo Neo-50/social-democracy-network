@@ -1,5 +1,5 @@
 .user-table {
-    width: 60%;
+    max-width: 90%;
     border-collapse: collapse;
     margin-top: 1rem;
     background-color: #2a2a2a;
@@ -23,11 +23,17 @@
     letter-spacing: 0.5px;
 }
 
+.user-table td {
+    max-height: 200px;
+    width: fit-content;
+    max-width: 800px;
+}
+
 .user-table tbody tr:hover {
     background-color: #404040;
 }
 
-.delete-btn {
+.trash-button {
     background: none;
     border: none;
     color: #ccc;
@@ -35,7 +41,7 @@
     cursor: pointer;
 }
 
-.delete-btn:hover {
+.trash-button:hover {
     color: red;
     transform: scale(1.1);
 }

@@ -9,6 +9,11 @@
                 <tr>
                     <th>Username</th>
                     <th>Email</th>
+                    <th>Admin</th>
+                    <th>Email Verified</th>
+                    <th>Avatar URL</th>
+                    <th>Avatar Filename</th>
+                    <th>Bio</th>
                     <th>Session Active</th>
                     <th>Delete</th>
                 </tr>
@@ -18,11 +23,15 @@
                 <tr>
                     <td>{{ user.username }}</td>
                     <td>{{ user.email }}</td>
-                    <td>{{ user.last_login or 'N/A' }}</td>
+                    <td>{{ 'Yes' if user.is_admin else 'No' }}</td>
+                    <td>{{ 'Yes' if user.email_verified else 'No' }}</td>
+                    <td>{{ user.avatar_url or '—' }}</td>
+                    <td>{{ user.avatar_filename or '—' }}</td>
+                    <td>{{ user.bio or '—' }}</td>
+                    <td>N/A</td> <!-- Replace with session logic later -->
                     <td>
-                        <form action="{{ url_for('admin_delete_user', user_id=user.id) }}" method="POST"
-                        style="display:inline;" onsubmit="return confirm('Delete {{ user.username }}?');">
-                            <button type="submit" class="delete-btn" title="Delete Account">🗑️</button>
+                        <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}">
+                        <button type="submit" class="trash-button">🗑️</button>
                         </form>
                     </td>
                 </tr>
