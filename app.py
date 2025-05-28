@@ -200,12 +200,7 @@ def news():
             .all()
     else:
         articles = NewsArticle.query.order_by(order_func).all()
-    
-    category = request.args.get('category')
-    if category:
-        articles = NewsArticle.query.filter_by(category=category).all()
-    else:
-        articles = NewsArticle.query.all()
+
     count = len(articles)
 
     return render_template(
