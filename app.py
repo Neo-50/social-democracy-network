@@ -276,7 +276,7 @@ def profile():
             file.seek(0)
 
             if file_size > MAX_FILE_SIZE:
-                flash("Avatar image is too large (max 2MB).")
+                flash("Avatar image is too large (max 2MB).", "danger")
                 return redirect(request.url)
 
             if allowed_file(file.filename):
@@ -291,7 +291,7 @@ def profile():
 
         user.bio = request.form.get('bio', '')
         db.session.commit()
-        flash("Profile updated.")
+        flash("Profile updated.", "success")
         return redirect(url_for('profile'))
 
     return render_template('profile.html', user=user)

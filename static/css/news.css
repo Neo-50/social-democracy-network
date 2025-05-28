@@ -309,9 +309,19 @@ p {
 
 .comment-content {
     display: flex;
+    color: white;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0;
+    white-space: pre-wrap;
+}
+
+.formatted-description {
+    text-align: left;
+    white-space: pre-wrap;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
 }
 
 .reply-container {
