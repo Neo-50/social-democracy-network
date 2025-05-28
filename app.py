@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timedelta, timezone
+from dateutil import parser
 import pytz
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory, current_app
@@ -170,7 +171,7 @@ def news():
         url = request.form['url']
         category = request.form.get('category', '').strip()
         metadata = extract_metadata(url)
-
+        published_str=metadata.get("published", "")
         article = NewsArticle(
             url=url,
             category=category,
@@ -178,7 +179,7 @@ def news():
             description=metadata["description"],
             image_url=metadata["image_url"],
             authors=metadata["authors"],
-            published=metadata.get("published", ""),
+            published = parser.parse(published_str).date() if published_str else None,
             source=metadata["source"],
             user_id=session.get("user_id")
         )
