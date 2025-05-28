@@ -132,6 +132,12 @@ p {
     padding: 0;
 }
 
+.category-links a.active {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+
 .new-category-container {
     display: flex;
     align-items: center;

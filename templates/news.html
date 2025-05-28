@@ -83,14 +83,21 @@
             </select>
             <div class="category-links">
                 <ul>
-                    <li><a href="{{ url_for('news') }}">All</a></li>
-                    <li><a href="{{ url_for('news', category='War Military & Conflict') }}">War Military & Conflict</a></li>
-                    <li><a href="{{ url_for('news', category='ICE & Immigration') }}">Immigration ICE Raids & Abductions</a></li>
-                    <li><a href="{{ url_for('news', category='Political Corruption') }}">US Political Corruption</a></li>
-                    <li><a href="{{ url_for('news', category='Protests & Activism') }}">Protests & Activism</a></li>
-                    <li><a href="{{ url_for('news', category='Climate & Environment') }}">Climate & Environment</a></li>
-                    <li><a href="{{ url_for('news', category='Science & Technology') }}">Science & Technology</a></li>
-                    <li><a href="{{ url_for('news', category='Economy & Finance') }}">Economy & Finance</a></li>
+                    <li><a href="{{ url_for('news') }}" class="{% if not selected_category %}active{% endif %}">All</a></li>
+                    <li><a href="{{ url_for('news', category='War Military & Conflict') }}"
+                        class="{% if selected_category == 'War Military & Conflict' %}active{% endif %}">War Military & Conflict</a></li>
+                    <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
+                        class="{% if selected_category == 'ICE & Immigration' %}active{% endif %}">Immigration ICE Raids & Abductions</a></li>
+                    <li><a href="{{ url_for('news', category='Political Corruption') }}"
+                        class="{% if selected_category == 'Political Corruption' %}active{% endif %}">US Political Corruption</a></li>
+                    <li><a href="{{ url_for('news', category='Protests & Activism') }}"
+                        class="{% if selected_category == 'Protests & Activism' %}active{% endif %}">Protests & Activism</a></li>
+                    <li><a href="{{ url_for('news', category='Climate & Environment') }}"
+                        class="{% if selected_category == 'Climate & Environment' %}active{% endif %}">Climate & Environment</a></li>
+                    <li><a href="{{ url_for('news', category='Science & Technology') }}"
+                        class="{% if selected_category == 'Science & Technology' %}active{% endif %}">Science & Technology</a></li>
+                    <li><a href="{{ url_for('news', category='Economy & Finance') }}"
+                        class="{% if selected_category == 'Economy & Finance' %}active{% endif %}">Economy & Finance</a></li>
                 </ul>
             </div>
         </form>
