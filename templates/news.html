@@ -53,7 +53,7 @@
                 <div class="reply-drawer" style="display: none;">
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                         <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                        <textarea name="content" placeholder="Write a reply..." required></textarea>
+                        <textarea name="comment-content" placeholder="Write a reply..." required></textarea>
                         <button type="submit" class="newsfeed-button">Submit</button>
                         <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
                     </form>
@@ -155,8 +155,12 @@
                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                     <div class="post-comment-container">
                         {% if session.get('user_id') %}
-                                <textarea name="content" placeholder="Write a comment..." required></textarea>
-                                <button type="submit" class="post-comment">Post Comment</button>
+                            <div class="comment-box" style="position: relative;">
+                                <textarea name="comment-content" placeholder="Write a comment..." 
+                                id="comment-content-main" required></textarea>
+                                <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">🙂</button>
+                            </div>
+                            <button type="submit" class="newsfeed-button">Post Comment</button>
                         {% else %}
                             <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
                         {% endif %}
@@ -196,6 +200,9 @@
                 {% endif %}
             </div>
         {% endfor %}
+        <div id="emoji-wrapper" style="display: none;">
+            <emoji-picker id="unicode-emoji-picker"></emoji-picker>
+        </div>
     </section>
 
     <div id="user-popup" class="popup" style="display: none;">
@@ -307,5 +314,45 @@
             });
         }
     </script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+<script>
+    function toggleEmojiPicker(event) {
+        const wrapper = document.getElementById("emoji-wrapper");
+        const picker = document.getElementById("unicode-emoji-picker");
+
+        const button = event.target;
+        const rect = button.getBoundingClientRect();
+
+        // Position the picker overlay near the button
+        wrapper.style.position = "absolute";
+        wrapper.style.top = `${rect.bottom + window.scrollY + 5}px`;
+        wrapper.style.left = `${rect.left + window.scrollX}px`;
+        wrapper.style.zIndex = "1000";
+        wrapper.style.display = (wrapper.style.display === "none" || wrapper.style.display === "") ? "block" : "none";
+
+        // Store the closest textarea's ID
+        const closestBox = button.closest(".comment-box");
+        const textarea = closestBox?.querySelector("textarea");
+        if (textarea) {
+            wrapper.dataset.targetId = textarea.id;
+        }
+    }
+        document.addEventListener("DOMContentLoaded", () => {
+        const picker = document.querySelector("emoji-picker");
+
+        picker.addEventListener("emoji-click", (event) => {
+            const emoji = event.detail.unicode;
+            const targetId = document.getElementById("emoji-wrapper").dataset.targetId;
+            const textarea = document.getElementById(targetId);
+
+            if (textarea) {
+            textarea.value += emoji;
+            textarea.focus();
+            }
+        });
+    });
+</script>
+
 </main>
 {% endblock %}

@@ -24,7 +24,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    max-width: 640px;
+    max-width: 720px;
     width: 100%;
     overflow-wrap: anywhere;
     overflow: hidden;
@@ -182,19 +182,6 @@ p {
     color: #666;
 }
 
-.news-right textarea[name="content"] {
-    width: 100%;
-    max-width: 400px;
-    min-width: 300px;
-    padding: 12px 20px;
-    margin-bottom: 20px;
-    background-color: #1f1f1f;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box;
-}
 
 .article-edit-form {
   display: flex;
@@ -234,13 +221,6 @@ p {
     margin: 0;
 }
 
-.comment-timestamp {
-  font-size: 0.75em;
-  margin-left: 0;
-  margin-top: 0;
-  color:#888
-}
-
 .delete-button {
     background-color: transparent;
     border: none;
@@ -255,25 +235,70 @@ p {
     background-color: #333;
 }
 
+.comments-thread {
+    font-size: 1.1em;
+}
+
+.comment-timestamp {
+  font-size: 0.75em;
+  margin-left: 0;
+  margin-top: 0;
+  color:#888
+}
+
 .post-comment-container {
-    display: inline-flex;
+    display: flex;
+    color: white;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 0;
     gap: 8px;
+    position: relative;
 }
 
-.post-comment {
-    background-color: #1a1a1a;
-    border: 3px solid #00e3ea;
-    color: #00e3ea;
-    padding: 5px 15px;
-    margin-left: 5px;
-    font-size: 1em;
-    border-radius: 999px;
+.comment-box {
+    display: flex;
+    color: white;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+    gap: 8px;
+    position: relative;
+}
+
+.news-right textarea[name="comment-content"] {
+    width: 100%;
+    max-width: 550px;
+    min-width: 350px;
+    min-height: 75px;
+    max-height: 350px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    background-color: #1f1f1f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.emoji-button {
+    background-color: transparent;
+    border: none;
+    padding: 2px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: color 0.2s ease;
-    text-decoration: none;
-    display: inline-block;
+    font-size: 24px;
+}
+
+#emoji-wrapper {
+  position: absolute;
+  z-index: 1000;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 2px 12px #1a1a1a;
 }
 
 .post-comment:hover {
@@ -281,18 +306,30 @@ p {
     color: white;
 }
 
+.comment-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0;
+    font-size: .9em;
+    color: #ccc;
+}
+
 .newsfeed-button {
     background-color: #1a1a1a;
     border: 3px solid #00e3ea;
     color: #00e3ea;
-    padding: 3px 16px;
+    padding: 5px 18px;
     margin-left: 0;
-    font-size: 0.9em;
+    font-size: .9em;
     border-radius: 999px;
     cursor: pointer;
     transition: color 0.2s ease;
     text-decoration: none;
     white-space: nowrap;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .newsfeed-button:hover {
@@ -305,15 +342,6 @@ p {
     margin-bottom: 14px;
     font-size: 1.2rem;
     color: rgb(255 255 255 / 70%);
-}
-
-.comment-content {
-    display: flex;
-    color: white;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0;
-    white-space: pre-wrap;
 }
 
 .formatted-description {
@@ -364,15 +392,6 @@ p {
 .reply-drawer {
     margin-top: 5px;
     margin-left: 5px;
-}
-
-.comment-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 0;
-    font-size: 1em;
-    color: #ccc;
 }
 
 .admin-badge {

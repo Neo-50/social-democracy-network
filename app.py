@@ -486,7 +486,7 @@ def admin_delete_user(user_id):
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required
 def add_comment(article_id):
-    content = request.form.get('content')
+    content = request.form.get('comment-content')
     parent_id = request.form.get('parent_id')
     if parent_id:
         parent_id = int(parent_id)
