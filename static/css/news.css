@@ -26,7 +26,6 @@
     gap: 10px;
     max-width: 640px;
     width: 100%;
-    word-wrap: break-word;
     overflow-wrap: anywhere;
     overflow: hidden;
 }
@@ -286,14 +285,15 @@ p {
     background-color: #1a1a1a;
     border: 3px solid #00e3ea;
     color: #00e3ea;
-    padding: 3px 12px;
+    padding: 3px 16px;
+    /* more horizontal breathing room */
     margin-left: 0;
     font-size: 0.9em;
     border-radius: 999px;
     cursor: pointer;
     transition: color 0.2s ease;
     text-decoration: none;
-    display: inline-block;
+    white-space: nowrap;
 }
 
 .newsfeed-button:hover {
