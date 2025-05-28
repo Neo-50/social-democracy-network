@@ -370,6 +370,8 @@ def resend_verification_email():
 @app.route('/admin_tools')
 @login_required
 def admin_tools():
+    if not current_user.is_admin:
+        abort(403)  # Forbidden
     users = User.query.all()
     return render_template('admin_tools.html', users=users)
 
