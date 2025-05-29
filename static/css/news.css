@@ -298,6 +298,8 @@ p {
 }
 
 .inline-emoji {
+    width: 42px;
+    height: 42px;
     vertical-align: middle;
     image-rendering: auto;
 }
