@@ -24,7 +24,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    max-width: 720px;
+    max-width: 780px;
     width: 100%;
     overflow-wrap: anywhere;
 }
@@ -214,6 +214,8 @@ p {
     margin-top: 5px;
 }
 
+
+
 .delete-form {
     display: inline;
     margin: 0;
@@ -282,6 +284,10 @@ p {
     box-sizing: border-box;
 }
 
+.news-right textarea[name="description"] {
+    min-height: 100px;
+}
+
 .emoji-button {
     background-color: transparent;
     border: none;
@@ -289,6 +295,12 @@ p {
     border-radius: 6px;
     cursor: pointer;
     font-size: 24px;
+}
+
+.inline-emoji {
+  width: 42px;
+  height: 42px;
+  vertical-align: middle;
 }
 
 #emoji-wrapper,
