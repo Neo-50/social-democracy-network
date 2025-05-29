@@ -2,6 +2,8 @@ import os
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import pytz
+import re
+from markupsafe import Markup
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory, current_app
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager, UserMixin
@@ -502,6 +504,17 @@ def add_comment(article_id):
         db.session.commit()
     flash("Comment posted successfully.", "success")
     return redirect(url_for('news'))
+
+@app.route('/emojis/<filename>')
+def emoji(filename):
+    return send_from_directory('/mnt/storage/emojis', filename)
+
+@app.template_filter("emojify")
+def emojify(content):
+    def replace(match):
+        name = match.group(1)
+        return f'<img src="media/emojis/{name}.png" alt="{name}" class="inline-emoji">'
+    return Markup(re.sub(r":([a-zA-Z0-9_]+):", replace, content))
 
 @app.context_processor
 def inject_timezone():

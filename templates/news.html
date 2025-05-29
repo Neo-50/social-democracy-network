@@ -30,7 +30,7 @@
             </div>
 
             <div class="comment-content">
-                <p>{{ comment.formatted_content() | safe }}</p>
+                <p>{{ comment.formatted_content() | emojify|  safe }}</p>
             </div>
 
             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
@@ -59,6 +59,7 @@
                             <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">🙂</button>
                             <div class="emoji-wrapper" style="display: none;">
                                 <emoji-picker></emoji-picker>
+                                <!-- JS will inject custom emoji drawer below -->
                             </div>
                             <button type="submit" class="newsfeed-button">Submit</button>
                             <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
@@ -169,6 +170,9 @@
                                   <div class="emoji-wrapper" style="display: none;">
                                     <emoji-picker></emoji-picker>
                                 </div>
+                                <div class="custom-emoji-drawer">
+                                <!-- Will be filled via JavaScript -->
+                                </div>
                             </div>
                             <button type="submit" class="newsfeed-button">Post Comment</button>
                         {% else %}
@@ -224,6 +228,8 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT SECTION-->
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.reply-toggle').forEach(button => {
@@ -246,25 +252,7 @@
             });
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const timestampElements = document.querySelectorAll('.comment-timestamp');
-            timestampElements.forEach(el => {
-                const utcIso = el.dataset.timestamp;
-                if (!utcIso) return;
 
-                const date = new Date(utcIso);
-                const options = {
-                    year: 'numeric', month: 'long', day: 'numeric',
-                    hour: 'numeric', minute: 'numeric',
-                    hour12: true,
-                };
-                const localTime = new Intl.DateTimeFormat(undefined, options).format(date);
-                el.textContent = localTime;
-                console.log("Timestamp:", utcIso, "→", date.toString());
-            });
-        });
-    </script>
     <script>
         function showUserPopup(element) {
             const popup = document.getElementById('user-popup');
@@ -333,18 +321,73 @@
             const picker = pickerWrapper.querySelector("emoji-picker");
             const textarea = box.querySelector("textarea");
 
-            // Toggle visibility
             pickerWrapper.style.display = pickerWrapper.style.display === "none" || !pickerWrapper.style.display ? "block" : "none";
 
-            // Only attach the listener once per picker
             if (!picker.dataset.bound) {
             picker.addEventListener("emoji-click", (e) => {
                 textarea.value += e.detail.unicode;
                 textarea.focus();
             });
-            picker.dataset.bound = "true"; // Prevent double-binding
+            picker.dataset.bound = "true";
             }
         }
+        const customEmojis = ['yellcat.png', 'smudge.png', 'catangry.png'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.emoji-wrapper').forEach(wrapper => {
+            if (wrapper.querySelector('.custom-emoji-drawer')) return;
+
+            const drawer = document.createElement('div');
+            drawer.className = 'custom-emoji-drawer';
+            drawer.style.marginTop = '10px';
+            drawer.style.display = 'flex';
+            drawer.style.flexWrap = 'wrap';
+            drawer.style.gap = '6px';
+
+            const picker = wrapper.querySelector('emoji-picker');
+
+            customEmojis.forEach(filename => {
+                const img = document.createElement('img');
+                img.src = `media/emojis/${filename}`;
+                img.alt = filename;
+                img.className = 'custom-emoji';
+                img.style.width = '36px';
+                img.style.height = '36px';
+                img.style.cursor = 'pointer';
+
+                img.addEventListener('click', () => {
+                    const textarea = wrapper.closest('.comment-box')?.querySelector('textarea');
+                    if (textarea) {
+                        textarea.value += ` :${filename.split('.')[0]}: `;
+                        textarea.focus();
+                    }
+                });
+                console.log("Appending emoji:", img.src, "as", img);
+                drawer.appendChild(img);
+            });
+
+            picker.insertAdjacentElement('afterend', drawer);
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const timestampElements = document.querySelectorAll('.comment-timestamp');
+            timestampElements.forEach(el => {
+                const utcIso = el.dataset.timestamp;
+                if (!utcIso) return;
+
+                const date = new Date(utcIso);
+                const options = {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: 'numeric', minute: 'numeric',
+                    hour12: true,
+                };
+                const localTime = new Intl.DateTimeFormat(undefined, options).format(date);
+                el.textContent = localTime;
+                console.log("Timestamp:", utcIso, "→", date.toString());
+            });
+        });
     </script>
 
 </main>
