@@ -298,7 +298,8 @@ p {
 }
 
 .inline-emoji {
-  vertical-align: middle;
+    vertical-align: middle;
+    image-rendering: auto;
 }
 
 #emoji-wrapper,

@@ -513,7 +513,13 @@ def emoji(filename):
 def emojify(content):
     def replace(match):
         name = match.group(1)
-        return f'<img src="media/emojis/{name}.png" alt="{name}" class="inline-emoji">'
+        # Try each extension
+        for ext in ['.png', '.gif', '.webp']:
+            path = os.path.join('mnt/storage/emojis', name + ext)
+            if os.path.exists(path):
+                return f'<img src="media/emojis/{name}{ext}" alt="{name}" class="inline-emoji">'
+        return match.group(0)  # fallback, keep text if not found
+
     return Markup(re.sub(r":([a-zA-Z0-9_]+):", replace, content))
 
 @app.context_processor
