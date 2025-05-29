@@ -331,7 +331,8 @@
             picker.dataset.bound = "true";
             }
         }
-        const customEmojis = ['yellcat.png', 'smudge.png', 'catangry.png'];
+        const customEmojis = ['yellcat.png', 'smudge.png', 'catangry.png', 'catcry', 'catno.png', 'catsadge.png', 
+                              'catthumbsup.png', 'catvibe.png', 'polite.png', 'politecry.png', 'sadcat.png', 'sadcat2.png', 'catcry2.png'];
 
         document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.emoji-wrapper').forEach(wrapper => {
@@ -351,8 +352,8 @@
                 img.src = `media/emojis/${filename}`;
                 img.alt = filename;
                 img.className = 'custom-emoji';
-                img.style.width = '36px';
-                img.style.height = '36px';
+                /* img.style.width = '50px'; */
+                /* img.style.height = '50px'; */
                 img.style.cursor = 'pointer';
 
                 img.addEventListener('click', () => {
