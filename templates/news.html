@@ -56,7 +56,7 @@
                         <div class="comment-box" style="position: relative;">
                             <textarea name="comment-content" id="comment-content-{{ comment.id }}"
                              placeholder="Write a reply..." required></textarea>
-                            <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">🙂</button>
+                            <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)"><img class="icon" src="media/icons/emoji.png" alt="emoji.png"></button>
                             <div class="emoji-wrapper" style="display: none;">
                                 <emoji-picker></emoji-picker>
                                 <!-- JS will inject custom emoji drawer below -->
@@ -186,7 +186,7 @@
                             <div class="comment-box" style="position: relative;">
                                 <textarea name="comment-content" placeholder="Write a comment..."
                                 id="comment-content-main" required></textarea>
-                                <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">🙂</button>
+                                <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)"><img class="icon" src="media/icons/emoji.png" alt="emoji.png"></button>
                                   <div class="emoji-wrapper" style="display: none;">
                                     <emoji-picker></emoji-picker>
                                 </div>
@@ -355,7 +355,7 @@
             }
         }
         const customEmojis = ['yellcat.png', 'smudge.png', 'catangry.png', 'catcry.png', 'catno.gif', 'catsadge.png',
-                              'catthumbsup.png', 'catvibe.gif', 'polite.png', 'politecri.png', 'sadcat.png', 'sadcat2.png', 'catcry2.png'];
+                              'catthumbsup.png', 'catvibe.gif', 'polite.png', 'politecri.png', 'sadcat.png', 'sadcat2.png', 'catcry2.png',];
 
         document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.emoji-wrapper').forEach(wrapper => {
@@ -375,8 +375,8 @@
                 img.src = `media/emojis/${filename}`;
                 img.alt = filename;
                 img.className = 'custom-emoji';
-                /* img.style.width = '50px'; */
-                /* img.style.height = '50px'; */
+                img.style.width = '36px';
+                img.style.height = '36px';
                 img.style.cursor = 'pointer';
 
                 img.addEventListener('click', () => {
