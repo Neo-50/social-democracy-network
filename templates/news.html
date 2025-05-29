@@ -358,7 +358,7 @@
                 img.addEventListener('click', () => {
                     const textarea = wrapper.closest('.comment-box')?.querySelector('textarea');
                     if (textarea) {
-                        textarea.value += ` :${filename.split('.')[0]}: `;
+                        textarea.value += `:${filename.split('.')[0]}:`;
                         textarea.focus();
                     }
                 });
