@@ -87,31 +87,47 @@
             </div>
             <select name="category" id="category">
                 <option value="">Uncategorized</option>
-                <option value="War Military & Conflict">War Military & Conflict</option>
-                <option value="ICE & Immigration">ICE Raids & Immigration</option>
-                <option value="Political Corruption">US Political Corruption</option>
                 <option value="Protests & Activism">Protests & Activism</option>
                 <option value="Climate & Environment">Climate & Environment</option>
                 <option value="Science & Technology">Science & Technology</option>
                 <option value="Economy & Finance">Economy & Finance</option>
+                <option value="Disasters">Disasters</option>
+                <option value="ICE & Immigration">ICE Raids & Immigration</option>
+                <option value="Political Corruption">US Political Corruption</option>
+                <option value="Middle East">Middle East</option>
+                <option value="Ukraine War">Ukraine War</option>
             </select>
             <div class="category-links">
                 <ul>
-                    <li><a href="{{ url_for('news') }}" class="{% if not selected_category %}active{% endif %}">All</a></li>
-                    <li><a href="{{ url_for('news', category='War Military & Conflict') }}"
-                        class="{% if selected_category == 'War Military & Conflict' %}active{% endif %}">War Military & Conflict</a></li>
-                    <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
-                        class="{% if selected_category == 'ICE & Immigration' %}active{% endif %}">Immigration ICE Raids & Abductions</a></li>
-                    <li><a href="{{ url_for('news', category='Political Corruption') }}"
-                        class="{% if selected_category == 'Political Corruption' %}active{% endif %}">US Political Corruption</a></li>
+                    <li><a href="{{ url_for('news') }}"
+                        class="{{ 'active' if not selected_category else '' }}">All</a></li>
                     <li><a href="{{ url_for('news', category='Protests & Activism') }}"
-                        class="{% if selected_category == 'Protests & Activism' %}active{% endif %}">Protests & Activism</a></li>
+                        class="{{ 'active' if selected_category == 'War Military & Conflict' else '' }}">
+                        Protests & Activism</a></li>
                     <li><a href="{{ url_for('news', category='Climate & Environment') }}"
-                        class="{% if selected_category == 'Climate & Environment' %}active{% endif %}">Climate & Environment</a></li>
+                        class="{{ 'active' if selected_category == 'Climate & Environment' else '' }}">
+                        Climate & Environment</a></li>
                     <li><a href="{{ url_for('news', category='Science & Technology') }}"
-                        class="{% if selected_category == 'Science & Technology' %}active{% endif %}">Science & Technology</a></li>
+                        class="{{ 'active' if selected_category == 'Science & Technology' else '' }}">
+                        Science & Technology</a></li>
                     <li><a href="{{ url_for('news', category='Economy & Finance') }}"
-                        class="{% if selected_category == 'Economy & Finance' %}active{% endif %}">Economy & Finance</a></li>
+                        class="{{ 'active' if selected_category == 'Economy & Finance' else '' }}">
+                        Economy & Finance</a></li>
+                    <li><a href="{{ url_for('news', category='Disasters') }}"
+                        class="{{ 'active' if selected_category == 'Disasters' else '' }}">
+                        Disasters</a></li>
+                    <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
+                        class="{{ 'active' if selected_category == 'ICE & Immigration' else '' }}">
+                        Immigration ICE Raids & Abductions</a></li>
+                    <li><a href="{{ url_for('news', category='Political Corruption') }}"
+                        class="{{ 'active' if selected_category == 'Political Corruption' else '' }}">
+                        US Political Corruption</a></li>
+                    <li><a href="{{ url_for('news', category='Middle East') }}"
+                        class="{{ 'active' if selected_category == 'Middle East' else '' }}">
+                        Middle East</a></li>
+                    <li><a href="{{ url_for('news', category='Ukraine War') }}"
+                        class="{{ 'active' if selected_category == 'Ukraine War' else '' }}">
+                        Ukraine War</a></li>
                 </ul>
             </div>
         </form>
@@ -136,7 +152,7 @@
                 <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
             </select>
         </form>
-        
+
         {% for article in articles %}
             <div class="news-article">
                 <div class="article-info">
@@ -164,7 +180,7 @@
                     <div class="post-comment-container">
                         {% if session.get('user_id') %}
                             <div class="comment-box" style="position: relative;">
-                                <textarea name="comment-content" placeholder="Write a comment..." 
+                                <textarea name="comment-content" placeholder="Write a comment..."
                                 id="comment-content-main" required></textarea>
                                 <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">🙂</button>
                                   <div class="emoji-wrapper" style="display: none;">
@@ -194,13 +210,15 @@
                         {% if is_admin() or current_user_obj.id == article.user_id %}
                             <select name="new-category" id="new-category">
                                 <option value="">Uncategorized</option>
-                                <option value="War Military & Conflict">War Military & Conflict</option>
-                                <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
-                                <option value="Political Corruption">US Political Corruption</option>
                                 <option value="Protests & Activism">Protests & Activism</option>
                                 <option value="Climate & Environment">Climate & Environment</option>
                                 <option value="Science & Technology">Science & Technology</option>
                                 <option value="Economy & Finance">Economy & Finance</option>
+                                <option value="Disasters">Disasters</option>
+                                <option value="Political Corruption">US Political Corruption</option>
+                                <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
+                                <option value="Middle East">Middle East</option>
+                                <option value="Ukraine War">Ukraine War</option>
                             </select>
                             <button type="submit" class="newsfeed-button">Update</button>
                         {% endif %}
@@ -300,7 +318,7 @@
                 offsetY = e.clientY - (rect.top + window.scrollY);
                 isDragging = true;
             });
-            
+
             document.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
                 popup.style.left = `${e.clientX - offsetX}px`;
@@ -331,7 +349,7 @@
             picker.dataset.bound = "true";
             }
         }
-        const customEmojis = ['yellcat.png', 'smudge.png', 'catangry.png', 'catcry.png', 'catno.gif', 'catsadge.png', 
+        const customEmojis = ['yellcat.png', 'smudge.png', 'catangry.png', 'catcry.png', 'catno.gif', 'catsadge.png',
                               'catthumbsup.png', 'catvibe.gif', 'polite.png', 'politecri.png', 'sadcat.png', 'sadcat2.png', 'catcry2.png'];
 
         document.addEventListener('DOMContentLoaded', () => {
