@@ -96,7 +96,7 @@
                 <option value="Political Corruption">US Political Corruption</option>
                 <option value="Middle East">Middle East</option>
                 <option value="Ukraine War">Ukraine War</option>
-                <option value="International Conflict">International Conflict</option>
+                <option value="US/International Conflict & Crises">US/International Conflict</option>
             </select>
             <div class="category-links">
                 <ul>
@@ -129,9 +129,9 @@
                     <li><a href="{{ url_for('news', category='Ukraine War') }}"
                         class="{{ 'active' if selected_category == 'Ukraine War' else '' }}">
                         Ukraine War</a></li>
-                    <li><a href="{{ url_for('news', category='International Conflict & Crises') }}"
-                        class="{{ 'active' if selected_category == 'International Conflict &Crises' else '' }}">
-                        International Conflict & Crises</a></li>
+                    <li><a href="{{ url_for('news', category='US/International Conflict & Crises') }}"
+                        class="{{ 'active' if selected_category == 'US/International Conflict & Crises' else '' }}">
+                        US/International Conflict & Crises</a></li>
                 </ul>
             </div>
         </form>
