@@ -551,10 +551,6 @@ p {
         gap: 10px;
     }
 
-    .new-left {
-        display: none;
-    }
-
     .news-left,
     .news-right {
         width: 100%;

@@ -148,29 +148,10 @@
 
 /* ========== Mobile Controls ========== */
 
+
 .directory-button,
 .hamburger-icon {
     display: none;
-    background-color: #1a1a1a;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.directory-button:hover,
-.hamburger-icon:hover {
-    background-color: #444;
-}
-
-.mobile-nav-container {
-    position: absolute;
-    width: 100%;
-}
-
-.mobile-nav-buttons {
-    gap: 10px;
 }
 
 #mobile-nav {
@@ -220,8 +201,8 @@
     background-color: #444;
 }
 
-#mobile-nav.show,
-#mobile-directory.show {
+#mobile-directory.show,
+#mobile-nav.show {
     display: flex;
 }
 
@@ -232,55 +213,56 @@
         display: none;
     }
 
+    .header-left,
+    .header-right,
+    .header-center {
+        all: unset;
+        display: contents;
+    }
+
     .main-content {
         margin-top: 0;
         padding-top: 0;
     }
 
     .top-bar {
-        height: auto;
-        flex-direction: column;
-        align-items: flex-start;
-        padding-top: 0;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #bbb;
-        margin-bottom: 0;
-    }
-
-    .header-left,
-    .header-right {
-        align-items: center;
-        text-align: center;
-    }
-
-    #directory-button,
-    #hamburger-icon {
         display: flex;
-        font-size: .9em;
-        padding: 8px 14px;
-        background-color: #111;
-        border-radius: 24px;
-        margin-top: 2px;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 0 5px;
+        border-bottom: 2px solid #bbb;
+        height: auto;
     }
-
+    
     .mobile-nav-buttons {
         display: flex;
+        align-items: center;
         gap: 5px;
-        margin-top: 0;
-        margin-left: 0;
+        margin-bottom: 5px;
         padding: 0;
-        justify-content: flex-start;
-        align-self: flex-start;
     }
 
     .user-nav {
         display: flex;
-        flex-direction: row;
-        align-items: flex-end;
-        margin-top: 38px;
-        margin-right: 0;
+        align-items: center;
+        margin-bottom: 5px;
         padding: 0;
-        gap: 0;
+    }
+
+    .directory-button,
+    .hamburger-icon {
+        display: flex;
+        background-color: #1a1a1a;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 24px;
+        cursor: pointer;
+    }
+
+    .directory-button:hover,
+    .hamburger-icon:hover {
+        background-color: #444;
     }
 
     .user-link {
@@ -291,20 +273,12 @@
         border-radius: 999px;
         background-color: #1a1a1a;
 }
-
-    .header-center {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 0;
-        padding: 0;
-        gap: 4px;
-    }
     
     .title-image {
-        display: block;
-        margin: 0 auto;
-        padding: 0;
+        display: flex;
+        margin: 5px auto;
+        margin-bottom: 0;
+        padding-top: 5px;
         max-width: 100%;
     }
 }
