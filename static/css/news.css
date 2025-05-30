@@ -53,7 +53,7 @@ p {
 }
 
 .article-info {
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: 550;
     margin-right: 4px;
 }
@@ -64,22 +64,22 @@ p {
 
 .article-info.description::before {
   content: "Description";
-  color: #888;
+  color: #bbb;
 }
 
 .article-info.source::before {
   content: "Source";
-  color: #888;
+  color: #bbb;
 }
 
 .article-info.published::before {
   content: "Published";
-  color: #888;
+  color: #bbb;
 }
 
 .article-info.category::before {
   content: "Category";
-  color: #888;
+  color: #bbb;
 }
 
 .news-image {
@@ -432,6 +432,7 @@ p {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 4px;
 }
 
 .reply p {
