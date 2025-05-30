@@ -63,21 +63,6 @@ p {
     transition: box-shadow 0.2s ease;
 }
 
-#category {
-    width: 300px;
-    padding: 12px 20px;
-    margin-left: 5px;
-    background-color: #1a1a1a;
-    color: #ccc;
-    border: none;
-    border-radius: 999px;
-    font-size: 1em;
-    box-sizing: border-box;
-    outline: none;
-    transition: box-shadow 0.2s ease;
-    margin-bottom: 30px;
-}
-
 .submit-article-container {
     display: flex;
     align-items: flex-start;
@@ -100,6 +85,21 @@ p {
 
 .submit-article:hover {
     background-color: #444;
+}
+
+#category {
+    width: 300px;
+    padding: 12px 20px;
+    margin-left: 5px;
+    background-color: #1a1a1a;
+    color: #bbb;
+    border: 0;
+    border-radius: 999px;
+    font-size: 1em;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+    margin-bottom: 30px;
 }
 
 .category-links {
@@ -150,7 +150,6 @@ p {
     margin-right: 10px;
     margin-bottom: 5px;
     background-color: #1f1f1f;
-    color: #999;
     border: none;
     font-size: 1em;
     box-sizing: border-box;
@@ -158,14 +157,21 @@ p {
     transition: box-shadow 0.2s ease;
 }
 
+.article-count {
+    margin-left: 0;
+    margin-bottom: 14px;
+    font-size: 1.2rem;
+    color: #bbb;
+}
+
 .sort-form {
     font-size: 0.9rem;
-    color: rgb(255 255 255 / 70%);
+    color: #bbb;
 }
 
 .sort-form select {
   background-color: #1a1a1a;
-  color: #fff;
+  color: #bbb;
   padding: 8px 10px;
   border: none;
 }
@@ -338,7 +344,7 @@ p {
     color: #00e3ea;
     padding: 5px 18px;
     margin-left: 0;
-    font-size: 1em !important;
+    font-size: 1em;
     border-radius: 999px;
     cursor: pointer;
     transition: color 0.2s ease;
@@ -352,13 +358,6 @@ p {
 .newsfeed-button:hover {
     background-color: #333;
     color: white;
-}
-
-.article-count {
-    margin-left: 0;
-    margin-bottom: 14px;
-    font-size: 1.2rem;
-    color: rgb(255 255 255 / 70%);
 }
 
 .formatted-description {
@@ -510,7 +509,8 @@ p {
         padding: 10px;
         margin-top: 0;
         background-color: #1a1a1a;
-        color: white;
+        color: #bbb;
+        border: 0;
         max-width: 300px;
         z-index: 1000;
         flex-direction: column;

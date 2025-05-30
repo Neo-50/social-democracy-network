@@ -80,7 +80,7 @@
 
 <main class="news-page">
     <section class="news-left">
-        <form method="POST" action="{{ url_for('news') }}">
+        <form method="POST" id="submit-news" action="{{ url_for('news') }}">
             <div class="submit-article-container">
                 <input type="url" name="url" placeholder="Paste news article URL here..." required>
                 <button type="submit" class="submit-article">Submit</button>
@@ -98,28 +98,6 @@
                 <option value="Ukraine War">Ukraine War</option>
                 <option value="US/International Conflict">US/International Conflict</option>
             </select>
-            <form method="GET" action="{{ url_for('news') }}">
-                <select name="mobile-categories" id="mobile-categories" onchange="this.form.submit()">
-                    <option value="">Select category to view news articles</option>
-                    <option value="Protests & Activism" {{ 'selected' if selected_category=='Protests & Activism' else '' }}>
-                        Protests & Activism</option>
-                    <option value="Climate & Environment" {{ 'selected' if selected_category=='Climate & Environment' else '' }}>
-                        Climate & Environment</option>
-                    <option value="Science & Technology" {{ 'selected' if selected_category=='Science & Technology' else '' }}>
-                        Science & Technology</option>
-                    <option value="Economy & Finance" {{ 'selected' if selected_category=='Economy & Finance' else '' }}>Economy &
-                        Finance</option>
-                    <option value="Disasters" {{ 'selected' if selected_category=='Disasters' else '' }}>Disasters</option>
-                    <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
-                        Immigration</option>
-                    <option value="Political Corruption" {{ 'selected' if selected_category=='Political Corruption' else '' }}>US
-                        Political Corruption</option>
-                    <option value="Middle East" {{ 'selected' if selected_category=='Middle East' else '' }}>Middle East</option>
-                    <option value="Ukraine War" {{ 'selected' if selected_category=='Ukraine War' else '' }}>Ukraine War</option>
-                    <option value="US/International Conflict" {{ 'selected' if selected_category=='US/International Conflict'
-                        else '' }}>US/International Conflict</option>
-                </select>
-            </form>              
             <div class="category-links">
                 <ul>
                     <li><a href="{{ url_for('news') }}"
@@ -156,8 +134,29 @@
                         US/International Conflict & Crises</a></li>
                 </ul>
             </div>
+        </form>    
+        <form method="GET" action="{{ url_for('news') }}">
+            <select name="category" id="mobile-categories" onchange="this.form.submit()">
+                <option value="">All Categories (select to filter)</option>
+                <option value="Protests & Activism" {{ 'selected' if selected_category=='Protests & Activism' else '' }}>
+                    Protests & Activism</option>
+                <option value="Climate & Environment" {{ 'selected' if selected_category=='Climate & Environment' else '' }}>
+                    Climate & Environment</option>
+                <option value="Science & Technology" {{ 'selected' if selected_category=='Science & Technology' else '' }}>
+                    Science & Technology</option>
+                <option value="Economy & Finance" {{ 'selected' if selected_category=='Economy & Finance' else '' }}>Economy &
+                    Finance</option>
+                <option value="Disasters" {{ 'selected' if selected_category=='Disasters' else '' }}>Disasters</option>
+                <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
+                    Immigration</option>
+                <option value="Political Corruption" {{ 'selected' if selected_category=='Political Corruption' else '' }}>US
+                    Political Corruption</option>
+                <option value="Middle East" {{ 'selected' if selected_category=='Middle East' else '' }}>Middle East</option>
+                <option value="Ukraine War" {{ 'selected' if selected_category=='Ukraine War' else '' }}>Ukraine War</option>
+                <option value="US/International Conflict" {{ 'selected' if selected_category=='US/International Conflict'
+                    else '' }}>US/International Conflict</option>
+            </select>
         </form>
-
     </section>
 
     <section class="news-right">
