@@ -190,7 +190,7 @@
                     <p><span class="article-info published"></span> {{ article.published | datetimeformat("%B %d, %Y") or 'None' }}</p>
                     <p><span class="article-info category"></span> {{ article.category }}</p>
                 </div>
-                <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
+                <img src="{{ article.image_url }}" onerror="this.style.display='none'" width="100%" class="news-image">
 
                 <div class="comments-wrapper">
                     <h2>Discussion</h2>
