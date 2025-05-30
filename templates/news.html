@@ -61,8 +61,10 @@
                                 <emoji-picker></emoji-picker>
                                 <!-- JS will inject custom emoji drawer below -->
                             </div>
-                            <button type="submit" class="newsfeed-button">Submit</button>
-                            <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                            <div class="submit-cancel">
+                                <button type="submit" class="newsfeed-button">Submit</button>
+                                <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -204,7 +206,7 @@
                     <div class="post-comment-container">
                         {% if session.get('user_id') %}
                             <div class="comment-box" style="position: relative;">
-                                <textarea name="comment-content" id="write-a-comment" placeholder="Write a comment..."
+                                <textarea name="comment-content" placeholder="Write a comment..."
                                 id="comment-content-main" required></textarea>
                                 <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)"><img class="icon" src="media/icons/emoji.png" alt="emoji.png"></button>
                                   <div class="emoji-wrapper" style="display: none;">
