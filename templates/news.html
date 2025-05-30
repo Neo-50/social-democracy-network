@@ -187,11 +187,7 @@
                         <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
                     </p>
                     <p><span class="article-info source"></span> {{ article.source or 'None' }}</p>
-                    {% if article.published %}
-                    <p><span class="article-info published"></span> {{ article.published }}</p>
-                    {% else %}
-                        <p><span class="article-info">None</span></p>
-                    {% endif %}
+                    <p><span class="article-info published"></span> {{ article.published | datetimeformat("%B %d, %Y") or 'None' }}</p>
                     <p><span class="article-info category"></span> {{ article.category }}</p>
                 </div>
                 <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
