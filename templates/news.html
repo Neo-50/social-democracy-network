@@ -180,16 +180,19 @@
 
         {% for article in articles %}
             <div class="news-article">
-                <div class="article-info">
+                <div class="article-info-wrapper">
                     <h2><a href="{{ article.url }}" target="_blank">{{ article.title or 'None' }}</a></h2>
-                    <div class="formatted-description"><strong>Description: </strong>{{ article.formatted_description() | safe }}</div>
-                    <p>Source: {{ article.source or 'None' }}</p>
+                    <p>
+                        <span class="article-info description"></span>
+                        <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
+                    </p>
+                    <p><span class="article-info source"></span> {{ article.source or 'None' }}</p>
                     {% if article.published %}
-                        <p>Published: {{ article.published | datetimeformat("%B %d, %Y") or 'None' }}</p>
+                    <p><span class="article-info published"></span> {{ article.published }}</p>
                     {% else %}
-                        <p>Published: None</p>
+                        <p><span class="article-info">None</span></p>
                     {% endif %}
-                    <p>Category: {{ article.category or 'None' }}</p>
+                    <p><span class="article-info category"></span> {{ article.category }}</p>
                 </div>
                 <img src="{{ article.image_url }}" alt="Article image" width="100%" class="news-image">
 
