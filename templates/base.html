@@ -112,7 +112,6 @@
                 <a href="{{ url_for('activism') }}">Activism</a>
                 <a href="{{ url_for('environment') }}">Environment</a>
                 <a href="{{ url_for('veganism') }}">Veganism</a>
-                <a href="{{ url_for('forum') }}">Forum</a>
                 <a href="{{ url_for('about') }}">About</a>
             </nav>
         </div>
@@ -210,7 +209,7 @@
             } else {
                 console.log('❌ mobile-nav not found');
             }
-            }
+        }
 
         function toggleDirectory() {
             const nav = document.getElementById('mobile-directory');

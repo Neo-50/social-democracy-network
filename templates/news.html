@@ -98,12 +98,34 @@
                 <option value="Ukraine War">Ukraine War</option>
                 <option value="US/International Conflict">US/International Conflict</option>
             </select>
+            <form method="GET" action="{{ url_for('news') }}">
+                <select name="mobile-categories" id="mobile-categories" onchange="this.form.submit()">
+                    <option value="">Select category to view news articles</option>
+                    <option value="Protests & Activism" {{ 'selected' if selected_category=='Protests & Activism' else '' }}>
+                        Protests & Activism</option>
+                    <option value="Climate & Environment" {{ 'selected' if selected_category=='Climate & Environment' else '' }}>
+                        Climate & Environment</option>
+                    <option value="Science & Technology" {{ 'selected' if selected_category=='Science & Technology' else '' }}>
+                        Science & Technology</option>
+                    <option value="Economy & Finance" {{ 'selected' if selected_category=='Economy & Finance' else '' }}>Economy &
+                        Finance</option>
+                    <option value="Disasters" {{ 'selected' if selected_category=='Disasters' else '' }}>Disasters</option>
+                    <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
+                        Immigration</option>
+                    <option value="Political Corruption" {{ 'selected' if selected_category=='Political Corruption' else '' }}>US
+                        Political Corruption</option>
+                    <option value="Middle East" {{ 'selected' if selected_category=='Middle East' else '' }}>Middle East</option>
+                    <option value="Ukraine War" {{ 'selected' if selected_category=='Ukraine War' else '' }}>Ukraine War</option>
+                    <option value="US/International Conflict" {{ 'selected' if selected_category=='US/International Conflict'
+                        else '' }}>US/International Conflict</option>
+                </select>
+            </form>              
             <div class="category-links">
                 <ul>
                     <li><a href="{{ url_for('news') }}"
                         class="{{ 'active' if not selected_category else '' }}">All</a></li>
                     <li><a href="{{ url_for('news', category='Protests & Activism') }}"
-                        class="{{ 'active' if selected_category == 'War Military & Conflict' else '' }}">
+                        class="{{ 'active' if selected_category == 'Protests & Activism' else '' }}">
                         Protests & Activism</a></li>
                     <li><a href="{{ url_for('news', category='Climate & Environment') }}"
                         class="{{ 'active' if selected_category == 'Climate & Environment' else '' }}">
@@ -140,11 +162,11 @@
 
     <section class="news-right">
         <div class="article-count">
-                {% if selected_category %}
-                    {{ selected_category }} ({{ count }} articles)
-                {% else %}
-                    All Categories ({{ count }} articles)
-                {% endif %}
+            {% if selected_category %}
+                {{ selected_category }} ({{ count }} articles)
+            {% else %}
+                All Categories ({{ count }} articles)
+            {% endif %}
         </div>
         <form method="get" class="sort-form" style="margin-bottom: 1em;">
             {% if selected_category %}
@@ -251,7 +273,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT SECTION-->
+    <!-- JAVASCRIPT -->
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -413,6 +435,5 @@
             });
         });
     </script>
-
 </main>
 {% endblock %}

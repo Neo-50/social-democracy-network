@@ -165,10 +165,14 @@ def about():
 
 @app.route('/news', methods=['GET', 'POST'])
 def news():
+    print("🚨 Request method:", request.method)
+    print("🚨 Form data:", request.form)
+    print("🚨 Args:", request.args)
     if request.method == 'POST':
-        if not session.get('user_id'):
-            flash("You must be logged in to post an article.", "danger")
-            return redirect(url_for('news'))
+        if request.form.get('url'):
+            if not session.get('user_id'):
+                flash("You must be logged in to post an article.", "danger")
+                return redirect(url_for('news'))
 
         url = request.form['url']
         category = request.form.get('category', '').strip()
