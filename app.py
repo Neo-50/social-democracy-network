@@ -171,6 +171,12 @@ def news():
             return redirect(url_for('news'))
 
         url = request.form['url']
+        
+        existing_article = NewsArticle.query.filter_by(url=url).first()
+        if existing_article:
+            flash("This article has already been submitted.", "danger")
+            return redirect(url_for('news'))
+
         category = request.form.get('category', '').strip()
         metadata = extract_metadata(url)
         published_str=metadata.get("published", "")
