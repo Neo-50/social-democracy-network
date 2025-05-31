@@ -200,18 +200,18 @@ def news():
     if selected_category:
         articles = NewsArticle.query \
             .filter_by(category=selected_category) \
+            .filter(NewsArticle.id != highlight_id) \
             .order_by(order_func) \
             .all()
     else:
-        articles = NewsArticle.query.order_by(order_func).all()
+        articles = NewsArticle.query \
+            .filter(NewsArticle.id != highlight_id) \
+            .order_by(order_func) \
+            .all()
     
-    highlighted = None
-    # Move highlighted article to the top
-    if highlight_id:
-        highlighted = next((a for a in articles if a.id == highlight_id), None)
-        if highlighted:
-            articles.remove(highlighted)
-            articles.insert(0, highlighted)
+    highlighted = NewsArticle.query.get(highlight_id)
+    if highlighted:
+        articles.insert(0, highlighted)
 
     count = len(articles)
 

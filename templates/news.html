@@ -265,14 +265,7 @@
         <div id="emoji-wrapper" style="display: none;">
             <emoji-picker id="unicode-emoji-picker"></emoji-picker>
         </div>
-        {% for article in articles %}
-            <div class="article-card {% if article.id == highlight_id %}highlight{% endif %}" id="article-{{ article.id }}">
-                <h2>{{ article.title }}</h2>
-                <p>{{ article.description }}</p>
-                <p>{{ article.source }}</p>
-            </div>
-        {% endfor %}
-            </section>
+        </section>
 
     <div id="user-popup" class="popup" style="display: none;">
         <div class="popup-inner" id="popup-header">
