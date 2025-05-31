@@ -114,6 +114,75 @@ class Post(db.Model):
     def __repr__(self):
         return f'<Post {self.title}>'
     
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    read = db.Column(db.Boolean, default=False)
+
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
+    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='received_messages')
+
+@app.route('/inbox')
+@app.route('/inbox/<username>', methods=['GET', 'POST'])
+@login_required
+def inbox(username=None):
+    user_id = session.get("user_id")
+
+    recipient = None  # initialize here in case it's used below
+
+    if username:
+        recipient = User.query.filter_by(username=username).first_or_404()
+
+    conversations = User.query.join(
+        Message,
+        ((Message.sender_id == User.id) & (Message.recipient_id == user_id)) |
+        ((Message.recipient_id == User.id) & (Message.sender_id == user_id))
+    ).filter(User.id != user_id).distinct().all()
+
+    # Get all other users for the dropdown
+    all_users = User.query.filter(User.id != user_id).order_by(User.username).all()
+
+    messages = []
+
+    # Send message logic
+    if request.method == 'POST':
+        recipient_id = request.form.get('recipient_id', type=int)
+        content = request.form.get('content', '').strip()
+        recipient = User.query.get(recipient_id)
+
+        if recipient and content:
+            msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
+            db.session.add(msg)
+            db.session.commit()
+            flash("Message sent!", "success")
+
+            return redirect(url_for('inbox', recipient_id=recipient.username))
+
+    # If a recipient was selected (or just messaged), show the thread
+    if recipient:
+        messages = Message.query.filter(
+            ((Message.sender_id == user_id) & (Message.recipient_id == recipient.id)) |
+            ((Message.sender_id == recipient.id) & (Message.recipient_id == user_id))
+        ).order_by(Message.timestamp).all()
+
+        # Mark as read
+        for msg in messages:
+            if msg.recipient_id == user_id and not msg.read:
+                msg.read = True
+        db.session.commit()
+
+    return render_template(
+        'inbox.html',
+        users=all_users,
+        messages=messages,
+        recipient=recipient,
+        conversations=conversations
+    )
+
+
 @app.route('/media/<path:filename>')
 def media(filename):
     print("Serving from /mnt/storage:", filename)
