@@ -125,7 +125,7 @@ class Message(db.Model):
     sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
     recipient = db.relationship('User', foreign_keys=[recipient_id], backref='received_messages')
 
-@app.route('/inbox')
+@app.route('/inbox', methods=['GET', 'POST'])
 @app.route('/inbox/<username>', methods=['GET', 'POST'])
 @login_required
 def inbox(username=None):
