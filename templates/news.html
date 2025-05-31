@@ -222,6 +222,9 @@
                         {% endif %}
                     </div>
                 </form>
+                <div id="article-{{ article.id }}" class="article-card {% if article.id == highlight_id %}highlight{% endif %}">
+                <button type="button" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
+                </div>
                 {% if is_admin() %}
                     <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" class="article-edit-form">
                         Title: <input name="title" value="{{ article.title or '' }}">
@@ -262,7 +265,14 @@
         <div id="emoji-wrapper" style="display: none;">
             <emoji-picker id="unicode-emoji-picker"></emoji-picker>
         </div>
-    </section>
+        {% for article in articles %}
+            <div class="article-card {% if article.id == highlight_id %}highlight{% endif %}" id="article-{{ article.id }}">
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.description }}</p>
+                <p>{{ article.source }}</p>
+            </div>
+        {% endfor %}
+            </section>
 
     <div id="user-popup" class="popup" style="display: none;">
         <div class="popup-inner" id="popup-header">
@@ -435,5 +445,26 @@
             });
         });
     </script>
+    <script>
+        function copyLink(articleId) {
+            const id = parseInt(articleId);  // convert back to number
+            const url = new URL(window.location.href);
+            url.searchParams.set("article", id);
+            navigator.clipboard.writeText(url.toString())
+                .then(() => alert("Link copied!"))
+                .catch(() => alert("Failed to copy link."));
+        }
+    </script>
+    {% if highlight_id %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const el = document.getElementById('article-{{ highlight_id }}');
+            if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            el.classList.add('highlight');
+            }
+        });
+    </script>
+    {% endif %}
 </main>
 {% endblock %}

@@ -25,6 +25,11 @@ def extract_metadata(url):
             "source": urlparse(url).netloc.replace("www.", "")
         }
 
+        # Fix relative image URLs
+        if metadata["image_url"] and metadata["image_url"].startswith("/"):
+            parsed = urlparse(url)
+            metadata["image_url"] = f"{parsed.scheme}://{parsed.netloc}{metadata['image_url']}"
+
         print(f"[DEBUG] Metadata extracted for {url}: {metadata}")
         return metadata
 

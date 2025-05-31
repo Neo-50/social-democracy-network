@@ -165,14 +165,10 @@ def about():
 
 @app.route('/news', methods=['GET', 'POST'])
 def news():
-    print("🚨 Request method:", request.method)
-    print("🚨 Form data:", request.form)
-    print("🚨 Args:", request.args)
     if request.method == 'POST':
-        if request.form.get('url'):
-            if not session.get('user_id'):
-                flash("You must be logged in to post an article.", "danger")
-                return redirect(url_for('news'))
+        if not session.get('user_id'):
+            flash("You must be logged in to post an article.", "danger")
+            return redirect(url_for('news'))
 
         url = request.form['url']
         category = request.form.get('category', '').strip()
@@ -197,6 +193,7 @@ def news():
 
     # GET logic
     selected_category = request.args.get('category')
+    highlight_id = request.args.get("article", type=int)
     sort_order = request.args.get('sort', 'desc')
     order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
 
@@ -207,6 +204,13 @@ def news():
             .all()
     else:
         articles = NewsArticle.query.order_by(order_func).all()
+    
+    # Move highlighted article to the top
+    if highlight_id:
+        highlighted = next((a for a in articles if a.id == highlight_id), None)
+        if highlighted:
+            articles.remove(highlighted)
+            articles.insert(0, highlighted)
 
     count = len(articles)
 
@@ -214,6 +218,7 @@ def news():
         'news.html',
         articles=articles,
         is_admin=is_admin,
+        highlight_id=highlight_id,
         selected_category=selected_category,
         count=count
     )
