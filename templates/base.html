@@ -8,11 +8,13 @@
     <script defer data-domain="social-democracy.net" src="https://plausible.io/js/script.js"></script>
     <title>Social Democracy Network</title>
     {% if article_to_highlight %}
-        <meta property="og:title" content="{{ article_to_highlight.source }}: {{ article_to_highlight.title }}">
+        <meta property="og:site_name" content="Social Democracy Network">
+        <meta property="article:author" content="{{ article_to_highlight.source }}">
+        <meta property="og:title" content="{{ article_to_highlight.title }}">
         <meta property="og:description" content="{{ article_to_highlight.description }}">
         <meta property="og:image" content="{{ article_to_highlight.image_url }}">
         <meta property="og:url" content="{{ request.url }}">
-        <meta property="og:site_name" content="Social Democracy Network">
+        
         <meta property="article:publisher" content="{{ article_to_highlight.source }}">
     {% else %}
         <meta property="og:title" content="Social Democracy Network - News">
@@ -72,6 +74,9 @@
 
     {% if request.endpoint == 'admin_tools' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_tools.css') }}">
+    {% endif %}
+    {% if request.endpoint == 'inbox' %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/messages.css') }}">
     {% endif %}
 </head>
 
@@ -167,13 +172,14 @@
                 <span class="username">{{ current_user_obj.username }}</span>
                 <div class="avatar-dropdown">
                     {% set avatar_file = current_user_obj.avatar_filename if current_user_obj.avatar_filename else 'default_avatar.png' %}
-                    <img src="{{ url_for('avatar', filename=avatar_file) }}" class="avatar-inline" alt="User Avatar">
+                    <img src="{{ url_for('media', filename='avatars/' ~ avatar_file) }}" class="avatar-inline" alt="User Avatar">
                     <div class="dropdown-menu">
                         <a href="{{ url_for('profile', username=current_user_obj.username) }}">Profile</a>
-                        <a href="{{ url_for('logout') }}">Logout</a>
+                        <a href="{{ url_for('inbox') }}" class="btn">Inbox</a>
                         {% if current_user.is_authenticated and current_user.is_admin %}
                             <a href="{{ url_for('admin_tools') }}">Admin Tools</a>
                         {% endif %}
+                        <a href="{{ url_for('logout') }}">Logout</a>
                     </div>
                 </div>
                 {% else %}

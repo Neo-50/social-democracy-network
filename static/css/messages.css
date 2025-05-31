@@ -1,0 +1,124 @@
+.inbox-container {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-bottom: 50px;
+    padding-left: 10px;
+    width: 100%;
+    max-width: 500px;
+    height: 500px;
+    overflow: hidden;
+}
+
+.message-thread-area {
+    display: flex;
+    flex-direction: column;
+    border-left: 4px solid #bbb;
+    padding-left: 20px;
+    flex: 1;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.conversation-list {
+    padding-bottom: 10px;
+    padding-right: 10px;
+    margin-right: 0;
+    border-radius: 24px;
+    width: fit-content;
+    height: fit-content;
+}
+
+.conversation-list a:hover {
+    color: white;
+}
+
+.message-wrapper {
+    display: flex;
+    align-items: flex-start;
+}
+
+.message {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 24px;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    width: fit-content;
+}
+
+.message.sent {
+    background-color: rgb(33 104 163);
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.message.received {
+    background-color: rgb(120 120 120);
+    color: white;
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+h2 {
+    color: #bbb;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+    padding-left: 10px;
+}
+
+.message .meta {
+    font-size: 0.75rem;
+    color: #bbb;
+    margin-bottom: 4px;
+}
+
+.message-form textarea {
+    width: 350px;
+    height: 90px;
+    padding: 8px;
+    margin-left: 0;
+    border-radius: 8px;
+    background-color: #222;
+    color: #eee;
+    resize: vertical;
+    border: none;
+}
+
+.write-message-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 10px;
+    gap: 10px;
+    width: min-content;
+    height: min-content;
+}
+
+.inbox-button {
+    background-color: #1a1a1a;
+    border: 3px solid #00e3ea;
+    color: #00e3ea;
+    padding: 2px 12px;
+    margin-left: 0;
+    font-size: .9em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+    text-align: center;
+    max-width: 100px;
+
+}
+
+#recipient_id {
+    background-color: #1a1a1a;
+    color: #bbb;
+    border: none;
+    padding: 8px 12px;
+}

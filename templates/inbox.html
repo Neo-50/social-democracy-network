@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Compose</h2>
+<form method="POST" class="message-form">
+    <div class="write-message-wrapper" action="{{ url_for('inbox', username=recipient.username) }}">
+        <select name="recipient_id" id="recipient_id" required>
+            <option value="" disabled selected>Select a user</option>
+            {% for user in users %}
+            <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+
+        <textarea name="content" placeholder="Write your message..." required></textarea>
+        <button class="inbox-button" type="submit">Send</button>
+    </div>
+</form>
+
+<h2>Message Threads</h2>
+
+<div class="inbox-container">
+    <div class="conversation-list">
+        {% for user in conversations %}
+            <a href="{{ url_for('inbox', username=user.username) }}">
+            💬 {{ user.username }}
+            </a>
+        {% else %}
+            No messages yet.
+        {% endfor %}
+    </div>
+    <div class="message-thread-area">
+        {% for msg in messages %}
+            <div class="message-wrapper">
+                <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
+                    <div class="content">{{ msg.content }}</div>
+                    <div class="meta">{{ msg.sender.username }} • {{ msg.timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+
+{% endblock %}

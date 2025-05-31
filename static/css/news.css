@@ -553,7 +553,9 @@ p {
 .sharelink:hover {
     color: white;
 }
+
 /* Mobile layout */
+
 @media (width <=800px) {
     .news-page {
         display: flex;
