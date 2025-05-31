@@ -205,6 +205,7 @@ def news():
     else:
         articles = NewsArticle.query.order_by(order_func).all()
     
+    highlighted = None
     # Move highlighted article to the top
     if highlight_id:
         highlighted = next((a for a in articles if a.id == highlight_id), None)
@@ -219,6 +220,7 @@ def news():
         articles=articles,
         is_admin=is_admin,
         highlight_id=highlight_id,
+        article_to_highlight=highlighted,
         selected_category=selected_category,
         count=count
     )
