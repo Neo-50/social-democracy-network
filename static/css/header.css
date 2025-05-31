@@ -206,6 +206,27 @@
     display: flex;
 }
 
+.toast-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(60 60 60 / 90%);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease, bottom 0.3s ease;
+}
+
+.toast-message.show {
+    display: block;
+    opacity: 1;
+    bottom: 40px;
+}
+
 /* ========== Responsive Adjustments (≤ 768px) ========== */
 @media (width <= 768px) {
     .header-date-time,

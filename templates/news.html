@@ -447,12 +447,17 @@
     </script>
     <script>
         function copyLink(articleId) {
-            const id = parseInt(articleId);  // convert back to number
+            const id = parseInt(articleId);
             const url = new URL(window.location.href);
             url.searchParams.set("article", id);
+
             navigator.clipboard.writeText(url.toString())
-                .then(() => alert("Link copied!"))
-                .catch(() => alert("Failed to copy link."));
+                .then(() => {
+                    showToast("🔗 Link copied!");
+                })
+                .catch(() => {
+                    showToast("❌ Failed to copy link.");
+                });
         }
     </script>
 </main>
