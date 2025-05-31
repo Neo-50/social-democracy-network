@@ -531,12 +531,28 @@ p {
     background-color: #888;
 }
 
-.highlight {
-    border: 2px solid gold;
-    background-color: rgb(255 255 100 / 10%);
-    scroll-margin-top: 100px; /* adjust for fixed headers */
+.sharelink {
+    background-color: transparent;
+    color: #00e3ea;
+    border: none;
+    padding: 0;
+    margin-left: 0;
+    margin-bottom: 20px;
+    margin-top: 5px;
+    font-size: 1em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.sharelink:hover {
+    color: white;
+}
 /* Mobile layout */
 @media (width <=800px) {
     .news-page {

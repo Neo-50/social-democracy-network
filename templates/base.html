@@ -7,6 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer data-domain="social-democracy.net" src="https://plausible.io/js/script.js"></script>
     <title>Social Democracy Network</title>
+    {% if article_to_highlight %}
+        <meta property="og:title" content="{{ article_to_highlight.title }}">
+        <meta property="og:description" content="{{ article_to_highlight.description }}">
+        <meta property="og:image" content="{{ article_to_highlight.image_url }}">
+        <meta property="og:url" content="{{ request.url }}">
+    {% else %}
+        <meta property="og:title" content="Social Democracy Network - News">
+        <meta property="og:description" content="Explore curated news from activist and independent sources.">
+        <meta property="og:image" content="{{ url_for('static', filename='img/og-default.jpg', _external=True) }}">
+        <meta property="og:url" content="{{ request.url }}">
+    {% endif %}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <!-- Site-wide styles -->
