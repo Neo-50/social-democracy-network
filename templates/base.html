@@ -8,10 +8,13 @@
     <script defer data-domain="social-democracy.net" src="https://plausible.io/js/script.js"></script>
     <title>Social Democracy Network</title>
     {% if article_to_highlight %}
-        <meta property="og:title" content="{{ article_to_highlight.title }}">
+        <meta property="og:title" content="{{ article_to_highlight.source }}: {{ article_to_highlight.title }}">
         <meta property="og:description" content="{{ article_to_highlight.description }}">
         <meta property="og:image" content="{{ article_to_highlight.image_url }}">
         <meta property="og:url" content="{{ request.url }}">
+        <meta property="og:site_name" content="Social Democracy Network">
+        <meta property="article:publisher" content="{{ article_to_highlight.source }}">
+
     {% else %}
         <meta property="og:title" content="Social Democracy Network - News">
         <meta property="og:description" content="Explore curated news from activist and independent sources.">
