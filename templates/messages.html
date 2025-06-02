@@ -3,7 +3,7 @@
 
 <h2>Compose</h2>
 <form method="POST" class="message-form">
-    <div class="write-message-wrapper" action="{{ url_for('inbox', username=recipient.username) }}">
+    <div class="write-message-wrapper" action="{{ url_for('messages', username=recipient.username) }}">
         <select name="recipient_id" id="recipient_id" required>
             <option value="" disabled selected>Select a user</option>
             {% for user in users %}
@@ -21,7 +21,7 @@
 <div class="inbox-container">
     <div class="conversation-list">
         {% for user in conversations %}
-            <a href="{{ url_for('inbox', username=user.username) }}">
+            <a href="{{ url_for('messages', username=user.username) }}">
             💬 {{ user.username }}
             </a>
         {% else %}

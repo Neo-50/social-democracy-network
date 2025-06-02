@@ -1,46 +1,305 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-
-/* Global Styles */
-body {
-    font-family: Inter, sans-serif;
-    font-weight: 400;
-    color: white;
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
     background-color: #3d3d3d;
-    margin: 0;
-    padding: 0;
+    color: white;
+    padding: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    height: 140px;
 }
 
-/* Styling for all hyperlinks */
-a {
-    color: #8feff2;  /* Change the default link color (unvisited) */
-    text-decoration: none;  /* Optional: Removes the underline */
+/* Left: time + mobile buttons */
+.header-left {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 5;
 }
 
-/* Styling for visited hyperlinks */
-a:visited {
-    color: #8feff2;  /* Set a different color for visited links (e.g., light gray) */
+/* Center: logo and nav */
+.header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1 1 auto;
+}
+
+/* Right: user menu */
+.header-right {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.username {
+    color: #8a8a8a;
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.user-link {
+    color: #00e3ea;
     text-decoration: none;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background-color: #1a1a1a;
 }
 
-* {
-  box-sizing: border-box;
+.user-link:first-of-type {
+    margin-right: 8px;
 }
 
-.flash-message {
-  padding: 10px 20px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  font-weight: bold;
+.user-link:hover {
+    color: #c7c7c7;
 }
 
-.flash-success { background-color: #4CAF50; 
-                 color: white; }
+/* Logo styling */
+.title-image {
+    max-width: 600px;
+    width: 80%;
+    height: auto;
+}
 
-.flash-danger { background-color: #f44336;
-                color: white; }
-            
-.flash-warning { background-color: #ff9800; 
-                 color: black; }
+.header-date-time {
+    color: white;
+    font-weight: 600;
+    font-size: 12pt;
+    padding-bottom: 40px;
+}
 
-.flash-info { background-color: #2196F3; 
-              color: white; }
+
+/* Navigation bar */
+#main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 10px;
+    z-index: 10;
+    margin-top: 0;
+    right: 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px;
+    color: #00e3ea;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.dropdown-menu a:hover {
+    background-color: #444;
+}
+
+.avatar-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+#main-nav a {
+    background-color: #1a1a1a;
+    color: white;
+    text-decoration: none;
+    padding: 6px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+#main-nav a:hover {
+    background-color: #444;
+}
+
+/* User navigation */
+.user-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.avatar-inline {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* ========== Mobile Controls ========== */
+
+
+.directory-button,
+.hamburger-icon {
+    display: none;
+}
+
+#mobile-nav {
+    display: none;
+    position: absolute;
+    font-size: 1em;
+    top: 100px;
+    left: 0;
+    padding: 10px;
+    background-color: #111;
+    border: 1px solid #444;
+    border-radius: 10px;
+    max-width: 300px;
+    z-index: 1000;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#mobile-nav a:hover {
+    color: white;
+    background-color: #444;
+}
+
+#mobile-directory {
+    display: none;
+    position: absolute;
+    font-size: 1em;
+    top: 100px;
+    left: 120px;
+    padding: 20px;
+    background-color: #111;
+    border: 1px solid #444;
+    border-radius: 10px;
+    max-width: 400px;
+    z-index: 1000;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#mobile-directory ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#mobile-directory a:hover {
+    color: white;
+    background-color: #444;
+}
+
+#mobile-directory.show,
+#mobile-nav.show {
+    display: flex;
+}
+
+.toast-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(60 60 60 / 90%);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease, bottom 0.3s ease;
+}
+
+.toast-message.show {
+    display: block;
+    opacity: 1;
+    bottom: 40px;
+}
+
+/* ========== Responsive Adjustments (≤ 768px) ========== */
+@media (width <= 768px) {
+    .header-date-time,
+    #main-nav {
+        display: none;
+    }
+
+    .header-left,
+    .header-right,
+    .header-center {
+        all: unset;
+        display: contents;
+    }
+
+    .main-content {
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 0 5px;
+        border-bottom: 2px solid #bbb;
+        height: auto;
+    }
+    
+    .mobile-nav-buttons {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+        padding: 0;
+    }
+
+    .user-nav {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        padding: 0;
+    }
+
+    .directory-button,
+    .hamburger-icon {
+        display: flex;
+        background-color: #1a1a1a;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 24px;
+        cursor: pointer;
+    }
+
+    .directory-button:hover,
+    .hamburger-icon:hover {
+        background-color: #444;
+    }
+
+    .user-link {
+        color: #00e3ea;
+        text-decoration: none;
+        font-size: .9em;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background-color: #1a1a1a;
+}
+    
+    .title-image {
+        display: flex;
+        margin: 5px auto;
+        margin-bottom: 0;
+        padding-top: 5px;
+        max-width: 100%;
+    }
+}
