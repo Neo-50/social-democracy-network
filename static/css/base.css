@@ -76,9 +76,13 @@
     color: white;
     font-weight: 600;
     font-size: 12pt;
-    padding-bottom: 40px;
+    padding-bottom: 8px;
 }
 
+.status {
+    color: #bbb;
+    font-size: .9em;
+}
 
 /* Navigation bar */
 #main-nav {
