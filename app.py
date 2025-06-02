@@ -378,8 +378,6 @@ def edit_article(article_id):
     flash("Article updated.", "success")
     return redirect(url_for('news'))
 
-
-
 def is_admin():
     return current_user.is_authenticated and current_user.is_admin
 
@@ -584,13 +582,13 @@ def reset_password_token(token):
 @app.route('/admin/reset_password/<int:user_id>', methods=['POST'])
 @login_required
 def reset_password_admin(user_id):
-    if not session.get('is_admin'):
+    if not current_user.is_admin:
         flash("Access denied.")
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     user = User.query.get_or_404(user_id)
     new_password = request.form['new_password']
-    user.password = generate_password_hash(new_password)
+    user.set_password = generate_password_hash(new_password)
     db.session.commit()
     flash(f"Password reset for user {user.username}")
     return redirect(url_for('admin_tools'))
