@@ -4,12 +4,15 @@ from models import User, NewsArticle, NewsComment, Message
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import re
+from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
 from werkzeug.exceptions import RequestEntityTooLarge
 from utils.email import confirm_verification_token, send_verification_email
@@ -31,6 +34,8 @@ app.config['MAIL_PASSWORD'] = 'fLuffy2feRret$arENice7'  # use Zoho app password 
 app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
 
 app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
+
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 mail = Mail(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -139,9 +144,15 @@ def news():
             .order_by(order_func) \
             .all()
     
-    highlighted = NewsArticle.query.get(highlight_id)
-    if highlighted:
-        articles.insert(0, highlighted)
+    highlighted = None
+    try:
+        highlight_id_int = int(highlight_id) if highlight_id is not None else None
+        if highlight_id_int is not None:
+            highlighted = NewsArticle.query.get(highlight_id_int)
+            if highlighted:
+                articles.insert(0, highlighted)
+    except (ValueError, TypeError):
+        highlighted = None
 
     count = len(articles)
 
@@ -447,32 +458,6 @@ def delete_article(article_id):
     flash("Article deleted.")
     return redirect(url_for('news'))
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        user = User.query.filter_by(email=email).first()
-
-        if user and user.check_password(password):
-            if not user.email_verified:
-                flash('Please verify your email before logging in.', 'warning')
-                return redirect(url_for('login'))
-            session.permanent = True
-            login_user(user)
-            session['user_id'] = user.id
-            flash('Logged in successfully!')
-            print(">>> Login successful")
-            print(">>> session user_id:", session.get('user_id'))
-            print(">>> current_user.is_authenticated:", current_user.is_authenticated)
-
-            return redirect(url_for('home'))
-
-        flash('Invalid email or password')
-        return redirect(url_for('login'))
-
-    return render_template('login.html')
-
 @app.route('/logout')
 def logout():
     session.clear()
@@ -539,6 +524,101 @@ def add_comment(article_id):
 @app.route('/emojis/<filename>')
 def emoji(filename):
     return send_from_directory('/mnt/storage/emojis', filename)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first()
+
+        if user and user.check_password(password):
+            if not user.email_verified:
+                flash('Please verify your email before logging in.', 'warning')
+                return redirect(url_for('login'))
+            session.permanent = True
+            login_user(user)
+            session['user_id'] = user.id
+            flash('Logged in successfully!')
+            print(">>> Login successful")
+            print(">>> session user_id:", session.get('user_id'))
+            print(">>> current_user.is_authenticated:", current_user.is_authenticated)
+
+            return redirect(url_for('home'))
+
+        flash('Invalid email or password')
+
+        if user:
+            print("Entered password (raw):", password)
+            print("Stored hash:", user.password_hash)
+        else:
+            print("No user found for email:", email)
+
+        return redirect(url_for('login'))
+
+    return render_template('login.html')
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password_token(token):
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
+    except Exception:
+        flash("The reset link is invalid or has expired.")
+        return redirect(url_for('login'))
+
+    user = User.query.filter_by(email=email).first_or_404()
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+        user.set_password(new_password)
+        db.session.commit()
+        flash("Your password has been successfully reset.")
+        return redirect(url_for('login'))
+
+    return render_template(
+        'change_password.html',
+        show_reset_form=True,
+        reset_token=token
+    )
+
+@app.route('/admin/reset_password/<int:user_id>', methods=['POST'])
+@login_required
+def reset_password_admin(user_id):
+    if not session.get('is_admin'):
+        flash("Access denied.")
+        return redirect(url_for('index'))
+
+    user = User.query.get_or_404(user_id)
+    new_password = request.form['new_password']
+    user.password = generate_password_hash(new_password)
+    db.session.commit()
+    flash(f"Password reset for user {user.username}")
+    return redirect(url_for('admin_tools'))
+
+@app.route('/forgot_password', methods=['POST'])
+def forgot_password():
+    email = request.form['email']
+    user = User.query.filter_by(email=email).first()
+    if user:
+        token = serializer.dumps(user.email, salt='password-reset-salt')
+
+        reset_url = url_for('reset_password_token', token=token, _external=True)
+
+        if not app.debug and '127.0.0.1' in reset_url:
+            reset_url = reset_url.replace('127.0.0.1:5000', 'social-democracy.net')
+
+        msg = flask_message(
+            "Reset Your Password for Social Democracy Network",
+            recipients=[user.email],
+            body=f"Click the link below to reset your password:\n\n{reset_url}"
+        )
+
+        mail.send(msg)
+
+        flash("A reset link has been sent to your email.")
+    else:
+        flash("If the email exists, a reset link will be sent.")
+    return redirect(url_for('login'))
 
 @app.context_processor
 def inject_user():
