@@ -11,8 +11,7 @@
                     <th>Email</th>
                     <th>Admin</th>
                     <th>Email Verified</th>
-                    <th>Avatar URL</th>
-                    <th>Avatar Filename</th>
+                    <th>Reset Password</th>
                     <th>Bio</th>
                     <th>Session Active</th>
                     <th>Delete</th>
@@ -25,8 +24,12 @@
                     <td>{{ user.email }}</td>
                     <td>{{ 'Yes' if user.is_admin else 'No' }}</td>
                     <td>{{ 'Yes' if user.email_verified else 'No' }}</td>
-                    <td>{{ user.avatar_url or '—' }}</td>
-                    <td>{{ user.avatar_filename or '—' }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('reset_password_admin', user_id=user.id) }}">
+                            <input type="password" name="new_password" placeholder="New password"  autocomplete="new-password" required>
+                        <button type="submit">Reset</button>
+                    </form>
+                    </td>
                     <td>{{ user.bio or '—' }}</td>
                     <td>N/A</td> <!-- Replace with session logic later -->
                     <td>
@@ -34,6 +37,9 @@
                         <button type="submit" class="trash-button">🗑️</button>
                         </form>
                     </td>
+                </tr>
+                <tr>
+
                 </tr>
                 {% endfor %}
             </tbody>
