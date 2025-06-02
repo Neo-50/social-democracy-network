@@ -1,8 +1,11 @@
+from db_init import db
+target_metadata = db.metadata
+
 import logging
 from logging.config import fileConfig
 
 from flask import current_app
-
+from models import User, NewsArticle, NewsComment, Message
 from alembic import context
 
 # this is the Alembic Config object, which provides

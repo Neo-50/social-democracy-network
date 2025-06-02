@@ -52,4 +52,3 @@ class NewsComment(db.Model):
         backref=db.backref('parent', remote_side=[id]),
         cascade='all, delete-orphan'
     )
-    

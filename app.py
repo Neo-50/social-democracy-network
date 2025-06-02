@@ -1,20 +1,16 @@
 import os
+from db_init import db
+from models import User, NewsArticle, NewsComment, Message
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
-import pytz
 import re
 from markupsafe import Markup
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, jsonify, send_from_directory, current_app
-from flask_login import current_user, login_user, login_required, logout_user, LoginManager, UserMixin
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app
+from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_migrate import Migrate
-from flask_mail import Mail, Message
-from sqlalchemy import Boolean, Column
+from flask_mail import Mail
 from utils.metadata_scraper import extract_metadata
-from db_init import db
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
 from utils.email import confirm_verification_token, send_verification_email
 from dotenv import load_dotenv
@@ -54,6 +50,18 @@ def login_required(f):
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
+
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+from sqlite3 import Connection as SQLite3Connection
+
+@event.listens_for(Engine, "connect")
+def enable_sqlite_foreign_keys(dbapi_connection, connection_record):
+    if isinstance(dbapi_connection, SQLite3Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.close()
+
 db.init_app(app)
 
 login_manager = LoginManager()
@@ -73,164 +81,11 @@ MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
 # Flask config (optional fallback, not enforced unless you hook into it)
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
-from news_system import NewsArticle, NewsComment
 migrate = Migrate(app, db)
-
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
-    email_verified = db.Column(db.Boolean, default=False)
-    avatar_url = db.Column(db.String(500), nullable=True)
-    bio = db.Column(db.Text, nullable=True)
-    avatar_filename = db.Column(db.String(120))
-    comments = db.relationship('NewsComment', back_populates='user', cascade='all, delete-orphan')
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-    
-    @property
-    def is_active(self):
-        return self.email_verified
-    
-    @property
-    def is_admin_user(self):
-        return self.is_admin
-
-    def get_id(self):
-        return str(self.id)
-
-
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-
-    def __repr__(self):
-        return f'<Post {self.title}>'
-    
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    read = db.Column(db.Boolean, default=False)
-
-    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
-    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='received_messages')
-
-@app.route('/inbox', methods=['GET', 'POST'])
-@app.route('/inbox/<username>', methods=['GET', 'POST'])
-@login_required
-def inbox(username=None):
-    user_id = session.get("user_id")
-
-    recipient = None  # initialize here in case it's used below
-
-    if username:
-        recipient = User.query.filter_by(username=username).first_or_404()
-
-    conversations = User.query.join(
-        Message,
-        ((Message.sender_id == User.id) & (Message.recipient_id == user_id)) |
-        ((Message.recipient_id == User.id) & (Message.sender_id == user_id))
-    ).filter(User.id != user_id).distinct().all()
-
-    # Get all other users for the dropdown
-    all_users = User.query.filter(User.id != user_id).order_by(User.username).all()
-
-    messages = []
-
-    # Send message logic
-    if request.method == 'POST':
-        recipient_id = request.form.get('recipient_id', type=int)
-        content = request.form.get('content', '').strip()
-        recipient = User.query.get(recipient_id)
-
-        if recipient and content:
-            msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
-            db.session.add(msg)
-            db.session.commit()
-            flash("Message sent!", "success")
-
-            return redirect(url_for('inbox', recipient_id=recipient.username))
-
-    # If a recipient was selected (or just messaged), show the thread
-    if recipient:
-        messages = Message.query.filter(
-            ((Message.sender_id == user_id) & (Message.recipient_id == recipient.id)) |
-            ((Message.sender_id == recipient.id) & (Message.recipient_id == user_id))
-        ).order_by(Message.timestamp).all()
-
-        # Mark as read
-        for msg in messages:
-            if msg.recipient_id == user_id and not msg.read:
-                msg.read = True
-        db.session.commit()
-
-    return render_template(
-        'inbox.html',
-        users=all_users,
-        messages=messages,
-        recipient=recipient,
-        conversations=conversations
-    )
-
-
-@app.route('/media/<path:filename>')
-def media(filename):
-    print("Serving from /mnt/storage:", filename)
-    return send_from_directory('mnt/storage', filename)
-
-@app.route('/media/avatars/<filename>')
-def avatar(filename):
-    if os.environ.get('FLASK_ENV') != 'production':
-        base_path = os.path.join(current_app.root_path, 'mnt', 'storage', 'avatars')
-    else:
-        base_path = '/mnt/storage/avatars'
-
-    full_path = os.path.join(base_path, filename)
-    print(">>> Attempting to serve avatar from:", full_path)
-
-    return send_from_directory(base_path, filename)
-
-@app.template_filter('datetimeformat')
-def datetimeformat(value, format="%B %d, %Y"):
-    try:
-        return value.strftime(format)
-    except (AttributeError, ValueError, TypeError):
-        return value
 
 @app.route('/')
 def home():
     return render_template('home.html')
-
-@app.route('/activism')
-def activism():
-    return render_template('activism.html')
-
-@app.route('/environment')
-def environment():
-    return render_template('environment.html')
-
-@app.route('/veganism')
-def veganism():
-    return render_template('veganism.html')
-
-@app.route('/forum')
-def forum():
-    posts = Post.query.order_by(Post.id.desc()).all()
-    return render_template('forum.html', posts=posts)
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
 
 @app.route('/news', methods=['GET', 'POST'])
 def news():
@@ -300,6 +155,170 @@ def news():
         count=count
     )
 
+@app.route('/activism')
+def activism():
+    return render_template('activism.html')
+
+@app.route('/environment')
+def environment():
+    return render_template('environment.html')
+
+@app.route('/veganism')
+def veganism():
+    return render_template('veganism.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
+    user = current_user
+    file = request.files.get('avatar')
+    
+    if request.method == 'POST':
+        if file and file.filename:
+            file.seek(0, os.SEEK_END)
+            file_size = file.tell()
+            file.seek(0)
+
+            if file_size > MAX_FILE_SIZE:
+                flash("Avatar image is too large (max 2MB).", "danger")
+                return redirect(request.url)
+
+            if allowed_file(file.filename):
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"{user.username}.{ext}"
+                path = os.path.join('/mnt/storage/avatars', filename)
+                file.save(path)
+                user.avatar_filename = filename
+            else:
+                flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
+                return redirect(request.url)
+
+        user.bio = request.form.get('bio', '')
+        db.session.commit()
+        flash("Profile updated.", "success")
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html', user=user)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('register'))
+
+        # Check if user exists
+        if User.query.filter((User.username == username) | (User.email == email)).first():
+            flash('Username or email already taken.')
+            return redirect(url_for('register'))
+
+        user = User(username=username, email=email)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+
+        from utils.email import send_verification_email
+        send_verification_email(user, mail)
+
+
+        flash('Registration successful. Please check your email to verify your account.', 'info')
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
+
+@app.route('/messages', methods=['GET', 'POST'])
+@app.route('/messages/<username>', methods=['GET', 'POST'])
+@login_required
+def messages(username=None):
+    user_id = session.get("user_id")
+
+    recipient = None  # initialize here in case it's used below
+
+    if username:
+        recipient = User.query.filter_by(username=username).first_or_404()
+
+    conversations = User.query.join(
+        Message,
+        ((Message.sender_id == User.id) & (Message.recipient_id == user_id)) |
+        ((Message.recipient_id == User.id) & (Message.sender_id == user_id))
+    ).filter(User.id != user_id).distinct().all()
+
+    # Get all other users for the dropdown
+    all_users = User.query.filter(User.id != user_id).order_by(User.username).all()
+
+    messages = []
+
+    # Send message logic
+    if request.method == 'POST':
+        recipient_id = request.form.get('recipient_id', type=int)
+        content = request.form.get('content', '').strip()
+        recipient = User.query.get(recipient_id)
+
+        if recipient and content:
+            msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
+            db.session.add(msg)
+            db.session.commit()
+            flash("Message sent!", "success")
+
+            return redirect(url_for('messages', recipient_id=recipient.username))
+
+    # If a recipient was selected (or just messaged), show the thread
+    if recipient:
+        messages = Message.query.filter(
+            ((Message.sender_id == user_id) & (Message.recipient_id == recipient.id)) |
+            ((Message.sender_id == recipient.id) & (Message.recipient_id == user_id))
+        ).order_by(Message.timestamp).all()
+
+        # Mark as read
+        for msg in messages:
+            if msg.recipient_id == user_id and not msg.read:
+                msg.read = True
+        db.session.commit()
+
+    return render_template(
+        'messages.html',
+        users=all_users,
+        messages=messages,
+        recipient=recipient,
+        conversations=conversations
+    )
+
+@app.route('/media/<path:filename>')
+def media(filename):
+    print("Serving from /mnt/storage:", filename)
+    return send_from_directory('mnt/storage', filename)
+
+@app.route('/media/avatars/<filename>')
+def avatar(filename):
+    if os.environ.get('FLASK_ENV') != 'production':
+        base_path = os.path.join(current_app.root_path, 'mnt', 'storage', 'avatars')
+    else:
+        base_path = '/mnt/storage/avatars'
+
+    full_path = os.path.join(base_path, filename)
+    print(">>> Attempting to serve avatar from:", full_path)
+
+    return send_from_directory(base_path, filename)
+
+@app.template_filter('datetimeformat')
+def datetimeformat(value, format="%B %d, %Y"):
+    try:
+        return value.strftime(format)
+    except (AttributeError, ValueError, TypeError):
+        return value
+
 @app.route('/update_category/<int:article_id>', methods=['POST'])
 @login_required
 def update_article_category(article_id):
@@ -348,76 +367,10 @@ def edit_article(article_id):
     flash("Article updated.", "success")
     return redirect(url_for('news'))
 
-@app.route('/profile', methods=['GET', 'POST'])
-@login_required
-def profile():
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))
 
-    user = current_user
-    file = request.files.get('avatar')
-    
-    if request.method == 'POST':
-        if file and file.filename:
-            file.seek(0, os.SEEK_END)
-            file_size = file.tell()
-            file.seek(0)
-
-            if file_size > MAX_FILE_SIZE:
-                flash("Avatar image is too large (max 2MB).", "danger")
-                return redirect(request.url)
-
-            if allowed_file(file.filename):
-                ext = file.filename.rsplit('.', 1)[1].lower()
-                filename = f"{user.username}.{ext}"
-                path = os.path.join('/mnt/storage/avatars', filename)
-                file.save(path)
-                user.avatar_filename = filename
-            else:
-                flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
-                return redirect(request.url)
-
-        user.bio = request.form.get('bio', '')
-        db.session.commit()
-        flash("Profile updated.", "success")
-        return redirect(url_for('profile'))
-
-    return render_template('profile.html', user=user)
 
 def is_admin():
     return current_user.is_authenticated and current_user.is_admin
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        confirm_password = request.form['confirm_password']
-
-        if password != confirm_password:
-            flash('Passwords do not match.', 'danger')
-            return redirect(url_for('register'))
-
-        # Check if user exists
-        if User.query.filter((User.username == username) | (User.email == email)).first():
-            flash('Username or email already taken.')
-            return redirect(url_for('register'))
-
-        user = User(username=username, email=email)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-
-        from utils.email import send_verification_email
-        send_verification_email(user, mail)
-
-
-        flash('Registration successful. Please check your email to verify your account.', 'info')
-        return redirect(url_for('login'))
-
-    return render_template('register.html')
 
 @app.route('/verify/<token>')
 def verify_email(token):
@@ -462,13 +415,6 @@ def admin_tools():
         abort(403)  # Forbidden
     users = User.query.all()
     return render_template('admin_tools.html', users=users)
-
-@app.context_processor
-def inject_user():
-    if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
-        user = User.query.get(current_user.get_id())
-        return dict(current_user_obj=user)
-    return dict(current_user_obj=None)
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
@@ -561,10 +507,9 @@ def admin_delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    # Optional: prevent admins from deleting themselves
-    # if user.id == current_user.id:
-    #     flash("You can't delete your own account from the admin panel.", "error")
-    #     return redirect(url_for('admin_tools'))
+    if user.id == current_user.id:
+        flash("You can't delete your own account from the admin panel.", "error")
+        return redirect(url_for('admin_tools'))
 
     db.session.delete(user)
     db.session.commit()
@@ -595,6 +540,17 @@ def add_comment(article_id):
 def emoji(filename):
     return send_from_directory('/mnt/storage/emojis', filename)
 
+@app.context_processor
+def inject_user():
+    if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated:
+        user = User.query.get(current_user.get_id())
+        return dict(current_user_obj=user)
+    return dict(current_user_obj=None)
+
+@app.context_processor
+def inject_timezone():
+    return {'timezone': timezone}
+
 @app.template_filter("emojify")
 def emojify(content):
     def replace(match):
@@ -608,9 +564,11 @@ def emojify(content):
 
     return Markup(re.sub(r":([a-zA-Z0-9_]+):", replace, content))
 
-@app.context_processor
-def inject_timezone():
-    return {'timezone': timezone}
+'''
+@app.route('/forum')
+def forum():
+    posts = Post.query.order_by(Post.id.desc()).all()
+    return render_template('forum.html', posts=posts)
 
 @app.route('/new_post', methods=['GET', 'POST'])
 def new_post():
@@ -628,3 +586,11 @@ def new_post():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+ class Post(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     title = db.Column(db.String(200), nullable=False)
+     content = db.Column(db.Text, nullable=False)
+     def __repr__(self):
+         return f'<Post {self.title}>'
+'''

@@ -25,14 +25,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
     <!-- Site-wide styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/default.css') }}">
 
     <!-- Header-specific styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 
     <!-- Page-specific styles -->
     {% if request.endpoint == 'home' %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/homepage.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'news' %}
@@ -75,7 +75,7 @@
     {% if request.endpoint == 'admin_tools' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_tools.css') }}">
     {% endif %}
-    {% if request.endpoint == 'inbox' %}
+    {% if request.endpoint == 'messages' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/messages.css') }}">
     {% endif %}
 </head>
@@ -175,7 +175,7 @@
                     <img src="{{ url_for('media', filename='avatars/' ~ avatar_file) }}" class="avatar-inline" alt="User Avatar">
                     <div class="dropdown-menu">
                         <a href="{{ url_for('profile', username=current_user_obj.username) }}">Profile</a>
-                        <a href="{{ url_for('inbox') }}" class="btn">Inbox</a>
+                        <a href="{{ url_for('messages') }}" class="btn">Messages</a>
                         {% if current_user.is_authenticated and current_user.is_admin %}
                             <a href="{{ url_for('admin_tools') }}">Admin Tools</a>
                         {% endif %}
