@@ -425,6 +425,26 @@ def admin_tools():
     users = User.query.all()
     return render_template('admin_tools.html', users=users)
 
+@app.route('/comment/<int:article_id>', methods=['POST'])
+@login_required
+def add_comment(article_id):
+    content = request.form.get('comment-content')
+    parent_id = request.form.get('parent_id')
+    if parent_id:
+        parent_id = int(parent_id)
+
+    if content:
+        comment = NewsComment(
+            content=content,
+            article_id=article_id,
+            user_id=current_user.get_id(),
+            parent_id=parent_id if parent_id else None
+        )
+        db.session.add(comment)
+        db.session.commit()
+    flash("Comment posted successfully.", "success")
+    return redirect(url_for('news'))
+
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
@@ -499,26 +519,6 @@ def admin_delete_user(user_id):
     flash(f"User '{user.username}' has been deleted.", "success")
     return redirect(url_for('admin_tools'))
 
-@app.route('/comment/<int:article_id>', methods=['POST'])
-@login_required
-def add_comment(article_id):
-    content = request.form.get('comment-content')
-    parent_id = request.form.get('parent_id')
-    if parent_id:
-        parent_id = int(parent_id)
-
-    if content:
-        comment = NewsComment(
-            content=content,
-            article_id=article_id,
-            user_id=current_user.get_id(),
-            parent_id=parent_id if parent_id else None
-        )
-        db.session.add(comment)
-        db.session.commit()
-    flash("Comment posted successfully.", "success")
-    return redirect(url_for('news'))
-
 @app.route('/emojis/<filename>')
 def emoji(filename):
     return send_from_directory('/mnt/storage/emojis', filename)
@@ -537,10 +537,6 @@ def login():
             session.permanent = True
             login_user(user)
             session['user_id'] = user.id
-            flash('Logged in successfully!')
-            print(">>> Login successful")
-            print(">>> session user_id:", session.get('user_id'))
-            print(">>> current_user.is_authenticated:", current_user.is_authenticated)
 
             return redirect(url_for('home'))
 
