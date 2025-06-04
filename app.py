@@ -1,4 +1,5 @@
 import os
+import sys
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message
 from datetime import datetime, timedelta, timezone
@@ -306,11 +307,6 @@ def messages(username=None):
         conversations=conversations
     )
 
-@app.route('/media/<path:filename>')
-def media(filename):
-    print("Serving from /mnt/storage:", filename)
-    return send_from_directory('mnt/storage', filename)
-
 @app.route('/media/avatars/<filename>')
 def avatar(filename):
     if os.environ.get('FLASK_ENV') != 'production':
@@ -319,9 +315,24 @@ def avatar(filename):
         base_path = '/mnt/storage/avatars'
 
     full_path = os.path.join(base_path, filename)
+    fallback = 'default_avatar.png'
+    fallback_path = os.path.join(base_path, fallback)
+
     print(">>> Attempting to serve avatar from:", full_path)
 
-    return send_from_directory(base_path, filename)
+    if os.path.isfile(full_path):
+        return send_from_directory(base_path, filename)
+    elif os.path.isfile(fallback_path):
+        print(">>> Avatar not found. Serving fallback:", fallback_path)
+        return send_from_directory(base_path, fallback)
+    else:
+        print(">>> Fallback avatar also missing:", fallback_path)
+        return abort(404)
+
+@app.route('/media/<path:filename>')
+def media(filename):
+    print("Serving from /mnt/storage:", filename)
+    return send_from_directory('mnt/storage', filename)
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
