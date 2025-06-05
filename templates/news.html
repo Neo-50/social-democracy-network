@@ -9,13 +9,14 @@
                     <button class="avatar-wrapper"
                         data-username="{{ comment.user.username }}"
                         data-bio="{{ comment.user.bio or 'No bio available' }}"
-                        data-avatar="{{ url_for('avatar', filename=comment.user.avatar_filename or 'default_avatar.png') }}"
+                        data-avatar="{{ url_for('media', filename='avatars/' ~ (comment.user.avatar_filename or 'default_avatar.png')) }}"
                         onclick="showUserPopup(this)">
-                        <img src="{{ url_for('avatar', filename=comment.user.avatar_filename or 'default_avatar.png') }}"
+                        <img src="{{ url_for('media', filename='avatars/' ~ (comment.user.avatar_filename or 'default_avatar.png')) }}"
                             alt="user avatar" class="avatar-inline">
                     </button>
                 {% else %}
-                <img src="{{ url_for('avatar', filename='default_avatar.png') }}" class="avatar-inline" alt="User Avatar">
+                <img src="{{ url_for('media', filename='avatars/' ~ (comment.user.avatar_filename or 'default_avatar.png')) }}"
+                class="avatar-inline" alt="User Avatar">
                 {% endif %}
                 <strong class="username">
                     {% if comment.user %}

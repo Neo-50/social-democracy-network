@@ -307,32 +307,11 @@ def messages(username=None):
         conversations=conversations
     )
 
-@app.route('/media/avatars/<filename>')
-def avatar(filename):
-    if os.environ.get('FLASK_ENV') != 'production':
-        base_path = os.path.join(current_app.root_path, 'mnt', 'storage', 'avatars')
-    else:
-        base_path = '/mnt/storage/avatars'
-
-    full_path = os.path.join(base_path, filename)
-    fallback = 'default_avatar.png'
-    fallback_path = os.path.join(base_path, fallback)
-
-    print(">>> Attempting to serve avatar from:", full_path)
-
-    if os.path.isfile(full_path):
-        return send_from_directory(base_path, filename)
-    elif os.path.isfile(fallback_path):
-        print(">>> Avatar not found. Serving fallback:", fallback_path)
-        return send_from_directory(base_path, fallback)
-    else:
-        print(">>> Fallback avatar also missing:", fallback_path)
-        return abort(404)
-
 @app.route('/media/<path:filename>')
 def media(filename):
-    print("Serving from /mnt/storage:", filename)
-    return send_from_directory('mnt/storage', filename)
+    full_media_path = os.path.join(app.root_path, 'mnt', 'storage')
+    print("Serving from:", full_media_path, "Filename:", filename)
+    return send_from_directory(full_media_path, filename)
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
