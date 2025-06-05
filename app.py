@@ -205,7 +205,7 @@ def profile():
             if allowed_file(file.filename):
                 ext = file.filename.rsplit('.', 1)[1].lower()
                 filename = f"{user.username}.{ext}"
-                path = os.path.join('/mnt/storage/avatars', filename)
+                path = get_media_path('avatars', filename)
                 file.save(path)
                 user.avatar_filename = filename
             else:
@@ -218,6 +218,15 @@ def profile():
         return redirect(url_for('profile'))
 
     return render_template('profile.html', user=user)
+
+def get_media_path(*parts):
+    return os.path.join(app.root_path, 'mnt', 'storage', *parts)
+
+@app.route('/media/<path:filename>')
+def media(filename):
+    full_media_path = os.path.join(app.root_path, 'mnt', 'storage')
+    print("Serving from:", full_media_path, "Filename:", filename)
+    return send_from_directory(full_media_path, filename)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -306,12 +315,6 @@ def messages(username=None):
         recipient=recipient,
         conversations=conversations
     )
-
-@app.route('/media/<path:filename>')
-def media(filename):
-    full_media_path = os.path.join(app.root_path, 'mnt', 'storage')
-    print("Serving from:", full_media_path, "Filename:", filename)
-    return send_from_directory(full_media_path, filename)
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
