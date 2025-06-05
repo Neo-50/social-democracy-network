@@ -21,6 +21,7 @@ waitress = "^3.0.2"
 watchdog = "^6.0.0"
 pytz = "^2025.2"
 python-dateutil = "^2.9.0.post0"
+requests-html = "^0.10.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
