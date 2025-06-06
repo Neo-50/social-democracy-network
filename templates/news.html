@@ -88,56 +88,60 @@
                 <input type="url" name="url" placeholder="Paste news article URL here..." required>
                 <button type="submit" class="submit-article">Submit</button>
             </div>
-            <select name="category" id="category">
-                <option value="">Uncategorized</option>
-                <option value="Protests & Activism">Protests & Activism</option>
-                <option value="Climate & Environment">Climate & Environment</option>
-                <option value="Science & Technology">Science & Technology</option>
-                <option value="Economy & Finance">Economy & Finance</option>
-                <option value="Disasters">Disasters</option>
-                <option value="ICE & Immigration">ICE Raids & Immigration</option>
-                <option value="Political Corruption">US Political Corruption</option>
-                <option value="Middle East">Middle East</option>
-                <option value="Ukraine War">Ukraine War</option>
-                <option value="US/International Conflict">US/International Conflict</option>
-            </select>
-            <div class="category-links">
-                <ul>
-                    <li><a href="{{ url_for('news') }}"
-                        class="{{ 'active' if not selected_category else '' }}">All</a></li>
-                    <li><a href="{{ url_for('news', category='Protests & Activism') }}"
-                        class="{{ 'active' if selected_category == 'Protests & Activism' else '' }}">
-                        Protests & Activism</a></li>
-                    <li><a href="{{ url_for('news', category='Climate & Environment') }}"
-                        class="{{ 'active' if selected_category == 'Climate & Environment' else '' }}">
-                        Climate & Environment</a></li>
-                    <li><a href="{{ url_for('news', category='Science & Technology') }}"
-                        class="{{ 'active' if selected_category == 'Science & Technology' else '' }}">
-                        Science & Technology</a></li>
-                    <li><a href="{{ url_for('news', category='Economy & Finance') }}"
-                        class="{{ 'active' if selected_category == 'Economy & Finance' else '' }}">
-                        Economy & Finance</a></li>
-                    <li><a href="{{ url_for('news', category='Disasters') }}"
-                        class="{{ 'active' if selected_category == 'Disasters' else '' }}">
-                        Disasters</a></li>
-                    <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
-                        class="{{ 'active' if selected_category == 'ICE & Immigration' else '' }}">
-                        Immigration ICE Raids & Abductions</a></li>
-                    <li><a href="{{ url_for('news', category='Political Corruption') }}"
-                        class="{{ 'active' if selected_category == 'Political Corruption' else '' }}">
-                        US Political Corruption</a></li>
-                    <li><a href="{{ url_for('news', category='Middle East') }}"
-                        class="{{ 'active' if selected_category == 'Middle East' else '' }}">
-                        Middle East</a></li>
-                    <li><a href="{{ url_for('news', category='Ukraine War') }}"
-                        class="{{ 'active' if selected_category == 'Ukraine War' else '' }}">
-                        Ukraine War</a></li>
-                    <li><a href="{{ url_for('news', category='US/International Conflict') }}"
-                        class="{{ 'active' if selected_category == 'US/International Conflict' else '' }}">
-                        US/International Conflict & Crises</a></li>
-                </ul>
-            </div>
-        </form>    
+        </form>
+        <select name="category" id="category">
+            <option value="">Uncategorized</option>
+            <option value="Protests & Activism">Protests & Activism</option>
+            <option value="Climate & Environment">Climate & Environment</option>
+            <option value="Science & Technology">Science & Technology</option>
+            <option value="Economy & Finance">Economy & Finance</option>
+            <option value="Disasters">Disasters</option>
+            <option value="ICE & Immigration">ICE Raids & Immigration</option>
+            <option value="Political Corruption">US Political Corruption</option>
+            <option value="Middle East">Middle East</option>
+            <option value="Ukraine War">Ukraine War</option>
+            <option value="US/International Conflict">US/International Conflict</option>
+        </select>
+        <div class="scraper-blocked-msg">
+            NOTE: AP, NY Times, WaPost, Axios, CNN, Reuters and other large media outlets use aggressive anti-metadata
+            scraping defenses against small sites like this one. You can still submit links - admins will manually fill in the info later.
+        </div>
+        <div class="category-links">
+            <ul>
+                <li><a href="{{ url_for('news') }}"
+                    class="{{ 'active' if not selected_category else '' }}">All</a></li>
+                <li><a href="{{ url_for('news', category='Protests & Activism') }}"
+                    class="{{ 'active' if selected_category == 'Protests & Activism' else '' }}">
+                    Protests & Activism</a></li>
+                <li><a href="{{ url_for('news', category='Climate & Environment') }}"
+                    class="{{ 'active' if selected_category == 'Climate & Environment' else '' }}">
+                    Climate & Environment</a></li>
+                <li><a href="{{ url_for('news', category='Science & Technology') }}"
+                    class="{{ 'active' if selected_category == 'Science & Technology' else '' }}">
+                    Science & Technology</a></li>
+                <li><a href="{{ url_for('news', category='Economy & Finance') }}"
+                    class="{{ 'active' if selected_category == 'Economy & Finance' else '' }}">
+                    Economy & Finance</a></li>
+                <li><a href="{{ url_for('news', category='Disasters') }}"
+                    class="{{ 'active' if selected_category == 'Disasters' else '' }}">
+                    Disasters</a></li>
+                <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
+                    class="{{ 'active' if selected_category == 'ICE & Immigration' else '' }}">
+                    Immigration ICE Raids & Abductions</a></li>
+                <li><a href="{{ url_for('news', category='Political Corruption') }}"
+                    class="{{ 'active' if selected_category == 'Political Corruption' else '' }}">
+                    US Political Corruption</a></li>
+                <li><a href="{{ url_for('news', category='Middle East') }}"
+                    class="{{ 'active' if selected_category == 'Middle East' else '' }}">
+                    Middle East</a></li>
+                <li><a href="{{ url_for('news', category='Ukraine War') }}"
+                    class="{{ 'active' if selected_category == 'Ukraine War' else '' }}">
+                    Ukraine War</a></li>
+                <li><a href="{{ url_for('news', category='US/International Conflict') }}"
+                    class="{{ 'active' if selected_category == 'US/International Conflict' else '' }}">
+                    US/International Conflict & Crises</a></li>
+            </ul>
+        </div>
         <form method="GET" action="{{ url_for('news') }}">
             <select name="category" id="mobile-categories" onchange="this.form.submit()">
                 <option value="">All Categories (select to filter)</option>
