@@ -1,89 +1,122 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-try:
-    from requests_html import HTMLSession
-except ImportError:
-    HTMLSession = None
+import logging
 
-def extract_metadata(url):
-    def get_meta(soup, property_name):
-        tag = soup.find("meta", property=property_name)
-        return tag["content"].strip() if tag and "content" in tag.attrs else None
+from playwright.sync_api import sync_playwright
+from playwright_stealth import stealth_sync
 
-    def parse_metadata(html, url):
-        soup = BeautifulSoup(html, 'html.parser')
-        metadata = {
-            "title": get_meta(soup, "og:title") or (soup.title.string if soup.title else url),
-            "description": get_meta(soup, "og:description") or (
-                soup.find("meta", attrs={"name": "description"}) or {}
-            ).get("content"),
-            "image_url": get_meta(soup, "og:image"),
-            "authors": get_meta(soup, "article:author") or get_meta(soup, "author"),
-            "published": get_meta(soup, "article:published_time") or get_meta(soup, "og:updated_time"),
-            "source": urlparse(url).netloc.replace("www.", "")
-        }
+log = logging.getLogger(__name__)
 
-        if metadata["image_url"] and metadata["image_url"].startswith("/"):
-            parsed = urlparse(url)
-            metadata["image_url"] = f"{parsed.scheme}://{parsed.netloc}{metadata['image_url']}"
+# Domain lists
+STEALTH_REQUIRED_DOMAINS = {
+    "cnn.com", "nytimes.com", "washingtonpost.com"
+}
 
-        print(f"[DEBUG] Metadata extracted for {url}: {metadata}")
-        return metadata
+MANUAL_REVIEW_DOMAINS = {
+    "axios.com", "apnews.com", "reuters.com", "washingtonpost.com", "cnn.com"
+}
+
+
+def extract_metadata(url, debug=False):
+    domain = urlparse(url).netloc.replace("www.", "")
+
+    if domain in MANUAL_REVIEW_DOMAINS:
+        log.warning(f"[SCRAPER] Skipping metadata for blocked domain: {domain}")
+        return blank_metadata(domain)
 
     try:
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:117.0) Gecko/20100101 Firefox/117.0",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Connection": "keep-alive",
-            "Upgrade-Insecure-Requests": "1",
-            "Referer": url,
-        }
-
-        # Step 1: Try requests unless forced to render
-        force_render_domains = ["axios.com", "reuters.com", "cnn.com", "nytimes.com", "washingtonpost.com"]
-        should_render = any(domain in url for domain in force_render_domains)
-
-        if not should_render:
-            try:
-                response = requests.get(url, headers=headers, timeout=10)
-                response.raise_for_status()
-                html = response.text
-
-                if len(html) < 1000 or "<meta" not in html.lower():
-                    should_render = True
-            except Exception as e:
-                print(f"[DEBUG] requests.get failed: {e}")
-                should_render = True
-
-        if should_render:
-            print(f"[DEBUG] Using JS rendering for {url}")
-            session = HTMLSession()
-            r = session.get(url)
-            r.html.render(timeout=30)
-            html = r.html.html
-
-        # Step 2: If it's too short or missing meta tags, fall back to JS render
+        if domain in STEALTH_REQUIRED_DOMAINS:
+            return try_playwright_scrape(url, domain, debug)
         else:
-            # Fallback if the fetched HTML is suspiciously short or missing metadata
-            if len(html) < 1000 or "<meta" not in html.lower():
-                print(f"[DEBUG] Falling back to JS rendering for {url}")
-                session = HTMLSession()
-                r = session.get(url)
-                r.html.render(timeout=20)
-                html = r.html.html
+            metadata = try_requests_scrape(url, domain)
+            if metadata["title"]:
+                return metadata
+            return try_playwright_scrape(url, domain, debug)
+    except Exception as e:
+        log.error(f"[SCRAPER] Unexpected error: {e}")
+        return blank_metadata(domain)
 
-        return parse_metadata(html, url)
+
+def try_requests_scrape(url, domain):
+    headers = {"User-Agent": "Mozilla/5.0"}
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+    except Exception as e:
+        log.warning(f"[REQUESTS] Failed to fetch {url}: {e}")
+        return blank_metadata(domain)
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    def get_meta(attr, value):
+        tag = soup.find("meta", attrs={attr: value})
+        return tag["content"].strip() if tag and tag.has_attr("content") else None
+
+    metadata = {
+        "title": soup.title.string.strip() if soup.title else None,
+        "description": get_meta("name", "description"),
+        "image_url": get_meta("property", "og:image"),
+        "authors": get_meta("name", "author"),
+        "published": get_meta("property", "article:published_time"),
+        "source": domain,
+    }
+    return metadata
+
+
+def try_playwright_scrape(url, domain, debug=False):
+    blank = blank_metadata(domain)
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            context = browser.new_context()
+            page = context.new_page()
+            stealth_sync(page)
+
+            try:
+                page.goto(url, timeout=60000, wait_until="domcontentloaded")
+            except Exception as e:
+                log.error(f"[PLAYWRIGHT] page.goto() failed: {e}")
+                return blank
+
+            title = page.title()
+            if "Just a moment" in title or "Access denied" in title:
+                log.warning(f"[PLAYWRIGHT] Blocked by bot wall on {url}")
+                return blank
+
+            def safe_locator(selector):
+                try:
+                    return page.locator(selector).get_attribute("content")
+                except:
+                    return None
+
+            metadata = {
+                "title": title,
+                "description": safe_locator("meta[name='description']"),
+                "image_url": safe_locator("meta[property='og:image']"),
+                "authors": safe_locator("meta[name='author']"),
+                "published": safe_locator("meta[property='article:published_time']"),
+                "source": domain,
+            }
+
+            if debug:
+                print("[DEBUG] Playwright metadata:", metadata)
+
+            browser.close()
+            return metadata
 
     except Exception as e:
-        print(f"[ERROR] Metadata extraction failed for {url}: {e}")
-        return {
-            "title": None,
-            "description": None,
-            "image_url": None,
-            "authors": None,
-            "published": None,
-            "source": None
-        }
+        log.error(f"[PLAYWRIGHT] scrape failed for {url}: {e}")
+        return blank
+
+
+def blank_metadata(domain):
+    return {
+        "title": None,
+        "description": None,
+        "image_url": None,
+        "authors": None,
+        "published": None,
+        "source": domain,
+    }
