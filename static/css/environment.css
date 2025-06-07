@@ -28,11 +28,6 @@
     grid-column: 2;
 }
 
-.environment-header {
-    margin-bottom: 0;
-    padding: 0;
-}
-
 .environment-left h2 {
     font-size: 1.5rem;
     margin-bottom: 10px;
