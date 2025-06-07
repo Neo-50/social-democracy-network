@@ -1,13 +1,13 @@
 .about-page {
     background-color: #1a1a1a;
-    padding: 30px 40px;
-    border-radius: 8px;
+    padding: 10px 40px;
+    border-radius: 24px;
     margin: 20px auto;
     max-width: 800px;
     color: #e0e0e0;
 }
 
 .about-section p {
-    line-height: 1.7;
+    line-height: 1.4;
     margin-bottom: 16px;
 }

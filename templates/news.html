@@ -88,20 +88,22 @@
                 <input type="url" name="url" placeholder="Paste news article URL here..." required>
                 <button type="submit" class="submit-article">Submit</button>
             </div>
+                <select name="category" id="category">
+                <option value="">Uncategorized</option>
+                <option value="Political Corruption">US Political Corruption</option>
+                <option value="ICE & Immigration">ICE Raids & Immigration</option>
+                <option value="Protests & Activism">Protests & Activism</option>
+                <option value="Climate & Environment">Climate & Environment</option>
+                <option value="Science & Technology">Science & Technology</option>
+                <option value="Economy & Finance">Economy & Finance</option>
+                <option value="Food & Health">Food & Health</option>
+                <option value="Disasters">Disasters</option>
+                <option value="Middle East">Middle East</option>
+                <option value="Ukraine War">Ukraine War</option>
+                <option value="US/International Conflict">US/International Conflict</option>
+            </select>
         </form>
-        <select name="category" id="category">
-            <option value="">Uncategorized</option>
-            <option value="Protests & Activism">Protests & Activism</option>
-            <option value="Climate & Environment">Climate & Environment</option>
-            <option value="Science & Technology">Science & Technology</option>
-            <option value="Economy & Finance">Economy & Finance</option>
-            <option value="Disasters">Disasters</option>
-            <option value="ICE & Immigration">ICE Raids & Immigration</option>
-            <option value="Political Corruption">US Political Corruption</option>
-            <option value="Middle East">Middle East</option>
-            <option value="Ukraine War">Ukraine War</option>
-            <option value="US/International Conflict">US/International Conflict</option>
-        </select>
+
         <div class="scraper-blocked-msg">
             NOTE: AP, NY Times, WaPost, Axios, CNN, Reuters and other large media outlets use aggressive anti-metadata
             scraping defenses against small sites like this one. You can still submit links - admins will manually fill in the info later.
@@ -110,6 +112,12 @@
             <ul>
                 <li><a href="{{ url_for('news') }}"
                     class="{{ 'active' if not selected_category else '' }}">All</a></li>
+                <li><a href="{{ url_for('news', category='Political Corruption') }}"
+                    class="{{ 'active' if selected_category == 'Political Corruption' else '' }}">
+                    US Political Corruption</a></li>
+                 <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
+                    class="{{ 'active' if selected_category == 'ICE & Immigration' else '' }}">
+                    Immigration ICE Raids & Abductions</a></li>
                 <li><a href="{{ url_for('news', category='Protests & Activism') }}"
                     class="{{ 'active' if selected_category == 'Protests & Activism' else '' }}">
                     Protests & Activism</a></li>
@@ -122,15 +130,12 @@
                 <li><a href="{{ url_for('news', category='Economy & Finance') }}"
                     class="{{ 'active' if selected_category == 'Economy & Finance' else '' }}">
                     Economy & Finance</a></li>
+                <li><a href="{{ url_for('news', category='Food & Health') }}"
+                    class="{{ 'active' if selected_category == 'Food & Health' else '' }}">
+                    Food & Health</a></li>
                 <li><a href="{{ url_for('news', category='Disasters') }}"
                     class="{{ 'active' if selected_category == 'Disasters' else '' }}">
                     Disasters</a></li>
-                <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
-                    class="{{ 'active' if selected_category == 'ICE & Immigration' else '' }}">
-                    Immigration ICE Raids & Abductions</a></li>
-                <li><a href="{{ url_for('news', category='Political Corruption') }}"
-                    class="{{ 'active' if selected_category == 'Political Corruption' else '' }}">
-                    US Political Corruption</a></li>
                 <li><a href="{{ url_for('news', category='Middle East') }}"
                     class="{{ 'active' if selected_category == 'Middle East' else '' }}">
                     Middle East</a></li>
@@ -145,19 +150,19 @@
         <form method="GET" action="{{ url_for('news') }}">
             <select name="category" id="mobile-categories" onchange="this.form.submit()">
                 <option value="">All Categories (select to filter)</option>
+                <option value="Political Corruption" {{ 'selected' if selected_category=='Political Corruption' else '' }}>US
+                    Political Corruption</option>
+                <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
+                    Immigration</option>
                 <option value="Protests & Activism" {{ 'selected' if selected_category=='Protests & Activism' else '' }}>
                     Protests & Activism</option>
                 <option value="Climate & Environment" {{ 'selected' if selected_category=='Climate & Environment' else '' }}>
                     Climate & Environment</option>
                 <option value="Science & Technology" {{ 'selected' if selected_category=='Science & Technology' else '' }}>
                     Science & Technology</option>
-                <option value="Economy & Finance" {{ 'selected' if selected_category=='Economy & Finance' else '' }}>Economy &
-                    Finance</option>
+                <option value="Economy & Finance" {{ 'selected' if selected_category=='Economy & Finance' else '' }}>Economy & Finance</option>
+                <option value="Food & Health" {{ 'selected' if selected_category=='Food & Health' else '' }}>Food & Health</option>
                 <option value="Disasters" {{ 'selected' if selected_category=='Disasters' else '' }}>Disasters</option>
-                <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
-                    Immigration</option>
-                <option value="Political Corruption" {{ 'selected' if selected_category=='Political Corruption' else '' }}>US
-                    Political Corruption</option>
                 <option value="Middle East" {{ 'selected' if selected_category=='Middle East' else '' }}>Middle East</option>
                 <option value="Ukraine War" {{ 'selected' if selected_category=='Ukraine War' else '' }}>Ukraine War</option>
                 <option value="US/International Conflict" {{ 'selected' if selected_category=='US/International Conflict'
