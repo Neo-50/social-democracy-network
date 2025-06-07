@@ -9,6 +9,14 @@ body {
     padding: 0;
 }
 
+h1 {
+    margin: 0;
+    padding-bottom: 20px;
+    text-align: center;
+    font-size: 2rem;
+    color: #8fd694;
+}
+
 h2 {
     font-size: 1.5rem;
     margin-bottom: 10px;
