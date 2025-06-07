@@ -236,6 +236,11 @@ def register():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
+        # Basic password rules
+        if len(password) < 8 or not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
+            flash('Password must be at least 8 characters long and contain both letters and numbers.', 'danger')
+            return redirect(url_for('register'))
+
         if password != confirm_password:
             flash('Passwords do not match.', 'danger')
             return redirect(url_for('register'))

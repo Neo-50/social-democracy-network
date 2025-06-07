@@ -16,6 +16,16 @@ label {
     font-weight: bold;
 }
 
+.password-rules {
+  font-size: 0.8em;
+  color: #bbb;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: 8px;
+  list-style-type: none;
+  padding-left: 0;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
