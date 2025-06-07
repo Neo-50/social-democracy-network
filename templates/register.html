@@ -15,9 +15,15 @@
         <label>Confirm Password:</label><br>
         <input type="password" name="confirm_password" required><br>
 
+        <ul class="password-rules">
+            <li>Minimum length: 8 characters</li>
+            <li>Must contain at least one letter</li>
+            <li>Must contain at least one number</li>
+        </ul>
+
         <button type="submit">Register</button>
     </form>
-<br><br>
+<br>
 <p>Didn't receive the verification email?</p>
 <form method="POST" action="{{ url_for('resend_verification_email') }}">
     <input type="email" name="email" placeholder="Enter your email" required>
