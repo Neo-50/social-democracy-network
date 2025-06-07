@@ -24,11 +24,11 @@
     {% endif %}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- Site-wide styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/default.css') }}">
-
     <!-- Header-specific styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+        <!-- Site-wide styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/default.css') }}">
 
     <!-- Page-specific styles -->
     {% if request.endpoint == 'home' %}
