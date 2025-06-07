@@ -558,10 +558,20 @@ def reset_password_token(token):
         flash("The reset link is invalid or has expired.")
         return redirect(url_for('login'))
 
-    user = User.query.filter_by(email=email).first_or_404()
-
     if request.method == 'POST':
+        user = User.query.filter_by(email=email).first_or_404()
         new_password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if new_password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return redirect(url_for('register'))
+
+        # Basic password rules
+        if len(new_password) < 8 or not re.search(r'[A-Za-z]', new_password) or not re.search(r'\d', new_password):
+            flash('Password must be at least 8 characters long and contain both letters and numbers.', 'danger')
+            return redirect(url_for('register'))
+        
         user.set_password(new_password)
         db.session.commit()
         flash("Your password has been successfully reset.")
