@@ -1,3 +1,25 @@
+.veganism-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 24px;
+    max-width: 640px;
+}
+
 .content-row {
     display: flex;
     flex-wrap: wrap;
@@ -8,7 +30,7 @@
     max-width: 100%;
 }
 
-.bsky-container {
+.veganism-left {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -16,28 +38,70 @@
     padding: 20px;
     margin-left: 10px;
     border-radius: 24px;
-    max-width: 640px;
-    flex: 1 1 300px;
+    min-width: 700px;
+}
+
+.veganism-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 20px;
+    margin-left: 0;
+    border-radius: 24px;
+    min-width: 700px;
+    box-sizing: border-box;
 }
 
 .substack-post-embed {
-    background-color: #1a1a1a;
-    padding: 20px;
-    margin: 0;
+    min-width: 700px;
     border-radius: 24px;
-    flex: 1 1 300px;
-    max-width: 640px;
+    background-color: #444;
 }
 
-/* Responsive layout on mobile */
-@media (width < 768px) {
+.veganism-left ul {
+    padding-left: 8px;
+    margin-left: 0;
+}
+
+
+/* Mobile layout */
+@media (width <= 800px) {
+    .veganism-main {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        box-sizing: border-box;
+        padding: 0 10px;
+        overflow-x: hidden;
+    }
+
+    h2 {
+        margin-top: 0;
+    }
+
+    .veganism-left,
+    .veganism-right {
+        width: 100%;
+        min-width: 0;
+        margin: 0;
+    }
+    
+    .wikipedia {
+        margin-bottom: 0;
+    }
+
     .content-row {
         flex-direction: column;
         align-items: center;
+        margin: 0;
     }
 
-    .image-container,
+    .bluesky-embed,
     .substack-post-embed {
         max-width: 100%;
+        overflow-x: hidden;
+        max-width: 250px;
+        min-width: 0;
     }
 }
