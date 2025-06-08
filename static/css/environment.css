@@ -59,15 +59,6 @@
     margin-bottom: 10px;
 }
 
-.environment-links a {
-    color: #8feff2;
-    text-decoration: none;
-}
-
-.environment-links a:hover {
-    text-decoration: none;
-}
-
 .image-container {
     display: flex;
     justify-content: center;

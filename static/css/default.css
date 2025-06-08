@@ -26,12 +26,19 @@ h2 {
 
 a {
     color: #8feff2;
+    transition: color 0.3s ease;
     text-decoration: none;
 }
 
 a:visited {
     color: #8feff2;
     text-decoration: none;
+}
+
+a:active,
+a:hover,
+a:focus {
+  color: #bbb;
 }
 
 * {
