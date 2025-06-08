@@ -1,10 +1,11 @@
 /* Styling for the news page only */
 .news-page {
     display: grid;
-    grid-template-columns: max-content 1fr;
+    grid-template-columns: max-content minmax(300px, 1000px);
+    max-width: 95%;
     grid-gap: 30px;
     padding: 0.5rem;
-    grid-template-rows: auto;
+    box-sizing: border-box;
 }
 
 .news-left, .news-right {
@@ -24,7 +25,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    max-width: 780px;
+    max-width: 1200px;
     width: 100%;
     overflow-wrap: anywhere;
 }
