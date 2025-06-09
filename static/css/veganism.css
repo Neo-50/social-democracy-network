@@ -4,16 +4,24 @@
     align-items: center;
     background-color: #1a1a1a;
     padding: 20px;
-    margin: 0 auto 20px;
     border-radius: 24px;
     max-width: 640px;
+}
+
+.top-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    max-height: fit-content;
+    margin: 0 auto 20px;
+    gap: 10px;
 }
 
 .veganism-main {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin: 0 20px;
     gap: 20px;
 }
 
