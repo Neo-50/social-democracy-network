@@ -4,11 +4,17 @@
 {% block content %}
 <main>
     <h1>Veganism</h1>
-    <div class="wikipedia">
-        <a href="https://en.wikipedia.org/wiki/Veganism" target="_blank">Wikipedia: </a>
-        Veganism is the practice of abstaining from the use of animal products and the consumption of animal source
-        foods, and an associated philosophy that rejects the commodity status of animals. A person who practices veganism is
-        known as a vegan.
+    <div class ="top-row">
+        <img class="icon" src="{{ url_for('media', filename='veganism/om.png') }}" alt="Om">
+        <img class="icon" src="{{ url_for('media', filename='veganism/vegan.png') }}" alt="Vegan">
+        <div class="wikipedia">
+            <a href="https://en.wikipedia.org/wiki/Veganism" target="_blank">Wikipedia: </a>
+            Veganism is the practice of abstaining from the use of animal products and the consumption of animal source
+            foods, and an associated philosophy that rejects the commodity status of animals. A person who practices veganism is
+            known as a vegan.
+        </div>
+        <img class="icon" src="{{ url_for('media', filename='veganism/ahimsa.png') }}" alt="Ahimsa">
+        <img class="icon" src="{{ url_for('media', filename='veganism/peace.png') }}" alt="Peace">
     </div>
     <section class="veganism-main">
         <div class="veganism-left">
