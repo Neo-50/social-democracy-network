@@ -193,14 +193,21 @@
         {% for article in articles %}
             <div class="news-article">
                 <div class="article-info-wrapper">
-                    <h2><a href="{{ article.url }}" target="_blank">{{ article.title or 'None' }}</a></h2>
+                    <h2><a href="{{ article.url }}" target="_blank">{{ article.title or 'Title unavailable' }}</a></h2>
                     <p>
                         <span class="article-info description"></span>
                         <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
                     </p>
-                    <p><span class="article-info source"></span> {{ article.source or 'None' }}</p>
-                    <p><span class="article-info published"></span> {{ article.published | datetimeformat("%B %d, %Y") or 'None' }}</p>
-                    <p><span class="article-info category"></span> {{ article.category }}</p>
+                    <p><span class="article-info source"></span> {{ article.source or 'Source unavailable' }}</p>
+                    {% if article.published %}
+                        <p><span class="article-info published"></span>
+                            {{ article.published | datetimeformat("%B %d, %Y") or 'Publication date unavailable' }}
+                        </p>
+                    {% endif %}
+                    {% if article.authors %}
+                        <p><span class="article-info authors"></span></p>
+                    {% endif %}
+                    <p><span class="article-info category"></span> {{ article.category or 'None'}}</p>
                     <div id="article-{{ article.id }}" class="article-card {% if article.id == highlight_id %}highlight{% endif %}">
                     <button type="button" class="sharelink" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
                 </div>

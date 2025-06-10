@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message
 from datetime import datetime, timedelta, timezone
@@ -621,6 +622,12 @@ def forgot_password():
     else:
         flash("If the email exists, a reset link will be sent.")
     return redirect(url_for('login'))
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(levelname)s] %(message)s'
+)
 
 @app.context_processor
 def inject_user():

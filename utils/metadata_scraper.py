@@ -9,12 +9,9 @@ from playwright_stealth import stealth_sync
 log = logging.getLogger(__name__)
 
 # Domain lists
-STEALTH_REQUIRED_DOMAINS = {
-    "cnn.com", "nytimes.com", "washingtonpost.com"
-}
 
 MANUAL_REVIEW_DOMAINS = {
-    "axios.com", "apnews.com", "reuters.com", "washingtonpost.com", "cnn.com"
+    "axios.com", "apnews.com", "reuters.com", "washingtonpost.com", "cnn.com", "nytimes.com"
 }
 
 
@@ -22,45 +19,47 @@ def extract_metadata(url, debug=False):
     domain = urlparse(url).netloc.replace("www.", "")
 
     if domain in MANUAL_REVIEW_DOMAINS:
-        log.warning(f"[SCRAPER] Skipping metadata for blocked domain: {domain}")
-        return blank_metadata(domain)
-
-    try:
-        if domain in STEALTH_REQUIRED_DOMAINS:
-            return try_playwright_scrape(url, domain, debug)
+        return blank_metadata(domain, url)
+    rscrape = try_requests_scrape(url, domain)
+    if rscrape:
+        return rscrape
+    else:
+        pwscrape = try_playwright_scrape(url, domain, debug)
+        if pwscrape:
+            return pwscrape
         else:
-            metadata = try_requests_scrape(url, domain)
-            if metadata["title"]:
-                return metadata
-            return try_playwright_scrape(url, domain, debug)
-    except Exception as e:
-        log.error(f"[SCRAPER] Unexpected error: {e}")
-        return blank_metadata(domain)
-
+            return blank_metadata(domain, url)
 
 def try_requests_scrape(url, domain):
     headers = {"User-Agent": "Mozilla/5.0"}
+
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
     except Exception as e:
-        log.warning(f"[REQUESTS] Failed to fetch {url}: {e}")
-        return blank_metadata(domain)
+        return blank_metadata(domain, url)
 
     soup = BeautifulSoup(response.text, "html.parser")
 
     def get_meta(attr, value):
         tag = soup.find("meta", attrs={attr: value})
-        return tag["content"].strip() if tag and tag.has_attr("content") else None
+        if tag and tag.has_attr("content"):
+            content = tag["content"].strip()
+            return content if content else None
+        return None
+
+    if not soup.title or not soup.title.string:
+        return blank_metadata(domain, url)
 
     metadata = {
-        "title": soup.title.string.strip() if soup.title else None,
-        "description": get_meta("name", "description"),
+        "title": soup.title.string.strip(),
+        "description": get_meta("name", "description") or get_meta("property", "og:description"),
         "image_url": get_meta("property", "og:image"),
         "authors": get_meta("name", "author"),
         "published": get_meta("property", "article:published_time"),
-        "source": domain,
+        "source": domain
     }
+
     return metadata
 
 
@@ -75,7 +74,7 @@ def try_playwright_scrape(url, domain, debug=False):
             stealth_sync(page)
 
             try:
-                page.goto(url, timeout=60000, wait_until="domcontentloaded")
+                page.goto(url, timeout=30000, wait_until="domcontentloaded")
             except Exception as e:
                 log.error(f"[PLAYWRIGHT] page.goto() failed: {e}")
                 return blank
@@ -100,9 +99,6 @@ def try_playwright_scrape(url, domain, debug=False):
                 "source": domain,
             }
 
-            if debug:
-                print("[DEBUG] Playwright metadata:", metadata)
-
             browser.close()
             return metadata
 
@@ -111,12 +107,12 @@ def try_playwright_scrape(url, domain, debug=False):
         return blank
 
 
-def blank_metadata(domain):
+def blank_metadata(domain, url):
     return {
-        "title": None,
-        "description": None,
-        "image_url": None,
+        "title": url,
+        "description": f"Preview unavailable for {domain}",
+        "image_url": f"media/news/default-article-image.png",
+        "source": domain,
         "authors": None,
         "published": None,
-        "source": domain,
     }
