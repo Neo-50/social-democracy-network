@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app, Response
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
@@ -233,6 +233,15 @@ def get_media_path(*parts):
 @app.route('/matrix')
 def matrix():
     return render_template('matrix.html')
+
+@app.route('/.well-known/matrix/<path:filename>')
+def well_known_matrix(filename):
+    full_path = os.path.join(app.root_path, 'static', '.well-known', 'matrix')
+    with open(os.path.join(full_path, filename)) as f:
+        contents = f.read()
+    response = Response(contents, mimetype='application/json')
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/media/<path:filename>')
 def media(filename):
