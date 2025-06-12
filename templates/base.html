@@ -8,14 +8,11 @@
     <script defer data-domain="social-democracy.net" src="https://plausible.io/js/script.js"></script>
     <title>Social Democracy Network</title>
     {% if article_to_highlight %}
-        <meta property="og:site_name" content="Social Democracy Network">
-        <meta property="article:author" content="{{ article_to_highlight.source }}">
         <meta property="og:title" content="{{ article_to_highlight.title }}">
         <meta property="og:description" content="{{ article_to_highlight.description }}">
+        <meta property="og:type" content="article">
         <meta property="og:image" content="{{ article_to_highlight.image_url }}">
-        <meta property="og:url" content="{{ request.url }}">
-        
-        <meta property="article:publisher" content="{{ article_to_highlight.source }}">
+        <meta property="og:url" content="https://social-democracy.net/news?article=221">
     {% else %}
         <meta property="og:title" content="Social Democracy Network - News">
         <meta property="og:description" content="Explore curated news from activist and independent sources.">
@@ -51,8 +48,8 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/veganism.css') }}">
     {% endif %}
 
-    {% if request.endpoint == 'forum' %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/forum.css') }}">
+    {% if request.endpoint == 'matrix' %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/matrix.css') }}">
     {% endif %}
 
     {% if request.endpoint == 'about' %}

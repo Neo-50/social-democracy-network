@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 import logging
+import re
 
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth_sync
@@ -14,9 +15,15 @@ MANUAL_REVIEW_DOMAINS = {
     "axios.com", "apnews.com", "reuters.com", "washingtonpost.com", "cnn.com", "nytimes.com"
 }
 
+YOUTUBE_DOMAINS = {"youtube.com", "youtu.be"}
 
 def extract_metadata(url, debug=False):
     domain = urlparse(url).netloc.replace("www.", "")
+
+    if domain in YOUTUBE_DOMAINS:
+        yt = try_youtube_scrape(url)
+        if yt:
+            return yt
 
     if domain in MANUAL_REVIEW_DOMAINS:
         return blank_metadata(domain, url)
@@ -29,6 +36,48 @@ def extract_metadata(url, debug=False):
             return pwscrape
         else:
             return blank_metadata(domain, url)
+
+def try_youtube_scrape(url):
+    video_id = extract_youtube_video_id(url)
+    if not video_id:
+        return None
+
+    embed_url = f"https://www.youtube.com/embed/{video_id}?enablejsapi=1"
+    oembed_url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
+
+    try:
+        resp = requests.get(oembed_url, timeout=5)
+        resp.raise_for_status()
+        data = resp.json()
+        return {
+            "title": data.get("title"),
+            "description": f"Video by {data.get('author_name')}",
+            "image_url": data.get("thumbnail_url"),
+            "source": "youtube.com",
+            "authors": data.get("author_name"),
+            "published": None,  # oEmbed does not provide this
+            "embed_html": f'''
+            <div class='responsive-youtube'>
+                <iframe
+                    src='https://www.youtube.com/embed/{video_id}?enablejsapi=1'
+                    frameborder='0'
+                    loading='lazy'
+                    allowfullscreen
+                ></iframe>
+            </div>
+            '''                     
+        }
+    except Exception as e:
+        return None
+
+def extract_youtube_video_id(url):
+    parsed = urlparse(url)
+    if "youtu.be" in parsed.netloc:
+        return parsed.path.lstrip("/")
+    if "youtube.com" in parsed.netloc:
+        qs = dict(part.split('=') for part in parsed.query.split('&') if '=' in part)
+        return qs.get("v")
+    return None
 
 def try_requests_scrape(url, domain):
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -61,7 +110,6 @@ def try_requests_scrape(url, domain):
     }
 
     return metadata
-
 
 def try_playwright_scrape(url, domain, debug=False):
     blank = blank_metadata(domain)

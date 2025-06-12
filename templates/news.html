@@ -194,10 +194,12 @@
             <div class="news-article">
                 <div class="article-info-wrapper">
                     <h2><a href="{{ article.url }}" target="_blank">{{ article.title or 'Title unavailable' }}</a></h2>
+                    {% if article.description %}
                     <p>
                         <span class="article-info description"></span>
                         <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
                     </p>
+                    {% endif %}
                     <p><span class="article-info source"></span> {{ article.source or 'Source unavailable' }}</p>
                     {% if article.published %}
                         <p><span class="article-info published"></span>
@@ -205,13 +207,20 @@
                         </p>
                     {% endif %}
                     {% if article.authors %}
-                        <p><span class="article-info authors"></span></p>
+                        <p><span class="article-info authors"></span>{{ article.authors }}</p>
                     {% endif %}
                     <p><span class="article-info category"></span> {{ article.category or 'None'}}</p>
                     <div id="article-{{ article.id }}" class="article-card {% if article.id == highlight_id %}highlight{% endif %}">
                     <button type="button" class="sharelink" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
                 </div>
-                <img src="{{ article.image_url }}" onerror="this.style.display='none'" width="100%" class="news-image">
+
+                {% if article.embed_html %}
+                <div class="news-embed-wrapper">
+                    <div class="youtube-placeholder" data-src="{{ article.embed_html | safe }}"></div>
+                </div>
+                {% else %}
+                <img src="{{ article.image_url }}" onerror="this.style.display='none'" class="news-image">
+                {% endif %}
 
                 <div class="comments-wrapper">
                     <h2>Discussion</h2>
@@ -246,8 +255,10 @@
                     <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" class="article-edit-form">
                         Title: <input name="title" value="{{ article.title or '' }}">
                         Description: <textarea name="description">{{ article.description or '' }}</textarea>
+                        Authors: <input name="authors" value="{{ article.authors or '' }}">
                         Source: <input name="source" value="{{ article.source or '' }}">
                         Published: <input type="date" name="published" value="{{ article.published or '' }}">
+                        Image URL: <input name="image_url" value="{{ article.image_url or '' }}">
                         <button type="submit" class="newsfeed-button">Update</button>
                     </form>
                 {% endif %}
@@ -317,7 +328,13 @@
             });
         });
     </script>
-
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".youtube-placeholder").forEach(placeholder => {
+                placeholder.innerHTML = placeholder.dataset.src;
+            });
+        });
+    </script>
     <script>
         function showUserPopup(element) {
             const popup = document.getElementById('user-popup');

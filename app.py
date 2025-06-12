@@ -158,6 +158,13 @@ def news():
 
     count = len(articles)
 
+    for article in articles:
+        if "youtube.com" in article.url or "youtu.be" in article.url:
+            scraped = extract_metadata(article.url)
+            if scraped and scraped.get("embed_html"):
+                article.embed_html = scraped["embed_html"]
+                print(f"Title: {article.title}, Embed: {hasattr(article, 'embed_html')}")
+
     return render_template(
         'news.html',
         articles=articles,
@@ -222,6 +229,10 @@ def profile():
 
 def get_media_path(*parts):
     return os.path.join(app.root_path, 'mnt', 'storage', *parts)
+
+@app.route('/matrix')
+def matrix():
+    return render_template('matrix.html')
 
 @app.route('/media/<path:filename>')
 def media(filename):
@@ -366,13 +377,15 @@ def edit_article(article_id):
     article.title = request.form.get('title') or article.title
     article.source = request.form.get('source') or article.source
     article.description = request.form.get('description') or article.description
+    article.authors = request.form.get('authors') or article.authors
+    article.image_url = request.form.get('image_url') or article.image_url
     pub = request.form.get('published')
     if pub:
         try:
             article.published = datetime.strptime(pub, "%Y-%m-%d").date()
         except ValueError:
             flash("Invalid date format. Use YYYY-MM-DD.", "danger")
-
+    print(f"Raw form image_url: {request.form.get('image_url')}")
     db.session.commit()
     flash("Article updated.", "success")
     return redirect(url_for('news'))
