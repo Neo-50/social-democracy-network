@@ -53,6 +53,23 @@ p {
     margin-top: 0;
 }
 
+.news-embed-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+}
+
+.news-embed-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
 .article-info {
     font-size: 1em;
     font-weight: 550;
@@ -75,6 +92,11 @@ p {
 
 .article-info.published::before {
   content: "Published";
+  color: #bbb;
+}
+
+.article-info.authors::before {
+  content: "Authors";
   color: #bbb;
 }
 
