@@ -88,7 +88,7 @@
                 <input type="url" name="url" placeholder="Paste news article URL here..." required>
                 <button type="submit" class="submit-article">Submit</button>
             </div>
-                <select name="category" id="category">
+            <select name="category" id="category">
                 <option value="">Uncategorized</option>
                 <option value="Political Corruption">US Political Corruption</option>
                 <option value="ICE & Immigration">ICE Raids & Immigration</option>
@@ -104,10 +104,6 @@
             </select>
         </form>
 
-        <div class="scraper-blocked-msg">
-            NOTE: AP, NY Times, WaPost, Axios, CNN, Reuters and other large media outlets use aggressive anti-metadata
-            scraping defenses against small sites like this one. You can still submit links - admins will manually fill in the info later.
-        </div>
         <div class="category-links">
             <ul>
                 <li><a href="{{ url_for('news') }}"

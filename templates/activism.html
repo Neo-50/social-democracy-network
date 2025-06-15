@@ -2,187 +2,308 @@
 
 {% block content %}
     <main>
-        <h2>Protest 2-17-2025</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/QBhnZJhALr8?si=yirUfKA-E_-WuPTO" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/2MWqhP859OA?si=EodKHIVOPVNCj4--" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/02-17-2025_01.png') }}" alt="02-17-2025 01" class="responsive-image">
+        <select id="sort-activism">
+            <option value=""> Select Protest Date</option>
+            <option value="Protest 6-14-2025">No Kings Protest 6-14-2025</option>
+            <option value="Protest 5-1-2025">Mayday Protest 5-1-2025</option>
+            <option value="Protest 4-19-2025">Protest 4-19-2025</option>
+            <option value="Protest 4-5-2025">Hands Off Protest 4-5-2025</option>
+            <option value="Protest 3-21-2025">Protest 3-21-2025 Bernie Sanders & AOC rally</option>
+            <option value="Protest 3-4-2025">Hands Off Protest 3-4-2025</option>
+            <option value="Protest 2-17-2025">Hands Off Protest 2-17-2025</option>
+        </select>
+
+        <div class="content-section" data-section="Protest 2-17-2025"  style="display: none;">
+            <h2>Protest 2-17-2025</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/QBhnZJhALr8?si=yirUfKA-E_-WuPTO" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/02-17-2025_02.png') }}" alt="02-17-2025 02" class="responsive-image">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/2MWqhP859OA?si=EodKHIVOPVNCj4--" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/02-17-2025_01.png') }}" alt="02-17-2025 01" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/02-17-2025_02.png') }}" alt="02-17-2025 02" class="responsive-image">
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/02-17-2025_03.jpg') }}" alt="02-17-2025 03" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/02-17-2025_04.jpg') }}" alt="02-17-2025 04" class="responsive-image">
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/02-17-2025_05.jpg') }}" alt="02-17-2025 05" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/02-17-2025_06.jpg') }}" alt="02-17-2025 06" class="responsive-image">
+                </div>
             </div>
         </div>
-        <div class="image-row"></div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/02-17-2025_03.jpg') }}" alt="02-17-2025 03" class="responsive-image">
+        <div class="content-section" data-section="Protest 3-4-2025"  style="display: none;">
+            <h2>Protest 3-4-2025</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/OjvyLPrUxRU?si=fz4OCMwvxHhe8Md8" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/02-17-2025_04.jpg') }}" alt="02-17-2025 04" class="responsive-image">
-            </div>
-        </div>
-        <div class="image-row"></div>
-        <div class="image-container">
-            <img src="{{ url_for('media', filename='activism/02-17-2025_05.jpg') }}" alt="02-17-2025 05" class="responsive-image">
-        </div>
-        <div class="image-container">
-            <img src="{{ url_for('media', filename='activism/02-17-2025_06.jpg') }}" alt="02-17-2025 06" class="responsive-image">
-        </div>
-        </div>
-        <h2>Protest 3-4-2025</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/OjvyLPrUxRU?si=fz4OCMwvxHhe8Md8" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="image-row">
             <div class="image-container">
                 <img src="{{ url_for('media', filename='activism/03-04-2025_01.jpg') }}" alt="02-17-2025 04" class="responsive-image">
             </div>
         </div>
-        <h2>Protest 3-21-2025 Bernie Sanders & AOC rally</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/AmKuFko7w78?si=4Bhj8tuJgyxujBwJ" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/03-21-2025_01.jpg') }}" alt="03-21-2025 01" class="responsive-image">
+        <div class="content-section" data-section="Protest 3-21-2025"  style="display: none;">
+            <h2>Protest 3-21-2025 Bernie Sanders & AOC rally</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/AmKuFko7w78?si=4Bhj8tuJgyxujBwJ" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/03-21-2025_02.jpg') }}" alt="03-21-2025 02" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/03-21-2025_01.jpg') }}" alt="03-21-2025 01" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/03-21-2025_02.jpg') }}" alt="03-21-2025 02" class="responsive-image">
+                </div>
             </div>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/03-21-2025_03.jpg') }}" alt="03-21-2025 03" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/03-21-2025_03.jpg') }}" alt="03-21-2025 03" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/03-21-2025_04.jpg') }}" alt="03-21-2025 04" class="responsive-image">
+                </div>
             </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/03-21-2025_04.jpg') }}" alt="03-21-2025 04" class="responsive-image">
-            </div>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/03-21-2025_05.jpg') }}" alt="03-21-2025 05" class="responsive-image">
-            </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/03-21-2025_06.jpg') }}" alt="03-21-2025 06" class="responsive-image">
-            </div>
-        </div>
-        <h2>Protest 4-5-2025</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/gQ-AlGI7Zu8?si=lDZetxSwvj6wElpz" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/KjeOK3kOt7g?si=D31JKe5TVUiwogU-" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_01.jpg') }}" alt="04-05-2025 01" class="responsive-image">
-            </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_02.jpg') }}" alt="04-05-2025 02" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/03-21-2025_05.jpg') }}" alt="03-21-2025 05" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/03-21-2025_06.jpg') }}" alt="03-21-2025 06" class="responsive-image">
+                </div>
             </div>
         </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_03.jpg') }}" alt="04-05-2025 03" class="responsive-image">
+        <div class="content-section" data-section="Protest 4-5-2025"  style="display: none;">
+            <h2>Hands Off Protest 4-5-2025</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/gQ-AlGI7Zu8?si=lDZetxSwvj6wElpz" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_04.jpg') }}" alt="04-05-2025 04" class="responsive-image">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/KjeOK3kOt7g?si=D31JKe5TVUiwogU-" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_05.jpg') }}" alt="04-05-2025 05" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_01.jpg') }}" alt="04-05-2025 01" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_02.jpg') }}" alt="04-05-2025 02" class="responsive-image">
+                </div>
             </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_06.jpg') }}" alt="04-05-2025 06" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_03.jpg') }}" alt="04-05-2025 03" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_04.jpg') }}" alt="04-05-2025 04" class="responsive-image">
+                </div>
             </div>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_07.jpg') }}" alt="04-05-2025 07" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_05.jpg') }}" alt="04-05-2025 05" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_06.jpg') }}" alt="04-05-2025 06" class="responsive-image">
+                </div>
             </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_08.jpg') }}" alt="04-05-2025 08" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_07.jpg') }}" alt="04-05-2025 07" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_08.jpg') }}" alt="04-05-2025 08" class="responsive-image">
+                </div>
             </div>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_09.jpg') }}" alt="04-05-2025 09" class="responsive-image">
-            </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-05-2025_10.jpg') }}" alt="04-05-2025 10" class="responsive-image">
-            </div>
-        </div>
-        <h2>Protest 4-19-2025</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/Z3SMERiLDPo?si=Gv9f6xvqlblNRk6N" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/1eMx5-mwMbY?si=kF56kPw8pn6lVvJa" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/jiOfuvBihIY?si=BI1EluQ6j6XYlNpy" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-19-2025_01.jpg') }}" alt="04-19-2025 01" class="responsive-image">
-            </div>
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-19-2025_02.jpg') }}" alt="04-19-2025 02" class="responsive-image">
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_09.jpg') }}" alt="04-05-2025 09" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-05-2025_10.jpg') }}" alt="04-05-2025 10" class="responsive-image">
+                </div>
             </div>
         </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-19-2025_03.jpg') }}" alt="04-19-2025 03" class="responsive-image">
+        <div class="content-section" data-section="Protest 4-19-2025"  style="display: none;">
+            <h2>Protest 4-19-2025</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/Z3SMERiLDPo?si=Gv9f6xvqlblNRk6N" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/1eMx5-mwMbY?si=kF56kPw8pn6lVvJa" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/jiOfuvBihIY?si=BI1EluQ6j6XYlNpy" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div data-section="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-19-2025_01.jpg') }}" alt="04-19-2025 01" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-19-2025_02.jpg') }}" alt="04-19-2025 02" class="responsive-image">
+                </div>
+            </div>
+            <div data-section="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-19-2025_03.jpg') }}" alt="04-19-2025 03" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-19-2025_04.jpg') }}" alt="04-19-2025 04" class="responsive-image">
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/04-19-2025_05.jpg') }}" alt="04-19-2025 05" class="responsive-image">
+                </div>
+            </div>
+        </div>
+        <div class="content-section" data-section="Protest 5-1-2025" style="display: none;">
+            <h2>Mayday Protest 5-1-2025</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/_JcTx2sJos0?si=tDbtvlTOBDbUpZxI" 
+                title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/gDvbdPEJ-Ic?si=Wn8QdyDCv1MJCzlg" title="YouTube video player"
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/AATw-Lokeqw?si=jdX6Pw0BAGzrOv-I" title="YouTube video player"
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="content-section" data-section="Protest 6-14-2025" style="display: none;">
+            <h2>No Kings Day Protest 6-14-2025</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/NbDt2DY6x5s?si=bWjvzxmIdJE_3WE6" title="YouTube video player"
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+            </div>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/aFrbgWD537Q?si=Vd_z_gBi99nc9HX3" title="YouTube video player"
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+                gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025  March.jpg') }}" alt="06-14-2025  March.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025  March02.jpg') }}" alt="06-14-2025  March02.jpg" class="responsive-image">
+                </div>
+             <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Bell Flag.jpg') }}" alt="06-14-2025 Bell Flag.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Bell Flag02.jpg') }}" alt="06-14-2025 Bell Flag02.jpg" class="responsive-image">
+                </div>
+             <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Big Flag.jpg') }}" alt="06-14-2025 Big Flag.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Crowd.jpg') }}" alt="06-14-2025 Crowd.jpg" class="responsive-image">
+                </div>
+             </div>
+             <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Crowd02.jpg') }}" alt="06-14-2025 Crowd02.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Crowd03.jpg') }}" alt="06-14-2025 Crowd03.jpg" class="responsive-image">
+                </div>
+             </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Dump Trump.jpg') }}" alt="06-14-2025 Dump Trump.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 March02.jpg') }}" alt="06-14-2025 March02.jpg" class="responsive-image">
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 March04.jpg') }}" alt="06-14-2025 March04.jpg" class="responsive-image">
+                </div>
+            </div><p>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Mural01.jpg') }}" alt="06-14-2025 Mural01.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Mural02.jpg') }}" alt="06-14-2025 Mural02.jpg" class="responsive-image">
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Mural03.jpg') }}" alt="06-14-2025 Mural03.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Mural04.jpg') }}" alt="06-14-2025 Mural04.jpg" class="responsive-image">
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Standoff.jpg') }}" alt="activism/06-14-2025 Standoff.jpg" class="responsive-image">
+                </div>
+                <div class="image-container">
+                    <img src="{{ url_for('media', filename='activism/06-14-2025 Standoff02.jpg') }}" alt="06-14-2025 Standoff02.jpg" class="responsive-image">
+                </div>
             </div>
             <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-19-2025_04.jpg') }}" alt="04-19-2025 04" class="responsive-image">
+                <img src="{{ url_for('media', filename='activism/06-14-2025 Standoff03.jpg') }}" alt="06-14-2025 Standoff03.jpg" class="responsive-image">
             </div>
         </div>
-        <div class="image-row">
-            <div class="image-container">
-                <img src="{{ url_for('media', filename='activism/04-19-2025_05.jpg') }}" alt="04-19-2025 05" class="responsive-image">
-            </div>
-        </div>
-        <h2>Mayday Protest 5-1-2025</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/_JcTx2sJos0?si=tDbtvlTOBDbUpZxI" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; 
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </div>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/gDvbdPEJ-Ic?si=Wn8QdyDCv1MJCzlg" title="YouTube video player"
-                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-        </div>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/AATw-Lokeqw?si=jdX6Pw0BAGzrOv-I" title="YouTube video player"
-                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
-            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-        </div>
+        <script>
+            const selector = document.getElementById('sort-activism');
+            const sections = document.querySelectorAll('.content-section');
+
+            selector.addEventListener('change', () => {
+                const value = selector.value;
+                sections.forEach(section => {
+                section.style.display = (section.dataset.section === value) ? 'block' : 'none';
+                });
+
+                if (!value) {
+                    sections.forEach(section => section.style.display = 'none');
+                }
+            });
+        </script>
     </main>
 {% endblock %}
