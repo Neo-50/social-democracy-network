@@ -176,7 +176,7 @@ p {
     box-sizing: border-box;
     outline: none;
     transition: box-shadow 0.2s ease;
-    margin-bottom: 5px;
+    margin-bottom: 40px;
 }
 
 .category-links {
