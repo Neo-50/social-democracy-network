@@ -29,7 +29,7 @@
                     {% endif %}
                 </strong>
             </div>
-
+            
             <div class="comment-content">
                 <p>{{ comment.formatted_content() | emojify|  safe }}</p>
             </div>
@@ -55,13 +55,23 @@
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                         <input type="hidden" name="parent_id" value="{{ comment.id }}">
                         <div class="comment-box" style="position: relative;">
-                            <textarea name="comment-content" id="comment-content-{{ comment.id }}"
-                             placeholder="Write a reply..." required></textarea>
-                            <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)"><img class="icon" src="media/icons/emoji.png" alt="emoji.png"></button>
+                            <div class="comment-editor" contenteditable="true" placeholder="Write a reply..." id="comment-content-{{ comment.id }}" required></div>
+                            <input type="hidden" name="comment-content" class="hidden-content">
+                            
+                            <!-- Unicode emoji picker -->
+                            <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">
+                                <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                            </button>
                             <div class="emoji-wrapper" style="display: none;">
                                 <emoji-picker></emoji-picker>
-                                <!-- JS will inject custom emoji drawer below -->
                             </div>
+
+                            <!-- Custom emoji picker -->
+                            <button type="button" class="emoji-button custom-toggle" onclick="toggleCustomEmojiDrawer(event)">😺</button>
+                            <div class="custom-wrapper" style="display: none;">
+                            <!-- JS will inject emoji drawer below -->
+                            </div>
+
                             <div class="submit-cancel">
                                 <button type="submit" class="newsfeed-button">Submit</button>
                                 <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
@@ -230,15 +240,26 @@
                     <div class="post-comment-container">
                         {% if session.get('user_id') %}
                             <div class="comment-box" style="position: relative;">
-                                <textarea name="comment-content" placeholder="Write a comment..."
-                                id="comment-content-main" required></textarea>
-                                <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)"><img class="icon" src="media/icons/emoji.png" alt="emoji.png"></button>
-                                  <div class="emoji-wrapper" style="display: none;">
+                                <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
+                                <input type="hidden" name="comment-content" class="hidden-content">
+                                <!-- Unicode emoji picker -->
+                                <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">
+                                    <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                                </button>
+                                <div class="emoji-wrapper" style="display: none;">
                                     <emoji-picker></emoji-picker>
                                 </div>
-                                <div class="custom-emoji-drawer">
-                                <!-- Will be filled via JavaScript -->
+
+                                <!-- Custom emoji picker -->
+                                <button type="button" class="emoji-button custom-toggle" onclick="toggleCustomEmojiDrawer(event)">😺</button>
+                                <div class="custom-wrapper" style="display: none;">
+                                <!-- JS will inject emoji drawer below -->
                                 </div>
+
+                            <div class="submit-cancel">
+                                <button type="submit" class="newsfeed-button">Submit</button>
+                                <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                            </div>
                                 <button type="submit" class="newsfeed-button">Post Comment</button>
                             </div>
                         {% else %}
@@ -301,37 +322,157 @@
     </div>
 
     <!-- JAVASCRIPT -->
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.reply-toggle').forEach(button => {
-                button.addEventListener('click', () => {
-                    const wrapper = button.closest('.comment-container');
-                    const drawer = wrapper.querySelector('.reply-drawer');
-                    if (drawer) {
-                        drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
-                    }
-                });
-            });
+        function initializeEmojiDrawer(wrapper) {
+            if (!wrapper.closest('.custom-wrapper')) return;
+            if (wrapper.querySelector('.custom-emoji-drawer')) return;
+                const drawer = document.createElement('div');
+                drawer.className = 'custom-emoji-drawer';
+                drawer.style.marginTop = '10px';
+                drawer.style.display = 'flex';
+                drawer.style.flexWrap = 'wrap';
+                drawer.style.gap = '6px';
 
-            document.querySelectorAll('.cancel-reply').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const drawer = e.target.closest('.reply-drawer');
-                    if (drawer) {
+                customEmojis.forEach(filename => {
+                    const img = document.createElement('img');
+                    img.src = `media/emojis/${filename}`;
+                    img.alt = filename;
+                    img.className = 'custom-emoji';
+                    img.style.width = '36px';
+                    img.style.height = '36px';
+                    img.style.cursor = 'pointer';
+
+                    img.addEventListener('click', () => {
+                        const editor = wrapper.closest('.comment-box')?.querySelector(".comment-editor");
+                        const hidden = wrapper.closest('.comment-box')?.querySelector(".hidden-content");
+
+                        if (editor) {
+                            const emoji = document.createElement('img');
+                            emoji.src = `media/emojis/${filename}`;
+                            emoji.alt = filename.split('.')[0];
+                            emoji.className = 'inline-emoji';
+                            emoji.style.width = '24px';
+                            emoji.style.height = '24px';
+                            emoji.style.verticalAlign = 'middle';
+
+                            insertAtCaret(editor, emoji);
+                            editor.focus();
+                            if (hidden) hidden.value = editor.innerHTML;
+                        }
+                    });
+
+                    drawer.appendChild(img);
+                });
+
+                wrapper.appendChild(drawer);
+        }
+        function insertAtCaret(container, node) {
+            const sel = window.getSelection();
+            if (!sel || !sel.rangeCount) return;
+
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(node);
+            range.setStartAfter(node);
+            range.setEndAfter(node);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        
+        document.querySelectorAll('.reply-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const wrapper = button.closest('.comment-container');
+                const drawer = wrapper.querySelector('.reply-drawer');
+                if (drawer) {
+                    drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+                    const pickerWrapper = drawer.querySelector('.emoji-wrapper');
+                    if (pickerWrapper) {
+                        initializeEmojiDrawer(pickerWrapper);
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const topBox = document.querySelector('.post-comment-container .emoji-wrapper');
+            if (topBox) {
+                initializeEmojiDrawer(topBox);
+            }
+        });
+
+        document.querySelectorAll('.cancel-reply').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const drawer = e.target.closest('.reply-drawer');
+                if (drawer) {
                         drawer.style.display = 'none';
+                }
+            });
+        });
+
+        function toggleEmojiPicker(event) {
+            const button = event.target;
+            const box = button.closest(".comment-box");
+            const pickerWrapper = box.querySelector(".emoji-wrapper");
+            const picker = pickerWrapper.querySelector("emoji-picker");
+            const editor = box.querySelector(".comment-editor");
+            const hidden = box.querySelector(".hidden-content");
+
+            pickerWrapper.style.display = pickerWrapper.style.display === "none" || !pickerWrapper.style.display ? "block" : "none";
+
+            if (!picker.dataset.bound) {
+                picker.addEventListener("emoji-click", (e) => {
+                    const editor = box.querySelector(".comment-editor");
+                    const hidden = box.querySelector(".hidden-content");
+                    editor.focus();
+                    document.execCommand('insertText', false, e.detail.unicode);
+                    if (hidden) hidden.value = editor.innerHTML;
+                });
+            picker.dataset.bound = "true";
+            }
+        }
+
+        function toggleCustomEmojiDrawer(event) {
+            const box = event.target.closest('.comment-box');
+            const wrapper = box.querySelector('.custom-wrapper');
+            const drawer = wrapper.querySelector('.custom-emoji-drawer');
+
+            // Hide all drawers inside this comment box (optional)
+            const unicodeWrapper = box.querySelector('.emoji-wrapper');
+            if (unicodeWrapper) unicodeWrapper.style.display = 'none';
+
+            // If drawer doesn't exist yet, create it
+            if (!drawer) {
+                wrapper.style.display = 'flex';
+                initializeEmojiDrawer(wrapper);
+            } else {
+                wrapper.style.display = wrapper.style.display === 'none' ? 'flex' : 'none';
+            }
+        }
+
+        const customEmojis = ['catblip.webp', 'catblush.webp', 'catclap.webp', 'catcool.webp', 'catcry.webp', 'catcry2.webp', 'catcry3.webp', 'catcry4.webp', 'catcry5.webp',
+                            'catdance.webp', 'catjam.webp', 'catjam2.webp', 'catno.webp', 'catpolice.webp', 'catrave.webp', 'catsadge.png', 'catshake.webp',
+                            'catstare.webp', 'catthumbsup.webp', 'cattocry.webp', 'cat_cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
+                            'polite.webp', 'politecri.png', 'red_angry.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', () => {
+                    const editor = form.querySelector('.comment-editor');
+                    const hidden = form.querySelector('.hidden-content');
+                    if (editor && hidden) {
+                        hidden.value = editor.innerHTML;
                     }
                 });
             });
         });
-    </script>
-    <script>
+
         window.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll(".youtube-placeholder").forEach(placeholder => {
                 placeholder.innerHTML = placeholder.dataset.src;
             });
         });
-    </script>
-    <script>
+        
+        
         function showUserPopup(element) {
             const popup = document.getElementById('user-popup');
 
@@ -389,67 +530,7 @@
                 isDragging = false;
             });
         }
-    </script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-    <script>
-        function toggleEmojiPicker(event) {
-            const button = event.target;
-            const box = button.closest(".comment-box");
-            const pickerWrapper = box.querySelector(".emoji-wrapper");
-            const picker = pickerWrapper.querySelector("emoji-picker");
-            const textarea = box.querySelector("textarea");
 
-            pickerWrapper.style.display = pickerWrapper.style.display === "none" || !pickerWrapper.style.display ? "block" : "none";
-
-            if (!picker.dataset.bound) {
-            picker.addEventListener("emoji-click", (e) => {
-                textarea.value += e.detail.unicode;
-                textarea.focus();
-            });
-            picker.dataset.bound = "true";
-            }
-        }
-        const customEmojis = ['yellcat.png', 'smudge.png', 'catangry.png', 'catcry.png', 'catno.gif', 'catsadge.png',
-                              'catthumbsup.png', 'catvibe.gif', 'polite.png', 'politecri.png', 'sadcat.png', 'sadcat2.png', 'catcry2.png', 'red_angry.png'];
-
-        document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.emoji-wrapper').forEach(wrapper => {
-            if (wrapper.querySelector('.custom-emoji-drawer')) return;
-
-            const drawer = document.createElement('div');
-            drawer.className = 'custom-emoji-drawer';
-            drawer.style.marginTop = '10px';
-            drawer.style.display = 'flex';
-            drawer.style.flexWrap = 'wrap';
-            drawer.style.gap = '6px';
-
-            const picker = wrapper.querySelector('emoji-picker');
-
-            customEmojis.forEach(filename => {
-                const img = document.createElement('img');
-                img.src = `media/emojis/${filename}`;
-                img.alt = filename;
-                img.className = 'custom-emoji';
-                img.style.width = '36px';
-                img.style.height = '36px';
-                img.style.cursor = 'pointer';
-
-                img.addEventListener('click', () => {
-                    const textarea = wrapper.closest('.comment-box')?.querySelector('textarea');
-                    if (textarea) {
-                        textarea.value += `:${filename.split('.')[0]}: `;
-                        textarea.focus();
-                    }
-                });
-                console.log("Appending emoji:", img.src, "as", img);
-                drawer.appendChild(img);
-            });
-
-            picker.insertAdjacentElement('afterend', drawer);
-            });
-        });
-    </script>
-    <script>
         document.addEventListener('DOMContentLoaded', function () {
             const timestampElements = document.querySelectorAll('.comment-timestamp');
             timestampElements.forEach(el => {
@@ -467,8 +548,6 @@
                 console.log("Timestamp:", utcIso, "→", date.toString());
             });
         });
-    </script>
-    <script>
         function copyLink(articleId) {
             const id = parseInt(articleId);
             const url = new URL(window.location.href);
@@ -483,5 +562,6 @@
                 });
         }
     </script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 </main>
 {% endblock %}

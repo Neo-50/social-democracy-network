@@ -27,7 +27,7 @@ class NewsComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
+    
     article_id = db.Column(
         db.Integer,
         db.ForeignKey('news_article.id', ondelete='CASCADE', name='fk_news_comment_article_id'),
@@ -44,8 +44,7 @@ class NewsComment(db.Model):
         nullable=True
     )
     def formatted_content(self):
-        safe = html.escape(self.content)
-        return safe.replace('\n', '<br />')
+        return self.content
 
     replies = db.relationship(
         'NewsComment',
