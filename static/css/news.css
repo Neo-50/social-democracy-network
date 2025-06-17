@@ -25,9 +25,10 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    max-width: 1200px;
+    max-width: 100%;
     width: 100%;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+    box-sizing: border-box;
 }
 
 h2 {
@@ -56,7 +57,7 @@ p {
 .news-embed-wrapper {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 */
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
     height: 0;
     overflow: hidden;
 }
@@ -78,6 +79,7 @@ p {
 
 .article-info-wrapper{
     line-height: 1.4;
+    width: 100%;
 }
 
 .article-info.description::before {
@@ -352,7 +354,7 @@ p {
     overflow: visible;
 }
 
-.news-right textarea[name="comment-content"] {
+.comment-editor {
     width: 100%;
     max-width: 550px;
     min-width: 350px;
@@ -400,6 +402,24 @@ p {
   padding: 8px;
   box-shadow: 0 2px 12px #1a1a1a;
   overflow-y: auto;
+}
+
+.custom-emoji-drawer {
+    position: absolute;
+    max-height: 200px;
+    min-width: 280px;
+    z-index: 1000;
+    top: 70px;
+    left: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    box-shadow: 0 2px 12px #1a1a1a;
+    border-radius: 6px;
 }
 
 .post-comment:hover {
@@ -626,13 +646,6 @@ p {
     .news-left,
     .news-right {
         width: 100%;
-    }
-
-    .news-right textarea[name="comment-content"] {
-        min-width: 0;
-        max-width: 2200px;
-        max-height: 100px;
-        min-height: 0;
     }
 
     .newsfeed-button {

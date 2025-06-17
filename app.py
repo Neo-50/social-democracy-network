@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import bleach
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message
 from datetime import datetime, timedelta, timezone
@@ -449,14 +450,26 @@ def admin_tools():
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required
 def add_comment(article_id):
-    content = request.form.get('comment-content')
+
+    ALLOWED_TAGS = ['img']
+    ALLOWED_ATTRIBUTES = {
+        'img': ['src', 'alt', 'class', 'style']
+    }
+
+    cleaned_html = bleach.clean(
+        request.form['comment-content'],
+        tags=ALLOWED_TAGS,
+        attributes=ALLOWED_ATTRIBUTES,
+        strip=True
+    )
+
     parent_id = request.form.get('parent_id')
     if parent_id:
         parent_id = int(parent_id)
 
-    if content:
+    if cleaned_html:
         comment = NewsComment(
-            content=content,
+            content=cleaned_html,
             article_id=article_id,
             user_id=current_user.get_id(),
             parent_id=parent_id if parent_id else None
