@@ -2,7 +2,7 @@
 .news-page {
     display: grid;
     grid-template-columns: max-content minmax(300px, 1000px);
-    max-width: 95%;
+    max-width: 98%;
     grid-gap: 30px;
     padding: 0.5rem;
     box-sizing: border-box;
@@ -21,14 +21,22 @@
     padding: 20px;
     margin: 10px 0;
     border-radius: 24px;
+    border: 1px solid lightblue;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 10px;
-    max-width: 100%;
     width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
     overflow-wrap: break-word;
     box-sizing: border-box;
+}
+
+.news-article * {
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
 }
 
 h2 {
@@ -356,11 +364,13 @@ p {
 
 .comment-editor {
     width: 100%;
-    max-width: 550px;
-    min-width: 350px;
+    max-width: 450px;
+    min-width: 275px;
     min-height: 75px;
-    max-height: 350px;
+    max-height: 250px;
     padding: 12px 20px;
+    resize: both;
+    overflow: auto;
     margin-bottom: 20px;
     background-color: #1f1f1f;
     color: white;
@@ -376,26 +386,52 @@ p {
 
 .emoji-button {
     background-color: transparent;
-    border: none;
-    padding: 2px;
-    border-radius: 6px;
+    padding: 0;
+    border-radius: 999px;
+    width: 100%;
+    height: 100%;
     cursor: pointer;
     font-size: 24px;
 }
 
+.icon {
+    width: 28px;
+    height: 28px;
+}
+
 .inline-emoji {
-    width: 32px;
-    height: 32px;
     vertical-align: middle;
     image-rendering: auto;
 }
 
-#emoji-wrapper,
+
+.emoji-size-toggle {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.size-option {
+    padding: 4px 10px;
+    border: 1px solid rgb(150 150 150 / 50%);
+    border-radius: 999px;
+    background-color: transparent;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.size-option.active {
+    background-color: rgb(0 255 255 / 20%);
+    border-color: cyan;
+}
+
 .emoji-wrapper {
   position: absolute;
   z-index: 1000;
-  top: 70px;
-  left: 360px;
+  top: 60px;
+  left: 280px;
   background-color: #1a1a1a;
   border: 1px solid #444;
   border-radius: 8px;
@@ -406,11 +442,11 @@ p {
 
 .custom-emoji-drawer {
     position: absolute;
-    max-height: 200px;
-    min-width: 280px;
+    max-height: 300px;
+    min-width: 360px;
     z-index: 1000;
-    top: 70px;
-    left: 400px;
+    top: 60px;
+    left: 340px;
     overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
@@ -567,10 +603,7 @@ p {
   cursor: pointer;
 }
 
-.icon {
-    width: 28px;
-    height: 28px;
-}
+
 
 #mobile-categories {
     display: none;
@@ -643,6 +676,22 @@ p {
         gap: 10px;
     }
 
+    .comment-editor {
+        width: 100%;
+        max-width: 450px;
+        min-width: 225px;
+        min-height: 55px;
+        max-height: 250px;
+        resize: both;
+        padding: 12px 20px;
+        margin-bottom: 20px;
+        background-color: #1f1f1f;
+        color: white;
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
     .news-left,
     .news-right {
         width: 100%;
@@ -667,5 +716,36 @@ p {
         display: inline-flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .emoji-wrapper {
+        position: absolute;
+        z-index: 1000;
+        top: 55px;
+        left: 10px;
+        background-color: #1a1a1a;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 8px;
+        box-shadow: 0 2px 12px #1a1a1a;
+        overflow-y: auto;
+    }
+
+    .custom-emoji-drawer {
+        position: absolute;
+        max-height: 220px;
+        max-width: 100px;
+        z-index: 1000;
+        top: 55px;
+        left: 60px;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 10px;
+        background-color: #1a1a1a;
+        border: 1px solid #444;
+        box-shadow: 0 2px 12px #1a1a1a;
+        border-radius: 6px;
     }
 }

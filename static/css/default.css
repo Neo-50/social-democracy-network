@@ -94,11 +94,12 @@ a:focus {
    Utilities
    ======================= */
 
-input {
-  background-color: #1a1a1a;
+input.password{
+  background-color: #444;
   color: #bbb;
   padding: 12px 20px;
   margin-left: 5px;
+  margin-bottom: 20px;
   width: 300px;
   border: none;
   border-radius: 24px;

@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message
 from datetime import datetime, timedelta, timezone
@@ -225,6 +226,20 @@ def profile():
         db.session.commit()
         flash("Profile updated.", "success")
         return redirect(url_for('profile'))
+
+    new_password = request.form.get('new_password', '')
+    confirm_password = request.form.get('confirm_password', '')
+
+    if new_password:
+        if new_password != confirm_password:
+            flash("Passwords do not match.", "danger")
+            return redirect(request.url)
+        if len(new_password) < 8:
+            flash("Password must be at least 8 characters long.", "danger")
+            return redirect(request.url)
+
+        user.set_password(new_password)  # Assumes user model has a set_password method
+        flash("Password changed successfully.", "success")
 
     return render_template('profile.html', user=user)
 
@@ -453,14 +468,17 @@ def add_comment(article_id):
 
     ALLOWED_TAGS = ['img']
     ALLOWED_ATTRIBUTES = {
-        'img': ['src', 'alt', 'class', 'style']
+        'img': ['width', 'height', 'src', 'alt', 'class', 'style']
     }
+
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height', 'vertical-align'])
 
     cleaned_html = bleach.clean(
         request.form['comment-content'],
         tags=ALLOWED_TAGS,
         attributes=ALLOWED_ATTRIBUTES,
-        strip=True
+        strip=True,
+        css_sanitizer=css_sanitizer
     )
 
     parent_id = request.form.get('parent_id')
@@ -472,8 +490,9 @@ def add_comment(article_id):
             content=cleaned_html,
             article_id=article_id,
             user_id=current_user.get_id(),
-            parent_id=parent_id if parent_id else None
+            parent_id=parent_id if parent_id else None,
         )
+
         db.session.add(comment)
         db.session.commit()
     flash("Comment posted successfully.", "success")

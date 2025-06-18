@@ -21,11 +21,22 @@
                 <button type="submit">Save</button>
             </div>
         </form>
-        <form action="{{ url_for('delete_account') }}" method="POST"
-            onsubmit="return confirm('Are you sure you want to delete your account? All comments and messages will be deleted');">
-            <input type="hidden" name="user_id" value="{{ current_user.id }}">
-            <button type="delete-account" class="btn btn-danger">Delete Account</button>
-        </form>
+        <div class="change-password">
+            <form method="POST" class="update-password-form">
+                <label for="new_password">New Password:</label>
+                <input type="password" class="password" name="new_password" required minlength="8" />
+                
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" class="password" name="confirm_password" required minlength="8" />
+
+                <button type="submit" class="btn">Change Password</button>
+            </form>
+            <form action="{{ url_for('delete_account') }}" method="POST"
+                onsubmit="return confirm('Are you sure you want to delete your account? All comments and messages will be deleted');">
+                <input type="hidden" name="user_id" value="{{ current_user.id }}">
+                <button type="delete-account" class="btn btn-danger">Delete Account</button>
+            </form>
+        </div>
         <div id="cropperModal" class="modal"
             style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-color: rgba(0,0,0,0.75); z-index: 9999; align-items: center; justify-content: center;">

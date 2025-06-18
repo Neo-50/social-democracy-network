@@ -26,6 +26,7 @@ playwright = "^1.52.0"
 playwright-stealth = "^1.0.6"
 setuptools = "^80.9.0"
 bleach = "^6.2.0"
+tinycss2 = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
