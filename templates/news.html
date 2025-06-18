@@ -333,14 +333,54 @@
                 drawer.style.flexWrap = 'wrap';
                 drawer.style.gap = '6px';
 
+                const toggleWrapper = document.createElement('div');
+                toggleWrapper.className = 'emoji-size-toggle';
+
+                const smallBtn = document.createElement('button');
+                smallBtn.textContent = 'Small';
+                smallBtn.className = 'size-option active';
+                smallBtn.type = 'button'; // prevent accidental submit
+
+                const largeBtn = document.createElement('button');
+                largeBtn.textContent = 'Large';
+                largeBtn.className = 'size-option';
+                largeBtn.type = 'button'; // prevent accidental submit
+
+                toggleWrapper.appendChild(smallBtn);
+                toggleWrapper.appendChild(largeBtn);
+                drawer.appendChild(toggleWrapper);
+
+                // Default size
+                selectedEmojiSize = 28;
+
+                // Click handlers
+                smallBtn.addEventListener('click', () => {
+                    selectedEmojiSize = 28;
+                    smallBtn.classList.add('active');
+                    largeBtn.classList.remove('active');
+                    updateDrawerEmojiSizes(drawer);
+                });
+
+                largeBtn.addEventListener('click', () => {
+                    selectedEmojiSize = 50;
+                    largeBtn.classList.add('active');
+                    smallBtn.classList.remove('active');
+                    updateDrawerEmojiSizes(drawer);
+                });
+
                 customEmojis.forEach(filename => {
                     const img = document.createElement('img');
                     img.src = `media/emojis/${filename}`;
                     img.alt = filename;
                     img.className = 'custom-emoji';
-                    img.style.width = '36px';
-                    img.style.height = '36px';
+                    img.style.width = `${selectedEmojiSize}px`;
+                    img.style.height = `${selectedEmojiSize}px`;
                     img.style.cursor = 'pointer';
+
+                    img.setAttribute(
+                        'style',
+                        `width:${selectedEmojiSize}px;height:${selectedEmojiSize}px;vertical-align:middle;`
+                    );
 
                     img.addEventListener('click', () => {
                         const editor = wrapper.closest('.comment-box')?.querySelector(".comment-editor");
@@ -351,8 +391,8 @@
                             emoji.src = `media/emojis/${filename}`;
                             emoji.alt = filename.split('.')[0];
                             emoji.className = 'inline-emoji';
-                            emoji.style.width = '24px';
-                            emoji.style.height = '24px';
+                            emoji.style.width = `${selectedEmojiSize}px`;
+                            emoji.style.height = `${selectedEmojiSize}px`;
                             emoji.style.verticalAlign = 'middle';
 
                             insertAtCaret(editor, emoji);
@@ -366,6 +406,14 @@
 
                 wrapper.appendChild(drawer);
         }
+
+        function updateDrawerEmojiSizes(drawer) {
+            drawer.querySelectorAll('.custom-emoji').forEach(img => {
+                img.style.width = `${selectedEmojiSize}px`;
+                img.style.height = `${selectedEmojiSize}px`;
+            });
+        }
+
         function insertAtCaret(container, node) {
             const sel = window.getSelection();
             if (!sel || !sel.rangeCount) return;
@@ -449,7 +497,8 @@
             }
         }
 
-        const customEmojis = ['catblip.webp', 'catblush.webp', 'catclap.webp', 'catcool.webp', 'catcry.webp', 'catcry2.webp', 'catcry3.webp', 'catcry4.webp', 'catcry5.webp',
+        const customEmojis = ['gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'catblip.webp', 'catblush.webp', 'catclap.webp', 'catcool.webp', 'catcry.webp',
+                            'catcry2.webp', 'catcry3.webp', 'catcry4.webp', 'catcry5.webp',
                             'catdance.webp', 'catjam.webp', 'catjam2.webp', 'catno.webp', 'catpolice.webp', 'catrave.webp', 'catsadge.png', 'catshake.webp',
                             'catstare.webp', 'catthumbsup.webp', 'cattocry.webp', 'cat_cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
                             'polite.webp', 'politecri.png', 'red_angry.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp'];
