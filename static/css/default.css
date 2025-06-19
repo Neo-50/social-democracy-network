@@ -94,7 +94,7 @@ a:focus {
    Utilities
    ======================= */
 
-input.password{
+input.password {
   background-color: #444;
   color: #bbb;
   padding: 12px 20px;
@@ -103,6 +103,17 @@ input.password{
   width: 300px;
   border: none;
   border-radius: 24px;
+}
+
+.change-password {
+    background-color: #1a1a1a;
+    color: #bbb;
+    padding: 12px 20px;
+    margin-left: 5px;
+    margin-bottom: 20px;
+    width: 300px;
+    border: none;
+    border-radius: 24px;
 }
 
 select {

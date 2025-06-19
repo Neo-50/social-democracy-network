@@ -82,10 +82,14 @@
             {% endif %}
         </div>
         <div class="reply-container">
-            {% if comment.replies %}
-                {% for reply in comment.replies %}
-                    {{ render_comment(reply, article, depth + 1) }}
-                {% endfor %}
+            {% if session.get('user_id') %}
+                {% if comment.replies %}
+                    {% for reply in comment.replies %}
+                        {{ render_comment(reply, article, depth + 1) }}
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to view replies.</p>
             {% endif %}
         </div>
     </div>
@@ -230,11 +234,13 @@
 
                 <div class="comments-wrapper">
                     <h2>Discussion</h2>
-                    <div class="comments-thread">
-                        {% for comment in article.comments if comment.parent_id is none %}
-                            {{ render_comment(comment, article) }}
-                        {% endfor %}
-                    </div>
+                    {% if session.get('user_id') %}
+                        <div class="comments-thread">
+                            {% for comment in article.comments if comment.parent_id is none %}
+                                {{ render_comment(comment, article) }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
                 <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                     <div class="post-comment-container">
@@ -497,8 +503,18 @@
             }
         }
 
-        const customEmojis = ['gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'catblip.webp', 'catblush.webp', 'catclap.webp', 'catcool.webp', 'catcry.webp',
-                            'catcry2.webp', 'catcry3.webp', 'catcry4.webp', 'catcry5.webp',
+        const customEmojis = ['gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-flat.webp', 'gir-suit.png', 'gir-happy.png', 'zimthonk.png',
+                            'pepe-yes.png', 'pepe-no.png', 'hmm.png', 'peepo-ban.png', 'peepo-cute.png', 'peepo-happy.png', 'peepo-heart.png', 
+                            'pepe-clown.png', 'pepe-copium.png', 'pepe-cringe.png', 'pepe-cry.png', 'pepe-dumb.png', 'pepe-evil.png', 'pepe-ez.png',
+                            'pepe-fu.png', 'pepe-giggle.png', 'pepe-gun.png', 'pepe-happy.png', 'pepe-holy.png', 'pepe-megacringe.png', 'pepe-nervous.png',
+                            'pepe-noted.png', 'pepe-nuke.png', 'pepe-ok-boomer.png', 'pepe-omg.png', 'pepe-poggers.png', 'pepe-popcorn.png',
+                            'pepe-pray.png', 'pepe-rage.png', 'pepe-sadclown.png', 'pepe-sadge.png', 'pepe-sad-hands.png', 'pepe-salute.png', 'pepe-shades.png',
+                            'pepe-sip.png', 'pepe-sword.png', 'pepe-teddy-cry.png', 'pepe-think.png', 'pepe-wait.png', 'peepo-rifle.png', 'pepe-angery.png',
+                            'peepo-blush.png', 'peepo-sip.png', 'peepo-sit.png', 'peepo-think.png', 'pepe-angry-police.png', 'pepe-angry-scimter.png',
+                            'pepe-bigsmile.png', 'pepe-blankie.png', 'pepe-blubbers.png', 'pepe-chat-dead.png', 'pepe-cheer.gif', 'pepe-chef.png', 'pepe-depressed.png',
+                            'pepe-fightme.png', 'pepe-flower.png', 'pepe-heart02.png', 'pepe-hug.png', 'pepe-nerd.gif', 'pepe-pirate.png', 'pepe-pitchfork.png',
+                            'pepe-police.png', 'pepe-sleep.png', 'pepe-ukraine.png', 'pepe-wizard.png', 'pepe-yep.png', 'pepe-yikes.png',
+                            'catblip.webp', 'catblush.webp', 'catclap.webp', 'catcool.webp', 'catcry.webp', 'catcry2.webp', 'catcry3.webp', 'catcry4.webp', 'catcry5.webp',
                             'catdance.webp', 'catjam.webp', 'catjam2.webp', 'catno.webp', 'catpolice.webp', 'catrave.webp', 'catsadge.png', 'catshake.webp',
                             'catstare.webp', 'catthumbsup.webp', 'cattocry.webp', 'cat_cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
                             'polite.webp', 'politecri.png', 'red_angry.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp'];
