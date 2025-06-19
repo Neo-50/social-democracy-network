@@ -689,6 +689,11 @@ p {
         box-sizing: border-box;
     }
 
+    .comment-toolbar {
+        min-width: 320px;
+        white-space: nowrap;
+    }
+
     .news-left,
     .news-right {
         width: 100%;
@@ -730,8 +735,8 @@ p {
 
     .custom-emoji-drawer {
         position: absolute;
-        max-height: 220px;
-        max-width: 100px;
+        max-height: 360px;
+        min-width: 300px;
         z-index: 1000;
         top: 55px;
         left: 60px;

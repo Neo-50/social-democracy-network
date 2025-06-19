@@ -193,55 +193,68 @@ def veganism():
 def about():
     return render_template('about.html')
 
-@app.route('/profile', methods=['GET', 'POST'])
+@app.route('/profile')
 @login_required
 def profile():
-    if not current_user.is_authenticated:
-        return redirect(url_for('login'))
+    return render_template('profile.html', user = current_user)
 
-    user = current_user
+@app.route('/upload_avatar', methods=['POST'])
+@login_required
+def upload_avatar():
     file = request.files.get('avatar')
-    
-    if request.method == 'POST':
-        if file and file.filename:
-            file.seek(0, os.SEEK_END)
-            file_size = file.tell()
-            file.seek(0)
+    if file and allowed_file(file.filename):
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = f"{current_user.username}.{ext}"
+        path = get_media_path('avatars', filename)
+        file.save(path)
 
-            if file_size > MAX_FILE_SIZE:
-                flash("Avatar image is too large (max 2MB).", "danger")
-                return redirect(request.url)
-
-            if allowed_file(file.filename):
-                ext = file.filename.rsplit('.', 1)[1].lower()
-                filename = f"{user.username}.{ext}"
-                path = get_media_path('avatars', filename)
-                file.save(path)
-                user.avatar_filename = filename
-            else:
-                flash("Invalid file type. Please upload a PNG, JPG, JPEG, or GIF.")
-                return redirect(request.url)
-
-        user.bio = request.form.get('bio', '')
+        current_user.avatar_filename = filename
         db.session.commit()
-        flash("Profile updated.", "success")
+        flash("Avatar updated", "success")
+    return redirect(url_for('profile'))
+
+@app.route('/update_bio', methods=['POST'])
+@login_required
+def update_bio():
+    current_user.bio = request.form.get('bio', '')
+    db.session.commit()
+    flash("Profile updated.", "success")
+    return redirect(url_for('profile'))
+
+@app.route('/profile_change_password', methods=['POST'])
+@login_required
+def profile_change_password():
+    new = request.form.get('new_password')
+    confirm = request.form.get('confirm_password')
+
+    if new != confirm:
+        flash("Passwords do not match.", "danger")
         return redirect(url_for('profile'))
 
-    new_password = request.form.get('new_password', '')
-    confirm_password = request.form.get('confirm_password', '')
+    if len(new) < 8:
+        flash("Password must be at least 8 characters long.", "danger")
+        return redirect(url_for('profile'))
 
-    if new_password:
-        if new_password != confirm_password:
-            flash("Passwords do not match.", "danger")
-            return redirect(request.url)
-        if len(new_password) < 8:
-            flash("Password must be at least 8 characters long.", "danger")
-            return redirect(request.url)
+    current_user.set_password(new)
+    db.session.commit()
+    flash("Password changed", "success")
+    return redirect(url_for('profile'))
 
-        user.set_password(new_password)  # Assumes user model has a set_password method
-        flash("Password changed successfully.", "success")
+@app.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    user_id_from_form = request.form.get('user_id')
+    if str(current_user.get_id()) != user_id_from_form:
+        flash("Invalid request.", "error")
+        return redirect(url_for('profile', username=current_user.username))
 
-    return render_template('profile.html', user=user)
+    user = current_user._get_current_object()
+    db.session.delete(user)
+    db.session.commit()
+    logout_user()
+    session.clear()
+    flash("Your account has been deleted.", "success")
+    return redirect(url_for('home'))
 
 def get_media_path(*parts):
     return os.path.join(app.root_path, 'mnt', 'storage', *parts)
@@ -534,26 +547,6 @@ def logout():
     session.clear()
     flash('Logged out.')
     return redirect(url_for('news'))
-
-@app.route('/delete_account', methods=['POST'])
-@login_required
-def delete_account():
-    if current_user.is_anonymous:
-        flash("You're not logged in.", "error")
-        return redirect(url_for('login'))
-
-    user_id_from_form = request.form.get('user_id')
-    if str(current_user.get_id()) != user_id_from_form:
-        flash("Invalid request.", "error")
-        return redirect(url_for('profile', username=current_user.username))
-
-    user = current_user._get_current_object()
-    db.session.delete(user)
-    db.session.commit()
-    logout_user()
-    session.clear()
-    flash("Your account has been deleted.", "success")
-    return redirect(url_for('home'))
 
 @app.route('/admin_delete_user/<int:user_id>', methods=['POST'])
 @login_required

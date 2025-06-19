@@ -51,11 +51,11 @@ document.addEventListener("DOMContentLoaded", function () {
     cropBtn.addEventListener("click", function () {
         if (cropper) {
             cropper.getCroppedCanvas({ width: 256, height: 256 }).toBlob(blob => {
-                const form = document.querySelector("form");
+                const form = document.querySelector("#avatar-form");
                 const formData = new FormData(form);
                 formData.set("avatar", blob, "cropped_avatar.png");
 
-                fetch("/profile", {
+                fetch("/upload_avatar", {
                     method: "POST",
                     body: formData
                 })
