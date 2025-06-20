@@ -26,7 +26,7 @@
                     <td>{{ 'Yes' if user.email_verified else 'No' }}</td>
                     <td>
                         <form method="POST" action="{{ url_for('reset_password_admin', user_id=user.id) }}">
-                            <input type="password" name="new_password" placeholder="New password"  autocomplete="new-password" required>
+                            <input type="password" name="new_password" class="change-password" placeholder="New password"  autocomplete="new-password" required>
                         <button type="submit">Reset</button>
                     </form>
                     </td>
