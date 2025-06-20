@@ -169,7 +169,7 @@
         <div class="header-right">
             <div class="user-nav">
                 {% if current_user.is_authenticated %}
-                <span class="username">{{ current_user_obj.username }}</span>
+                <span class="username">{{ current_user_obj.display_name or current_user_obj.username }}</span>
                 <div class="avatar-dropdown">
                     {% set avatar_file = current_user_obj.avatar_filename if current_user_obj.avatar_filename else 'default_avatar.png' %}
                     <img src="{{ url_for('media', filename='avatars/' ~ avatar_file) }}" class="avatar-inline" alt="User Avatar">

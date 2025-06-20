@@ -213,6 +213,21 @@ def upload_avatar():
         flash("Avatar updated", "success")
     return redirect(url_for('profile'))
 
+@app.route('/update_display_name', methods=['POST'])
+@login_required
+def update_display_name():
+    new_name = request.form.get('display_name', '').strip()
+    
+    try:
+        current_user.display_name = new_name
+        db.session.commit()
+        flash('Display name updated successfully.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Failed to update display name: {e}', 'danger')
+
+    return redirect(url_for('profile'))
+
 @app.route('/update_bio', methods=['POST'])
 @login_required
 def update_bio():
