@@ -135,10 +135,6 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #444;
-}
-
 .flash-message {
   padding: 10px 20px;
   margin-bottom: 10px;
