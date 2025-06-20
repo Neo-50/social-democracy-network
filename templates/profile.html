@@ -3,17 +3,25 @@
 {% block content %}
 <main class="profile-page">
     <div class="profile-wrapper">
-        <div class="profile-container">
+        <div class="profile-container-center">
             {% set avatar_file = current_user_obj.avatar_filename if current_user_obj.avatar_filename else 'default_avatar.png' %}
             <img src="{{ url_for('media', filename='avatars/' ~ avatar_file) }}"
                 class="profile-avatar" alt="User Avatar">
-            <h2 class="profile-username">{{ user.username }}</h2>
-            <p>About Me: {{ user.bio or 'No bio yet.' }}</p>
+            {% if user.display_name %}
+                <h2>{{ user.display_name }}</h2>
+            {% endif %}
+            <h3>{{ user.username }}</h3>
+            <p><strong>About Me:</strong> {{ user.bio or 'No bio yet.' }}</p>
         </div>
-        <div class="profile-container">
+        <div class="profile-container-left">
             <h2>Upload Avatar (max 2MB):</h2>
             <form method="POST" action="{{ url_for('upload_avatar') }}" enctype="multipart/form-data" id="avatar-form">
                 <input type="file" name="avatar" accept="image/*">
+            </form>
+            <h2>Display Name:</h2>
+            <form action="{{ url_for('update_display_name') }}" method="POST">
+                    <input type="text" name="display_name" id="display_name" value="{{ current_user.display_name or '' }}">
+                <button type="submit">Save</button>
             </form>
             <h2>About Me</h2>
             <form method="POST" action="{{ url_for('update_bio') }}" id="update-bio"> 
@@ -21,7 +29,7 @@
                 <button type="submit">Save</button>
             </form>
         </div>
-        <div class="profile-container">
+        <div class="profile-container-left">
             <h2>Change Password:</h2>
             <form method="POST" class="change-password-form" action="{{ url_for('profile_change_password') }}" id="profile-change-password">
                 <label for="new_password">New Password:</label>

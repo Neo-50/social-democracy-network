@@ -8,6 +8,7 @@
                 {% if comment.user %}
                     <button class="avatar-wrapper"
                         data-username="{{ comment.user.username }}"
+                        data-display_name="{{ comment.user.display_name }}"
                         data-bio="{{ comment.user.bio or 'No bio available' }}"
                         data-avatar="{{ url_for('media', filename='avatars/' ~ (comment.user.avatar_filename or 'default_avatar.png')) }}"
                         onclick="showUserPopup(this)">
@@ -20,7 +21,7 @@
                 {% endif %}
                 <strong class="username">
                     {% if comment.user %}
-                        {{ comment.user.username }}
+                        {{ comment.user.display_name or comment.user.username }}
                         {% if comment.user.is_admin %}
                             <span class="admin-badge" title="Admin">🛡️</span>
                         {% endif %}

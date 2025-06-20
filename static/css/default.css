@@ -24,6 +24,12 @@ h2 {
     color: #b4e197;
 }
 
+h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #8feff2;
+}
+
 a {
     color: #8feff2;
     transition: color 0.3s ease;
@@ -94,11 +100,13 @@ a:focus {
    Utilities
    ======================= */
 
-input.password {
+input.password,
+#display_name {
   background-color: #444;
   color: #bbb;
   padding: 12px 20px;
   margin-left: 5px;
+  margin-top: 10px;
   margin-bottom: 20px;
   width: 300px;
   border: none;
