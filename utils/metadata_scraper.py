@@ -26,16 +26,25 @@ def extract_metadata(url, debug=False):
             return yt
 
     if domain in MANUAL_REVIEW_DOMAINS:
+        synapse_scrape = try_synapse_preview_scrape(url)
+        if synapse_scrape:
+            return synapse_scrape
         return blank_metadata(domain, url)
+
+    # Normal flow for all other domains
     rscrape = try_requests_scrape(url, domain)
     if rscrape:
         return rscrape
-    else:
-        pwscrape = try_playwright_scrape(url, domain, debug)
-        if pwscrape:
-            return pwscrape
-        else:
-            return blank_metadata(domain, url)
+
+    pwscrape = try_playwright_scrape(url, domain, debug)
+    if pwscrape:
+        return pwscrape
+
+    synapse_scrape = try_synapse_preview_scrape(url)
+    if synapse_scrape:
+        return synapse_scrape
+
+    return blank_metadata(domain, url)      
 
 def try_youtube_scrape(url):
     video_id = extract_youtube_video_id(url)
@@ -153,6 +162,32 @@ def try_playwright_scrape(url, domain, debug=False):
     except Exception as e:
         log.error(f"[PLAYWRIGHT] scrape failed for {url}: {e}")
         return blank
+
+def try_synapse_preview_scrape(url):
+    import time
+    import urllib.parse
+
+    synapse_url = "https://matrix.social-democracy.net/_matrix/media/r0/preview_url"
+    ts = int(time.time() * 1000)
+    encoded_url = urllib.parse.quote(url, safe="")
+
+    try:
+        full_url = f"{synapse_url}?url={encoded_url}&ts={ts}"
+        resp = requests.get(full_url, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+
+        return {
+            "title": data.get("og:title") or url,
+            "description": data.get("og:description"),
+            "image_url": data.get("og:image"),
+            "source": urlparse(url).netloc.replace("www.", ""),
+            "authors": None,
+            "published": None,
+        }
+    except Exception as e:
+        log.warning(f"[SYNAPSE PREVIEW] Failed to fetch preview for {url}: {e}")
+        return None
 
 
 def blank_metadata(domain, url):
