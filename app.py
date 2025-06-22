@@ -8,6 +8,7 @@ from models import User, NewsArticle, NewsComment, Message
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import re
+import subprocess
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
@@ -715,33 +716,5 @@ def emojify(content):
 
     return Markup(re.sub(r":([a-zA-Z0-9_]+):", replace, content))
 
-'''
-@app.route('/forum')
-def forum():
-    posts = Post.query.order_by(Post.id.desc()).all()
-    return render_template('forum.html', posts=posts)
-
-@app.route('/new_post', methods=['GET', 'POST'])
-def new_post():
-    if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-        
-        new_post = Post(title=title, content=content)
-        db.session.add(new_post)
-        db.session.commit()
-        
-        return redirect(url_for('forum'))
-
-    return render_template('new_post.html')
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
-
- class Post(db.Model):
-     id = db.Column(db.Integer, primary_key=True)
-     title = db.Column(db.String(200), nullable=False)
-     content = db.Column(db.Text, nullable=False)
-     def __repr__(self):
-         return f'<Post {self.title}>'
-'''
+# if __name__ == "__main__":
+#     app.run(debug=False, use_reloader=False)

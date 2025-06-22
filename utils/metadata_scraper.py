@@ -24,12 +24,15 @@ def extract_metadata(url, debug=False):
         yt = try_youtube_scrape(url)
         if yt:
             return yt
-
+    
     if domain in MANUAL_REVIEW_DOMAINS:
-        synapse_scrape = try_synapse_preview_scrape(url)
-        if synapse_scrape:
-            return synapse_scrape
-        return blank_metadata(domain, url)
+        # Defer this to subprocess scraper
+        return {
+            "title": None,
+            "description": None,
+            "image": None,
+            "needs_scrape": True  # Signal that we need to queue a subprocess
+        }
 
     # Normal flow for all other domains
     rscrape = try_requests_scrape(url, domain)
@@ -39,10 +42,6 @@ def extract_metadata(url, debug=False):
     pwscrape = try_playwright_scrape(url, domain, debug)
     if pwscrape:
         return pwscrape
-
-    synapse_scrape = try_synapse_preview_scrape(url)
-    if synapse_scrape:
-        return synapse_scrape
 
     return blank_metadata(domain, url)      
 
@@ -121,17 +120,24 @@ def try_requests_scrape(url, domain):
     return metadata
 
 def try_playwright_scrape(url, domain, debug=False):
-    blank = blank_metadata(domain)
-
+    blank = blank_metadata(domain, url)
+    
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = p.chromium.launch(headless=True, args=[
+            "--disable-gpu",
+            "--no-sandbox",
+            "--disable-dev-shm-usage",
+            "--single-process",
+            "--no-zygote",
+            "--disable-software-rasterizer",
+            ])
             context = browser.new_context()
             page = context.new_page()
             stealth_sync(page)
 
             try:
-                page.goto(url, timeout=30000, wait_until="domcontentloaded")
+                page.goto(url, timeout=10000, wait_until="domcontentloaded")
             except Exception as e:
                 log.error(f"[PLAYWRIGHT] page.goto() failed: {e}")
                 return blank
@@ -162,33 +168,6 @@ def try_playwright_scrape(url, domain, debug=False):
     except Exception as e:
         log.error(f"[PLAYWRIGHT] scrape failed for {url}: {e}")
         return blank
-
-def try_synapse_preview_scrape(url):
-    import time
-    import urllib.parse
-
-    synapse_url = "https://matrix.social-democracy.net/_matrix/media/r0/preview_url"
-    ts = int(time.time() * 1000)
-    encoded_url = urllib.parse.quote(url, safe="")
-
-    try:
-        full_url = f"{synapse_url}?url={encoded_url}&ts={ts}"
-        resp = requests.get(full_url, timeout=10)
-        resp.raise_for_status()
-        data = resp.json()
-
-        return {
-            "title": data.get("og:title") or url,
-            "description": data.get("og:description"),
-            "image_url": data.get("og:image"),
-            "source": urlparse(url).netloc.replace("www.", ""),
-            "authors": None,
-            "published": None,
-        }
-    except Exception as e:
-        log.warning(f"[SYNAPSE PREVIEW] Failed to fetch preview for {url}: {e}")
-        return None
-
 
 def blank_metadata(domain, url):
     return {
