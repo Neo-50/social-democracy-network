@@ -14,6 +14,7 @@ class NewsArticle(db.Model):
     source = db.Column(db.String(100), nullable=True)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     category = db.Column(db.String(50), nullable=True)
+    needs_scrape = db.Column(db.Boolean, default=False)
 
     def formatted_description(self):
         if self.description:

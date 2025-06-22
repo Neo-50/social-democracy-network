@@ -641,19 +641,33 @@ p {
     color: white;
 }
 
-.spinner {
-width: 16px;
-height: 16px;
-border: 2px solid black;
-border-left-color: #555;
-border-radius: 50%;
-animation: spin 1s linear infinite;
+.loading-article {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: gray;
+  font-size: 1rem;
+  padding: 1rem;
+}
+
+.spinner::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border: 2px solid #888;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
 @keyframes spin {
-to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
 
 /* Mobile layout */
 
