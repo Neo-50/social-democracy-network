@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import time
 import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from db_init import db
@@ -20,7 +21,7 @@ from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
 from werkzeug.exceptions import RequestEntityTooLarge
-from utils.email import confirm_verification_token, send_verification_email
+from utils.email_utils import confirm_verification_token, send_verification_email
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -129,13 +130,21 @@ def news():
         db.session.commit()
         flash("Article submitted successfully!", "success")
 
-        return redirect(url_for('news'))  # 🚨 Prevent falling through to render
+        # Background metadata scrape
+        if metadata.get("needs_scrape"):
+            subprocess.Popen([
+                "/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
+                str(article.id), url
+            ])
+
+        return redirect(url_for('news', article=article.id))
 
     # GET logic
     selected_category = request.args.get('category')
     highlight_id = request.args.get("article", type=int)
     sort_order = request.args.get('sort', 'desc')
     order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
+    
 
     if selected_category:
         articles = NewsArticle.query \
@@ -158,6 +167,8 @@ def news():
                 articles.insert(0, highlighted)
     except (ValueError, TypeError):
         highlighted = None
+    
+    incomplete = article.title == "Title unavailable" if article else False
 
     count = len(articles)
 
@@ -175,8 +186,9 @@ def news():
         highlight_id=highlight_id,
         article_to_highlight=highlighted,
         selected_category=selected_category,
-        count=count
-    )
+        count=count,
+        incomplete = incomplete
+    ),
 
 @app.route('/activism')
 def activism():
@@ -272,6 +284,16 @@ def delete_account():
     flash("Your account has been deleted.", "success")
     return redirect(url_for('home'))
 
+@app.route('/check_metadata_status/<int:article_id>')
+def check_metadata_status(article_id):
+    article = NewsArticle.query.get(article_id)
+    if not article:
+        return {"status": "not_found"}, 404
+
+    if article.title and article.title != "Title unavailable":
+        return {"status": "ready"}
+    return {"status": "pending"}
+
 def get_media_path(*parts):
     return os.path.join(app.root_path, 'mnt', 'storage', *parts)
 
@@ -321,7 +343,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        from utils.email import send_verification_email
+        from utils.email_utils import send_verification_email
         send_verification_email(user, mail)
 
 

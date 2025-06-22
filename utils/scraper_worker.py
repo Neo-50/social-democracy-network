@@ -1,18 +1,29 @@
 import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from app import app
 from app import db
-from models import Article  # adjust this import to match your model
+from models import NewsArticle
 from metadata_scraper import try_playwright_scrape
 
 def update_article(article_id, url):
-    domain = url.split('/')[2]
-    data = try_playwright_scrape(url, domain)
-    article = Article.query.get(article_id)
-    if article:
-        article.title = data['title']
-        article.description = data['description']
-        article.image_url = data['image']
-        db.session.commit()
+    try:
+        domain = url.split('/')[2]
+        data = try_playwright_scrape(url, domain)
+        article = NewsArticle.query.get(article_id)
+        if article:
+            article.title = data['title']  or 'metadata loading...'
+            article.description = data['description']  or 'metadata loading...'
+            article.image_url = data['image_url'] or None
+            article.source = data['source']  or 'metadata loading...'
+            article.authors = data['authors']  or 'metadata loading...'
+            article.published = data['published'] or None
+            print(f"[SCRAPER WORKER] Saving article {article_id} with new metadata")
+            db.session.commit()
+            print(f"[SCRAPER WORKER] Article {article_id} committed successfully")
+
+    except Exception as e:
+        print(f"[SCRAPER WORKER] Failed to update article {article_id}: {e}")
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
@@ -21,4 +32,5 @@ if __name__ == '__main__':
 
     article_id = int(sys.argv[1])
     url = sys.argv[2]
-    update_article(article_id, url)
+    with app.app_context():
+        update_article(article_id, url)

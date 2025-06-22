@@ -30,7 +30,10 @@ def extract_metadata(url, debug=False):
         return {
             "title": None,
             "description": None,
-            "image": None,
+            "image_url": None,
+            "source": None,
+            "authors": None,
+            "published": None,
             "needs_scrape": True  # Signal that we need to queue a subprocess
         }
 
@@ -161,8 +164,12 @@ def try_playwright_scrape(url, domain, debug=False):
                 "published": safe_locator("meta[property='article:published_time']"),
                 "source": domain,
             }
+            print(metadata)
 
             browser.close()
+            if all(value is None for key, value in metadata.items() if key != "source"):
+                log.warning(f"[PLAYWRIGHT] No useful metadata found on {url}")
+
             return metadata
 
     except Exception as e:
