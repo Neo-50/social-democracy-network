@@ -641,6 +641,20 @@ p {
     color: white;
 }
 
+.spinner {
+width: 16px;
+height: 16px;
+border: 2px solid black;
+border-left-color: #555;
+border-radius: 50%;
+animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+
+
 /* Mobile layout */
 
 @media (width <=800px) {
