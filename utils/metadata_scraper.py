@@ -28,13 +28,13 @@ def extract_metadata(url, debug=False):
     if domain in MANUAL_REVIEW_DOMAINS:
         # Defer this to subprocess scraper
         return {
-            "title": None,
-            "description": None,
+            "title": url,
+            "description": 'Blocked by ' + domain,
             "image_url": None,
-            "source": None,
+            "source": domain,
             "authors": None,
             "published": None,
-            "needs_scrape": True  # Signal that we need to queue a subprocess
+            "needs_scrape": True
         }
 
     # Normal flow for all other domains
@@ -140,7 +140,7 @@ def try_playwright_scrape(url, domain, debug=False):
             stealth_sync(page)
 
             try:
-                page.goto(url, timeout=10000, wait_until="domcontentloaded")
+                page.goto(url, timeout=50000, wait_until="domcontentloaded")
             except Exception as e:
                 log.error(f"[PLAYWRIGHT] page.goto() failed: {e}")
                 return blank
@@ -162,6 +162,7 @@ def try_playwright_scrape(url, domain, debug=False):
                 "image_url": safe_locator("meta[property='og:image']"),
                 "authors": safe_locator("meta[name='author']"),
                 "published": safe_locator("meta[property='article:published_time']"),
+                "needs_scrape": False,
                 "source": domain,
             }
             print(metadata)

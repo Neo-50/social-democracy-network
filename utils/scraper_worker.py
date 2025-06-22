@@ -12,12 +12,13 @@ def update_article(article_id, url):
         data = try_playwright_scrape(url, domain)
         article = NewsArticle.query.get(article_id)
         if article:
-            article.title = data['title']  or 'metadata loading...'
-            article.description = data['description']  or 'metadata loading...'
+            article.title = data['title'] or f"[URL] {url}"
+            article.description = data['description']  or "Blocked by " + domain
             article.image_url = data['image_url'] or None
-            article.source = data['source']  or 'metadata loading...'
-            article.authors = data['authors']  or 'metadata loading...'
+            article.source = data['source']  or domain
+            article.authors = data['authors']  or None
             article.published = data['published'] or None
+            article.needs_scrape = False
             print(f"[SCRAPER WORKER] Saving article {article_id} with new metadata")
             db.session.commit()
             print(f"[SCRAPER WORKER] Article {article_id} committed successfully")

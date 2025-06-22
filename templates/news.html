@@ -200,123 +200,124 @@
                 <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
             </select>
         </form>
-        {% if highlight_id and incomplete %}
-            <div id="metadata-loading" style="display: flex; align-items: center; gap: 10px; color: gray;">
-                <div class="spinner"></div> Fetching metadata...
-            </div>
-        {% endif %}
         {% for article in articles %}
-            <div class="news-article">
-                <div class="article-info-wrapper">
-                    <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
-                    {% if article.description %}
-                    <p>
-                        <span class="article-info description"></span>
-                        <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
-                    </p>
-                    {% endif %}
-                    <p><span class="article-info source"></span> {{ article.source }}</p>
-                    {% if article.published %}
-                        <p><span class="article-info published"></span>
-                            {{ article.published | datetimeformat("%B %d, %Y") }}
+            {% if highlight_id == article.id and article.needs_scrape %}
+                <div class="news-article loading-article">
+                <div class="spinner"></div> Fetching metadata...
+                </div>
+            {% else %}
+                <div class="news-article">
+                    <div class="article-info-wrapper">
+                        <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                        {% if article.description %}
+                        <p>
+                            <span class="article-info description"></span>
+                            <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
                         </p>
-                    {% endif %}
-                    {% if article.authors %}
-                        <p><span class="article-info authors"></span>{{ article.authors }}</p>
-                    {% endif %}
-                    <p><span class="article-info category"></span> {{ article.category or 'None'}}</p>
-                    <div id="article-{{ article.id }}" class="article-card {% if article.id == highlight_id %}highlight{% endif %}">
-                    <button type="button" class="sharelink" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
-                </div>
+                        {% endif %}
+                        <p><span class="article-info source"></span> {{ article.source }}</p>
+                        {% if article.published %}
+                            <p><span class="article-info published"></span>
+                                {{ article.published | datetimeformat("%B %d, %Y") }}
+                            </p>
+                        {% endif %}
+                        {% if article.authors %}
+                            <p><span class="article-info authors"></span>{{ article.authors }}</p>
+                        {% endif %}
+                        <p><span class="article-info category"></span> {{ article.category or 'None'}}</p>
+                        <div id="article-{{ article.id }}" class="article-card {% if article.id == highlight_id %}highlight{% endif %}">
+                        <button type="button" class="sharelink" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
+                    </div>
 
-                {% if article.embed_html %}
-                <div class="news-embed-wrapper">
-                    <div class="youtube-placeholder" data-src="{{ article.embed_html | safe }}"></div>
-                </div>
-                {% else %}
-                <img src="{{ article.image_url }}" onerror="this.style.display='none'" class="news-image">
-                {% endif %}
-
-                <div class="comments-wrapper">
-                    <h2>Discussion</h2>
-                    {% if session.get('user_id') %}
-                        <div class="comments-thread">
-                            {% for comment in article.comments if comment.parent_id is none %}
-                                {{ render_comment(comment, article) }}
-                            {% endfor %}
-                        </div>
+                    {% if article.embed_html %}
+                    <div class="news-embed-wrapper">
+                        <div class="youtube-placeholder" data-src="{{ article.embed_html | safe }}"></div>
+                    </div>
+                    {% else %}
+                    <img src="{{ article.image_url }}" onerror="this.style.display='none'" class="news-image">
                     {% endif %}
-                </div>
-                <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                    <div class="post-comment-container">
+
+                    <div class="comments-wrapper">
+                        <h2>Discussion</h2>
                         {% if session.get('user_id') %}
-                            <div class="comment-box" style="position: relative;">
-                                <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
-                                <input type="hidden" name="comment-content" class="hidden-content">
-                                <!-- Unicode emoji picker -->
-                                <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">
-                                    <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
-                                </button>
-                                <div class="emoji-wrapper" style="display: none;">
-                                    <emoji-picker></emoji-picker>
-                                </div>
-
-                                <!-- Custom emoji picker -->
-                                <button type="button" class="emoji-button" onclick="toggleCustomEmojiDrawer(event)">😺</button>
-                                <div class="custom-wrapper" style="display: none;">
-                                <!-- JS will inject emoji drawer below -->
-                                </div>
-
-                            <div class="submit-cancel">
-                                <button type="submit" class="newsfeed-button">Submit</button>
-                                <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                            <div class="comments-thread">
+                                {% for comment in article.comments if comment.parent_id is none %}
+                                    {{ render_comment(comment, article) }}
+                                {% endfor %}
                             </div>
-                                <button type="submit" class="newsfeed-button">Post Comment</button>
-                            </div>
-                        {% else %}
-                            <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
                         {% endif %}
                     </div>
-                </form>
-                </div>
-                {% if is_admin() %}
-                    <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" class="article-edit-form">
-                        Title: <input name="title" value="{{ article.title or '' }}">
-                        Description: <textarea name="description">{{ article.description or '' }}</textarea>
-                        Authors: <input name="authors" value="{{ article.authors or '' }}">
-                        Source: <input name="source" value="{{ article.source or '' }}">
-                        Published: <input type="date" name="published" value="{{ article.published or '' }}">
-                        Image URL: <input name="image_url" value="{{ article.image_url or '' }}">
-                        <button type="submit" class="newsfeed-button">Update</button>
+                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                        <div class="post-comment-container">
+                            {% if session.get('user_id') %}
+                                <div class="comment-box" style="position: relative;">
+                                    <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
+                                    <input type="hidden" name="comment-content" class="hidden-content">
+                                    <!-- Unicode emoji picker -->
+                                    <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">
+                                        <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                                    </button>
+                                    <div class="emoji-wrapper" style="display: none;">
+                                        <emoji-picker></emoji-picker>
+                                    </div>
+
+                                    <!-- Custom emoji picker -->
+                                    <button type="button" class="emoji-button" onclick="toggleCustomEmojiDrawer(event)">😺</button>
+                                    <div class="custom-wrapper" style="display: none;">
+                                    <!-- JS will inject emoji drawer below -->
+                                    </div>
+
+                                <div class="submit-cancel">
+                                    <button type="submit" class="newsfeed-button">Submit</button>
+                                    <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                                </div>
+                                    <button type="submit" class="newsfeed-button">Post Comment</button>
+                                </div>
+                            {% else %}
+                                <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
+                            {% endif %}
+                        </div>
                     </form>
-                {% endif %}
-                <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
-                    <div class="new-category-container">
-                        {% if is_admin() or current_user_obj.id == article.user_id %}
-                            <select name="new-category" id="new-category">
-                                <option value="">Uncategorized</option>
-                                <option value="Protests & Activism">Protests & Activism</option>
-                                <option value="Climate & Environment">Climate & Environment</option>
-                                <option value="Science & Technology">Science & Technology</option>
-                                <option value="Economy & Finance">Economy & Finance</option>
-                                <option value="Disasters">Disasters</option>
-                                <option value="Political Corruption">US Political Corruption</option>
-                                <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
-                                <option value="Middle East">Middle East</option>
-                                <option value="Ukraine War">Ukraine War</option>
-                                <option value="US/International Conflict">US/International Conflict</option>
-                            </select>
+                    </div>
+                    {% if is_admin() %}
+                        <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" class="article-edit-form">
+                            Title: <input name="title" value="{{ article.title or '' }}">
+                            Description: <textarea name="description">{{ article.description or '' }}</textarea>
+                            Authors: <input name="authors" value="{{ article.authors or '' }}">
+                            Source: <input name="source" value="{{ article.source or '' }}">
+                            Published: <input type="date" name="published" value="{{ article.published or '' }}">
+                            Image URL: <input name="image_url" value="{{ article.image_url or '' }}">
                             <button type="submit" class="newsfeed-button">Update</button>
-                        {% endif %}
-                    </div>
-                </form>
-                {% if is_admin() or current_user_obj.id == article.user_id %}
-                    <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
-                        <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
-                            Article</button>
+                        </form>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
+                        <div class="new-category-container">
+                            {% if is_admin() or current_user_obj.id == article.user_id %}
+                                <select name="new-category" id="new-category">
+                                    <option value="">Uncategorized</option>
+                                    <option value="Protests & Activism">Protests & Activism</option>
+                                    <option value="Climate & Environment">Climate & Environment</option>
+                                    <option value="Science & Technology">Science & Technology</option>
+                                    <option value="Economy & Finance">Economy & Finance</option>
+                                    <option value="Disasters">Disasters</option>
+                                    <option value="Political Corruption">US Political Corruption</option>
+                                    <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
+                                    <option value="Middle East">Middle East</option>
+                                    <option value="Ukraine War">Ukraine War</option>
+                                    <option value="US/International Conflict">US/International Conflict</option>
+                                </select>
+                                <button type="submit" class="newsfeed-button">Update</button>
+                            {% endif %}
+                        </div>
                     </form>
-                {% endif %}
-            </div>
+                    {% if is_admin() or current_user_obj.id == article.user_id %}
+                        <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                            <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
+                                Article</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endfor %}
         <div id="emoji-wrapper" style="display: none;">
             <emoji-picker id="unicode-emoji-picker"></emoji-picker>
@@ -649,12 +650,15 @@
                         if (data.status === "ready") {
                             clearInterval(interval);
                             const url = new URL(window.location);
-                            url.searchParams.delete('article');  // Remove ?article= from URL
+                            url.searchParams.delete('article');
                             window.history.replaceState({}, '', url);
                             location.reload();
                         } else if (retries <= 0) {
                             clearInterval(interval);
-                            console.warn("Metadata fetch timeout");
+                            const url = new URL(window.location);
+                            url.searchParams.delete('article');
+                            window.history.replaceState({}, '', url);
+                            location.reload();
                         }
                     });
                 }, 3000); // poll every 3s

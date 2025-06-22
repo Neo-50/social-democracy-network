@@ -115,6 +115,7 @@ def news():
         category = request.form.get('category', '').strip()
         metadata = extract_metadata(url)
         published_str=metadata.get("published", "")
+        needs_scrape = metadata.get("needs_scrape", False)
         article = NewsArticle(
             url=url,
             category=category,
@@ -124,6 +125,7 @@ def news():
             authors=metadata["authors"],
             published = parser.parse(published_str).date() if published_str else None,
             source=metadata["source"],
+            needs_scrape=needs_scrape,
             user_id=session.get("user_id")
         )
         db.session.add(article)
@@ -131,7 +133,7 @@ def news():
         flash("Article submitted successfully!", "success")
 
         # Background metadata scrape
-        if metadata.get("needs_scrape"):
+        if needs_scrape:
             subprocess.Popen([
                 "/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
                 str(article.id), url
@@ -168,7 +170,11 @@ def news():
     except (ValueError, TypeError):
         highlighted = None
     
-    incomplete = article.title == "Title unavailable" if article else False
+    incomplete = False
+    for a in articles:
+        if a.id == highlight_id and a.needs_scrape:
+            incomplete = True
+            break
 
     count = len(articles)
 
@@ -187,8 +193,8 @@ def news():
         article_to_highlight=highlighted,
         selected_category=selected_category,
         count=count,
-        incomplete = incomplete
-    ),
+        incomplete=incomplete
+    )
 
 @app.route('/activism')
 def activism():
@@ -290,8 +296,10 @@ def check_metadata_status(article_id):
     if not article:
         return {"status": "not_found"}, 404
 
-    if article.title and article.title != "Title unavailable":
+    complete = article and not article.needs_scrape
+    if complete:
         return {"status": "ready"}
+
     return {"status": "pending"}
 
 def get_media_path(*parts):
