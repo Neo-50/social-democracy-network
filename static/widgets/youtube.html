@@ -40,8 +40,8 @@
   </div>
 
   <script type="module">
-    import { createWidgetApi } from "https://unpkg.com/matrix-widget-api@latest";
-
+    import * as MatrixWidgetApi from "https://unpkg.com/matrix-widget-api@1.0.0/dist/bundle.mjs";
+    const widgetApi = MatrixWidgetApi.createWidgetApi();
 
     const input = document.getElementById("youtubeUrl");
     const player = document.getElementById("player");
