@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Auto Embed Widget</title>
+  <style>
+    body {
+      background-color: #000;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    iframe {
+      width: 90%;
+      max-width: 960px;
+      height: 540px;
+      border: none;
+    }
+    #input-section {
+      margin-top: 10px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 80%;
+      max-width: 600px;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="player" src="" allowfullscreen></iframe>
+  <div id="input-section">
+    <input type="text" id="youtubeUrl" placeholder="Paste a YouTube link here and press Enter..." />
+  </div>
+
+  <script>
+    const input = document.getElementById("youtubeUrl");
+    const player = document.getElementById("player");
+
+    function extractYouTubeID(url) {
+      const match = url.match(/[?&]v=([^&#]+)/);
+      return match ? match[1] : null;
+    }
+
+    function setVideo(id) {
+      player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+    }
+
+    // Support URL query param ?v=abc123
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialID = urlParams.get("v");
+    if (initialID) {
+      setVideo(initialID);
+      input.value = `https://youtube.com/watch?v=${initialID}`;
+    }
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const id = extractYouTubeID(input.value);
+        if (id) setVideo(id);
+      }
+    });
+  </script>
+</body>
+</html>
