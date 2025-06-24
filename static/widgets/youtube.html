@@ -1,28 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>YouTube Auto Embed Widget</title>
+  <meta charset="utf-8" />
+  <title>YouTube Widget</title>
   <style>
-    body {
-      background-color: #000;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: #fff;
-      font-family: sans-serif;
-    }
-    iframe {
-      width: 90%;
-      max-width: 960px;
-      height: 540px;
-      border: none;
-    }
     #input-section {
       margin-top: 10px;
     }
@@ -34,44 +15,63 @@
   </style>
 </head>
 <body>
-  <iframe id="player" src="" allowfullscreen></iframe>
+  <iframe id="player" src="" allowfullscreen width="560" height="315"></iframe>
+
   <div id="input-section">
     <input type="text" id="youtubeUrl" placeholder="Paste a YouTube link here and press Enter..." />
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/matrix-widget-api@0.3.0/lib/umd/index.js"></script>
-<script>
-  const widgetApi = new window.MatrixWidgetApi();
-  widgetApi.start();
+  <!-- ✅ This is the correct working Matrix widget API script -->
+  <script src="https://scalar.vector.im/_matrix/static/client/matrix-widget-api.js"></script>
 
-  const input = document.getElementById("youtubeUrl");
-  const player = document.getElementById("player");
+  <script>
+    const input = document.getElementById("youtubeUrl");
+    const player = document.getElementById("player");
 
-  function extractYouTubeID(url) {
-    const match = url.match(/[?&]v=([^&]+)/);
-    return match ? match[1] : null;
-  }
-
-  function setVideo(id) {
-    if (id) {
-      const embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
-      player.src = embedUrl;
-      input.value = `https://youtube.com/watch?v=${id}`;
-      console.log("Set video:", id);
+    function extractYouTubeID(url) {
+      const match = url.match(/[?&]v=([^&]+)/);
+      return match ? match[1] : null;
     }
-  }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialID = urlParams.get("v");
-  if (initialID) setVideo(initialID);
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      const id = extractYouTubeID(input.value);
-      setVideo(id);
+    function setVideo(id) {
+      if (id) {
+        const embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+        player.src = embedUrl;
+        input.value = `https://youtube.com/watch?v=${id}`;
+        console.log("✅ Set video:", id);
+      } else {
+        console.warn("⚠️ Invalid YouTube ID");
+      }
     }
-  });
-</script>
 
+    // Load from query param if provided
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialID = urlParams.get("v");
+    if (initialID) setVideo(initialID);
+
+    // Handle manual input
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const id = extractYouTubeID(input.value);
+        setVideo(id);
+      }
+    });
+
+    // 🔌 Matrix widget event integration
+    window.addEventListener("message", (event) => {
+      const data = event.data;
+      if (!data || data.api !== "fromWidget") return;
+
+      const content = data?.data?.content;
+      const body = content?.body;
+      if (typeof body === "string" && body.includes("youtube.com/watch?v=")) {
+        const id = extractYouTubeID(body);
+        if (id) {
+          console.log("🎬 Auto-playing from message:", id);
+          setVideo(id);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
