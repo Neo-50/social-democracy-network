@@ -22,11 +22,15 @@
   </div>
 
   <!-- ✅ This is the correct working Matrix widget API script -->
-  <script src="https://scalar.vector.im/_matrix/static/client/matrix-widget-api.js"></script>
+  <script src="/media/widgets/matrix-widget-api.js"></script>
 
   <script>
     const input = document.getElementById("youtubeUrl");
     const player = document.getElementById("player");
+
+    const widgetApi = new window.MatrixWidgetApi();
+    widgetApi.start();
+    widgetApi.send('content_loaded');
 
     function extractYouTubeID(url) {
       const match = url.match(/[?&]v=([^&]+)/);
