@@ -39,7 +39,9 @@
     <input type="text" id="youtubeUrl" placeholder="Paste a YouTube link here and press Enter..." />
   </div>
 
-  <script>
+  <script type="module">
+    import { createWidgetApi } from "https://unpkg.com/matrix-widget-api@1.0.0/lib/index.js";
+
     const input = document.getElementById("youtubeUrl");
     const player = document.getElementById("player");
 
@@ -49,20 +51,34 @@
     }
 
     function setVideo(id) {
-      player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+      if (id) {
+        player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+        input.value = `https://youtube.com/watch?v=${id}`;
+      }
     }
 
-    // Support URL query param ?v=abc123
+    // Load ?v=abc123 from query string
     const urlParams = new URLSearchParams(window.location.search);
     const initialID = urlParams.get("v");
-    if (initialID) {
-      setVideo(initialID);
-      input.value = `https://youtube.com/watch?v=${initialID}`;
-    }
+    if (initialID) setVideo(initialID);
 
+    // Manual entry support
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const id = extractYouTubeID(input.value);
+        if (id) setVideo(id);
+      }
+    });
+
+    // Matrix widget API setup
+    const widgetApi = createWidgetApi();
+    widgetApi.requestCapabilities(["org.matrix.msc2876.receive_event:m.room.message"]);
+    await widgetApi.start();
+
+    widgetApi.observeRoomEvents("m.room.message", (ev) => {
+      const body = ev.content?.body;
+      if (body && body.includes("youtube.com/watch?v=")) {
+        const id = extractYouTubeID(body);
         if (id) setVideo(id);
       }
     });
