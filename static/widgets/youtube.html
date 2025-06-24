@@ -52,6 +52,7 @@
 
     function setVideo(id) {
       if (id) {
+        console.log("Embedding YouTube ID:", id);
         player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
         input.value = `https://youtube.com/watch?v=${id}`;
       }
@@ -66,22 +67,36 @@
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const id = extractYouTubeID(input.value);
+        console.log("Manual input detected, ID:", id);
         if (id) setVideo(id);
       }
     });
 
+    // Try to initialize Matrix widget API
     (async () => {
+      try {
         const widgetApi = createWidgetApi();
+        console.log("Requesting widget capabilities...");
         widgetApi.requestCapabilities(["org.matrix.msc2876.receive_event:m.room.message"]);
         await widgetApi.start();
+        console.log("Matrix widget API started.");
 
         widgetApi.observeRoomEvents("m.room.message", (ev) => {
-            const body = ev.content?.body;
-            if (body && body.includes("youtube.com/watch?v=")) {
-                const id = extractYouTubeID(body);
-                if (id) setVideo(id);
-            }
+          const body = ev.content?.body;
+          console.log("Received message:", body);
+          if (body && body.includes("youtube.com/watch?v=")) {
+            const id = extractYouTubeID(body);
+            if (id) setVideo(id);
+          }
         });
+      } catch (err) {
+        console.warn("Matrix widget API failed to initialize:", err);
+        const fallback = document.createElement("p");
+        fallback.textContent = "⚠️ Widget running in limited mode (no chat access).";
+        fallback.style.color = "#aaa";
+        fallback.style.marginTop = "10px";
+        document.body.appendChild(fallback);
+      }
     })();
   </script>
 </body>
