@@ -324,6 +324,10 @@ def media(filename):
     print("Serving from:", full_media_path, "Filename:", filename)
     return send_from_directory(full_media_path, filename)
 
+@app.route('/media/widgets/<path:filename>')
+def widget_static(filename):
+    return send_from_directory('static/widgets', filename)
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
