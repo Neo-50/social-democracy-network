@@ -39,19 +39,23 @@
     <input type="text" id="youtubeUrl" placeholder="Paste a YouTube link here and press Enter..." />
   </div>
 
-<script src="https://scalar.vector.im/_matrix/static/client/matrix-widget-api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/matrix-widget-api@0.3.0/lib/umd/index.js"></script>
 <script>
+  const widgetApi = new window.MatrixWidgetApi();
+  widgetApi.start();
+
   const input = document.getElementById("youtubeUrl");
   const player = document.getElementById("player");
 
   function extractYouTubeID(url) {
-    const match = url.match(/[?&]v=([^&#]+)/);
+    const match = url.match(/[?&]v=([^&]+)/);
     return match ? match[1] : null;
   }
 
   function setVideo(id) {
     if (id) {
-      player.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+      const embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+      player.src = embedUrl;
       input.value = `https://youtube.com/watch?v=${id}`;
       console.log("Set video:", id);
     }
@@ -64,31 +68,8 @@
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       const id = extractYouTubeID(input.value);
-      if (id) setVideo(id);
+      setVideo(id);
     }
-  });
-
-  const widgetApi = matrixWidgetApi.createWidgetApi();
-
-  widgetApi.requestCapabilities([
-    "org.matrix.msc2876.receive_event:m.room.message"
-  ]);
-
-  widgetApi.start().then(() => {
-    console.log("Widget API started");
-
-    widgetApi.observeRoomEvents("m.room.message", (ev) => {
-      const body = ev.content?.body;
-      if (body && body.includes("youtube.com/watch?v=")) {
-        const id = extractYouTubeID(body);
-        if (id) {
-          console.log("Auto-playing from message:", id);
-          setVideo(id);
-        }
-      }
-    });
-  }).catch(err => {
-    console.error("Widget API failed to start:", err);
   });
 </script>
 
