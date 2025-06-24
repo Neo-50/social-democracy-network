@@ -32,6 +32,24 @@
     widgetApi.start();
     widgetApi.send('content_loaded');
 
+    widgetApi.observeEvent("m.room.message", async (event) => {
+      try {
+        const content = event?.data?.content;
+        const sender = event?.data?.sender;
+        console.log("📩 New message from:", sender, content);
+
+        if (!content || content.msgtype !== "m.text") return;
+
+        const id = extractYouTubeID(content.body || "");
+        if (id) {
+          console.log("🎯 Found YouTube ID:", id);
+          setVideo(id);
+        }
+      } catch (err) {
+        console.error("❌ Error handling m.room.message:", err);
+      }
+    });
+
     function extractYouTubeID(url) {
       const match = url.match(/[?&]v=([^&]+)/);
       return match ? match[1] : null;
