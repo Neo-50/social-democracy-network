@@ -70,18 +70,19 @@
       }
     });
 
-    // Matrix widget API setup
-    const widgetApi = createWidgetApi();
-    widgetApi.requestCapabilities(["org.matrix.msc2876.receive_event:m.room.message"]);
-    await widgetApi.start();
+    (async () => {
+        const widgetApi = createWidgetApi();
+        widgetApi.requestCapabilities(["org.matrix.msc2876.receive_event:m.room.message"]);
+        await widgetApi.start();
 
-    widgetApi.observeRoomEvents("m.room.message", (ev) => {
-      const body = ev.content?.body;
-      if (body && body.includes("youtube.com/watch?v=")) {
-        const id = extractYouTubeID(body);
-        if (id) setVideo(id);
-      }
-    });
+        widgetApi.observeRoomEvents("m.room.message", (ev) => {
+            const body = ev.content?.body;
+            if (body && body.includes("youtube.com/watch?v=")) {
+                const id = extractYouTubeID(body);
+                if (id) setVideo(id);
+            }
+        });
+    })();
   </script>
 </body>
 </html>
