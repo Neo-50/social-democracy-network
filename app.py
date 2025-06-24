@@ -302,9 +302,6 @@ def check_metadata_status(article_id):
 
     return {"status": "pending"}
 
-def get_media_path(*parts):
-    return os.path.join(app.root_path, 'mnt', 'storage', *parts)
-
 @app.route('/matrix')
 def matrix():
     return render_template('matrix.html')
@@ -318,11 +315,14 @@ def well_known_matrix(filename):
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
+def get_media_path(*parts):
+    return os.path.join(app.root_path, 'mnt', 'storage', *parts)
+
 @app.route('/media/<path:filename>')
 def media(filename):
-    full_media_path = os.path.join(app.root_path, 'mnt', 'storage')
+    full_media_path = get_media_path()  # Base: /mnt/storage
     print("Serving from:", full_media_path, "Filename:", filename)
-    return send_from_directory(full_media_path, filename)
+    return send_from_directory(full_media_path, filename)   
 
 @app.route('/media/widgets/<path:filename>')
 def widget_static(filename):

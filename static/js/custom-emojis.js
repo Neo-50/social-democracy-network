@@ -135,3 +135,9 @@ function toggleCustomEmojiDrawer(event) {
                             'catdance.webp', 'catjam.webp', 'catjam2.webp', 'catno.webp', 'catpolice.webp', 'catrave.webp', 'catsadge.png', 'catshake.webp',
                             'catstare.webp', 'catthumbsup.webp', 'cattocry.webp', 'cat_cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
                             'polite.webp', 'politecri.png', 'red_angry.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp'];
+
+// Expose to global scope
+window.initializeEmojiDrawer = initializeEmojiDrawer;
+window.updateDrawerEmojiSizes = updateDrawerEmojiSizes;
+window.insertAtCaret = insertAtCaret;
+window.toggleCustomEmojiDrawer = toggleCustomEmojiDrawer;
