@@ -144,6 +144,7 @@ def news():
     # GET logic
     selected_category = request.args.get('category')
     highlight_id = request.args.get("article", type=int)
+    manual_highlight = True if request.args.get("article") else False
     sort_order = request.args.get('sort', 'desc')
     order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
     
@@ -190,6 +191,7 @@ def news():
         articles=articles,
         is_admin=is_admin,
         highlight_id=highlight_id,
+        manual_highlight=manual_highlight,
         article_to_highlight=highlighted,
         selected_category=selected_category,
         count=count,
