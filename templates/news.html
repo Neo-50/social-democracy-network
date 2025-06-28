@@ -337,7 +337,7 @@
     <script src="/static/js/news.js"></script>
     <script src="/static/js/custom-emojis.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-    {% if highlight_id %}
+    {% if highlight_id and not manual_highlight %}
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const articleId = "{{ highlight_id }}";
