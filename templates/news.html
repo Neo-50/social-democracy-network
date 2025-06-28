@@ -201,7 +201,7 @@
             </select>
         </form>
         {% for article in articles %}
-            {% if highlight_id == article.id and article.needs_scrape %}
+            {% if highlight_id == article.id and article.needs_scrape and not manual_highlight %}
                 <div class="news-article loading-article">
                 <div class="spinner"></div> Fetching metadata...
                 </div>
