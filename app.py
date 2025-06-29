@@ -116,6 +116,9 @@ def news():
         metadata = extract_metadata(url)
         published_str=metadata.get("published", "")
         needs_scrape = metadata.get("needs_scrape", False)
+        
+        # scrape_id = request.args.get("scrape", type=int)
+
         article = NewsArticle(
             url=url,
             category=category,
@@ -138,13 +141,15 @@ def news():
                 "/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
                 str(article.id), url
             ])
-
-        return redirect(url_for('news', article=article.id))
+        if needs_scrape:
+            return redirect(url_for("news", article=article.id, scrape=article.id))
+        else:
+            return redirect(url_for("news", article=article.id))
 
     # GET logic
     selected_category = request.args.get('category')
     highlight_id = request.args.get("article", type=int)
-    manual_highlight = True if request.args.get("article") else False
+    scrape_id = request.args.get("scrape", type=int)
     sort_order = request.args.get('sort', 'desc')
     order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
     
@@ -170,12 +175,6 @@ def news():
                 articles.insert(0, highlighted)
     except (ValueError, TypeError):
         highlighted = None
-    
-    incomplete = False
-    for a in articles:
-        if a.id == highlight_id and a.needs_scrape:
-            incomplete = True
-            break
 
     count = len(articles)
 
@@ -184,18 +183,16 @@ def news():
             scraped = extract_metadata(article.url)
             if scraped and scraped.get("embed_html"):
                 article.embed_html = scraped["embed_html"]
-                print(f"Title: {article.title}, Embed: {hasattr(article, 'embed_html')}")
 
     return render_template(
         'news.html',
         articles=articles,
         is_admin=is_admin,
         highlight_id=highlight_id,
-        manual_highlight=manual_highlight,
+        scrape_id=scrape_id,
         article_to_highlight=highlighted,
         selected_category=selected_category,
         count=count,
-        incomplete=incomplete
     )
 
 @app.route('/activism')

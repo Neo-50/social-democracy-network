@@ -201,7 +201,7 @@
             </select>
         </form>
         {% for article in articles %}
-            {% if highlight_id == article.id and article.needs_scrape and not manual_highlight %}
+            {% if scrape_id == article.id and article.needs_scrape %}
                 <div class="news-article loading-article">
                 <div class="spinner"></div> Fetching metadata...
                 </div>
@@ -337,10 +337,10 @@
     <script src="/static/js/news.js"></script>
     <script src="/static/js/custom-emojis.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-    {% if highlight_id and not manual_highlight %}
+    {% if scrape_id %}
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                const articleId = "{{ highlight_id }}";
+                const articleId = "{{ scrape_id }}";
                 if (!articleId) return;
 
                 let retries = 20;
