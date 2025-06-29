@@ -355,12 +355,14 @@
                             clearInterval(interval);
                             const url = new URL(window.location);
                             url.searchParams.delete('article');
+                            url.searchParams.delete('scrape');
                             window.history.replaceState({}, '', url);
                             location.reload();
                         } else if (retries <= 0) {
                             clearInterval(interval);
                             const url = new URL(window.location);
                             url.searchParams.delete('article');
+                            url.searchParams.delete('scrape');
                             window.history.replaceState({}, '', url);
                             location.reload();
                         }
