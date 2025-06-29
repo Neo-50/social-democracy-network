@@ -13,10 +13,16 @@
         <meta property="og:type" content="article">
         <meta property="og:image" content="{{ article_to_highlight.image_url }}">
         <meta property="og:url" content="https://social-democracy.net/news?article={{ article_to_highlight.id }}">
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ article_to_highlight.title }}">
+        <meta name="twitter:description" content="{{ article_to_highlight.description }}">
+        <meta name="twitter:image" content="{{ article_to_highlight.image_url }}">
+
     {% else %}
         <meta property="og:site_name" content="Social Democracy Network">
-        <meta property="og:title" content="Social Democracy Network - News">
-        <meta property="og:description" content="Explore curated news from activist and independent sources.">
+        <meta property="og:title" content="Social Democracy Network">
+        <meta property="og:description" content="Explore world and local news and connect with community forum and Matrix server.">
         <meta property="og:image" content="{{ url_for('static', filename='img/og-default.jpg', _external=True) }}">
         <meta property="og:url" content="{{ request.url }}">
     {% endif %}
