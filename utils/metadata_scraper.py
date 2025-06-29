@@ -10,6 +10,16 @@ MANUAL_REVIEW_DOMAINS = {
 
 YOUTUBE_DOMAINS = {"youtube.com", "youtu.be"}
 
+def blank_metadata(url, domain):
+    return {
+        "title": url,
+        "description": f"Blocked by {domain}",
+        "image_url": f"media/news/default-article-image.png",
+        "source": domain,
+        "authors": None,
+        "published": None,
+    }
+
 def extract_metadata(url, debug=False):
     domain = urlparse(url).netloc.replace("www.", "")
 
@@ -19,32 +29,14 @@ def extract_metadata(url, debug=False):
             return yt
     
     if domain in MANUAL_REVIEW_DOMAINS:
-        # Defer this to subprocess scraper
-        return {
-            "title": url,
-            "description": 'Blocked by ' + domain,
-            "image_url": None,
-            "source": domain,
-            "authors": None,
-            "published": None,
-            "needs_scrape": True
-        }
+        return blank_metadata (url, domain)
 
     # Normal flow for all other domains
     rscrape = try_requests_scrape(url, domain)
     if rscrape:
         return rscrape
     else:
-        # Defer this to subprocess scraper
-        return {
-            "title": url,
-            "description": 'Blocked by ' + domain,
-            "image_url": None,
-            "source": domain,
-            "authors": None,
-            "published": None,
-            "needs_scrape": True
-        }  
+        return blank_metadata(url, domain)
 
 def try_youtube_scrape(url):
     video_id = extract_youtube_video_id(url)
@@ -95,7 +87,7 @@ def try_requests_scrape(url, domain):
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
     except Exception as e:
-        return blank_metadata(domain, url)
+        return blank_metadata(url, domain)
 
     soup = BeautifulSoup(response.text, "html.parser")
 
@@ -107,7 +99,7 @@ def try_requests_scrape(url, domain):
         return None
 
     if not soup.title or not soup.title.string:
-        return blank_metadata(domain, url)
+        return blank_metadata(url, domain)
 
     metadata = {
         "title": soup.title.string.strip(),
@@ -120,12 +112,3 @@ def try_requests_scrape(url, domain):
 
     return metadata
 
-def blank_metadata(domain, url):
-    return {
-        "title": url,
-        "description": f"Preview unavailable for {domain}",
-        "image_url": f"media/news/default-article-image.png",
-        "source": domain,
-        "authors": None,
-        "published": None,
-    }
