@@ -227,7 +227,7 @@
                         <p><span class="article-info category"></span> {{ article.category or 'None'}}</p>
                         <div id="article-{{ article.id }}" class="article-card {% if article.id == highlight_id %}highlight{% endif %}">
                         {% if article.archive_url %}
-                            <p><span class="article-info archive-url"></span><a href="{{ article.archive_url }}">{{ article.archive_url }}</a></p>
+                            <p><span class="article-info archive-url"></span><a href="{{ article.archive_url }}" target="_blank">{{ article.archive_url }}</a></p>
                         {% endif %}
                         <button type="button" class="sharelink" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
                     </div>
