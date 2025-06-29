@@ -48,7 +48,7 @@ async def update_article(article_id, url):
             article.needs_scrape = False
             db.session.commit()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python scraper_worker.py <article_id> <url>")
         sys.exit(1)
@@ -56,11 +56,8 @@ if __name__ == '__main__':
     article_id = int(sys.argv[1])
     url = sys.argv[2]
 
-    async def main():
-        async with app.app_context():
-            await update_article(article_id, url)
-
-    asyncio.run(main())
+    with app.app_context():
+        asyncio.run(update_article(article_id, url))
 
 def try_playwright_scrape(url, domain, debug=False):
     print(f"[PLAYWRIGHT] Starting scrape for {url}")
