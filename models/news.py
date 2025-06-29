@@ -12,6 +12,7 @@ class NewsArticle(db.Model):
     authors = db.Column(db.String(200), nullable=True)
     published = db.Column(db.Date, nullable=True)
     source = db.Column(db.String(100), nullable=True)
+    archive_url = db.Column(db.String(200), nullable=True)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     category = db.Column(db.String(50), nullable=True)
     needs_scrape = db.Column(db.Boolean, default=False)
