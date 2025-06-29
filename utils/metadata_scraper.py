@@ -1,13 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-import logging
-import re
-
-from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth_sync
-
-log = logging.getLogger(__name__)
 
 # Domain lists
 
@@ -126,61 +119,6 @@ def try_requests_scrape(url, domain):
     }
 
     return metadata
-
-def try_playwright_scrape(url, domain, debug=False):
-    blank = blank_metadata(domain, url)
-    
-    try:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True, args=[
-            "--disable-gpu",
-            "--no-sandbox",
-            "--disable-dev-shm-usage",
-            "--single-process",
-            "--no-zygote",
-            "--disable-software-rasterizer",
-            ])
-            context = browser.new_context()
-            page = context.new_page()
-            stealth_sync(page)
-
-            try:
-                page.goto(url, timeout=50000, wait_until="domcontentloaded")
-            except Exception as e:
-                log.error(f"[PLAYWRIGHT] page.goto() failed: {e}")
-                return blank
-
-            title = page.title()
-            if "Just a moment" in title or "Access denied" in title:
-                log.warning(f"[PLAYWRIGHT] Blocked by bot wall on {url}")
-                return blank
-
-            def safe_locator(selector):
-                try:
-                    return page.locator(selector).get_attribute("content")
-                except:
-                    return None
-
-            metadata = {
-                "title": title,
-                "description": safe_locator("meta[name='description']"),
-                "image_url": safe_locator("meta[property='og:image']"),
-                "authors": safe_locator("meta[name='author']"),
-                "published": safe_locator("meta[property='article:published_time']"),
-                "needs_scrape": False,
-                "source": domain,
-            }
-            print(metadata)
-
-            browser.close()
-            if all(value is None for key, value in metadata.items() if key != "source"):
-                log.warning(f"[PLAYWRIGHT] No useful metadata found on {url}")
-
-            return metadata
-
-    except Exception as e:
-        log.error(f"[PLAYWRIGHT] scrape failed for {url}: {e}")
-        return blank
 
 def blank_metadata(domain, url):
     return {
