@@ -465,6 +465,7 @@ def edit_article(article_id):
     article.source = request.form.get('source') or article.source
     article.description = request.form.get('description') or article.description
     article.authors = request.form.get('authors') or article.authors
+    article.archive_url = request.form.get('archive_url') or article.archive_url
     article.image_url = request.form.get('image_url') or article.image_url
     pub = request.form.get('published')
     if pub:

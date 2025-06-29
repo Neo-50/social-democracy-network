@@ -116,7 +116,7 @@ p {
 }
 
 .article-info.archive-url::before {
-  content: "archive-url";
+  content: "Archive URL";
   color: #bbb;
 }
 
