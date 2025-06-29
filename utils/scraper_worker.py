@@ -43,6 +43,10 @@ async def update_article(article_id, url):
 
     except Exception as e:
         print(f"[SCRAPER WORKER] Failed to update article {article_id}: {e}")
+        article = NewsArticle.query.get(article_id)
+        if article:
+            article.needs_scrape = False
+            db.session.commit()
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
@@ -59,6 +63,7 @@ if __name__ == '__main__':
     asyncio.run(main())
 
 def try_playwright_scrape(url, domain, debug=False):
+    print(f"[PLAYWRIGHT] Starting scrape for {url}")
     blank = blank_metadata(domain, url)
     
     try:
@@ -101,6 +106,7 @@ def try_playwright_scrape(url, domain, debug=False):
                 "needs_scrape": False,
                 "source": domain,
             }
+            print(f"[PLAYWRIGHT] Completed scrape for {url} with data:")
             print(metadata)
 
             browser.close()
