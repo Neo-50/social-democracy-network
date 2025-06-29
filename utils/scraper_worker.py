@@ -11,6 +11,16 @@ from models import NewsArticle
 
 log = logging.getLogger(__name__)
 
+def blank_metadata(domain, url):
+    return {
+        "title": url,
+        "description": f"Preview unavailable for {domain}",
+        "image_url": f"media/news/default-article-image.png",
+        "source": domain,
+        "authors": None,
+        "published": None,
+    }
+
 def try_playwright_scrape(url, domain, debug=False):
     print(f"[PLAYWRIGHT] Starting scrape for {url}")
     blank = blank_metadata(domain, url)
@@ -115,13 +125,3 @@ if __name__ == "__main__":
 
     with app.app_context():
         asyncio.run(update_article(article_id, url))
-
-def blank_metadata(domain, url):
-    return {
-        "title": url,
-        "description": f"Preview unavailable for {domain}",
-        "image_url": f"media/news/default-article-image.png",
-        "source": domain,
-        "authors": None,
-        "published": None,
-    }
