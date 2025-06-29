@@ -8,7 +8,6 @@ import logging
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth_sync
 from models import NewsArticle
-from metadata_scraper import try_playwright_scrape
 
 log = logging.getLogger(__name__)
 
