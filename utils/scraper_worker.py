@@ -21,6 +21,7 @@ def blank_metadata(url, domain):
         "source": domain,
         "authors": None,
         "published": None,
+        "needs_scrape": True,
     }
 
 def try_playwright_scrape(url, domain, debug=False):
