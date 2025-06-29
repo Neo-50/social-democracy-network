@@ -51,8 +51,12 @@ if __name__ == '__main__':
 
     article_id = int(sys.argv[1])
     url = sys.argv[2]
-    with app.app_context():
-        update_article(article_id, url)
+
+    async def main():
+        async with app.app_context():
+            await update_article(article_id, url)
+
+    asyncio.run(main())
 
 def try_playwright_scrape(url, domain, debug=False):
     blank = blank_metadata(domain, url)
