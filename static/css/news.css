@@ -115,6 +115,11 @@ p {
   color: #bbb;
 }
 
+.article-info.archive-url::before {
+  content: "archive-url";
+  color: #bbb;
+}
+
 .news-image {
     width: 100%;
     height: auto;
