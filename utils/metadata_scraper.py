@@ -18,6 +18,7 @@ def blank_metadata(url, domain):
         "source": domain,
         "authors": None,
         "published": None,
+        "needs_scrape": True,
     }
 
 def extract_metadata(url, debug=False):
