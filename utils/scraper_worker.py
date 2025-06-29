@@ -5,16 +5,18 @@ from app import app
 from app import db
 import asyncio
 import logging
+from urllib.parse import urlparse
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth_sync
 from models import NewsArticle
 
 log = logging.getLogger(__name__)
 
-def blank_metadata(domain, url):
+
+def blank_metadata(url, domain):
     return {
         "title": url,
-        "description": f"Preview unavailable for {domain}",
+        "description": f"Blocked by {domain}",
         "image_url": f"media/news/default-article-image.png",
         "source": domain,
         "authors": None,
@@ -23,7 +25,7 @@ def blank_metadata(domain, url):
 
 def try_playwright_scrape(url, domain, debug=False):
     print(f"[PLAYWRIGHT] Starting scrape for {url}")
-    blank = blank_metadata(domain, url)
+    blank = blank_metadata(url, domain)
     
     try:
         with sync_playwright() as p:
@@ -80,7 +82,7 @@ def try_playwright_scrape(url, domain, debug=False):
 
 async def update_article(article_id, url):
     try:
-        domain = url.split('/')[2]
+        domain = urlparse(url).netloc.replace("www.", "")
         loop = asyncio.get_running_loop()
         try:
             data = await asyncio.wait_for(
