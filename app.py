@@ -295,7 +295,7 @@ def check_metadata_status(article_id):
     if not article:
         return {"status": "not_found"}, 404
 
-    complete = article and not article.needs_scrape
+    complete = article and not article.needs_scrape and article.title and article.description != f"Blocked by {article.source}"
     if complete:
         return {"status": "ready"}
 
