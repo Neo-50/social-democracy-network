@@ -41,12 +41,17 @@ def extract_metadata(url, debug=False):
     rscrape = try_requests_scrape(url, domain)
     if rscrape:
         return rscrape
-
-    pwscrape = try_playwright_scrape(url, domain, debug)
-    if pwscrape:
-        return pwscrape
-
-    return blank_metadata(domain, url)      
+    else:
+        # Defer this to subprocess scraper
+        return {
+            "title": url,
+            "description": 'Blocked by ' + domain,
+            "image_url": None,
+            "source": domain,
+            "authors": None,
+            "published": None,
+            "needs_scrape": True
+        }  
 
 def try_youtube_scrape(url):
     video_id = extract_youtube_video_id(url)
