@@ -25,25 +25,6 @@ def blank_metadata(url, domain):
         "needs_scrape": True,
     }
 
-def get_wayback_url(url):
-    """
-    Tries to submit the URL to the Wayback Machine SavePageNow endpoint
-    and returns the archive URL if possible.
-    """
-    try:
-        print(f"[WAYBACK] Trying to archive {url}")
-        submit = requests.get(f"https://web.archive.org/save/{url}",
-                              headers={"User-Agent": "Mozilla/5.0"})
-        if submit.status_code == 200:
-            archived_url = submit.url
-            print(f"[WAYBACK] Archive available at {archived_url}")
-            return archived_url
-        else:
-            print(f"[WAYBACK] Could not save page: status {submit.status_code}")
-            return None
-    except Exception as e:
-        print(f"[WAYBACK] Failed to archive {url}: {e}")
-        return None
 
 def try_playwright_scrape(url, domain, debug=False):
     print(f"[PLAYWRIGHT] Starting scrape for {url}")
@@ -67,7 +48,6 @@ def try_playwright_scrape(url, domain, debug=False):
                 page.goto(url, timeout=50000, wait_until="domcontentloaded")
             except Exception as e:
                 log.error(f"[PLAYWRIGHT] page.goto() failed: {e}")
-                get_wayback_url(url)
                 return blank
 
             title = page.title()
@@ -101,7 +81,6 @@ def try_playwright_scrape(url, domain, debug=False):
 
     except Exception as e:
         log.error(f"[PLAYWRIGHT] scrape failed for {url}: {e}")
-        get_wayback_url(url)
         return blank
 
 async def update_article(article_id, url):
