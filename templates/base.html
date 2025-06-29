@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Democracy Network</title>
     {% if article_to_highlight %}
+        <meta property="og:site_name" content="Social Democracy Network">
         <meta property="og:title" content="{{ article_to_highlight.title }}">
         <meta property="og:description" content="{{ article_to_highlight.description }}">
         <meta property="og:type" content="article">
         <meta property="og:image" content="{{ article_to_highlight.image_url }}">
         <meta property="og:url" content="https://social-democracy.net/news?article={{ article_to_highlight.id }}">
     {% else %}
+        <meta property="og:site_name" content="Social Democracy Network">
         <meta property="og:title" content="Social Democracy Network - News">
         <meta property="og:description" content="Explore curated news from activist and independent sources.">
         <meta property="og:image" content="{{ url_for('static', filename='img/og-default.jpg', _external=True) }}">
