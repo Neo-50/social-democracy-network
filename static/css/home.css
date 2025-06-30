@@ -55,6 +55,12 @@ h2  {
     min-width: 260px;
 }
 
+.home-trackers {
+    border: 2px solid #8feff2;
+    border-radius: 24px;
+    padding: 20px;
+}
+
 /* Mobile layout */
 @media (width <= 800px) {
     .home-page {
