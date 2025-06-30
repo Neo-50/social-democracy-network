@@ -141,7 +141,6 @@ a {
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    color: inherit;
 }
 
 .link-with-icon:hover {
