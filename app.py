@@ -484,7 +484,7 @@ def edit_article(article_id):
     print(f"Raw form image_url: {request.form.get('image_url')}")
     db.session.commit()
     flash("Article updated.", "success")
-    return redirect(url_for('news'))
+    return redirect(url_for("news", category=article.category, article=article.id))
 
 def is_admin():
     return current_user.is_authenticated and current_user.is_admin
