@@ -267,6 +267,7 @@ p {
   color: #bbb;
   padding: 8px 10px;
   border: none;
+  width: fit-content;
 }
 
 .comments-thread form {
