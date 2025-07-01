@@ -142,9 +142,9 @@ def news():
                 str(article.id), url
             ])
         if needs_scrape:
-            return redirect(url_for("news", article=article.id, scrape=article.id))
+            return redirect(url_for("news", category=article.category, article=article.id, scrape=article.id))
         else:
-            return redirect(url_for("news", article=article.id))
+            return redirect(url_for("news", category=article.category, article=article.id))
 
     # GET logic
     selected_category = request.args.get('category')
