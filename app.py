@@ -151,21 +151,29 @@ def news():
     highlight_id = request.args.get("article", type=int)
     scrape_id = request.args.get("scrape", type=int)
     sort_order = request.args.get('sort', 'desc')
+    limit = request.args.get('limit', '20')
     order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
     
 
     if selected_category:
-        articles = NewsArticle.query \
+        articles_query = NewsArticle.query \
             .filter_by(category=selected_category) \
             .filter(NewsArticle.id != highlight_id) \
-            .order_by(order_func) \
-            .all()
+            .order_by(order_func)
     else:
-        articles = NewsArticle.query \
+        articles_query = NewsArticle.query \
             .filter(NewsArticle.id != highlight_id) \
-            .order_by(order_func) \
-            .all()
+            .order_by(order_func)
     
+    if limit != 'all':
+        try:
+            limit_int = int(limit)
+            articles = articles_query.limit(limit_int).all()
+        except ValueError:
+            articles = articles_query.limit(20).all()
+    else:
+        articles = articles_query.all()
+
     highlighted = None
     try:
         highlight_id_int = int(highlight_id) if highlight_id is not None else None

@@ -199,7 +199,15 @@
                 <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Newest First</option>
                 <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
             </select>
+            <label for="limit">Show:</label>
+            <select name="limit" id="limit" onchange="this.form.submit()">
+                <option value="20" {% if request.args.get('limit', '20') == '20' %}selected{% endif %}>20</option>
+                <option value="50" {% if request.args.get('limit') == '50' %}selected{% endif %}>50</option>
+                <option value="100" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
+                <option value="all" {% if request.args.get('limit') == 'all' %}selected{% endif %}>All</option>
+            </select>
         </form>
+
         {% for article in articles %}
             {% if scrape_id == article.id and article.needs_scrape %}
                 <div class="news-article loading-article">
