@@ -5,7 +5,7 @@ import time
 import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from db_init import db
-from models import User, NewsArticle, NewsComment, Message
+from models import User, NewsArticle, NewsComment, Message, ChatMessage
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import re
@@ -309,9 +309,11 @@ def check_metadata_status(article_id):
 
     return {"status": "pending"}
 
-@app.route('/matrix')
+@app.route("/matrix")
+@login_required
 def matrix():
-    return render_template('matrix.html')
+    messages = ChatMessage.query.order_by(ChatMessage.timestamp.asc()).all()
+    return render_template("matrix.html", messages=messages)
 
 @app.route('/.well-known/matrix/<path:filename>')
 def well_known_matrix(filename):
