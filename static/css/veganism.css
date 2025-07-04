@@ -76,6 +76,11 @@ h2 {
         min-width: 0;
         margin: 0;
     }
+
+    .icon {
+        width: 50%;
+        height: 50%;
+    }
     
     .wikipedia {
         margin-bottom: 0;
