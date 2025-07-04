@@ -99,9 +99,11 @@ h2  {
 }
 
 .matrix-logo {
-  display: block;
-  width: 500px;
-  height: 200px;
+  display: flex;
+  align-self: center;
+  width: 60%;
+  height: auto;
+  margin: 0 auto;
 }
 
 a {
