@@ -95,14 +95,27 @@ function initializeEmojiDrawer(wrapper) {
                 emoji.style.height = `${selectedEmojiSize}px`;
                 emoji.style.verticalAlign = 'middle';
 
-                insertAtCaret(editor, emoji);
+                insertAtCaret(emoji);
             }
-        });        
+        });
 
         drawer.appendChild(img);
     });
 
     wrapper.appendChild(drawer);
+}
+
+function toggleCustomEmojiDrawer() {
+    const wrapper = document.querySelector('.custom-emoji-wrapper');
+    const drawer = wrapper.querySelector('.custom-emoji-drawer');
+
+    // If drawer doesn't exist yet, create it
+    if (!drawer) {
+        wrapper.style.display = 'flex';
+        initializeEmojiDrawer(wrapper);
+    } else {
+        wrapper.style.display = wrapper.style.display === 'none' ? 'flex' : 'none';
+    }
 }
 
 function updateDrawerEmojiSizes(drawer) {
@@ -112,7 +125,7 @@ function updateDrawerEmojiSizes(drawer) {
     });
 }
 
-function insertAtCaret(container, node) {
+function insertAtCaret(node) {
     const sel = window.getSelection();
     if (!sel || !sel.rangeCount) return;
 
@@ -202,7 +215,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // helpers
     function insertAtCursor(editable, text) {
         editable.focus();
-        document.execCommand("insertText", false, text);
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(document.createTextNode(text));
+
+        // move cursor after the inserted text
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
     }
 
     function appendMessage(sender, text) {
@@ -212,19 +235,6 @@ document.addEventListener("DOMContentLoaded", () => {
         msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
         chatMessages.appendChild(msg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function toggleCustomEmojiDrawer() {
-        const wrapper = document.querySelector('.custom-emoji-wrapper');
-        const drawer = wrapper.querySelector('.custom-emoji-drawer');
-
-        // If drawer doesn't exist yet, create it
-        if (!drawer) {
-            wrapper.style.display = 'flex';
-            initializeEmojiDrawer(wrapper);
-        } else {
-            wrapper.style.display = wrapper.style.display === 'none' ? 'flex' : 'none';
-        }
     }
 });
 

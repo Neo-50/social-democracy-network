@@ -60,7 +60,7 @@
                             <input type="hidden" name="comment-content" class="hidden-content">
                             
                             <!-- Unicode emoji picker -->
-                            <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">
+                            <button type="button" class="emoji-button" data-emoji-type="unicode"">
                                 <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
                             </button>
                             <div class="emoji-wrapper" style="display: none;">
@@ -68,11 +68,15 @@
                             </div>
 
                             <!-- Custom emoji picker -->
-                            <button type="button" class="emoji-button" onclick="toggleCustomEmojiDrawer(event)">😺</button>
+                            <button type="button" class="emoji-button" data-emoji-type="custom">😺</button>
                             <div class="custom-wrapper" style="display: none;">
                             <!-- JS will inject emoji drawer below -->
                             </div>
-
+                            <!-- Upload button -->
+                            <button type="button" id="upload-button" class="upload-button">
+                                📎
+                            </button>
+                            <input type="file" id="file-input" style="display: none;" />
                             <div class="submit-cancel">
                                 <button type="submit" class="newsfeed-button">Submit</button>
                                 <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
@@ -265,7 +269,7 @@
                                     <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
                                     <input type="hidden" name="comment-content" class="hidden-content">
                                     <!-- Unicode emoji picker -->
-                                    <button type="button" class="emoji-button" onclick="toggleEmojiPicker(event)">
+                                    <button type="button" class="emoji-button" data-emoji-type="unicode">
                                         <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
                                     </button>
                                     <div class="emoji-wrapper" style="display: none;">
@@ -273,15 +277,19 @@
                                     </div>
 
                                     <!-- Custom emoji picker -->
-                                    <button type="button" class="emoji-button" onclick="toggleCustomEmojiDrawer(event)">😺</button>
+                                    <button type="button" class="emoji-button" data-emoji-type="custom">😺</button>
                                     <div class="custom-wrapper" style="display: none;">
                                     <!-- JS will inject emoji drawer below -->
                                     </div>
-
-                                <div class="submit-cancel">
-                                    <button type="submit" class="newsfeed-button">Submit</button>
-                                    <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
-                                </div>
+                                    <!-- Upload button -->
+                                    <button type="button" id="upload-button" class="upload-button">
+                                        📎
+                                    </button>
+                                    <input type="file" id="file-input" style="display: none;" />
+                                    <div class="submit-cancel">
+                                        <button type="submit" class="newsfeed-button">Submit</button>
+                                        <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+                                    </div>
                                     <button type="submit" class="newsfeed-button">Post Comment</button>
                                 </div>
                             {% else %}
@@ -346,8 +354,8 @@
     </div>
 
     <!-- JAVASCRIPT -->
+     <script src="/static/js/custom-emojis.js"></script>
     <script src="/static/js/news.js"></script>
-    <script src="/static/js/custom-emojis.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     {% if scrape_id %}
         <script>

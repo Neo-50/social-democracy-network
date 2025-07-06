@@ -403,6 +403,15 @@ p {
     height: 28px;
 }
 
+/* upload button */
+.upload-button {
+    background: transparent;
+    font-size: 1.8em;
+    margin-bottom: 8px;
+    cursor: pointer;
+    padding: 0;
+}
+
 .inline-emoji {
     vertical-align: middle;
     image-rendering: auto;

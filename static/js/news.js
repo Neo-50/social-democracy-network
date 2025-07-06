@@ -1,3 +1,72 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const topBox = document.querySelector('.post-comment-container .comment-box');
+    const fileInput = document.getElementById("file-input");
+    const uploadButton = document.getElementById("upload-button");
+
+    if (topBox) {
+    initializeEmojiDrawer(topBox);
+    }
+
+    // file upload
+    uploadButton.addEventListener("click", () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        if (file) {
+            console.log("Selected file:", file.name);
+            // you would upload this file to the server or Matrix API here
+        }
+    });
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', () => {
+            const editor = form.querySelector('.comment-editor');
+            const hidden = form.querySelector('.hidden-content');
+            if (editor && hidden) {
+                hidden.value = editor.innerHTML;
+            }
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const timestampElements = document.querySelectorAll('.comment-timestamp');
+    timestampElements.forEach(el => {
+        const utcIso = el.dataset.timestamp;
+        if (!utcIso) return;
+
+        const date = new Date(utcIso);
+        const options = {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: 'numeric', minute: 'numeric',
+            hour12: true,
+        };
+        const localTime = new Intl.DateTimeFormat(undefined, options).format(date);
+        el.textContent = localTime;
+        console.log("Timestamp:", utcIso, "→", date.toString());
+    });
+});
+
+document.addEventListener("click", e => {
+    const emojiButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
+    if (!emojiButton) return;
+
+    const commentBox = emojiButton.closest(".comment-box");
+    if (!commentBox) return;
+
+    let wrapper = commentBox.querySelector(".custom-wrapper");
+
+    let drawer = wrapper.querySelector(".custom-emoji-drawer");
+    if (!drawer) {
+        initializeEmojiDrawer(commentBox);
+        wrapper.style.display = 'flex';
+    } else {
+        wrapper.style.display = wrapper.style.display === 'none' ? 'flex' : 'none';
+    }
+});
+
+
 document.querySelectorAll('.reply-toggle').forEach(button => {
     button.addEventListener('click', () => {
         const wrapper = button.closest('.comment-container');
@@ -10,13 +79,6 @@ document.querySelectorAll('.reply-toggle').forEach(button => {
             }
         }
     });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const topBox = document.querySelector('.post-comment-container .emoji-wrapper');
-    if (topBox) {
-        initializeEmojiDrawer(topBox);
-    }
 });
 
 document.querySelectorAll('.cancel-reply').forEach(button => {
@@ -33,8 +95,6 @@ function toggleEmojiPicker(event) {
     const box = button.closest(".comment-box");
     const pickerWrapper = box.querySelector(".emoji-wrapper");
     const picker = pickerWrapper.querySelector("emoji-picker");
-    const editor = box.querySelector(".comment-editor");
-    const hidden = box.querySelector(".hidden-content");
 
     pickerWrapper.style.display = pickerWrapper.style.display === "none" || !pickerWrapper.style.display ? "block" : "none";
 
@@ -49,18 +109,6 @@ function toggleEmojiPicker(event) {
     picker.dataset.bound = "true";
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', () => {
-            const editor = form.querySelector('.comment-editor');
-            const hidden = form.querySelector('.hidden-content');
-            if (editor && hidden) {
-                hidden.value = editor.innerHTML;
-            }
-        });
-    });
-});
 
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".youtube-placeholder").forEach(placeholder => {
@@ -127,23 +175,6 @@ function makeDraggable(popup) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const timestampElements = document.querySelectorAll('.comment-timestamp');
-    timestampElements.forEach(el => {
-        const utcIso = el.dataset.timestamp;
-        if (!utcIso) return;
-
-        const date = new Date(utcIso);
-        const options = {
-            year: 'numeric', month: 'long', day: 'numeric',
-            hour: 'numeric', minute: 'numeric',
-            hour12: true,
-        };
-        const localTime = new Intl.DateTimeFormat(undefined, options).format(date);
-        el.textContent = localTime;
-        console.log("Timestamp:", utcIso, "→", date.toString());
-    });
-});
 function copyLink(articleId) {
     const id = parseInt(articleId);
     const url = new URL(window.location.href);
@@ -157,3 +188,4 @@ function copyLink(articleId) {
             showToast("❌ Failed to copy link.");
         });
 }
+
