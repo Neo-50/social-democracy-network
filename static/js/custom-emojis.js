@@ -14,6 +14,7 @@ const customEmojis = ['gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-
                     'catstare.webp', 'catthumbsup.webp', 'cattocry.webp', 'cat_cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
                     'polite.webp', 'politecri.png', 'red_angry.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp'];
 
+let activeCommentBox = null;
 
 document.addEventListener("click", (e) => {
     const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");
@@ -172,27 +173,3 @@ function insertAtCaret(node) {
     sel.removeAllRanges();
     sel.addRange(range);
 }
-
-
-function toggleUnicodeEmojiDrawer(commentBox) {
-    const wrapper = commentBox.querySelector(".emoji-wrapper");
-    if (!wrapper) return;
-
-    wrapper.style.display = wrapper.style.display === "none" ? "block" : "none";
-}
-
-function toggleCustomEmojiDrawer(button) {
-    const commentBox = button.closest('.comment-box');
-    const editor = commentBox.querySelector('.comment-editor');
-    const wrapper = commentBox.querySelector('.custom-wrapper');
-
-    let drawer = wrapper.querySelector('.custom-emoji-drawer');
-
-    if (!drawer) {
-        wrapper.style.display = 'flex';
-        initializeEmojiDrawer(wrapper);
-    } else {
-        wrapper.style.display = wrapper.style.display === 'none' ? 'flex' : 'none';
-    }
-}
-
