@@ -60,16 +60,16 @@
                             <input type="hidden" name="comment-content" class="hidden-content">
                             
                             <!-- Unicode emoji picker -->
-                            <button type="button" class="emoji-button" data-emoji-type="unicode"">
+                            <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode"">
                                 <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
                             </button>
-                            <div class="emoji-wrapper" style="display: none;">
+                            <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
                                 <emoji-picker></emoji-picker>
                             </div>
 
                             <!-- Custom emoji picker -->
-                            <button type="button" class="emoji-button" data-emoji-type="custom">😺</button>
-                            <div class="custom-wrapper" style="display: none;">
+                            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
+                            <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
                             <!-- JS will inject emoji drawer below -->
                             </div>
                             <!-- Upload button -->
@@ -269,16 +269,16 @@
                                     <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
                                     <input type="hidden" name="comment-content" class="hidden-content">
                                     <!-- Unicode emoji picker -->
-                                    <button type="button" class="emoji-button" data-emoji-type="unicode">
+                                    <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
                                         <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
                                     </button>
-                                    <div class="emoji-wrapper" style="display: none;">
+                                    <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
                                         <emoji-picker></emoji-picker>
                                     </div>
 
                                     <!-- Custom emoji picker -->
-                                    <button type="button" class="emoji-button" data-emoji-type="custom">😺</button>
-                                    <div class="custom-wrapper" style="display: none;">
+                                    <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
+                                    <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
                                     <!-- JS will inject emoji drawer below -->
                                     </div>
                                     <!-- Upload button -->

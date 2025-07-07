@@ -1,13 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const topBox = document.querySelector('.post-comment-container .comment-box');
     const fileInput = document.getElementById("file-input");
     const uploadButton = document.getElementById("upload-button");
 
-    if (topBox) {
-    initializeEmojiDrawer(topBox);
-    }
+    // UNICODE EMOJI DRAWER
+    document.addEventListener("click", e => {
+        const emojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
+        if (!emojiButton) return;
 
-    // file upload
+        toggleEmojiPicker({ target: emojiButton });
+        });
+
+    // CUSTOM EMOJI DRAWER
+    document.addEventListener("click", e => {
+        const customButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
+        if (customButton) {
+            toggleCustomEmojiDrawer(customButton);
+        }
+    });
+  
+    // FILE UPLOAD
     uploadButton.addEventListener("click", () => {
         fileInput.click();
     });
@@ -28,7 +39,59 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    document.addEventListener("click", (e) => {
+        const isCustomButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
+        const isInCustomDrawer = e.target.closest(".custom-wrapper");
+
+        if (!isCustomButton && !isInCustomDrawer && activeCommentBox) {
+            // clicked outside, close drawer
+            const wrapper = activeCommentBox.querySelector(".custom-wrapper");
+            if (wrapper) wrapper.style.display = "none";
+            activeCommentBox = null;
+        }
+    });
+  
+    document.addEventListener("click", (e) => {
+        const isEmojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
+        const isInUnicodeDrawer = e.target.closest(".emoji-wrapper");
+
+        if (!isEmojiButton && !isInUnicodeDrawer) {
+            document.querySelectorAll(".emoji-wrapper").forEach(wrapper => {
+                wrapper.style.display = "none";
+            });
+        }
+    });
 });
+
+function toggleUnicodeEmojiDrawer(commentBox) {
+    const wrapper = commentBox.querySelector(".emoji-wrapper");
+    if (!wrapper) return;
+
+    wrapper.style.display = wrapper.style.display === "none" ? "block" : "none";
+}
+
+function toggleCustomEmojiDrawer(button) {
+    const commentBox = button.closest(".comment-box");
+    const wrapper = commentBox.querySelector(".custom-wrapper");
+
+    if (wrapper.style.display === "flex") {
+        // it's already open, so close it
+        wrapper.style.display = "none";
+        activeCommentBox = null;
+        return;
+    }
+
+    // open it
+    wrapper.style.display = "flex";
+
+    let drawer = wrapper.querySelector(".custom-emoji-drawer");
+    if (!drawer) {
+        initializeEmojiDrawer(commentBox);
+    }
+    activeCommentBox = commentBox;
+}
+  
 
 document.addEventListener('DOMContentLoaded', function () {
     const timestampElements = document.querySelectorAll('.comment-timestamp');
@@ -47,25 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Timestamp:", utcIso, "→", date.toString());
     });
 });
-
-document.addEventListener("click", e => {
-    const emojiButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
-    if (!emojiButton) return;
-
-    const commentBox = emojiButton.closest(".comment-box");
-    if (!commentBox) return;
-
-    let wrapper = commentBox.querySelector(".custom-wrapper");
-
-    let drawer = wrapper.querySelector(".custom-emoji-drawer");
-    if (!drawer) {
-        initializeEmojiDrawer(commentBox);
-        wrapper.style.display = 'flex';
-    } else {
-        wrapper.style.display = wrapper.style.display === 'none' ? 'flex' : 'none';
-    }
-});
-
 
 document.querySelectorAll('.reply-toggle').forEach(button => {
     button.addEventListener('click', () => {

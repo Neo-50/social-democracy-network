@@ -16,6 +16,108 @@ const customEmojis = ['gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-
     'catstare.webp', 'catthumbsup.webp', 'cattocry.webp', 'cat_cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
     'polite.webp', 'politecri.png', 'red_angry.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp'];
 
+document.addEventListener("DOMContentLoaded", () => {
+    const chatEditor = document.getElementById("chat-editor");
+    const sendButton = document.getElementById("send-button");
+    const uploadButton = document.getElementById("upload-button");
+    const fileInput = document.getElementById("file-input");
+    const unicodeEmojiButton = document.getElementById("unicode-emoji-button");
+    const unicodeEmojiWrapper = document.getElementById("unicode-emoji-wrapper");
+    const customEmojiButton = document.getElementById("custom-emoji-button");
+    const customEmojiWrapper = document.getElementById("custom-emoji-wrapper");
+
+    // toggle unicode emoji drawer
+    unicodeEmojiButton.addEventListener("click", () => {
+        unicodeEmojiWrapper.style.display =
+            unicodeEmojiWrapper.style.display === "none" ? "block" : "none";
+    });
+
+    // handle unicode emoji selection
+    document.addEventListener("emoji-click", (e) => {
+        const emoji = e.detail.unicode;
+        insertAtCursor(chatEditor, emoji);
+    });
+
+    // toggle custom emoji drawer
+    customEmojiButton.addEventListener("click", () => {
+        const wrapper = document.getElementById("custom-emoji-wrapper");
+        if (!wrapper) return;
+
+        if (wrapper.style.display === "none" || wrapper.style.display === "") {
+            wrapper.style.display = "flex";  // show
+            initializeEmojiDrawer(wrapper);
+        } else {
+            wrapper.style.display = "none";  // hide
+        }
+    });
+
+    // send message
+    sendButton.addEventListener("click", () => {
+        const message = chatEditor.innerHTML.trim();
+        if (message !== "") {
+            // Here you would POST the message to the server or Matrix API
+            console.log("Send message:", message);
+            appendMessage("You", message); // temporary local append
+            chatEditor.innerHTML = "";
+        }
+    });
+
+    // file upload
+    uploadButton.addEventListener("click", () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        if (file) {
+            console.log("Selected file:", file.name);
+            // you would upload this file to the server or Matrix API here
+        }
+    });
+
+    // helpers
+    function insertAtCursor(editable, text) {
+        editable.focus();
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(document.createTextNode(text));
+
+        // move cursor after the inserted text
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
+
+    function appendMessage(sender, text) {
+        const chatMessages = document.getElementById("chat-messages");
+        const msg = document.createElement("div");
+        msg.className = "chat-message";
+        msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+        chatMessages.appendChild(msg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    });
+
+document.addEventListener("click", (e) => {
+    const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");
+    const customWrapper = document.getElementById("custom-emoji-wrapper");
+
+    const isEmojiButton =
+        e.target.closest("#unicode-emoji-button") ||
+        e.target.closest("#custom-emoji-button");
+
+    const isInUnicodeWrapper = e.target.closest("#unicode-emoji-wrapper");
+    const isInCustomWrapper = e.target.closest("#custom-emoji-wrapper");
+
+    if (!isEmojiButton && !isInUnicodeWrapper && !isInCustomWrapper) {
+        if (unicodeWrapper) unicodeWrapper.style.display = "none";
+        if (customWrapper) customWrapper.style.display = "none";
+    }
+    });
+
 function initializeEmojiDrawer(wrapper) {
     // clear existing drawer
     const existingDrawer = wrapper.querySelector('.custom-emoji-drawer');
@@ -153,104 +255,6 @@ function placeCaretAtEnd(el) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const chatEditor = document.getElementById("chat-editor");
-    const sendButton = document.getElementById("send-button");
-    const uploadButton = document.getElementById("upload-button");
-    const fileInput = document.getElementById("file-input");
-    const unicodeEmojiButton = document.getElementById("unicode-emoji-button");
-    const unicodeEmojiWrapper = document.getElementById("unicode-emoji-wrapper");
-    const customEmojiButton = document.getElementById("custom-emoji-button");
-    const customEmojiWrapper = document.getElementById("custom-emoji-wrapper");
 
-    // toggle unicode emoji drawer
-    unicodeEmojiButton.addEventListener("click", () => {
-        unicodeEmojiWrapper.style.display =
-            unicodeEmojiWrapper.style.display === "none" ? "block" : "none";
-    });
 
-    // handle unicode emoji selection
-    document.addEventListener("emoji-click", (e) => {
-        const emoji = e.detail.unicode;
-        insertAtCursor(chatEditor, emoji);
-    });
 
-    // toggle custom emoji drawer
-    customEmojiButton.addEventListener("click", () => {
-        const wrapper = document.getElementById("custom-emoji-wrapper");
-        if (!wrapper) return;
-
-        if (wrapper.style.display === "none" || wrapper.style.display === "") {
-            wrapper.style.display = "flex";  // show
-            initializeEmojiDrawer(wrapper);
-        } else {
-            wrapper.style.display = "none";  // hide
-        }
-    });
-
-    // send message
-    sendButton.addEventListener("click", () => {
-        const message = chatEditor.innerHTML.trim();
-        if (message !== "") {
-            // Here you would POST the message to the server or Matrix API
-            console.log("Send message:", message);
-            appendMessage("You", message); // temporary local append
-            chatEditor.innerHTML = "";
-        }
-    });
-
-    // file upload
-    uploadButton.addEventListener("click", () => {
-        fileInput.click();
-    });
-
-    fileInput.addEventListener("change", () => {
-        const file = fileInput.files[0];
-        if (file) {
-            console.log("Selected file:", file.name);
-            // you would upload this file to the server or Matrix API here
-        }
-    });
-
-    // helpers
-    function insertAtCursor(editable, text) {
-        editable.focus();
-        const sel = window.getSelection();
-        if (!sel || !sel.rangeCount) return;
-
-        const range = sel.getRangeAt(0);
-        range.deleteContents();
-        range.insertNode(document.createTextNode(text));
-
-        // move cursor after the inserted text
-        range.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    }
-
-    function appendMessage(sender, text) {
-        const chatMessages = document.getElementById("chat-messages");
-        const msg = document.createElement("div");
-        msg.className = "chat-message";
-        msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
-        chatMessages.appendChild(msg);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-});
-
-document.addEventListener("click", (e) => {
-    const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");
-    const customWrapper = document.getElementById("custom-emoji-wrapper");
-
-    const isEmojiButton =
-        e.target.closest("#unicode-emoji-button") ||
-        e.target.closest("#custom-emoji-button");
-
-    const isInUnicodeWrapper = e.target.closest("#unicode-emoji-wrapper");
-    const isInCustomWrapper = e.target.closest("#custom-emoji-wrapper");
-
-    if (!isEmojiButton && !isInUnicodeWrapper && !isInCustomWrapper) {
-        if (unicodeWrapper) unicodeWrapper.style.display = "none";
-        if (customWrapper) customWrapper.style.display = "none";
-    }
-});
