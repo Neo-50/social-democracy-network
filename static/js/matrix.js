@@ -24,7 +24,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const unicodeEmojiButton = document.getElementById("unicode-emoji-button");
     const unicodeEmojiWrapper = document.getElementById("unicode-emoji-wrapper");
     const customEmojiButton = document.getElementById("custom-emoji-button");
-    const customEmojiWrapper = document.getElementById("custom-emoji-wrapper");
+
+    // Pull chat messages from DB and insert in chat-messages
+        window.addEventListener("DOMContentLoaded", () => {
+        fetch("/get_messages")
+            .then(res => res.json())
+            .then(messages => {
+                messages.forEach(msg => {
+                    appendMessage(msg.sender, msg.content, msg.id);
+                });
+            })
+            .catch(err => {
+                console.error("Failed to load messages:", err);
+            });
+    });
+
+    function appendMessage(sender, text, messageId = null) {
+        const chatMessages = document.getElementById("chat-messages");
+        const msg = document.createElement("div");
+        msg.className = "chat-message";
+
+        if (messageId) {
+            msg.dataset.messageId = messageId;
+        }
+
+        // Message content
+        msg.innerHTML = `
+            <strong>${sender}:</strong> <span class="message-body">${text}</span>
+            <button class="delete-btn" onclick="deleteMessage(${messageId})">🗑️</button>
+        `;
+
+        chatMessages.appendChild(msg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
     // toggle unicode emoji drawer
     unicodeEmojiButton.addEventListener("click", () => {
@@ -55,10 +87,25 @@ document.addEventListener("DOMContentLoaded", () => {
     sendButton.addEventListener("click", () => {
         const message = chatEditor.innerHTML.trim();
         if (message !== "") {
-            // Here you would POST the message to the server or Matrix API
-            console.log("Send message:", message);
-            appendMessage("You", message); // temporary local append
-            chatEditor.innerHTML = "";
+            fetch("/matrix/send", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    content: message,
+                    message_type: "text"
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    appendMessage("You", message, data.message_id);
+                    chatEditor.innerHTML = "";
+                } else {
+                    console.error("Error sending message:", data.error);
+                }
+            });
         }
     });
 
@@ -90,16 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         sel.removeAllRanges();
         sel.addRange(range);
     }
-
-    function appendMessage(sender, text) {
-        const chatMessages = document.getElementById("chat-messages");
-        const msg = document.createElement("div");
-        msg.className = "chat-message";
-        msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
-        chatMessages.appendChild(msg);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    });
+});
 
 document.addEventListener("click", (e) => {
     const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");

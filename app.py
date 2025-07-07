@@ -14,7 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app, Response
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app, Response, jsonify
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
@@ -729,6 +729,62 @@ def forgot_password():
     else:
         flash("If the email exists, a reset link will be sent.")
     return redirect(url_for('login'))
+
+@app.route("/get_messages", methods=["GET"])
+@login_required
+def get_messages():
+    messages = (
+        ChatMessage.query
+        .order_by(ChatMessage.timestamp.asc())
+        .all()
+    )
+
+    result = []
+    for msg in messages:
+        result.append({
+            "id": msg.id,
+            "sender": msg.user.username,
+            "content": msg.content,
+            "timestamp": msg.timestamp.isoformat(),
+            "edited": msg.edited,
+            "file_url": msg.file_url,
+            "file_name": msg.file_name,
+            "message_type": msg.message_type,
+        })
+
+    return jsonify(result)
+
+@app.route("/matrix/send", methods=["POST"])
+@login_required
+def send_chat_message():
+    data = request.get_json()
+    content = data.get("content", "").strip()
+    file_url = data.get("file_url")
+    file_name = data.get("file_name")
+    message_type = data.get("message_type", "text")
+
+    if not content and not file_url:
+        return jsonify({"error": "Empty message"}), 400
+
+    print("Sanitized content before saving:", content)
+
+    message = ChatMessage(
+        user_id=current_user.id,
+        content=content,
+        file_url=file_url,
+        file_name=file_name,
+        message_type=message_type,
+        timestamp=datetime.utcnow()
+    )
+
+    db.session.add(message)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message_id": message.id,
+        "timestamp": message.timestamp.isoformat()
+    })
 
 
 logging.basicConfig(
