@@ -14,8 +14,6 @@ const customEmojis = ['gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-
                     'catstare.webp', 'catthumbsup.webp', 'cattocry.webp', 'cat_cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
                     'polite.webp', 'politecri.png', 'red_angry.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp'];
 
-let activeCommentBox = null;
-
 document.addEventListener("click", (e) => {
     const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");
     const customWrapper = document.getElementById("custom-emoji-wrapper");
@@ -33,7 +31,7 @@ document.addEventListener("click", (e) => {
     }
 });
 
-function initializeEmojiDrawer(wrapper) {
+function initializeEmojiDrawer(commentBox, wrapper) {
     if (wrapper.querySelector('.custom-emoji-drawer')) return;
 
     const drawer = document.createElement('div');
@@ -44,12 +42,14 @@ function initializeEmojiDrawer(wrapper) {
     drawer.style.gap = '6px';
 
     // get editor inside this comment box
-    const editorBox = wrapper.querySelector('.comment-editor');
+    const editorBox = commentBox.querySelector('.comment-editor');
     if (!editorBox || !editorBox.id) {
-        console.error("Editor missing or missing id in wrapper:", wrapper);
+        console.error("Editor missing or missing id in commentBox", commentBox);
         return;
     }
     drawer.dataset.targetEditorId = editorBox.id;
+
+    wrapper.appendChild(drawer);
 
     const toggleWrapper = document.createElement('div');
     toggleWrapper.className = 'emoji-size-toggle';
@@ -118,18 +118,24 @@ function initializeEmojiDrawer(wrapper) {
                 if (hidden) hidden.value = editor.innerHTML;
             }
         });
-
+        
             img.addEventListener("click", () => {
-                targetEditor.focus();
-                placeCaretAtEnd(targetEditor);
+                const editor = wrapper.closest(".comment-box")?.querySelector(".comment-editor");
+                if (editor) {
+                    const emojiNode = document.createElement("img");
+                    emojiNode.src = img.src;
+                    emojiNode.className = "inline-emoji";
+                    emojiNode.alt = filename.split(".")[0];
+                    emojiNode.style.width = `${selectedEmojiSize}px`;
+                    emojiNode.style.height = `${selectedEmojiSize}px`;
+                    emojiNode.style.verticalAlign = "middle";
 
-                const emojiNode = document.createElement("img");
-                emojiNode.src = img.src;
-                emojiNode.className = "inline-emoji";
-                emoji.style.width = `${selectedEmojiSize}px`;
-                emoji.style.height = `${selectedEmojiSize}px`;
+                    insertEmojiAtEditorCaret(editor, emojiNode);
 
-                insertAtCaret(emojiNode);
+                    // update hidden field
+                    const hidden = wrapper.closest(".comment-box")?.querySelector(".hidden-content");
+                    if (hidden) hidden.value = editor.innerHTML;
+                }
         });
 
         drawer.appendChild(img);
@@ -145,31 +151,34 @@ function updateDrawerEmojiSizes(drawer) {
     });
 }
 
-function placeCaretAtEnd(editor) {
+function insertEmojiAtEditorCaret(editor, node) {
     editor.focus();
-    if (
-        typeof window.getSelection != "undefined"
-        && typeof document.createRange != "undefined"
-    ) {
-        const range = document.createRange();
-        range.selectNodeContents(editor);
-        range.collapse(false);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-    }
-}
 
-function insertAtCaret(node) {
     const sel = window.getSelection();
-    if (!sel || !sel.rangeCount) return;
+    if (!sel || sel.rangeCount === 0) {
+        console.warn("No selection available, placing at end instead.");
+        editor.appendChild(node);
+        return;
+    }
 
     const range = sel.getRangeAt(0);
-    range.deleteContents();
 
+    // ensure caret is actually inside this editor
+    if (!editor.contains(range.startContainer)) {
+        console.warn("Selection not in this editor, placing at end.");
+        editor.appendChild(node);
+        placeCaretAtEnd(editor);
+        return;
+    }
+
+    // insert
     range.insertNode(node);
+
+    // move caret after the inserted emoji
     range.setStartAfter(node);
-    range.setEndAfter(node);
+    range.collapse(true);
+
+    // restore selection
     sel.removeAllRanges();
     sel.addRange(range);
 }

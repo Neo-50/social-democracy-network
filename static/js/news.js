@@ -1,3 +1,5 @@
+let activeCommentBox = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById("file-input");
     const uploadButton = document.getElementById("upload-button");
@@ -72,13 +74,16 @@ function toggleUnicodeEmojiDrawer(commentBox) {
 }
 
 function toggleCustomEmojiDrawer(button) {
+    console.log('Toggling custom emoji drawer')
     const commentBox = button.closest(".comment-box");
     const wrapper = commentBox.querySelector(".custom-wrapper");
 
     if (wrapper.style.display === "flex") {
-        // it's already open, so close it
         wrapper.style.display = "none";
+        const drawer = wrapper.querySelector(".custom-emoji-drawer");
+        if (drawer) drawer.remove();
         activeCommentBox = null;
+        console.log('Emoji drawer has been closed!');
         return;
     }
 
@@ -87,11 +92,10 @@ function toggleCustomEmojiDrawer(button) {
 
     let drawer = wrapper.querySelector(".custom-emoji-drawer");
     if (!drawer) {
-        initializeEmojiDrawer(commentBox);
+        initializeEmojiDrawer(commentBox, wrapper);
     }
     activeCommentBox = commentBox;
 }
-  
 
 document.addEventListener('DOMContentLoaded', function () {
     const timestampElements = document.querySelectorAll('.comment-timestamp');
