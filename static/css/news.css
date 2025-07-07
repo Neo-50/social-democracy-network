@@ -403,6 +403,10 @@ p {
     height: 28px;
 }
 
+.custom-emoji {
+    cursor: pointer;
+}
+
 /* upload button */
 .upload-button {
     background: transparent;
