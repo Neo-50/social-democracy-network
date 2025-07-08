@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Pull chat messages from DB and insert in chat-messages
         window.addEventListener("DOMContentLoaded", () => {
-        fetch("/get_messages")
+        fetch("/matrix/get_messages")
             .then(res => res.json())
             .then(messages => {
                 messages.forEach(msg => {
@@ -49,10 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Message content
-        msg.innerHTML = `
-            <strong>${sender}:</strong> <span class="message-body">${text}</span>
-            <button class="delete-btn" onclick="deleteMessage(${messageId})">🗑️</button>
-        `;
+        msg.innerHTML = `<strong>${sender}:</strong> <span class="message-body"></span>
+        <button class="delete-btn">🗑️</button>`;
+
+        msg.querySelector(".message-body").innerHTML = text;
+
+        msg.querySelector(".delete-btn").addEventListener("click", () => {
+            deleteMessage(messageId);
+        });
 
         chatMessages.appendChild(msg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -291,6 +295,26 @@ function placeCaretAtEnd(el) {
         sel.removeAllRanges();
         sel.addRange(range);
     }
+}
+
+function deleteMessage(messageId) {
+    if (!confirm("Are you sure you want to delete this message?")) return;
+
+    fetch(`/matrix/delete_message/${messageId}`, {
+        method: "DELETE",
+    })
+    .then(res => {
+        if (res.ok) {
+            const msgEl = document.querySelector(`.chat-message[data-message-id="${messageId}"]`);
+            if (msgEl) msgEl.remove();
+        } else {
+            alert("Failed to delete message");
+        }
+    })
+    .catch(err => {
+        console.error("Delete failed:", err);
+        alert("Error occurred while deleting message");
+    });
 }
 
 

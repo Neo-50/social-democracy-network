@@ -4,6 +4,7 @@ import logging
 import time
 import bleach
 from bleach.css_sanitizer import CSSSanitizer
+from bleach import clean
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message, ChatMessage
 from datetime import datetime, timedelta, timezone
@@ -730,7 +731,7 @@ def forgot_password():
         flash("If the email exists, a reset link will be sent.")
     return redirect(url_for('login'))
 
-@app.route("/get_messages", methods=["GET"])
+@app.route("/matrix/get_messages", methods=["GET"])
 @login_required
 def get_messages():
     messages = (
@@ -763,6 +764,21 @@ def send_chat_message():
     file_name = data.get("file_name")
     message_type = data.get("message_type", "text")
 
+    ALLOWED_TAGS = ['img']
+    ALLOWED_ATTRIBUTES = {
+        'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
+    }
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height', 'vertical-align'])
+
+    # inside send_chat_message
+    content = clean(
+        data.get("content", "").strip(),
+        tags=ALLOWED_TAGS,
+        attributes=ALLOWED_ATTRIBUTES,
+        strip=True,
+        css_sanitizer=css_sanitizer
+    )
+
     if not content and not file_url:
         return jsonify({"error": "Empty message"}), 400
 
@@ -785,6 +801,17 @@ def send_chat_message():
         "message_id": message.id,
         "timestamp": message.timestamp.isoformat()
     })
+
+@app.route("/matrix/delete_message/<int:message_id>", methods=["DELETE"])
+@login_required
+def delete_message(message_id):
+    message = ChatMessage.query.get_or_404(message_id)
+    if message.user_id != current_user.id:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    db.session.delete(message)
+    db.session.commit()
+    return jsonify({"success": True})
 
 
 logging.basicConfig(
