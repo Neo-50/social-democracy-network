@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         msg.innerHTML = `
             <div class="chat-header">
                 ${avatarImg}
-                <strong>${displayName}</strong>
+                <strong>${displayName || username}</strong>
             </div>
             <div class="message-body"></div>
             <div class="chat-toolbar">
