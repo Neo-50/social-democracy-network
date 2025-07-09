@@ -25,10 +25,10 @@
                     <td>{{ 'Yes' if user.is_admin else 'No' }}</td>
                     <td>{{ 'Yes' if user.email_verified else 'No' }}</td>
                     <td>
-                        <form method="POST" action="{{ url_for('reset_password_admin', user_id=user.id) }}">
+                        <form method="POST" class="password-form" action="{{ url_for('reset_password_admin', user_id=user.id) }}">
                             <input type="password" name="new_password" class="change-password" placeholder="New password"  autocomplete="new-password" required>
-                        <button type="submit">Reset</button>
-                    </form>
+                            <button type="submit" class="reset-button">Reset</button>
+                        </form>
                     </td>
                     <td>{{ user.bio or '—' }}</td>
                     <td>N/A</td> <!-- Replace with session logic later -->
