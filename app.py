@@ -768,7 +768,7 @@ def send_chat_message():
     ALLOWED_ATTRIBUTES = {
         'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
     }
-    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height', 'vertical-align'])
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'max-width', 'height', 'vertical-align'])
 
     # inside send_chat_message
     content = clean(
@@ -801,6 +801,37 @@ def send_chat_message():
         "message_id": message.id,
         "timestamp": message.timestamp.isoformat()
     })
+
+@app.route("/matrix/upload_chat_image", methods=["POST"])
+@login_required
+def upload_chat_image():
+    if "file" not in request.files:
+        return jsonify({"success": False, "error": "No file provided"}), 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"success": False, "error": "Empty filename"}), 400
+
+    if not file.mimetype.startswith("image/"):
+        return jsonify({"success": False, "error": "Invalid file type"}), 400
+
+    # Ensure unique name: chatimg0001.jpg, etc.
+    ext = os.path.splitext(file.filename)[1]
+    base = "chatimg"
+    i = 1
+    while True:
+        filename = f"{base}{i:04}{ext}"
+        path = get_media_path("matrix", filename)
+        if not os.path.exists(path):
+            break
+        i += 1
+
+    file.save(path)
+    file_url = url_for("media", filename=f"matrix/{filename}", _external=True)
+
+    return jsonify({"success": True, "url": file_url, "filename": filename})
+
 
 @app.route("/matrix/delete_message/<int:message_id>", methods=["DELETE"])
 @login_required
