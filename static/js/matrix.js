@@ -56,8 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const img = document.createElement("img");
                     img.src = data.url;
                     img.alt = file.name;
-                    img.style.maxWidth = "200px";
+                    img.style.maxWidth = "500px";
                     img.style.height = "auto";
+                    img.style.borderRadius = "24px";
 
                     insertNodeAtCursor(chatEditor, img);
                 } else {
