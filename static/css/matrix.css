@@ -62,6 +62,29 @@ body {
   color:#888
 }
 
+.preview-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #1a1a1a;
+    font-size: .8em;
+    color: #bbb;
+    flex-wrap: wrap;
+    border: 2px solid #00e3ea;
+    border-radius: 24px;
+    margin-left: 58px;
+    padding: 20px;
+    width: 580px;
+}
+
+.preview-container-inner {
+    border-left: 4px solid #bbb;
+    padding-left: 6px;
+}
+
+.preview-image {
+    width: 300px;
+}
+
 /* input section at the bottom */
 .chat-input-container {
     display: flex;

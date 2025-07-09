@@ -70,6 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("An error occurred while uploading.");
             });
         });
+    
+    function extractUrls(text) {
+        return [...text.matchAll(/https?:\/\/[^\s<>"']+/g)].map(m => m[0]);
+    }
 
     // Pull chat messages from DB and insert in chat-messages
     window.addEventListener("DOMContentLoaded", () => {
@@ -119,6 +123,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="delete-btn">🗑️ Delete</button>
             </div>
         `;
+
+        const urls = extractUrls(text).filter(url => {
+            const isMedia = url.includes("/media/");
+            const isImage = /\.(jpg|jpeg|png|gif|webp|avif|svg)$/i.test(url);
+            return !isMedia && !isImage;
+        });          
+        urls.forEach(url => {
+            fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data) {
+                        renderUrlPreview(msg, data);
+                    }
+                })
+                .catch(err => console.error("URL preview error:", err));
+        });
 
         msg.querySelector(".message-body").innerHTML = text;
 
@@ -382,6 +402,25 @@ function insertNodeAtCursor(editable, node) {
     sel.removeAllRanges();
     sel.addRange(range);
 }
+
+function renderUrlPreview(msgElement, data) {
+    const preview = document.createElement("div");
+    preview.className = "url-preview";
+
+    preview.innerHTML = `
+        <div class="preview-container">
+            <div class="preview-container-inner">
+                <a href="${data.url}" target="_blank" class="preview-link">
+                    <div class="preview-title">${data.title || data.url}</div>
+                    ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
+                </a>
+                ${data.description ? `<div class="preview-description">${data.description}</div>` : ""}
+            </div>
+        </div>
+    `;
+
+    msgElement.appendChild(preview);
+}  
 
 function deleteMessage(messageId) {
     if (!confirm("Are you sure you want to delete this message?")) return;
