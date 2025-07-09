@@ -744,7 +744,10 @@ def get_messages():
     for msg in messages:
         result.append({
             "id": msg.id,
-            "sender": msg.user.username,
+            "username": msg.user.username,
+            "display_name": msg.user.display_name,
+            "avatar": msg.user.avatar_filename,
+            "bio": msg.user.bio,
             "content": msg.content,
             "timestamp": msg.timestamp.isoformat(),
             "edited": msg.edited,

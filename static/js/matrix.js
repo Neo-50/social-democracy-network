@@ -76,7 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(messages => {
                 messages.forEach(msg => {
-                    appendMessage(msg.sender, msg.content, msg.id);
+                    appendMessage(msg.username, msg.display_name, msg.content, msg.id, msg.avatar, msg.bio);
+
                 });
             })
             .catch(err => {
@@ -84,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     });
 
-    function appendMessage(sender, text, messageId = null) {
+    function appendMessage(username, displayName, text, messageId = null, avatar, bio) {
         const chatMessages = document.getElementById("chat-messages");
         const msg = document.createElement("div");
         msg.className = "chat-message";
@@ -93,9 +94,26 @@ document.addEventListener("DOMContentLoaded", () => {
             msg.dataset.messageId = messageId;
         }
 
-        // Message content
-        msg.innerHTML = `<strong>${sender}:</strong> <span class="message-body"></span>
-        <button class="delete-btn">🗑 Delete</button>`;
+        const avatarImg = avatar ? `
+            <button class="avatar-wrapper"
+                data-username="${username}"
+                data-display_name="${displayName}"
+                data-bio="${bio || 'No bio available'}"
+                data-avatar="/media/avatars/${avatar}"
+                onclick="showUserPopup(this)">
+                <img src="/media/avatars/${avatar}" class="avatar" alt="avatar"
+                    style="width:50px; height:50px; border-radius:50%;">
+            </button>
+            ` : `<div class="avatar-placeholder"></div>`;
+
+        msg.innerHTML = `
+            <div class="chat-header">
+                ${avatarImg}
+                <strong>${displayName}</strong>
+            </div>
+            <div class="message-body"></div>
+            <button class="delete-btn">🗑️ Delete</button>
+        `;
 
         msg.querySelector(".message-body").innerHTML = text;
 

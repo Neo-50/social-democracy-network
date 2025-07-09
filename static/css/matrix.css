@@ -29,6 +29,28 @@ body {
     margin-bottom: 6px;
     align-items: center;
 }
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.chat-header strong {
+  margin-left: 6px;
+  font-size: 14px;
+}
+
+.chat-message .message-body {
+  margin-left: 58px;
+  margin-bottom: 6px;
+}
+
+.avatar {
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
 .chat-message:hover {
     background-color: #444;
 }
@@ -37,7 +59,7 @@ body {
     max-width: 150px;
     height: auto;
     border-radius: 12px;
-    /* optional */ }
+}
 
 /* input section at the bottom */
 .chat-input-container {
@@ -86,7 +108,8 @@ body {
     border-radius: 0;
     cursor: pointer;
     font-size: 0.9em;
-    margin-left: 5px;
+    margin-left: 58px;
+    margin-bottom: 6px;
     padding: 5px;
 }
 
