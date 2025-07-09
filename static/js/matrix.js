@@ -25,8 +25,53 @@ document.addEventListener("DOMContentLoaded", () => {
     const unicodeEmojiWrapper = document.getElementById("unicode-emoji-wrapper");
     const customEmojiButton = document.getElementById("custom-emoji-button");
 
+    if (!fileInput || !uploadButton) {
+        console.error("Missing fileInput or uploadButton");
+        return;
+    }
+
+    // file upload
+    uploadButton.addEventListener("click", () => {
+        fileInput.click();
+        });
+    fileInput.addEventListener("change", () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            alert("Only image files are allowed.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/matrix/upload_chat_image", {
+            method: "POST",
+            body: formData,
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const img = document.createElement("img");
+                    img.src = data.url;
+                    img.alt = file.name;
+                    img.style.maxWidth = "200px";
+                    img.style.height = "auto";
+
+                    insertNodeAtCursor(chatEditor, img);
+                } else {
+                    alert("Upload failed.");
+                }
+            })
+            .catch(err => {
+                console.error("Upload error:", err);
+                alert("An error occurred while uploading.");
+            });
+        });
+
     // Pull chat messages from DB and insert in chat-messages
-        window.addEventListener("DOMContentLoaded", () => {
+    window.addEventListener("DOMContentLoaded", () => {
         fetch("/matrix/get_messages")
             .then(res => res.json())
             .then(messages => {
@@ -50,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Message content
         msg.innerHTML = `<strong>${sender}:</strong> <span class="message-body"></span>
-        <button class="delete-btn">🗑️</button>`;
+        <button class="delete-btn">🗑 Delete</button>`;
 
         msg.querySelector(".message-body").innerHTML = text;
 
@@ -110,19 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("Error sending message:", data.error);
                 }
             });
-        }
-    });
-
-    // file upload
-    uploadButton.addEventListener("click", () => {
-        fileInput.click();
-    });
-
-    fileInput.addEventListener("change", () => {
-        const file = fileInput.files[0];
-        if (file) {
-            console.log("Selected file:", file.name);
-            // you would upload this file to the server or Matrix API here
         }
     });
 
@@ -295,6 +327,22 @@ function placeCaretAtEnd(el) {
         sel.removeAllRanges();
         sel.addRange(range);
     }
+}
+
+function insertNodeAtCursor(editable, node) {
+    editable.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+
+    // Optional: move cursor after inserted node
+    range.setStartAfter(node);
+    range.setEndAfter(node);
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 
 function deleteMessage(messageId) {
