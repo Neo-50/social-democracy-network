@@ -801,8 +801,15 @@ def send_chat_message():
 
     return jsonify({
         "success": True,
-        "message_id": message.id,
-        "timestamp": message.timestamp.isoformat()
+        "message": {
+            "id": message.id,
+            "content": message.content,
+            "timestamp": message.timestamp.isoformat(),
+            "username": current_user.username,
+            "display_name": current_user.display_name,
+            "avatar_filename": current_user.avatar_filename or "",
+            "bio": current_user.bio or "No bio available"
+        }
     })
 
 @app.route("/matrix/upload_chat_image", methods=["POST"])
