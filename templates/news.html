@@ -344,14 +344,16 @@
         <div class="popup-inner" id="popup-header">
             <span class="popup-close" onclick="hideUserPopup()">×</span>
             <img id="popup-avatar" class="popup-avatar" src="" alt="User avatar">
-            <h3 id="popup-username"></h3>
+            <h1 id="popup-display-name" style="padding-bottom: 0"></h1>
+            <h2 id="popup-username"></h2>
             <p id="popup-bio"></p>
         </div>
     </div>
 
     <!-- JAVASCRIPT -->
-     <script src="/static/js/custom-emojis.js"></script>
-    <script src="/static/js/news.js"></script>
+     <script src="{{ url_for('static', filename='js/custom-emojis.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/news.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/user_popup.js') }}"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     {% if scrape_id %}
         <script>
