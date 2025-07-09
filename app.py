@@ -701,7 +701,7 @@ def reset_password_admin(user_id):
 
     user = User.query.get_or_404(user_id)
     new_password = request.form['new_password']
-    user.set_password = generate_password_hash(new_password)
+    user.set_password(new_password)
     db.session.commit()
     flash(f"Password reset for user {user.username}")
     return redirect(url_for('admin_tools'))
