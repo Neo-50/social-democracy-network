@@ -77,16 +77,17 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(messages => {
                 messages.forEach(msg => {
-                    appendMessage(msg.username, msg.display_name, msg.content, msg.id, msg.avatar, msg.bio);
+                    appendMessage(msg.username, msg.display_name, msg.content, msg.id, msg.avatar, msg.bio, msg.timestamp);
 
                 });
+                formatTimestamp();
             })
             .catch(err => {
                 console.error("Failed to load messages:", err);
             });
     });
 
-    function appendMessage(username, displayName, text, messageId = null, avatar, bio) {
+    function appendMessage(username, displayName, text, messageId = null, avatar, bio, timestamp) {
         const chatMessages = document.getElementById("chat-messages");
         const msg = document.createElement("div");
         msg.className = "chat-message";
@@ -113,7 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 <strong>${displayName}</strong>
             </div>
             <div class="message-body"></div>
-            <button class="delete-btn">🗑️ Delete</button>
+            <div class="chat-toolbar">
+                <span class="comment-timestamp" data-timestamp="${timestamp}"></span>
+                <button class="delete-btn">🗑️ Delete</button>
+            </div>
         `;
 
         msg.querySelector(".message-body").innerHTML = text;
@@ -182,6 +186,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("Error sending message:", data.error);
                 }
             });
+        }
+    });
+
+    chatEditor.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault(); // Prevent newline
+            sendButton.click(); // Trigger the click event on send button
         }
     });
 

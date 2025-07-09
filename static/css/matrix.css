@@ -55,6 +55,13 @@ body {
     background-color: #444;
 }
 
+.chat-toolbar {
+  font-size: 0.75em;
+  margin-left: 58px;
+  margin-top: 0;
+  color:#888
+}
+
 /* input section at the bottom */
 .chat-input-container {
     display: flex;
@@ -102,7 +109,7 @@ body {
     border-radius: 0;
     cursor: pointer;
     font-size: 0.9em;
-    margin-left: 58px;
+    margin-left: 5px;
     margin-bottom: 6px;
     padding: 5px;
 }
