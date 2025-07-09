@@ -55,12 +55,6 @@ body {
     background-color: #444;
 }
 
-.chat-message img {
-    max-width: 150px;
-    height: auto;
-    border-radius: 12px;
-}
-
 /* input section at the bottom */
 .chat-input-container {
     display: flex;
@@ -152,6 +146,10 @@ body {
 
 .custom-emoji {
     cursor: pointer;
+}
+
+.inline-emoji {
+    border-radius: 0;
 }
 
 /* send button */

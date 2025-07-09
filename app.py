@@ -771,7 +771,7 @@ def send_chat_message():
     ALLOWED_ATTRIBUTES = {
         'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
     }
-    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'max-width', 'height', 'vertical-align'])
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'max-width', 'height', 'border-radius', 'vertical-align'])
 
     # inside send_chat_message
     content = clean(
