@@ -167,7 +167,15 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    appendMessage("You", message, data.message_id);
+                    const msg = data.message;
+                    appendMessage(
+                        msg.username,
+                        msg.display_name,
+                        msg.content,
+                        msg.id,
+                        msg.avatar_filename,
+                        msg.bio
+                    );
                     chatEditor.innerHTML = "";
                 } else {
                     console.error("Error sending message:", data.error);

@@ -48,6 +48,14 @@
     </div>
 </div>
 
+<script>
+  const currentUser = {
+    username: "{{ current_user.username }}",
+    display_name: "{{ current_user.display_name }}",
+    avatar_filename: "{{ current_user.avatar_filename or '' }}",
+    bio: "{{ current_user.bio or 'No bio available' }}"
+  };
+</script>
 <script src="{{ url_for('static', filename='js/matrix.js') }}"></script>
 <script src="{{ url_for('static', filename='js/user_popup.js') }}"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
