@@ -773,7 +773,6 @@ def send_chat_message():
     }
     css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'max-width', 'height', 'border-radius', 'vertical-align'])
 
-    # inside send_chat_message
     content = clean(
         data.get("content", "").strip(),
         tags=ALLOWED_TAGS,
@@ -810,6 +809,24 @@ def send_chat_message():
             "avatar_filename": current_user.avatar_filename or "",
             "bio": current_user.bio or "No bio available"
         }
+    })
+
+@app.route("/api/url-preview")
+def url_preview():
+    url = request.args.get("url")
+    if not url:
+        return jsonify({"error": "No URL"}), 400
+
+    article = NewsArticle.query.filter_by(url=url).first()
+    if not article:
+        return jsonify({"error": "Not found"}), 404
+
+    return jsonify({
+        "url": article.url,
+        "title": article.title,
+        "description": article.description,
+        "image_url": article.image_url,
+        "source": article.source
     })
 
 @app.route("/matrix/upload_chat_image", methods=["POST"])
