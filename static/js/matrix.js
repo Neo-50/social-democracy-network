@@ -84,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     appendMessage(msg.username, msg.display_name, msg.content, msg.id, msg.avatar, msg.bio, msg.timestamp);
 
                 });
-                formatTimestamp();
             })
             .catch(err => {
                 console.error("Failed to load messages:", err);
@@ -111,6 +110,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     style="width:50px; height:50px; border-radius:50%;">
             </button>
             ` : `<div class="avatar-placeholder"></div>`;
+        
+        console.log("Incoming timestamp:", timestamp);
 
         msg.innerHTML = `
             <div class="chat-header">
@@ -123,6 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="delete-btn">🗑️ Delete</button>
             </div>
         `;
+
+        formatTimestamp(msg);
 
         const urls = extractUrls(text).filter(url => {
             const isMedia = url.includes("/media/");
@@ -147,6 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         chatMessages.appendChild(msg);
+        console.log('FORMATTING TIMESTAMP')
+        formatTimestamp();
+        console.log('TIMESTAMP FORMATTED')
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
@@ -196,6 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     appendMessage(
                         msg.username,
                         msg.display_name,
+                        msg.timestamp,
                         msg.content,
                         msg.id,
                         msg.avatar_filename,
@@ -414,7 +421,10 @@ function renderUrlPreview(msgElement, data) {
                     <div class="preview-title">${data.title || data.url}</div>
                     ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
                 </a>
-                ${data.description ? `<div class="preview-description">${data.description}</div>` : ""}
+                ${data.source ? `<div class="preview-source">Source: ${data.source}</div>` : ""}
+                ${data.authors ? `<div class="preview-authors">Authors: ${data.authors}</div>` : ""}
+                ${data.description ? `<div class="preview-description">Description: ${data.description}</div>` : ""}
+                
             </div>
         </div>
     `;
