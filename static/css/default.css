@@ -91,6 +91,38 @@ a:focus {
   cursor: pointer;
 }
 
+/* Article Info Headings */
+
+.article-info.description::before {
+  content: "Description";
+  color: #bbb;
+}
+
+.article-info.source::before {
+  content: "Source";
+  color: #bbb;
+}
+
+.article-info.published::before {
+  content: "Published";
+  color: #bbb;
+}
+
+.article-info.authors::before {
+  content: "Authors";
+  color: #bbb;
+}
+
+.article-info.category::before {
+  content: "Category";
+  color: #bbb;
+}
+
+.article-info.archive-url::before {
+  content: "Archive URL";
+  color: #bbb;
+}
+
 /* Video embed block */
 
 .video-container {
@@ -141,6 +173,7 @@ a:focus {
    ======================= */
 
 input.password,
+/* stylelint-disable-next-line selector-id-pattern */
 #display_name {
   background-color: #444;
   color: #bbb;

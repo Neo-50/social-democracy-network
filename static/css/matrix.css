@@ -67,8 +67,7 @@ body {
     flex-direction: column;
     background-color: #1a1a1a;
     font-size: .8em;
-    color: #bbb;
-    flex-wrap: wrap;
+    word-wrap: normal;
     border: 2px solid #00e3ea;
     border-radius: 24px;
     margin-left: 58px;

@@ -114,8 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     style="width:50px; height:50px; border-radius:50%;">
             </button>
             ` : `<div class="avatar-placeholder"></div>`;
-        
-        console.log("Incoming timestamp:", timestamp);
 
         msg.innerHTML = `
             <div class="chat-header">
@@ -418,6 +416,19 @@ function renderUrlPreview(msgElement, data) {
     const preview = document.createElement("div");
     preview.className = "url-preview";
 
+    let formattedDate = "";
+    if (data.published) {
+        const date = new Date(data.published);
+        if (!isNaN(date)) {
+            // Example: "July 9, 2025"
+            formattedDate = date.toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    }
+
     preview.innerHTML = `
         <div class="preview-container">
             <div class="preview-container-inner">
@@ -425,10 +436,11 @@ function renderUrlPreview(msgElement, data) {
                     <div class="preview-title">${data.title || data.url}</div>
                     ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
                 </a>
-                ${data.source ? `<div class="preview-source">Source: ${data.source}</div>` : ""}
-                ${data.authors ? `<div class="preview-authors">Authors: ${data.authors}</div>` : ""}
-                ${data.description ? `<div class="preview-description">Description: ${data.description}</div>` : ""}
-                
+                ${data.description ? `<div><span class="article-info description"></span> ${data.description}</div>` : ""}
+                ${data.source ? `<div><span class="article-info source"></span> ${data.source}</div>` : ""}
+                ${formattedDate ? `<div><span class="article-info published"></span> ${formattedDate}</div>` : ""}
+                ${data.authors ? `<div><span class="article-info authors"></span> ${data.authors}</div>` : ""}
+                ${data.category ? `<div><span class="article-info category"></span> ${data.category}</div>` : ""}
             </div>
         </div>
     `;

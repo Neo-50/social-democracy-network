@@ -90,36 +90,6 @@ p {
     width: 100%;
 }
 
-.article-info.description::before {
-  content: "Description";
-  color: #bbb;
-}
-
-.article-info.source::before {
-  content: "Source";
-  color: #bbb;
-}
-
-.article-info.published::before {
-  content: "Published";
-  color: #bbb;
-}
-
-.article-info.authors::before {
-  content: "Authors";
-  color: #bbb;
-}
-
-.article-info.category::before {
-  content: "Category";
-  color: #bbb;
-}
-
-.article-info.archive-url::before {
-  content: "Archive URL";
-  color: #bbb;
-}
-
 .news-image {
     width: 100%;
     height: auto;
