@@ -3,6 +3,8 @@ import sys
 import logging
 import time
 import bleach
+import random
+import string
 from bleach.css_sanitizer import CSSSanitizer
 from bleach import clean
 from db_init import db
@@ -40,6 +42,7 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
 app.config['MAIL_PASSWORD'] = 'fLuffy2feRret$arENice7'  # use Zoho app password here
 app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
+print("MAX_CONTENT_LENGTH:", app.config["MAX_CONTENT_LENGTH"])
 
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
@@ -457,8 +460,7 @@ def log_incoming_request():
 
 @app.errorhandler(RequestEntityTooLarge)
 def handle_large_file(e):
-    flash("File is too large. Max size is 16MB.")
-    return redirect(request.url)
+    return jsonify({"success": False, "error": "File too large (server limit exceeded)"}), 413
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -862,10 +864,11 @@ def upload_chat_image():
 
     # Ensure unique name: chatimg0001.jpg, etc.
     ext = os.path.splitext(file.filename)[1]
-    base = "chatimg"
+    prefix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
+    base = f"{prefix}_chatimg"
     i = 1
     while True:
-        filename = f"{base}{i:04}{ext}"
+        filename = f"{base}{i:03}{ext}"
         path = get_media_path("matrix", filename)
         if not os.path.exists(path):
             break
