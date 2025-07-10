@@ -852,12 +852,12 @@ def upload_chat_image():
     if not file.mimetype.startswith("image/"):
         return jsonify({"success": False, "error": "Invalid file type"}), 400
 
-    MAX_FILE_SIZE = 2 * 1024 * 1024
+    MAX_FILE_SIZE = 16 * 1024 * 1024
 
     # Read file into memory to check size
     file_contents = file.read()
     if len(file_contents) > MAX_FILE_SIZE:
-        return jsonify({"success": False, "error": "File too large (max 2 MB)"}), 400
+        return jsonify({"success": False, "error": "File too large (max 16 MB)"}), 400
 
     # Reset pointer to beginning before saving
     file.stream.seek(0)
