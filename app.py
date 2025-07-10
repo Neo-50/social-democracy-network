@@ -458,10 +458,6 @@ def update_article_category(article_id):
 def log_incoming_request():
     print("Request received:", request.method, request.path)
 
-@app.errorhandler(RequestEntityTooLarge)
-def handle_large_file(e):
-    return jsonify({"success": False, "error": "File too large (server limit exceeded)"}), 413
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -878,7 +874,6 @@ def upload_chat_image():
     file_url = url_for("media", filename=f"matrix/{filename}", _external=True)
 
     return jsonify({"success": True, "url": file_url, "filename": filename})
-
 
 @app.route("/matrix/delete_message/<int:message_id>", methods=["DELETE"])
 @login_required
