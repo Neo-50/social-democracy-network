@@ -825,6 +825,8 @@ def url_preview():
         "url": article.url,
         "title": article.title,
         "description": article.description,
+        "source": article.source,
+        "authors": article.authors,
         "image_url": article.image_url,
         "source": article.source
     })
