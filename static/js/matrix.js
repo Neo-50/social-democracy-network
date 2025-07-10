@@ -35,41 +35,42 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.click();
         });
     fileInput.addEventListener("change", () => {
-        const file = fileInput.files[0];
-        if (!file) return;
+    const file = fileInput.files[0];
+    if (!file) return;
 
-        if (!file.type.startsWith("image/")) {
-            alert("Only image files are allowed.");
-            return;
-        }
+    if (!file.type.startsWith("image/")) {
+        alert("Only image files are allowed.");
+        return;
+    }
 
-        const formData = new FormData();
-        formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-        fetch("/matrix/upload_chat_image", {
-            method: "POST",
-            body: formData,
+    fetch("/matrix/upload_chat_image", {
+        method: "POST",
+        body: formData,
+    })
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+            throw new Error(data.error || "Upload failed.");
+            }
+            return data;
         })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const img = document.createElement("img");
-                    img.src = data.url;
-                    img.alt = file.name;
-                    img.style.maxWidth = "500px";
-                    img.style.height = "auto";
-                    img.style.borderRadius = "24px";
-
-                    insertNodeAtCursor(chatEditor, img);
-                } else {
-                    alert("Upload failed.");
-                }
-            })
-            .catch(err => {
-                console.error("Upload error:", err);
-                alert("An error occurred while uploading.");
-            });
+        .then(data => {
+            const img = document.createElement("img");
+            img.src = data.url;
+            img.alt = file.name;
+            img.style.maxWidth = "500px";
+            img.style.height = "auto";
+            img.style.borderRadius = "24px";
+            insertNodeAtCursor(chatEditor, img);
+        })
+        .catch(err => {
+            console.error("Upload error:", err);
+            alert(err.message || "A network error occurred while uploading.");
         });
+});
     
     function extractUrls(text) {
         return [...text.matchAll(/https?:\/\/[^\s<>"']+/g)].map(m => m[0]);
@@ -128,12 +129,13 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         formatTimestamp(msg);
-
+        
         const urls = extractUrls(text).filter(url => {
             const isMedia = url.includes("/media/");
             const isImage = /\.(jpg|jpeg|png|gif|webp|avif|svg)$/i.test(url);
-            return !isMedia && !isImage;
-        });          
+            return !isMedia && !isImage; // YouTube links will pass through
+        });
+
         urls.forEach(url => {
             fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
                 .then(res => res.ok ? res.json() : null)
@@ -415,6 +417,12 @@ function insertNodeAtCursor(editable, node) {
 function renderUrlPreview(msgElement, data) {
     const preview = document.createElement("div");
     preview.className = "url-preview";
+
+    if (data.embed_html) {
+        preview.innerHTML = data.embed_html;
+        msgElement.appendChild(preview);
+        return;
+    }
 
     let formattedDate = "";
     if (data.published) {
