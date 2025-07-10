@@ -7,6 +7,7 @@ import random
 import string
 from bleach.css_sanitizer import CSSSanitizer
 from bleach import clean
+from bs4 import BeautifulSoup
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message, ChatMessage
 from datetime import datetime, timedelta, timezone
@@ -877,6 +878,22 @@ def delete_message(message_id):
     message = ChatMessage.query.get_or_404(message_id)
     if message.user_id != current_user.id:
         return jsonify({"error": "Unauthorized"}), 403
+    
+    # Delete attached images in /media/matrix/ if they exist
+    if message.content:  # assuming .content holds the HTML
+        soup = BeautifulSoup(message.content, "html.parser")
+        for img in soup.find_all("img"):
+            src = img.get("src")
+            if src and "/media/matrix/" in src:
+                filename = os.path.basename(src)
+                file_path = os.path.join("mnt", "storage", "matrix", filename)
+                try:
+                    os.remove(file_path)
+                    print(f"Deleted image file: {file_path}")
+                except FileNotFoundError:
+                    print(f"File not found (already deleted?): {file_path}")
+                except Exception as e:
+                    print(f"Error deleting {file_path}: {e}")
 
     db.session.delete(message)
     db.session.commit()
