@@ -20,6 +20,9 @@ body {
 @media (width < 600px) {
   .chat-container {
     height: 76vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0 5px;
   }
 }
 
@@ -274,13 +277,13 @@ body {
 @media (width < 600px) {
     #unicode-emoji-wrapper {
         right: 0;
-        bottom: 65px;
+        bottom: 72px;
     }
 
     #custom-emoji-wrapper {
         max-height: 290px;
         width: 260px;
-        bottom: 65px;
+        bottom: 72px;
     }
 
     .responsive-youtube {
