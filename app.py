@@ -90,10 +90,6 @@ def load_user(user_id):
 
 # Constants
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-MAX_FILE_SIZE = 2 * 1024 * 1024  # 2MB
-
-# Flask config (optional fallback, not enforced unless you hook into it)
-app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
 migrate = Migrate(app, db)
 
@@ -768,7 +764,7 @@ def send_chat_message():
     ALLOWED_ATTRIBUTES = {
         'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
     }
-    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'max-width', 'height', 'border-radius', 'vertical-align'])
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height' 'max-width', 'max-height', 'border-radius', 'vertical-align'])
 
     content = clean(
         data.get("content", "").strip(),
