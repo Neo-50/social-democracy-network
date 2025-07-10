@@ -22,6 +22,7 @@ from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
 from werkzeug.exceptions import RequestEntityTooLarge
+from utils.metadata_scraper import try_youtube_scrape
 from utils.email_utils import confirm_verification_token, send_verification_email
 from dotenv import load_dotenv
 load_dotenv()
@@ -816,6 +817,11 @@ def url_preview():
     url = request.args.get("url")
     if not url:
         return jsonify({"error": "No URL"}), 400
+    
+    if "youtube.com" in url or "youtu.be" in url:
+        data = try_youtube_scrape(url)
+        if data:
+            return jsonify(data)
 
     article = NewsArticle.query.filter_by(url=url).first()
     if not article:
@@ -845,6 +851,16 @@ def upload_chat_image():
 
     if not file.mimetype.startswith("image/"):
         return jsonify({"success": False, "error": "Invalid file type"}), 400
+
+    MAX_FILE_SIZE = 2 * 1024 * 1024
+
+    # Read file into memory to check size
+    file_contents = file.read()
+    if len(file_contents) > MAX_FILE_SIZE:
+        return jsonify({"success": False, "error": "File too large (max 2 MB)"}), 400
+
+    # Reset pointer to beginning before saving
+    file.stream.seek(0)
 
     # Ensure unique name: chatimg0001.jpg, etc.
     ext = os.path.splitext(file.filename)[1]
@@ -879,6 +895,10 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='[%(levelname)s] %(message)s'
 )
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_large_file_error(e):
+    return jsonify(success=False, error="File too large (server limit exceeded)"), 413
 
 @app.context_processor
 def inject_user():
