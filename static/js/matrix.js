@@ -81,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.json())
             .then(messages => {
                 messages.forEach(msg => {
+                    console.log("Message:", msg);
                     appendMessage(msg.username, msg.display_name, msg.content, msg.id, msg.avatar, msg.bio, msg.timestamp);
 
                 });
@@ -91,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function appendMessage(username, displayName, text, messageId = null, avatar, bio, timestamp) {
+        console.log("appendMessage args:", { username, displayName, text, messageId, avatar, bio, timestamp });
         const chatMessages = document.getElementById("chat-messages");
         const msg = document.createElement("div");
         msg.className = "chat-message";
@@ -98,6 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (messageId) {
             msg.dataset.messageId = messageId;
         }
+
+        console.log("Avatar param:", avatar);
 
         const avatarImg = avatar ? `
             <button class="avatar-wrapper"
@@ -120,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="message-body"></div>
             <div class="chat-toolbar">
-                <span class="comment-timestamp" data-timestamp="${timestamp}"></span>
+                <span class="comment-timestamp" data-timestamp="${timestamp}Z"></span>
                 <button class="delete-btn">🗑️ Delete</button>
             </div>
         `;
@@ -202,11 +206,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     appendMessage(
                         msg.username,
                         msg.display_name,
-                        msg.timestamp,
                         msg.content,
                         msg.id,
-                        msg.avatar_filename,
-                        msg.bio
+                        msg.avatar,
+                        msg.bio,
+                        msg.timestamp
                     );
                     chatEditor.innerHTML = "";
                 } else {
