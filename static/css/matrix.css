@@ -9,7 +9,7 @@ body {
 .chat-container {
     display: flex;
     flex-direction: column;
-    height: 82vh;
+    height: 84vh;
     border: 2px solid #bbb;
     background-color: #2a2a2a;
     overflow: hidden;
@@ -28,6 +28,9 @@ body {
     color: #ddd;
     margin-bottom: 6px;
     align-items: center;
+    max-width: 100%;
+    overflow-x: hidden;
+    border: 2px solid #00e3ea;
 }
 
 .chat-header {
@@ -95,6 +98,14 @@ body {
   overflow: hidden;
   position: relative;
   border: 2px solid #8feff2;
+}
+
+@media (width < 600px) {
+  .responsive-youtube {
+    max-width: 100%;
+    margin-left: 0;
+    border-radius: 12px;
+  }
 }
 
 .responsive-youtube iframe {
@@ -242,6 +253,25 @@ body {
     border: 1px solid #444;
     border-radius: 6px;
     box-shadow: 0 2px 12px rgb(0 0 0.5);
+}
+
+@media (width < 600px) {
+    #unicode-emoji-wrapper {
+        right: 0;
+        bottom: 60px;
+    }
+
+    #custom-emoji-wrapper {
+        max-height: 290px;
+        width: 260px;
+        bottom: 60px;
+    }
+
+    .responsive-youtube {
+        max-width: 100%;
+        margin-left: 0;
+        border-radius: 12px;
+    }
 }
 
 /* individual custom emoji in drawer */
