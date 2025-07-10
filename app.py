@@ -806,7 +806,7 @@ def send_chat_message():
             "timestamp": message.timestamp.isoformat(),
             "username": current_user.username,
             "display_name": current_user.display_name,
-            "avatar_filename": current_user.avatar_filename or "",
+            "avatar": current_user.avatar_filename or "",
             "bio": current_user.bio or "No bio available"
         }
     })
