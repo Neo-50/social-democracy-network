@@ -28,7 +28,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-
+app.config["MAX_CONTENT_LENGTH"] = 30 * 1024 * 1024  # 30MB
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback_dev_key')
 app.config['SESSION_COOKIE_SECURE'] = True  # Required for HTTPS-only cookies
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Good default for login forms
@@ -40,8 +40,6 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
 app.config['MAIL_PASSWORD'] = 'fLuffy2feRret$arENice7'  # use Zoho app password here
 app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
-
-app.config['MAX_CONTENT_LENGTH'] = 1.8 * 1024 * 1024  # 2 MB limit
 
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
@@ -459,7 +457,7 @@ def log_incoming_request():
 
 @app.errorhandler(RequestEntityTooLarge)
 def handle_large_file(e):
-    flash("File is too large. Max size is 2MB.")
+    flash("File is too large. Max size is 16MB.")
     return redirect(request.url)
 
 def allowed_file(filename):
