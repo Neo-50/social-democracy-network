@@ -56,6 +56,7 @@ body {
 .chat-message .message-body {
   margin-left: 58px;
   margin-bottom: 6px;
+  max-width: 95%;
 }
 
 .avatar {
@@ -64,7 +65,7 @@ body {
 }
 
 .chat-message:hover {
-    background-color: #444;
+    background-color: #111;
 }
 
 .chat-toolbar {
@@ -273,13 +274,13 @@ body {
 @media (width < 600px) {
     #unicode-emoji-wrapper {
         right: 0;
-        bottom: 60px;
+        bottom: 65px;
     }
 
     #custom-emoji-wrapper {
         max-height: 290px;
         width: 260px;
-        bottom: 60px;
+        bottom: 65px;
     }
 
     .responsive-youtube {
