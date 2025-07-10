@@ -17,7 +17,7 @@ body {
 
 @media (width < 600px) {
   .chat-container {
-    height: 80vh;
+    height: 76vh;
   }
 }
 
