@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-
-<div class="chat-container">
-    <div class="chat-messages" id="chat-messages"></div>
+<body>
+<div class="chat-wrapper">
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages"></div>
+        </div>
+    </div>
     <div class="chat-input-container">
         <div class="chat-editor" id="chat-editor" contenteditable="true" placeholder="Type a message..." required></div>
         <input type="hidden" name="chat-content" class="hidden-content">
-
+    
         <div class="chat-buttons">
             <!-- Unicode emoji picker button -->
             <button type="button" class="emoji-button" id="unicode-emoji-button">
@@ -15,7 +18,7 @@
             <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
                 <emoji-picker></emoji-picker>
             </div>
-
+    
             <!-- Custom emoji picker button -->
             <button type="button" class="emoji-button" id="custom-emoji-button">
                 🐱
@@ -23,13 +26,13 @@
             <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display: none;">
                 <!-- custom emoji drawer will be injected here -->
             </div>
-            
+    
             <!-- Upload button -->
             <button type="button" id="upload-button" class="upload-button">
                 📎
             </button>
             <input type="file" id="file-input" accept="image/*" style="display: none" />
-
+    
             <!-- Send button -->
             <button type="button" id="send-button" class="send-button">
                 Send
@@ -37,6 +40,7 @@
         </div>
     </div>
 </div>
+</body>
 
 <div id="user-popup" class="popup" style="display: none;">
     <div class="popup-inner" id="popup-header">
