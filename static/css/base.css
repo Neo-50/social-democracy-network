@@ -227,8 +227,7 @@
     }
 
     .title-image {
-        width: 200px;
-        height: auto;
+        display: none;
     }
     
     .mobile-nav-buttons {
