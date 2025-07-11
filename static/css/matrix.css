@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     height: 74dvh;
+    border: 2px solid yellow;
 }
 
 .chat-container {
@@ -12,7 +13,7 @@
     -webkit-overflow-scrolling: touch;
     background-color: #222;
     padding: 0 5px;
-    margin: 0 5px;
+    margin: 0 10px;
 }
 
 .chat-input-container {
@@ -63,7 +64,8 @@
   font-size: 0.75em;
   margin-left: 58px;
   margin-top: 0;
-  color:#888
+  color:#888;
+  border: 2px solid limegreen;
 }
 
 .preview-container {
@@ -132,6 +134,7 @@
     padding-top: 8px;
     background-color: #444;
     border-top: 1px solid #bbb;
+    border: 2px solid navy;
 }
 
 /* contenteditable box */
@@ -180,6 +183,7 @@
     width: fit-content;
     gap: 0;
     margin-right: 4px;
+    border: 2px solid limegreen;
 }
 
 #unicode-emoji-button {
