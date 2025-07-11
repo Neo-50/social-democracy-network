@@ -174,11 +174,14 @@
         </div>
     </section>
     <section class="home-right">
+        {% if current_user.is_authenticated %}
+            <h2>Welcome, {{ current_user.display_name or current_user.username }}!</h2>
+        {% endif %}
         <a href="https://element.social-democracy.net" target="_blank">
             <img src="{{ url_for('media', filename='home/matrix.png') }}" alt="matrix" class="matrix-logo">
         </a>
         <div class="matrix-message">
-            <a href="https://element.social-democracy.net" target="_blank">Join Matrix Server</a>
+            <a href="https://element.social-democracy.net" target="_blank">Enter Matrix Server</a>
         </div>
         <div class="image-container">
             <a href="https://goodtroubleliveson.org/" target="_blank">

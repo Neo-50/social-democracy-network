@@ -315,6 +315,10 @@ def matrix():
     messages = ChatMessage.query.order_by(ChatMessage.timestamp.asc()).all()
     return render_template("matrix.html", messages=messages)
 
+@app.route("/chat")
+def chat():
+    return render_template("chat.html", messages=messages)
+
 @app.route('/.well-known/matrix/<path:filename>')
 def well_known_matrix(filename):
     full_path = os.path.join(app.root_path, 'static', '.well-known', 'matrix')
