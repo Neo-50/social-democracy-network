@@ -10,7 +10,7 @@
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    background-color: #222;
+    background-color: #1a1a1a;
     padding: 0 5px;
     margin: 0 2px;
 }
@@ -79,20 +79,6 @@
     width: 440px;
 }
 
-@media (width < 600px) {
-    .preview-container{
-        margin-left: 0;
-        width: 330px;
-    }
-    .chat-message .message-body {
-        margin-left: 58px;
-        margin-bottom: 6px;
-        max-width: 380px;
-        word-wrap: break-word;
-        overflow: hidden;
-    }
-}
-
 .preview-container-inner {
     border-left: 4px solid #bbb;
     padding-left: 6px;
@@ -100,7 +86,25 @@
 
 .preview-image {
     width: 380px;
-    width: 280px;
+}
+
+@media (width < 600px) {
+    .preview-container{
+        margin-left: 0;
+        width: 330px;
+    }
+
+    .preview-image {
+        width: 280px;
+    }
+
+    .chat-message .message-body {
+        margin-left: 58px;
+        margin-bottom: 6px;
+        max-width: 380px;
+        word-wrap: break-word;
+        overflow: hidden;
+    }
 }
 
 .responsive-youtube {
@@ -152,23 +156,6 @@
     pointer-events: none;
 }
 
-.delete-btn {
-    background-color: transparent;
-    border: none;
-    color: #888;
-    border-radius: 0;
-    cursor: pointer;
-    font-size: 0.9em;
-    margin-left: 5px;
-    margin-bottom: 6px;
-    padding: 5px;
-}
-
-.delete-btn:hover {
-    color: #fff;
-    background-color: #333;
-}
-
 /* buttons */
 
 .chat-buttons {
@@ -205,10 +192,6 @@
     padding: 0;
 }
 
-@media (width < 600px) {
-
-}
-
 .icon {
     width: 32px;
     height: 32px;
@@ -237,7 +220,6 @@
     color: #fff;
     background-color: #333;
 }
-
 
 .reply-drawer {
   display: flex;
