@@ -3,7 +3,7 @@
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 75dvh;
+    height: 76dvh;
 }
 
 .chat-container {
@@ -48,7 +48,6 @@
   margin-left: 58px;
   margin-bottom: 6px;
   max-width: 95%;
-  border: 2px solid orange;
 }
 
 .avatar {
@@ -65,7 +64,6 @@
   margin-left: 58px;
   margin-top: 0;
   color:#888;
-  border: 2px solid limegreen;
 }
 
 .preview-container {
@@ -141,7 +139,6 @@
     padding-top: 8px;
     background-color: #444;
     border-top: 1px solid #bbb;
-    border: 2px solid navy;
 }
 
 /* contenteditable box */
@@ -190,7 +187,6 @@
     width: fit-content;
     gap: 0;
     margin-right: 4px;
-    border: 2px solid limegreen;
 }
 
 #unicode-emoji-button {
