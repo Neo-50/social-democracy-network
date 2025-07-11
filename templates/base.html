@@ -103,22 +103,19 @@
     
     <header class="top-bar">
         <div class="header-date-time" id="date"></div>
-        <div class="header-center">
-            <nav id="main-nav">
-                <a href="{{ url_for('home') }}">Home</a>
-                <a href="{{ url_for('news') }}">News</a>
-                <a href="{{ url_for('activism') }}">Activism</a>
-                <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">
-                <a href="{{ url_for('environment') }}">Environment</a>
-                <a href="{{ url_for('veganism') }}">Veganism</a>
-                <a href="{{ url_for('about') }}">About</a>
-            </nav>
-        
-            <div class="mobile-nav-buttons">
-                <button id="hamburger-icon" class="hamburger-icon" onclick="toggleMobileMenu()">☰
-                <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Directory</button>
-            </div>
+        <div class="mobile-nav-buttons">
+            <button id="hamburger-icon" class="hamburger-icon" onclick="toggleMobileMenu()">☰
+            <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Directory</button>
         </div>
+        <nav id="main-nav">
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('news') }}">News</a>
+            <a href="{{ url_for('activism') }}">Activism</a>
+            <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">
+            <a href="{{ url_for('environment') }}">Environment</a>
+            <a href="{{ url_for('veganism') }}">Veganism</a>
+            <a href="{{ url_for('about') }}">About</a>
+        </nav>
         <div class="mobile-nav-container">
             <nav id="mobile-nav" class="mobile-nav">
                 <a href="{{ url_for('home') }}">Home</a>
