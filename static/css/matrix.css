@@ -84,12 +84,15 @@
 @media (width < 600px) {
     .preview-container{
         margin-left: 0;
-        width: 340px;
+        width: 330px;
     }
     .chat-message .message-body {
         margin-left: 58px;
         margin-bottom: 6px;
-        max-width: 380px;     }
+        max-width: 380px;
+        word-wrap: break-word;
+        overflow: hidden;
+    }
 }
 
 .preview-container-inner {
