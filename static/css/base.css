@@ -74,9 +74,11 @@
 /* Navigation bar */
 #main-nav {
     display: flex;
-    justify-content: center;
+    align-self: center;
     align-items: center;
-    width: fit-content;
+    justify-content: center;
+    margin: 0 auto;
+    width: auto;
     gap: 5px;
 }
 
