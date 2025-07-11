@@ -152,7 +152,7 @@
     display: none;
     position: absolute;
     font-size: 1em;
-    top: 100px;
+    top: 45px;
     left: 0;
     padding: 10px;
     background-color: #111;
@@ -173,8 +173,8 @@
     display: none;
     position: absolute;
     font-size: 1em;
-    top: 100px;
-    left: 120px;
+    top: 45px;
+    left: 110px;
     padding: 20px;
     background-color: #111;
     border: 1px solid #444;
