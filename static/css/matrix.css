@@ -3,8 +3,7 @@
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 74dvh;
-    border: 2px solid yellow;
+    height: 75dvh;
 }
 
 .chat-container {
@@ -49,6 +48,7 @@
   margin-left: 58px;
   margin-bottom: 6px;
   max-width: 95%;
+  border: 2px solid orange;
 }
 
 .avatar {
@@ -84,8 +84,12 @@
 @media (width < 600px) {
     .preview-container{
         margin-left: 0;
-        width: 360px;
+        width: 340px;
     }
+    .chat-message .message-body {
+        margin-left: 58px;
+        margin-bottom: 6px;
+        max-width: 380px;     }
 }
 
 .preview-container-inner {
@@ -275,13 +279,13 @@
 @media (width < 600px) {
     #unicode-emoji-wrapper {
         right: 0;
-        bottom: 72px;
+        bottom: 76px;
     }
 
     #custom-emoji-wrapper {
         max-height: 290px;
         width: 260px;
-        bottom: 72px;
+        bottom: 76px;
     }
 
     .responsive-youtube {
