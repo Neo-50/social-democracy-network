@@ -1,25 +1,25 @@
 .top-bar {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    position: relative;
+    flex-direction: row;
     background-color: #3d3d3d;
+    align-items: center;
     color: white;
-    padding: 1rem;
-    flex-wrap: wrap;
+    border-bottom: 1px solid #bbb;
     gap: 1rem;
-    height: 140px;
+    height: 60px;
 }
 
 /* Left: time + mobile buttons */
 .header-left {
-    position: absolute;
-    bottom: 0.5rem;
-    left: 1rem;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    z-index: 5;
+    margin-left: 10px;
+}
+
+.header-date-time {
+    color: white;
+    font-weight: 600;
+    height: fit-content;
+    font-size: 12pt;
 }
 
 /* Center: logo and nav */
@@ -69,15 +69,10 @@
 /* Logo styling */
 .title-image {
     max-width: 600px;
-    width: 80%;
+    width: 35%;
+    margin-left: 10px;
+    margin-right: 10px;
     height: auto;
-}
-
-.header-date-time {
-    color: white;
-    font-weight: 600;
-    font-size: 12pt;
-    padding-bottom: 8px;
 }
 
 .status {
@@ -88,10 +83,10 @@
 /* Navigation bar */
 #main-nav {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    align-items: center;
+    width: fit-content;
+    gap: 5px;
 }
 
 .dropdown-menu {
@@ -126,7 +121,9 @@
     background-color: #1a1a1a;
     color: white;
     text-decoration: none;
-    padding: 6px 20px;
+    text-align: center;
+    max-height: 32px;
+    padding: 2px 20px;
     border-radius: 999px;
     font-weight: 600;
 }
@@ -238,25 +235,8 @@
         display: none;
     }
 
-    .header-left,
-    .header-right,
-    .header-center {
-        all: unset;
-        display: contents;
-    }
-
-    .main-content {
-        margin-top: 0;
-        padding-top: 0;
-    }
-
-    .top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        padding: 0 5px;
-        border-bottom: 2px solid #bbb;
-        height: auto;
+    .title-image {
+        min-width: 300px;
     }
     
     .mobile-nav-buttons {
@@ -299,13 +279,5 @@
         margin: 0;
         border-radius: 999px;
         background-color: #1a1a1a;
-}
-    
-    .title-image {
-        display: flex;
-        margin: 5px auto;
-        margin-bottom: 0;
-        padding-top: 5px;
-        max-width: 100%;
     }
 }
