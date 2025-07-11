@@ -49,8 +49,7 @@ h2 {
 .formatted-description {
     display: inline;
     text-align: left;
-    white-space: pre-wrap;
-    line-height: 1.4;
+    line-height: 1;
     margin-top: 5px;
     margin-bottom: 0;
     font-size: 1em;
