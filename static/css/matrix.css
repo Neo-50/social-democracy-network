@@ -3,13 +3,14 @@
 .chat-wrapper {
     display: flex;
     flex-direction: column;
+    max-width: 98%;
     height: 86dvh;
     background-color: black;
 }
 
 @media (width < 600px) {
     .chat-wrapper {
-        height: 74dvh;
+        height: 76dvh;
     }  
 }
 
@@ -18,7 +19,7 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     background-color: #1a1a1a;
-    padding: 0 5px;
+    padding: 1px;
     margin: 0 2px;
 }
 
