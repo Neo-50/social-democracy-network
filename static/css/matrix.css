@@ -3,7 +3,7 @@
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 76dvh;
+    height: 84dvh;
 }
 
 .chat-container {
@@ -226,6 +226,7 @@
   gap: 8px;
   margin-top: 8px;
   margin-left: 58px;
+  margin-bottom: 20px;
   padding-left: 10px;
   width: fit-content;
   border-left: 4px solid #bbb;
