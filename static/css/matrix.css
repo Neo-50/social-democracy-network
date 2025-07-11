@@ -38,7 +38,11 @@ html, body {
 .chat-input-container {
     display: flex;
     align-items: center;
+    box-sizing: border-box;
+    max-width: 100%;
+    width: 100%;
     padding: 8px;
+    border: 1px solid lightblue;
     background: #111; 
 }
 
