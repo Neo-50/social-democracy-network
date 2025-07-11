@@ -6,6 +6,7 @@
     grid-gap: 30px;
     padding: 0.5rem;
     box-sizing: border-box;
+    border: 2px solid limegreen;
 }
 
 .news-left, .news-right {

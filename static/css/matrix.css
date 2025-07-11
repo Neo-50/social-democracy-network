@@ -1,20 +1,11 @@
 /* matrix.css */
 
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  width: 100%;
-  box-sizing: border-box;
-}
-
 .chat-wrapper {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
     overflow-x: hidden;
-    width: 100%;
-    max-width: 100%;
+    max-width: 98%;
     height: 86dvh;
     border: 2px solid #bbb;
     background-color: black;
