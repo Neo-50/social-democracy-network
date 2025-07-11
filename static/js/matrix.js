@@ -95,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function appendMessage(username, displayName, text, messageId = null, avatar, bio, timestamp) {
-        console.log("appendMessage args:", { username, displayName, text, messageId, avatar, bio, timestamp });
         const chatMessages = document.getElementById("chat-messages");
         const msg = document.createElement("div");
         msg.className = "chat-message";
@@ -126,9 +125,37 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="message-body"></div>
             <div class="chat-toolbar">
                 <span class="comment-timestamp" data-timestamp="${timestamp}Z"></span>
+                <button class="reply-button">Reply</button>
                 <button class="delete-btn">🗑️ Delete</button>
             </div>
+            <div class="reply-drawer" style="display: none;">
+                <input class="reply-input" type="text" placeholder="Type a reply..." />
+                <button class="reply-submit">Send</button>
+                <button class="reply-cancel">Cancel</button>
+            </div>
         `;
+
+        const replyBtn = msg.querySelector('.reply-button');
+        const replyDrawer = msg.querySelector('.reply-drawer');
+
+        replyBtn.addEventListener('click', () => {
+            replyDrawer.style.display = replyDrawer.style.display === 'block' ? 'none' : 'block';
+        });
+
+        const replyInput = msg.querySelector('.reply-input');
+        const replySubmit = msg.querySelector('.reply-submit');
+
+        replySubmit.addEventListener('click', () => {
+            const replyText = replyInput.value.trim();
+            if (replyText) {
+                console.log(`Reply to message ID ${messageId}:`, replyText);
+                // Clear and optionally collapse drawer
+                replyInput.value = '';
+                replyDrawer.style.display = 'none';
+
+                // TODO: Send replyText to backend here
+            }
+        });
 
         formatTimestamp(msg);
         
