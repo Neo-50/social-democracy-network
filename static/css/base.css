@@ -78,6 +78,7 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+    padding-right: 140px;
     width: auto;
     gap: 5px;
 }
@@ -224,7 +225,8 @@
 /* ========== Responsive Adjustments (≤ 768px) ========== */
 @media (width <= 768px) {
     .header-date-time,
-    #main-nav a {
+    #main-nav a,
+    .username {
         display: none;
     }
 

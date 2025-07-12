@@ -1,4 +1,4 @@
-// matrix.js
+// chat.js
 
 const customEmojis = ['gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-flat.webp', 'gir-suit.png', 'gir-happy.png', 'zimthonk.png',
     'pepe-yes.png', 'pepe-no.png', 'hmm.png', 'peepo-ban.png', 'peepo-cute.png', 'peepo-happy.png', 'peepo-heart.png',
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    fetch("/matrix/upload_chat_image", {
+    fetch("/chat/upload_chat_image", {
         method: "POST",
         body: formData,
     })
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-        fetch("/matrix/get_messages")
+        fetch("/chat/get_messages")
             .then(res => res.json())
             .then(messages => {
             messages.forEach(msg => {
@@ -244,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sendButton.addEventListener("click", () => {
         const message = chatEditor.innerHTML.trim();
         if (message !== "") {
-            fetch("/matrix/send", {
+            fetch("/chat/send", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -516,7 +516,7 @@ function renderUrlPreview(msgElement, data) {
 function deleteMessage(messageId) {
     if (!confirm("Are you sure you want to delete this message?")) return;
 
-    fetch(`/matrix/delete_message/${messageId}`, {
+    fetch(`/chat/delete_message/${messageId}`, {
         method: "DELETE",
     })
     .then(res => {

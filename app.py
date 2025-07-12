@@ -309,15 +309,15 @@ def check_metadata_status(article_id):
 
     return {"status": "pending"}
 
-@app.route("/matrix")
-@login_required
-def matrix():
-    messages = ChatMessage.query.order_by(ChatMessage.timestamp.asc()).all()
-    return render_template("matrix.html", messages=messages)
-
 @app.route("/chat")
+@login_required
 def chat():
+    messages = ChatMessage.query.order_by(ChatMessage.timestamp.asc()).all()
     return render_template("chat.html", messages=messages)
+
+@app.route("/chat_intro")
+def chat_intro():
+    return render_template("chat_intro.html", messages=messages)
 
 @app.route('/.well-known/matrix/<path:filename>')
 def well_known_matrix(filename):
@@ -749,7 +749,7 @@ def forgot_password():
         flash("If the email exists, a reset link will be sent.")
     return redirect(url_for('login'))
 
-@app.route("/matrix/get_messages", methods=["GET"])
+@app.route("/chat/get_messages", methods=["GET"])
 @login_required
 def get_messages():
     messages = (
@@ -777,7 +777,7 @@ def get_messages():
 
     return jsonify(result)
 
-@app.route("/matrix/send", methods=["POST"])
+@app.route("/chat/send", methods=["POST"])
 @login_required
 def send_chat_message():
     data = request.get_json()
@@ -857,7 +857,7 @@ def url_preview():
         "category": article.category
     })
 
-@app.route("/matrix/upload_chat_image", methods=["POST"])
+@app.route("/chat/upload_chat_image", methods=["POST"])
 @login_required
 def upload_chat_image():
     if "file" not in request.files:
@@ -888,31 +888,31 @@ def upload_chat_image():
     i = 1
     while True:
         filename = f"{base}{i:03}{ext}"
-        path = get_media_path("matrix", filename)
+        path = get_media_path("chat", filename)
         if not os.path.exists(path):
             break
         i += 1
 
     file.save(path)
-    file_url = url_for("media", filename=f"matrix/{filename}", _external=True)
+    file_url = url_for("media", filename=f"chat/{filename}", _external=True)
 
     return jsonify({"success": True, "url": file_url, "filename": filename})
 
-@app.route("/matrix/delete_message/<int:message_id>", methods=["DELETE"])
+@app.route("/chat/delete_message/<int:message_id>", methods=["DELETE"])
 @login_required
 def delete_message(message_id):
     message = ChatMessage.query.get_or_404(message_id)
     if message.user_id != current_user.id:
         return jsonify({"error": "Unauthorized"}), 403
     
-    # Delete attached images in /media/matrix/ if they exist
+    # Delete attached images in /media/chat/ if they exist
     if message.content:  # assuming .content holds the HTML
         soup = BeautifulSoup(message.content, "html.parser")
         for img in soup.find_all("img"):
             src = img.get("src")
-            if src and "/media/matrix/" in src:
+            if src and "/media/chat/" in src:
                 filename = os.path.basename(src)
-                file_path = os.path.join("mnt", "storage", "matrix", filename)
+                file_path = os.path.join("mnt", "storage", "chat", filename)
                 try:
                     os.remove(file_path)
                     print(f"Deleted image file: {file_path}")
