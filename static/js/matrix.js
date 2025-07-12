@@ -517,25 +517,27 @@ function scrollToBottomAfterMessagesLoad() {
   const lastMsg = document.querySelector("#chat-messages .chat-message:last-child");
   if (!chatContainer || !lastMsg) return;
 
-  // Observe last message size/layout changes
-  const resizeObserver = new ResizeObserver(() => {
-    resizeObserver.disconnect();
+  const scrollToBottom = () => {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    console.log("✅ Forced scroll to bottom:", chatContainer.scrollTop);
+  };
 
-    // Double RAF ensures DOM updates settle
+  const observer = new ResizeObserver(() => {
+    observer.disconnect();
+
+    // 1st: Wait for layout & paints to finish
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-        console.log("✅ Scrolled .chat-container to bottom:", chatContainer.scrollTop);
+        scrollToBottom();
+
+        // 2nd: Re-scroll after slight delay to fix any bounce-up
+        setTimeout(() => {
+          scrollToBottom();
+        }, 50); // short delay to catch final shifts
       });
     });
-
-    // Backup safety scroll after 100ms in case layout delays
-    setTimeout(() => {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-      console.log("🕒 Fallback scroll .chat-container to bottom:", chatContainer.scrollTop);
-    }, 100);
   });
 
-  resizeObserver.observe(lastMsg);
+  observer.observe(lastMsg);
 }
 
