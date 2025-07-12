@@ -75,7 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     function extractUrls(text) {
-        return [...text.matchAll(/https?:\/\/[^\s<>"']+/g)].map(m => m[0]);
+        if (typeof text !== 'string') return [];
+        const urlRegex = /https?:\/\/[^\s]+/g;
+        return [...text.matchAll(urlRegex)].map(m => m[0]);
     }
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -257,6 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (data.success) {
                     const msg = data.message;
                     appendMessage(
+                        msg.user_id,
                         msg.username,
                         msg.display_name,
                         msg.content,

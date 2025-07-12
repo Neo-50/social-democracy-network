@@ -52,6 +52,7 @@ html, body {
   display: flex;
   align-items: center;
   margin-bottom: 4px;
+  width: auto;
 }
 
 .chat-header strong {
@@ -63,6 +64,8 @@ html, body {
   margin-left: 58px;
   margin-bottom: 6px;
   max-width: 95%;
+  vertical-align: middle;
+  padding: 0;
 }
 
 .avatar {
@@ -218,6 +221,8 @@ html, body {
 
 .inline-emoji {
     border-radius: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .delete-btn {
