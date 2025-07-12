@@ -6,6 +6,7 @@ function showUserPopup(element) {
     document.getElementById('popup-username').textContent = element.dataset.username;
     document.getElementById('popup-display-name').textContent = element.dataset.display_name;
     document.getElementById('popup-bio').textContent = element.dataset.bio;
+    document.getElementById("popup-send-message").dataset.recipientId = element.dataset.id;
 
     popup.style.position = 'absolute';
     popup.style.display = 'block';
@@ -56,3 +57,37 @@ function makeDraggable(popup) {
         isDragging = false;
     });
 }
+
+document.getElementById("popup-send-message").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+
+    const input = e.target;
+    const content = input.value.trim();
+    const recipientId = input.dataset.recipientId;
+
+    console.log("📤 Sending message to", recipientId, "with content:", content);
+
+    if (!content || !recipientId) {
+        console.warn("⛔ Missing data", { recipientId, content });
+        return;
+    }
+
+    fetch("/send_popup_message", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `recipient_id=${recipientId}&content=${encodeURIComponent(content)}`
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        input.value = ""; // Clear input
+        showToast('Message sent!')
+      } else {
+        console.error("Failed to send:", data.error);
+      }
+    });
+  }
+});
