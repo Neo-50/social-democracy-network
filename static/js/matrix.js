@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             });
 
-            scrollToBottomAfterMessagesLoad();
+            scrollChatToBottom();
 
         })
         .catch(err => {
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
 
-        scrollToBottomAfterMessagesLoad();
+        scrollChatToBottom();
 
         const replyBtn = msg.querySelector('.reply-button');
         const replyDrawer = msg.querySelector('.reply-drawer');
@@ -512,34 +512,18 @@ function deleteMessage(messageId) {
     });
 }
 
-function scrollToBottomAfterMessagesLoad() {
-  const chatContainer = document.querySelector(".chat-container");
-  if (!chatContainer) return;
+function scrollChatToBottom() {
+  const container = document.querySelector('.chat-container');
+  if (!container) return;
 
-  let scrollAttempts = 0;
-
-  const scrollToBottom = () => {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-    console.log("✅ Scrolled to:", chatContainer.scrollTop);
-  };
-
-  const observer = new ResizeObserver(() => {
-    scrollAttempts++;
-
-    scrollToBottom();
-
-    // Retry a few times in case layout continues to change (e.g. images/emojis loading)
-    if (scrollAttempts >= 5) {
-      observer.disconnect();
-      console.log("✅ ResizeObserver disconnected after stable layout.");
-    }
+  requestAnimationFrame(() => {
+    container.scrollTop = container.scrollHeight;
+    console.log("✅ Scrolled to:", container.scrollTop);
   });
 
-  observer.observe(chatContainer);
-
-  // Fallback: force one final scroll after everything should've loaded
+  // Double fallback in case layout isn't stable yet
   setTimeout(() => {
-    scrollToBottom();
-  }, 300);
+    container.scrollTop = container.scrollHeight;
+    console.log("⏱️ Fallback scroll to:", container.scrollTop);
+  }, 1000);
 }
-
