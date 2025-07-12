@@ -78,21 +78,37 @@ document.addEventListener("DOMContentLoaded", () => {
         return [...text.matchAll(/https?:\/\/[^\s<>"']+/g)].map(m => m[0]);
     }
 
-    // Pull chat messages from DB and insert in chat-messages
     window.addEventListener("DOMContentLoaded", () => {
         fetch("/matrix/get_messages")
             .then(res => res.json())
             .then(messages => {
-                messages.forEach(msg => {
-                    console.log("Message:", msg);
-                    appendMessage(msg.username, msg.display_name, msg.content, msg.id, msg.avatar, msg.bio, msg.timestamp);
-
-                });
-            })
-            .catch(err => {
-                console.error("Failed to load messages:", err);
+            messages.forEach(msg => {
+                appendMessage(
+                msg.username,
+                msg.display_name,
+                msg.content,
+                msg.id,
+                msg.avatar,
+                msg.bio,
+                msg.timestamp
+                );
             });
+
+            // ✅ Scroll to bottom *after* all messages are rendered
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const chatContainer = document.querySelector(".chat-container");
+                    if (chatContainer) {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }
+                }, 0);
+            });
+        })
+        .catch(err => {
+        console.error("Failed to load messages:", err);
+        });
     });
+
 
     function appendMessage(username, displayName, text, messageId = null, avatar, bio, timestamp) {
         const chatMessages = document.getElementById("chat-messages");
@@ -102,8 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (messageId) {
             msg.dataset.messageId = messageId;
         }
-
-        console.log("Avatar param:", avatar);
 
         const avatarImg = avatar ? `
             <button class="avatar-wrapper"
@@ -135,6 +149,15 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
 
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                const chatContainer = document.querySelector(".chat-container");
+                if (chatContainer) {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+            }, 0);
+        });
+
         const replyBtn = msg.querySelector('.reply-button');
         const replyDrawer = msg.querySelector('.reply-drawer');
 
@@ -157,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        formatTimestamp(msg);
+        formatTimestamp();
         
         const urls = extractUrls(text).filter(url => {
             const isMedia = url.includes("/media/");
@@ -183,9 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         chatMessages.appendChild(msg);
-        console.log('FORMATTING TIMESTAMP')
         formatTimestamp();
-        console.log('TIMESTAMP FORMATTED')
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
