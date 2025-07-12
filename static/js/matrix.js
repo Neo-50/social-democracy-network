@@ -514,30 +514,32 @@ function deleteMessage(messageId) {
 
 function scrollToBottomAfterMessagesLoad() {
   const chatContainer = document.querySelector(".chat-container");
-  const lastMsg = document.querySelector("#chat-messages .chat-message:last-child");
-  if (!chatContainer || !lastMsg) return;
+  if (!chatContainer) return;
+
+  let scrollAttempts = 0;
 
   const scrollToBottom = () => {
     chatContainer.scrollTop = chatContainer.scrollHeight;
-    console.log("✅ Forced scroll to bottom:", chatContainer.scrollTop);
+    console.log("✅ Scrolled to:", chatContainer.scrollTop);
   };
 
   const observer = new ResizeObserver(() => {
-    observer.disconnect();
+    scrollAttempts++;
 
-    // 1st: Wait for layout & paints to finish
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        scrollToBottom();
+    scrollToBottom();
 
-        // 2nd: Re-scroll after slight delay to fix any bounce-up
-        setTimeout(() => {
-          scrollToBottom();
-        }, 50); // short delay to catch final shifts
-      });
-    });
+    // Retry a few times in case layout continues to change (e.g. images/emojis loading)
+    if (scrollAttempts >= 5) {
+      observer.disconnect();
+      console.log("✅ ResizeObserver disconnected after stable layout.");
+    }
   });
 
-  observer.observe(lastMsg);
+  observer.observe(chatContainer);
+
+  // Fallback: force one final scroll after everything should've loaded
+  setTimeout(() => {
+    scrollToBottom();
+  }, 300);
 }
 
