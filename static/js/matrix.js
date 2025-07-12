@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(messages => {
             messages.forEach(msg => {
                 appendMessage(
+                msg.user_id,
                 msg.username,
                 msg.display_name,
                 msg.content,
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    function appendMessage(username, displayName, text, messageId = null, avatar, bio, timestamp) {
+    function appendMessage(user_id, username, displayName, text, messageId = null, avatar, bio, timestamp) {
         const chatMessages = document.getElementById("chat-messages");
         const msg = document.createElement("div");
         msg.className = "chat-message";
@@ -114,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const avatarImg = avatar ? `
             <button class="avatar-wrapper"
+                data-id="${user_id}"
                 data-username="${username}"
                 data-display_name="${displayName}"
                 data-bio="${bio || 'No bio available'}"

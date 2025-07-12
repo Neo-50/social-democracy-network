@@ -434,6 +434,26 @@ def messages(username=None):
         conversations=conversations
     )
 
+@app.route('/send_popup_message', methods=['POST'])
+@login_required
+def send_popup_message():
+    user_id = session.get("user_id")
+    recipient_id = request.form.get("recipient_id", type=int)
+    content = request.form.get("content", "").strip()
+
+    if not recipient_id or not content:
+        return jsonify({"success": False, "error": "Missing data"}), 400
+
+    recipient = User.query.get(recipient_id)
+    if not recipient:
+        return jsonify({"success": False, "error": "Recipient not found"}), 404
+
+    msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
+    db.session.add(msg)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Message sent"})
+
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
     try:
@@ -741,6 +761,7 @@ def get_messages():
     result = []
     for msg in messages:
         result.append({
+            "user_id": msg.user.id,
             "id": msg.id,
             "username": msg.user.username,
             "display_name": msg.user.display_name,
