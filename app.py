@@ -820,13 +820,14 @@ def send_chat_message():
     return jsonify({
         "success": True,
         "message": {
-            "id": message.id,
-            "content": message.content,
-            "timestamp": message.timestamp.isoformat(),
+            "user_id": current_user.id,
             "username": current_user.username,
             "display_name": current_user.display_name,
+            "content": message.content,
+            "id": message.id,
             "avatar": current_user.avatar_filename or "",
-            "bio": current_user.bio or "No bio available"
+            "bio": current_user.bio or "No bio available",
+            "timestamp": message.timestamp.isoformat(),
         }
     })
 
