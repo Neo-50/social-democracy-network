@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Upload error:", err);
             alert(err.message || "A network error occurred while uploading.");
         });
-});
+    });
     
     function extractUrls(text) {
         return [...text.matchAll(/https?:\/\/[^\s<>"']+/g)].map(m => m[0]);
@@ -220,6 +220,21 @@ document.addEventListener("DOMContentLoaded", () => {
             wrapper.style.display = "none";  // hide
         }
     });
+
+    // Button to scroll to the bottom of the feed
+    const scrollBtn = document.getElementById('scroll-to-bottom-btn');
+    const container = document.querySelector('.chat-container');
+
+    // Show button only if not in the most recent 20%
+    container.addEventListener('scroll', () => {
+    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+    const showBtn = distanceFromBottom > container.scrollHeight * 0.2;
+
+    scrollBtn.style.display = showBtn ? 'block' : 'none';
+    });
+
+    // Click button to scroll using your existing function
+    scrollBtn.addEventListener('click', scrollChatToBottom);
 
     // send message
     sendButton.addEventListener("click", () => {
@@ -384,6 +399,7 @@ function initializeEmojiDrawer(wrapper) {
     });
 
     wrapper.appendChild(drawer);
+
 }
 
 function toggleCustomEmojiDrawer() {
