@@ -1,39 +1,38 @@
 /* matrix.css */
 
-.chat-wrapper {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    overflow-x: hidden;
-    max-width: 100%;
-    height: 86dvh;
-    border: 2px solid #bbb;
-    background-color: black;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
-@media (width < 600px) {
-    .chat-wrapper {
-        height: 80dvh;
-    }  
+.chat-wrapper {
+  position: fixed;          /* detach from document scroll */
+  inset: 60px 0 0;
+  padding: 10px 10px 60px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;           /* scroll only this section */
 }
 
 .chat-container {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    background-color: #1a1a1a;
-    padding: 10px;
-    margin: 0 2px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .chat-input-container {
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    max-width: 100%;
-    width: 100%;
-    padding: 8px;
-    background: #111; 
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: black;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  z-index: 10;
+  border-top: 1px solid #333;
 }
 
 /* each chat message */
@@ -160,7 +159,7 @@
     padding: 10px;
     border-radius: 24px;
     background-color: #1a1a1a;
-    border: 1px solid #555;
+    border: 1px solid #00e3ea;
     margin-bottom: 8px;
     overflow-y: auto;
     overflow-wrap: break-word;
@@ -178,7 +177,7 @@
     display: flex;
     align-items: center;
     width: fit-content;
-    gap: 0;
+    gap: 2px;
     margin-right: 4px;
 }
 
@@ -258,7 +257,7 @@
 }
 
 .send-button {
-    margin-right: 20px;
+    margin-right: 5px;
 }
 
 .reply-submit,
@@ -294,7 +293,7 @@
 /* emoji picker drawer (unicode) */
 #unicode-emoji-wrapper {
     position: absolute;
-    bottom: 80px;
+    bottom: 60px;
     right: 120px;
     z-index: 1000;
 }
@@ -305,7 +304,7 @@
     max-height: 410px;
     min-height: 300px;
     width: 360px;
-    bottom: 80px;
+    bottom: 60px;
     right: 0;
     overflow-y: auto;
     display: flex;
@@ -321,13 +320,13 @@
 @media (width < 600px) {
     #unicode-emoji-wrapper {
         right: 0;
-        bottom: 76px;
+        bottom: 60px;
     }
 
     #custom-emoji-wrapper {
         max-height: 290px;
         width: 260px;
-        bottom: 76px;
+        bottom: 60px;
     }
 
     .responsive-youtube {
