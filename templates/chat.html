@@ -1,19 +1,72 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block content %}
-    <h1>Chatroom</h1>
-    <div class="intro-card">
-        <h2>🚧 Status: In Development</h2>
-        {% if not current_user.is_authenticated %}
-            <p>Welcome! Please <a href="{{ url_for('register') }}">create a free account</a> to enter the chatroom.</p>
-        {% else %}
-            <span>Welcome, {{ current_user.display_name or current_user.username }}!</span>
-            <p>The chatroom is still in development. Be aware that things may change as bugs are fixed and features are added.</p>
-            <p>The chatroom is integrated with the news page. If you post a link to a news article that exists on 
-                the <a href="{{ url_for('news') }}">news page</a>, it will fetch a preview.</p>
-            <p>This chatroom is not part of <a href="https://matrix.org" target="_blank">Matrix</a>. It will eventually include a bridge between the 
-               public <a href="https://element.social-democracy.net" target="_blank">matrix room</a> and this chat interface.</p>
-            <a href="{{ url_for('matrix') }}" class="center-this"><div class="enter-chat">enter chatroom</div></a>
-        {% endif %}
+
+<body>
+    <div class="chat-wrapper">
+        <div class="chat-container">
+            <div class="chat-messages" id="chat-messages"></div>
+        </div>
+        <div class="chat-input-container">
+            <div class="chat-editor" id="chat-editor" contenteditable="true" placeholder="Type a message..." required></div>
+            <input type="hidden" name="chat-content" class="hidden-content">
+        
+            <div class="chat-buttons">
+                <!-- Unicode emoji picker button -->
+                <button type="button" class="emoji-button" id="unicode-emoji-button">
+                    <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                </button>
+                <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
+                    <emoji-picker></emoji-picker>
+                </div>
+        
+                <!-- Custom emoji picker button -->
+                <button type="button" class="emoji-button" id="custom-emoji-button">
+                    🐱
+                </button>
+                <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display: none;">
+                    <!-- custom emoji drawer will be injected here -->
+                </div>
+        
+                <!-- Upload button -->
+                <button type="button" id="upload-button" class="upload-button">
+                    📎
+                </button>
+                <input type="file" id="file-input" accept="image/*" style="display: none" />
+        
+                <!-- Send button -->
+                <button type="button" id="send-button" class="send-button">
+                    Send
+                </button>
+            </div>
+        </div>
     </div>
+
+    <button id="scroll-to-bottom-btn" title="Scroll to bottom"><img class="down-arrow" src="{{ url_for('media', filename='chat/down.png') }}"></button>
+
+</body>
+
+
+<div id="user-popup" class="popup" style="display: none;">
+    <div class="popup-inner" id="popup-header">
+        <span class="popup-close" onclick="hideUserPopup()">×</span>
+        <img id="popup-avatar" class="popup-avatar" src="" alt="User avatar">
+        <h1 id="popup-display-name" style="padding-bottom: 0"></h1>
+        <h2 id="popup-username"></h2>
+        <p id="popup-bio"></p>
+        <div class="popup-send-message-container"><input id="popup-send-message" placeholder="Send message..."></input></div>
+    </div>
+</div>
+
+<script>
+  const currentUser = {
+    username: "{{ current_user.username }}",
+    display_name: "{{ current_user.display_name }}",
+    avatar_filename: "{{ current_user.avatar_filename or '' }}",
+    bio: "{{ current_user.bio or 'No bio available' }}"
+  };
+</script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
+<script src="{{ url_for('static', filename='js/user_popup.js') }}"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 {% endblock %}

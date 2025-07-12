@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Chatroom</h1>
+    <div class="intro-card">
+        <h2>🚧 Status: In Development</h2>
+        {% if not current_user.is_authenticated %}
+            <p>Welcome! Please <a href="{{ url_for('login') }}">login</a> or <a href="{{ url_for('register') }}">create a free account</a> to enter the chatroom.</p>
+        {% else %}
+            <span>Welcome, {{ current_user.display_name or current_user.username }}!</span>
+            <p>The chatroom is still in development. Be aware that things may change as bugs are fixed and features are added.</p>
+            <p>The chatroom is integrated with the news page. If you post a link to a news article that exists on 
+                the <a href="{{ url_for('news') }}">news page</a>, it will fetch a preview.</p>
+            <p>This chatroom is not part of <a href="https://matrix.org" target="_blank">Matrix</a>. It will eventually include a bridge between the 
+               public <a href="https://element.social-democracy.net" target="_blank">matrix room</a> and this chat interface.</p>
+            <a href="{{ url_for('chat') }}" class="center-this"><div class="enter-chat">enter chatroom</div></a>
+        {% endif %}
+    </div>
+{% endblock %}
