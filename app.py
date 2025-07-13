@@ -377,8 +377,8 @@ def register():
 
     return render_template('register.html')
 
-@app.route('/messages', methods=['GET', 'POST'])
-@app.route('/messages/<username>', methods=['GET', 'POST'])
+@app.route('/messages', methods=['GET'])
+@app.route('/messages/<username>', methods=['GET'])
 @login_required
 def messages(username=None):
     user_id = session.get("user_id")
@@ -398,20 +398,6 @@ def messages(username=None):
     all_users = User.query.filter(User.id != user_id).order_by(User.username).all()
 
     messages = []
-
-    # Send message logic
-    if request.method == 'POST':
-        recipient_id = request.form.get('recipient_id', type=int)
-        content = request.form.get('content', '').strip()
-        recipient = User.query.get(recipient_id)
-
-        if recipient and content:
-            msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
-            db.session.add(msg)
-            db.session.commit()
-            flash("Message sent!", "success")
-
-            return redirect(url_for('messages', recipient_id=recipient.username))
 
     # If a recipient was selected (or just messaged), show the thread
     if recipient:
@@ -455,33 +441,13 @@ def api_send_message():
         "message": {
             "id": msg.id,
             "content": msg.content,
-            "timestamp": msg.timestamp.strftime("%Y-%m-%d %H:%M"),
+            "timestamp": msg.timestamp.strftime("%m-%d-%Y %H:%M"),
             "sender": {
                 "id": user_id,
                 "username": getattr(current_user, "username", "Unknown")
             }
         }
     })
-
-@app.route('/send_popup_message', methods=['POST'])
-@login_required
-def send_popup_message():
-    user_id = session.get("user_id")
-    recipient_id = request.form.get("recipient_id", type=int)
-    content = request.form.get("content", "").strip()
-
-    if not recipient_id or not content:
-        return jsonify({"success": False, "error": "Missing data"}), 400
-
-    recipient = User.query.get(recipient_id)
-    if not recipient:
-        return jsonify({"success": False, "error": "Recipient not found"}), 404
-
-    msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
-    db.session.add(msg)
-    db.session.commit()
-
-    return jsonify({"success": True, "message": "Message sent"})
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):

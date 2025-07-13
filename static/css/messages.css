@@ -24,12 +24,20 @@
     display: flex;
     flex-direction: row;
     border-radius: 24px;
-    overflow-x: auto;
-    overflow-y: auto;
+    overflow: auto;
     align-items: flex-start;
     padding: 6px;
     width: 100%;
     gap: 5px;
+}
+
+.send-new-message {
+    background-color: #1a1a1a;
+    border: 2px solid #00e3ea;
+    border-radius: 24px;
+    width: fit-content;
+    padding: 20px;
+    margin-left: 10px;
 }
 
 .thread-item {
@@ -37,7 +45,7 @@
     border-radius: 24px;
     padding: 4px 10px;
     cursor: pointer;
-    border: 2px solid limegreen;
+    border: 2px solid #00e3ea;
 }
 
 .thread-item:hover {
@@ -103,13 +111,13 @@
     margin-bottom: 4px;
 }
 
-.message-form textarea {
+.new-message-form textarea {
     width: 350px;
     height: 90px;
     padding: 8px;
     margin-left: 0;
     border-radius: 8px;
-    background-color: #1a1a1a;
+    background-color: #333;
     color: #eee;
     resize: vertical;
     border: none;
@@ -149,7 +157,7 @@
 
 /* stylelint-disable-next-line selector-id-pattern */
 #recipient_id {
-    background-color: #1a1a1a;
+    background-color: #333;
     color: #bbb;
     border: none;
     padding: 8px 12px;
