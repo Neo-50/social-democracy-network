@@ -73,7 +73,7 @@ document.getElementById("popup-send-message").addEventListener("keypress", funct
         return;
     }
 
-    fetch("/send_popup_message", {
+    fetch("/api/send_message", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

@@ -3,19 +3,21 @@
 
 <main class="messages-main-wrapper">
     <h2>Send New Message</h2>
-    <form method="POST" class="message-form">
-        <div class="write-message-wrapper" action="{{ url_for('messages', username=recipient.username) }}">
-            <select name="recipient_id" id="recipient_id" required>
-                <option value="" disabled selected>Select a user</option>
-                {% for user in users %}
-                <option value="{{ user.id }}">{{ user.username }}</option>
-                {% endfor %}
-            </select>
+    <div class="send-new-message">
+        <form class="new-message-form" id="new-message-form">
+            <div class="write-message-wrapper">
+                <select name="recipient_id" id="recipient_id" required>
+                    <option value="" disabled selected>Select a user</option>
+                    {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
 
-            <textarea name="content" placeholder="Write your message..." required></textarea>
-            <button class="inbox-button" type="submit">Send</button>
-        </div>
-    </form>
+                <textarea name="content" placeholder="Write your message..." required></textarea>
+                <button class="inbox-button" type="submit">Send</button>
+            </div>
+        </form>
+    </div>
 
     <h2>Message Threads</h2>
 
@@ -50,44 +52,62 @@
           
     </div>
     <script>
-        document.getElementById('message-form').addEventListener('submit', async function (e) {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function () {
+            const newMessageForm = document.getElementById('new-message-form');
+            if (newMessageForm) {
+                newMessageForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(newMessageForm);
+                    const response = await fetch('/api/send_message', {
+                        method: 'POST',
+                        body: formData
+                    });
 
-            const form = e.target;
-            const formData = new FormData(form);
+                    const result = await response.json();
 
-            const response = await fetch('/api/send_message', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                const text = await response.text();
-                console.error('Server error:', text);
-                throw new Error('Server error');
+                    if (result.success) {
+                        showToast('Message sent!');
+                        newMessageForm.reset();
+                    } else {
+                        alert(result.error || 'Message failed to send.');
+                    }
+                });
             }
 
-            const result = await response.json();
+            const messageForm = document.getElementById('message-form');
+            if (messageForm) {
+                messageForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(messageForm);
+                    const response = await fetch('/api/send_message', {
+                        method: 'POST',
+                        body: formData
+                    });
 
-            if (result.success) {
-                const msg = result.message;
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error('Server error:', text);
+                        throw new Error('Server error');
+                    }
 
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message-wrapper', 'sent');
-                messageDiv.innerHTML = `
-                    <div class="message sent">
-                        <div class="content">${msg.content}</div>
-                        <div class="meta">${msg.sender.username} • ${msg.timestamp}</div>
-                    </div>
-                `;
-
-                document.querySelector('.messages-container').appendChild(messageDiv);
-
-                // ✅ Must go here, while messageDiv is still in scope
-                messageDiv.scrollIntoView({ behavior: 'smooth' });
-
-                // Clear input
-                form.querySelector('input[name="content"]').value = '';
+                    const result = await response.json();
+                    if (result.success) {
+                        const msg = result.message;
+                        const messageDiv = document.createElement('div');
+                        messageDiv.classList.add('message-wrapper', 'sent');
+                        messageDiv.innerHTML = `
+                            <div class="message sent">
+                                <div class="content">${msg.content}</div>
+                                <div class="meta">${msg.sender.username} • ${msg.timestamp}</div>
+                            </div>
+                        `;
+                        document.querySelector('.messages-container').appendChild(messageDiv);
+                        messageDiv.scrollIntoView({ behavior: 'smooth' });
+                        messageForm.querySelector('input[name="content"]').value = '';
+                    } else {
+                        alert(result.error || 'Failed to send message.');
+                    }
+                });
             }
         });
     </script>        
