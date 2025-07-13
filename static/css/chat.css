@@ -13,7 +13,6 @@ html, body {
   padding: 10px 10px 60px;
   display: flex;
   flex-direction: column;
-  overflow: auto;           /* scroll only this section */
 }
 
 .chat-container {
