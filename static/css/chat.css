@@ -10,7 +10,7 @@ html, body {
 .chat-wrapper {
   position: fixed;          /* detach from document scroll */
   inset: 60px 0 0;
-  padding: 10px 10px 60px;
+  padding: 0 5px 60px 5px;
   display: flex;
   flex-direction: column;
 }
