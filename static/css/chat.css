@@ -4,7 +4,6 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
 
 .chat-wrapper {
@@ -39,12 +38,12 @@ html, body {
     color: #ddd;
     margin-bottom: 6px;
     align-items: center;
-    max-width: 100%;
+    width: 100%;
     box-sizing: border-box;
     padding: 4px;
     overflow: auto;
     background-color: #222;
-    border: 2px solid #555;
+    border: 2px solid magenta;
 }
 
 .chat-header {
@@ -120,7 +119,6 @@ html, body {
         margin-bottom: 6px;
         max-width: 380px;
         word-wrap: break-word;
-        overflow: hidden;
     }
 }
 
