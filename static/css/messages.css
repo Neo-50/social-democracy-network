@@ -218,6 +218,13 @@
     border: none;
 }
 
+@media (width <=800px) {
+    .new-message-form textarea {
+        width: 280px;
+        max-width: 280px;
+    }
+}
+
 /* stylelint-disable-next-line selector-id-pattern */
 #recipient_id {
     background-color: #333;
@@ -226,11 +233,7 @@
     padding: 8px 12px;
 }
 
-@media (width <=800px) {
-    .new-message-form textarea {
-        max-width: 100%;
-    }
-}
+
 
 .write-message-wrapper {
     display: flex;
