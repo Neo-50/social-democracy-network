@@ -17,7 +17,7 @@
     border-radius: 24px;
     width: 700px;
     height: 700px;
-    border: 2px solid cyan;
+    border: 2px solid #00e3ea;
 }
 
 .conversation-list {
@@ -36,7 +36,7 @@
     padding: 4px 10px;
     cursor: pointer;
     border-radius: 24px;
-    border: 2px solid cyan;
+    border: 2px solid #00e3ea;
 }
 
 .thread-item.selected {
@@ -48,15 +48,97 @@
 
 .send-new-message {
     background-color: #1a1a1a;
-    border: 2px solid cyan;
+    border: 2px solid #00e3ea;
     border-radius: 24px;
     width: fit-content;
     padding: 20px;
     margin-left: 10px;
 }
 
-.thread-item:hover {
-    background-color: #444;
+.message-input-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    bottom: 0;
+    width: 96%;
+    padding-bottom: 10px;
+}
+
+.chat-editor {
+    background-color: black;
+    border: 2px solid #00e3ea;
+    color: white;
+    padding: 10px;
+    width: 85%;
+    border-radius: 24px;
+    min-height: 40px;
+}
+
+/* buttons */
+
+.chat-buttons {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    gap: 2px;
+    margin-right: 4px;
+    padding: 2px 5px;
+    border-radius: 24px;
+    background-color: black;
+    border: 2px solid #00e3ea;
+}
+
+#unicode-emoji-button {
+    margin-left: 6px;
+}
+
+.emoji-button {
+    background: transparent;
+    padding: 0;
+    font-size: 1.8em;
+    margin-left: 6px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+#custom-emoji-button {
+    margin-bottom: 8px;
+}
+
+.icon {
+    width: 32px;
+    height: 32px;
+}
+
+.custom-emoji {
+    cursor: pointer;
+}
+
+/* emoji picker drawer (unicode) */
+#unicode-emoji-wrapper {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    z-index: 1000;
+}
+
+/* custom emoji drawer */
+#custom-emoji-wrapper {
+    position: absolute;
+    max-height: 410px;
+    min-height: 300px;
+    width: 360px;
+    bottom: 60px;
+    right: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    box-shadow: 0 2px 12px rgb(0 0 0.5);
 }
 
 .message-wrapper {
@@ -67,26 +149,10 @@
 .messages-container {
     overflow-x: auto;
     border-radius: 24px;
-    height: 570px;
+    height: 560px;
     width: 100%;
-    border: 2px solid cyan;
-}
-
-.message-input-container {
-    position: absolute;
-    bottom: 0;
-    width: 96%;
-    padding-bottom: 14px;
-}
-
-.compose-message {
     background-color: black;
-    border: 2px solid cyan;
-    color: white;
-    padding: 10px;
-    width: 100%;
-    border-radius: 24px;
-    min-height: 40px;
+    border: 2px solid #00e3ea;
 }
 
 .message {
@@ -141,7 +207,7 @@
 
 .send-button {
     background-color: #1a1a1a;
-    border: 3px solid cyan;
+    border: 3px solid #00e3ea;
     color: #00e3ea;
     padding: 2px 12px;
     margin-left: 0;

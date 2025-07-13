@@ -13,7 +13,7 @@
             <div class="chat-buttons">
                 <!-- Unicode emoji picker button -->
                 <button type="button" class="emoji-button" id="unicode-emoji-button">
-                    <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                    <img class="icon" src="{{ url_for('media', filename='icons/emoji.png') }}" alt="emoji.png">
                 </button>
                 <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
                     <emoji-picker></emoji-picker>
@@ -66,6 +66,7 @@
   };
 </script>
 <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/emojis.js') }}"></script>
 <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
 <script src="{{ url_for('static', filename='js/user_popup.js') }}"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>

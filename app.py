@@ -423,9 +423,24 @@ def messages(username=None):
 @app.route('/api/send_message', methods=['POST'])
 @login_required
 def api_send_message():
+    print('SENDING MESSAGE')
     user_id = session.get("user_id")
     recipient_id = request.form.get('recipient_id', type=int)
-    content = request.form.get('content', '').strip()
+    raw_content = request.form.get('content', '').strip()
+    
+    ALLOWED_TAGS = ['img']
+    ALLOWED_ATTRIBUTES = {
+        'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
+    }
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height' 'max-width', 'max-height', 'border-radius', 'vertical-align'])
+
+    content = clean(
+        raw_content,
+        tags=ALLOWED_TAGS,
+        attributes=ALLOWED_ATTRIBUTES,
+        css_sanitizer=css_sanitizer,
+        strip=True
+    )
 
     recipient = User.query.get(recipient_id)
 
