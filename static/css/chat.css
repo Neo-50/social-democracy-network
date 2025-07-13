@@ -43,7 +43,7 @@ html, body {
     max-width: 100%;
     box-sizing: border-box;
     padding: 4px;
-    overflow-x: auto;
+    overflow: auto;
     background-color: #222;
     border: 2px solid #555;
 }
