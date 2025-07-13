@@ -18,7 +18,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app, Response, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app, Response, jsonify, g
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
@@ -433,6 +433,35 @@ def messages(username=None):
         recipient=recipient,
         conversations=conversations
     )
+
+@app.route('/api/send_message', methods=['POST'])
+@login_required
+def api_send_message():
+    user_id = session.get("user_id")
+    recipient_id = request.form.get('recipient_id', type=int)
+    content = request.form.get('content', '').strip()
+
+    recipient = User.query.get(recipient_id)
+
+    if not recipient or not content:
+        return jsonify({"success": False, "error": "Invalid input"}), 400
+
+    msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
+    db.session.add(msg)
+    db.session.commit()
+
+    return jsonify ({
+        "success": True,
+        "message": {
+            "id": msg.id,
+            "content": msg.content,
+            "timestamp": msg.timestamp.strftime("%Y-%m-%d %H:%M"),
+            "sender": {
+                "id": user_id,
+                "username": getattr(current_user, "username", "Unknown")
+            }
+        }
+    })
 
 @app.route('/send_popup_message', methods=['POST'])
 @login_required

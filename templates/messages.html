@@ -2,7 +2,7 @@
 {% block content %}
 
 <main class="messages-main-wrapper">
-    <h2>Send Message</h2>
+    <h2>Send New Message</h2>
     <form method="POST" class="message-form">
         <div class="write-message-wrapper" action="{{ url_for('messages', username=recipient.username) }}">
             <select name="recipient_id" id="recipient_id" required>
@@ -22,14 +22,16 @@
     <div class="message-threads">
         <div class="conversation-list">
             {% for user in conversations %}
-                <a href="{{ url_for('messages', username=user.username) }}">
-                💬 {{ user.username }}
-                </a>
+                <div class="thread-item">
+                    <a href="{{ url_for('messages', username=user.username) }}">
+                    💬 {{ user.username }}
+                    </a>
+                </div>
             {% else %}
                 No messages yet.
             {% endfor %}
         </div>
-        <div class="message-thread-area">
+        <div class="messages-container">
             {% for msg in messages %}
                 <div class="message-wrapper">
                     <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
@@ -39,7 +41,56 @@
                 </div>
             {% endfor %}
         </div>
+        <form id="message-form" class="message-form">
+            <div class="message-input-container">
+                <input type="hidden" name="recipient_id" value="{{ recipient.id }}">
+                <input class="compose-message" name="content" placeholder="Write a message..." required />
+            </div>
+        </form>
+          
     </div>
+    <script>
+        document.getElementById('message-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            const response = await fetch('/api/send_message', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error('Server error:', text);
+                throw new Error('Server error');
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                const msg = result.message;
+
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-wrapper', 'sent');
+                messageDiv.innerHTML = `
+                    <div class="message sent">
+                        <div class="content">${msg.content}</div>
+                        <div class="meta">${msg.sender.username} • ${msg.timestamp}</div>
+                    </div>
+                `;
+
+                document.querySelector('.messages-container').appendChild(messageDiv);
+
+                // ✅ Must go here, while messageDiv is still in scope
+                messageDiv.scrollIntoView({ behavior: 'smooth' });
+
+                // Clear input
+                form.querySelector('input[name="content"]').value = '';
+            }
+        });
+    </script>        
 </main>
 
 {% endblock %}
