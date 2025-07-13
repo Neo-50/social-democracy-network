@@ -16,7 +16,7 @@
     padding: 10px;
     border-radius: 24px;
     width: 760px;
-    height: 760px;
+    height: 710px;
     border: 2px solid #00e3ea;
 }
 
@@ -37,7 +37,7 @@
 .messages-container {
     overflow-x: auto;
     border-radius: 24px;
-    height: 620px;
+    height: 570px;
     width: 100%;
     background-color: black;
     border: 2px solid #00e3ea;
@@ -59,6 +59,7 @@
     padding: 4px 10px;
     cursor: pointer;
     border-radius: 24px;
+    white-space: nowrap;
     border: 2px solid #00e3ea;
 }
 
