@@ -14,7 +14,7 @@
                 </select>
 
                 <textarea name="content" placeholder="Write your message..." required></textarea>
-                <button class="inbox-button" type="submit">Send</button>
+                <button class="send-button" type="submit">Send</button>
             </div>
         </form>
     </div>
@@ -24,9 +24,9 @@
     <div class="message-threads">
         <div class="conversation-list">
             {% for user in conversations %}
-                <div class="thread-item">
+                <div class="thread-item {% if user.username == recipient.username %}selected{% endif %}">
                     <a href="{{ url_for('messages', username=user.username) }}">
-                    💬 {{ user.username }}
+                        💬 {{ user.username }}
                     </a>
                 </div>
             {% else %}
