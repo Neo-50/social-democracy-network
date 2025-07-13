@@ -27,17 +27,17 @@ h2 {
 h3 {
     font-size: 1.1rem;
     margin-bottom: 10px;
-    color: #8feff2;
+    color: #00e3ea;
 }
 
 a {
-    color: #8feff2;
+    color: #00e3ea;
     transition: color 0.3s ease;
     text-decoration: none;
 }
 
 a:visited {
-    color: #8feff2;
+    color: #00e3ea;
     text-decoration: none;
 }
 
