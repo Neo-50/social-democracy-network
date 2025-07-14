@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const unicodeEmojiButton = document.getElementById("unicode-emoji-button");
     const unicodeEmojiWrapper = document.getElementById("unicode-emoji-wrapper");
     const customEmojiButton = document.getElementById("custom-emoji-button");
+    const picker = document.querySelector("#unicode-emoji-wrapper emoji-picker");
     
     // toggle unicode emoji drawer
     unicodeEmojiButton.addEventListener("click", () => {
@@ -45,22 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
             wrapper.style.display = "none";  // hide
         }
     });
-
-    // helpers
-    function insertAtCursor(editable, text) {
-        editable.focus();
-        const sel = window.getSelection();
-        if (!sel || !sel.rangeCount) return;
-
-        const range = sel.getRangeAt(0);
-        range.deleteContents();
-        range.insertNode(document.createTextNode(text));
-
-        // move cursor after the inserted text
-        range.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    }
 })
 
 document.addEventListener("click", (e) => {
@@ -188,6 +173,21 @@ function updateDrawerEmojiSizes(drawer) {
         img.style.width = `${selectedEmojiSize}px`;
         img.style.height = `${selectedEmojiSize}px`;
     });
+}
+
+function insertAtCursor(editable, text) {
+  editable.focus();
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return;
+
+  const range = sel.getRangeAt(0);
+  range.deleteContents();
+  range.insertNode(document.createTextNode(text));
+
+  // Move cursor after inserted emoji
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
 }
 
 function insertAtCaret(node) {
