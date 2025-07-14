@@ -9,7 +9,7 @@ html, body {
 .chat-wrapper {
   position: fixed;          /* detach from document scroll */
   inset: 60px 0 0;
-  padding: 0 5px 60px 5px;
+  padding: 0 5px 60px;
   display: flex;
   flex-direction: column;
 }
@@ -65,7 +65,14 @@ html, body {
   padding: 0;
 }
 
-@media
+@media (width < 600px) {
+  .chat-message .message-body {
+      margin-left: 0;
+      margin-bottom: 6px;
+      max-width: 380px;
+      word-wrap: break-word;
+  }
+}
 
 .avatar {
     vertical-align: middle;
