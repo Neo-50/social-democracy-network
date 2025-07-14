@@ -1,7 +1,8 @@
 // chat.js
 
+window.chatEditor = document.getElementById("chat-editor");
+
 document.addEventListener("DOMContentLoaded", () => {
-    const chatEditor = document.getElementById("chat-editor");
     const sendButton = document.getElementById("send-button");
     const uploadButton = document.getElementById("upload-button");
     const fileInput = document.getElementById("file-input");

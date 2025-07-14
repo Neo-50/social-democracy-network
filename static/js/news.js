@@ -133,7 +133,7 @@ function toggleEmojiPicker(event) {
             const editor = box.querySelector(".comment-editor");
             const hidden = box.querySelector(".hidden-content");
             editor.focus();
-            document.execCommand('insertText', false, e.detail.unicode);
+            insertAtCursor(editor, e.detail.unicode);
             if (hidden) hidden.value = editor.innerHTML;
         });
     picker.dataset.bound = "true";
@@ -158,5 +158,20 @@ function copyLink(articleId) {
         .catch(() => {
             showToast("❌ Failed to copy link.");
         });
+}
+
+function insertAtCursor(editable, text) {
+    editable.focus();
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(document.createTextNode(text));
+
+    // move cursor after the inserted text
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 
