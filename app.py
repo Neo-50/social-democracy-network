@@ -138,9 +138,12 @@ def news():
         # Background metadata scrape
         if needs_scrape:
             subprocess.Popen([
-                "/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
-                str(article.id), url
-            ])
+            "systemd-run", "--user", "--scope",
+            "-p", "MemoryMax=500M",
+            "--working-directory=/home/doug/social-democracy-network",
+            "/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
+            str(article.id), url
+        ])
         if needs_scrape:
             return redirect(url_for("news", category=article.category, article=article.id, scrape=article.id))
         else:
