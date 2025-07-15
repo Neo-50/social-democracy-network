@@ -446,6 +446,7 @@ def api_send_message():
     )
 
     recipient = User.query.get(recipient_id)
+    print('RECIPIENT ID: {recipient}')
 
     if not recipient or not content:
         return jsonify({"success": False, "error": "Invalid input"}), 400
