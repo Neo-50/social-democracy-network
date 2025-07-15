@@ -315,6 +315,5 @@ function scrollChatToBottom() {
   // Double fallback in case layout isn't stable yet
   setTimeout(() => {
     container.scrollTop = container.scrollHeight;
-    console.log("⏱️ Fallback scroll to:", container.scrollTop);
-  }, 1000);
+    console.log("⏱️ Fallback scroll to:", container.scrollTop); }, 3000);
 }
