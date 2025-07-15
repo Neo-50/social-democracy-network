@@ -423,6 +423,10 @@ def messages(username=None):
         conversations=conversations
     )
 
+@app.route('/api/debug_message_ids')
+def debug_ids():
+    return jsonify([m.id for m in Message.query.all()])
+
 @app.route('/api/send_message', methods=['POST'])
 @login_required
 def api_send_message():
@@ -447,7 +451,11 @@ def api_send_message():
 
     msg = Message(sender_id=user_id, recipient_id=recipient_id, content=content)
     db.session.add(msg)
+    db.session.flush()
+    db.session.refresh(msg)
     db.session.commit()
+
+    debug_ids()
 
     return jsonify ({
         "success": True,
@@ -461,6 +469,25 @@ def api_send_message():
             }
         }
     })
+
+@app.route("/api/delete_im/<int:message_id>", methods=["DELETE"])
+@login_required
+def delete_im(message_id):
+    user_id = session.get("user_id")
+    print(f"Attempting to delete message ID: {message_id}")
+    print(f"Current user ID: {session.get('user_id')}")
+    msg = Message.query.get(message_id)
+
+    if msg.sender_id != user_id and not is_admin(user_id):
+        return jsonify(success=False, error="Unauthorized"), 403
+
+    if msg is None:
+        print("Message not found!")
+        return jsonify(success=False, error="Not found"), 404
+
+    db.session.delete(msg)
+    db.session.commit()
+    return jsonify(success=True)
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):

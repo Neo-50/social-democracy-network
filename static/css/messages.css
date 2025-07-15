@@ -200,9 +200,26 @@
 }
 
 .message .meta {
+    display: flex;
+    flex-direction: row;
     font-size: 0.75rem;
     color: #bbb;
     margin-bottom: 4px;
+}
+
+.delete-im {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    color: #bbb;
+    cursor: pointer;
+    font-size: 0.75rem !important;
+    padding: 5px;
+}
+
+.delete-im:hover {
+    color: #fff;
+    background-color: #333;
 }
 
 .new-message-form textarea {
