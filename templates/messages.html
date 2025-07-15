@@ -45,7 +45,7 @@
         </div>
         <form id="message-form" class="message-form">
             <div class="message-input-container">
-                <input type="hidden" name="recipient_id" value="{{ recipient.id }}">
+                <input type="hidden" name="recipient_id" value="{{ recipient.id if recipient else '' }}">
                 <div id="chat-editor" class="chat-editor" contenteditable="true" placeholder="Write a message..." required></div>
                 <input type="hidden" name="content" id="content-hidden">
 

@@ -445,13 +445,7 @@ def api_send_message():
         strip=True
     )
 
-    recipient = User.query.get(recipient_id)
-    print('RECIPIENT ID: {recipient}')
-
-    if not recipient or not content:
-        return jsonify({"success": False, "error": "Invalid input"}), 400
-
-    msg = Message(sender_id=user_id, recipient_id=recipient.id, content=content)
+    msg = Message(sender_id=user_id, recipient_id=recipient_id, content=content)
     db.session.add(msg)
     db.session.commit()
 
