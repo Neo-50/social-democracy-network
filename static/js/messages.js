@@ -1,11 +1,33 @@
 let chatEditor;
 let messageForm;
 
-
 document.addEventListener('DOMContentLoaded', function () {
     messageForm = document.getElementById("message-form");
-    const newMessageForm = document.getElementById('new-message-form');
     chatEditor = document.getElementById('chat-editor');
+    const newMessageForm = document.getElementById('new-message-form');
+
+    scrollChatToBottom()
+
+    if (newMessageForm) {
+        newMessageForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(newMessageForm);
+            const response = await fetch('/api/send_message', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showToast('Message sent!');
+                newMessageForm.reset();
+                window.location.reload();
+            } else {
+                alert(result.error || 'Message failed to send.');
+            }
+        });
+    }
     
     if (messageForm && chatEditor) {
         messageForm.addEventListener("submit", submitMessageForm);
@@ -13,51 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 submitMessageForm(e);
-            }
-        });
-
-        messageForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            console.log("📤 Sending message:", hiddenInput.value);
-            console.log("🧾 chatEditor content:", chatEditor.innerHTML);
-
-            const formData = new FormData(messageForm);
-            const response = await fetch('/api/send_message', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                const text = await response.text();
-                console.error('Server error:', text);
-                throw new Error('Server error');
-            }
-
-            const result = await response.json();
-            if (result.success) {
-                const msg = result.message;
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message-wrapper', 'sent');
-                const timestamp = msg.timestamp + 'Z';
-                messageDiv.innerHTML = `
-                    <div class="message sent">
-                        <div class="content">${msg.content}</div>
-                        <div class="meta">${msg.sender.username} • <span class="timestamp" data-timestamp="${timestamp}"></span></div>
-                    </div>
-                `;
-                document.querySelector('.messages-container').appendChild(messageDiv);
-                
-                // Format the newly inserted timestamp
-                const timestampEl = messageDiv.querySelector('.timestamp');
-                if (timestampEl && timestampEl.dataset.timestamp) {
-                    timestampEl.textContent = formatLocalDate(timestampEl.dataset.timestamp);
-                }
-
-                messageDiv.scrollIntoView({ behavior: 'smooth' });
-                messageForm.querySelector('input[name="content"]').value = '';
-            } else {
-                alert(result.error || 'Failed to send message.');
+                scrollChatToBottom()
             }
         });
     }
@@ -88,8 +66,14 @@ async function submitMessageForm(e) {
 
     const hiddenInput = document.getElementById("content-hidden");
     hiddenInput.value = chatEditor.innerHTML.trim();
-
     const formData = new FormData(messageForm);
+
+    const recipientInput = messageForm.querySelector('input[name="recipient_id"]');
+    if (!recipientInput || !recipientInput.value) {
+        showToast('❗ Select a thread before sending a message.');
+        return;
+    }
+
     const response = await fetch("/api/send_message", {
         method: "POST",
         body: formData,
@@ -133,3 +117,18 @@ async function submitMessageForm(e) {
     }
 }
 
+function scrollChatToBottom() {
+    const container = document.querySelector('.messages-container');
+    if (!container) return;
+
+    requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+        console.log("✅ Scrolled to:", container.scrollTop);
+    });
+
+    // Double fallback in case layout isn't stable yet
+    setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+        console.log("⏱️ Fallback scroll to:", container.scrollTop);
+    }, 1000);
+}
