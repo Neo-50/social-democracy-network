@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="message-body"></div>
             <div class="chat-toolbar">
-                <span class="comment-timestamp" data-timestamp="${timestamp}Z"></span>
+                <span class="timestamp" data-timestamp="${timestamp}Z"></span>
                 <button class="reply-button">Reply</button>
                 <button class="delete-btn">🗑️ Delete</button>
             </div>

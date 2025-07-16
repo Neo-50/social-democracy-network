@@ -41,26 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-document.querySelectorAll('.timestamp').forEach(el => {
-    const raw = el.dataset.timestamp;
-    if (raw) {
-        el.textContent = formatLocalDate(raw);
-    }
-});
-
-function formatLocalDate(dateStr) {
-    const date = new Date(dateStr);
-    const options = {
-        month: 'numeric',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-    }
-    return date.toLocaleString('en-US', options).replace(',', ' ');
-}
-
 async function submitMessageForm(e) {
     e.preventDefault();
 
@@ -97,7 +77,7 @@ async function submitMessageForm(e) {
         messageDiv.innerHTML = `
             <div class="message sent">
                 <div class="content">${msg.content}</div>
-                <div class="meta">${msg.sender.username}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="${timestamp}"></span>
+                <div class="meta">${msg.sender.display_name || msg.sender.username}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="${timestamp}"></span>
                 <button class="delete-im" type="button">🗑️ Delete</button></div>
             </div>
         `;
