@@ -38,7 +38,7 @@
                 <div class="message-wrapper">
                     <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
                         <div class="content">{{ msg.content | safe }}</div>
-                        <div class="meta">{{ msg.sender.username }} • <span class="timestamp" data-timestamp="{{ msg.timestamp.isoformat() + 'Z' }}"></span>
+                        <div class="meta">{{ msg.sender.username }}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="{{ msg.timestamp.isoformat() + 'Z' }}"></span>
                         <button class="delete-im" type="button" data-id="{{ msg.id }}">🗑️ Delete</button></div>
                     </div>
                 </div>

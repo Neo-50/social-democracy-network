@@ -51,14 +51,14 @@ document.querySelectorAll('.timestamp').forEach(el => {
 function formatLocalDate(dateStr) {
     const date = new Date(dateStr);
     const options = {
-        weekday: 'long',
-        month: 'long',
+        month: 'numeric',
         day: 'numeric',
         year: 'numeric',
         hour: 'numeric',
-        minute: '2-digit'
-    };
-    return date.toLocaleString('en-US', options);
+        minute: '2-digit',
+        hour12: true,
+    }
+    return date.toLocaleString('en-US', options).replace(',', ' ');
 }
 
 async function submitMessageForm(e) {
@@ -97,7 +97,7 @@ async function submitMessageForm(e) {
         messageDiv.innerHTML = `
             <div class="message sent">
                 <div class="content">${msg.content}</div>
-                <div class="meta">${msg.sender.username} • <span class="timestamp" data-timestamp="${timestamp}"></span>
+                <div class="meta">${msg.sender.username}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="${timestamp}"></span>
                 <button class="delete-im" type="button">🗑️ Delete</button></div>
             </div>
         `;
