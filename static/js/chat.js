@@ -305,7 +305,7 @@ function loadMessages(beforeId = null) {
     if (isLoading) return;
     isLoading = true;
 
-    let url = "/chat/get_messages?limit=5";
+    let url = "/chat/get_messages?limit=10";
     if (beforeId) {
         url += `&before_id=${beforeId}`;
     }

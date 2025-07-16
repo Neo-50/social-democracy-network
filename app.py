@@ -788,7 +788,7 @@ def forgot_password():
 @app.route("/chat/get_messages", methods=["GET"])
 @login_required
 def get_messages():
-    limit = int(request.args.get("limit", 25))
+    limit = int(request.args.get("limit", 10))
     before_id = request.args.get("before_id", type=int)
 
     query = ChatMessage.query.order_by(ChatMessage.timestamp.desc())
