@@ -9,7 +9,7 @@ function extractUrls(text) {
     return [...text.matchAll(urlRegex)].map(m => m[0]);
 }
 
-window.appendMessage = function(user_id, username, displayName, text, messageId, avatar, bio, timestamp) {
+window.appendMessage = function(user_id, username, displayName, text, messageId, avatar, bio, timestamp, prepend=false) {
     console.log("appendMessage called:", { user_id, username, displayName, text });
     const chatMessages = document.getElementById("chat-messages");
     const msg = document.createElement("div");
@@ -52,6 +52,16 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
     if (isInitialLoad) {
         scrollChatToBottom();
         isInitialLoad = false;
+    }
+
+    console.log("🧱 Prepending?", prepend, "| chatMessages.childElementCount =", chatMessages.childElementCount);
+    console.log("🔼 First child ID before insert:", chatMessages.firstChild?.dataset?.messageId);
+
+
+    if (prepend) {
+        chatMessages.insertBefore(msg, chatMessages.firstChild);
+    } else {
+        chatMessages.appendChild(msg);
     }
 
     const replyBtn = msg.querySelector('.reply-button');
@@ -119,11 +129,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     chatContainer.addEventListener("scroll", () => {
         if (chatContainer.scrollTop === 0) {
-            loadMessages(earliestMessageId);
+            console.log("🔼 Scrolling up! earliestMessageId =", earliestMessageId);
+            loadMessages(earliestMessageId, true);
         }
     });
 
     loadMessages();
+
+    const newScrollHeight = container.scrollHeight;
+    const scrollDiff = newScrollHeight - previousScrollHeight;
+    container.scrollTop = previousScrollTop + scrollDiff;
 
     if (!fileInput || !uploadButton) {
         console.error("Missing fileInput or uploadButton");
@@ -300,8 +315,9 @@ function deleteMessage(messageId) {
 
 let isLoading = false;
 let earliestMessageId = null;
+const renderedMessageIds = new Set();
 
-function loadMessages(beforeId = null) {
+function loadMessages(beforeId = null, prepend=false) {
     if (isLoading) return;
     isLoading = true;
 
@@ -310,11 +326,39 @@ function loadMessages(beforeId = null) {
         url += `&before_id=${beforeId}`;
     }
     console.log("Fetching messages with beforeId =", beforeId);
+
     fetch(url)
         .then(res => res.json())
         .then(messages => {
-            console.log("Received", messages.length, "messages");
+            const newMessages = [];
+
+            // Set earliestMessageId only when prepending
+            if (prepend && messages.length > 0) {
+                const minId = Math.min(...messages.map(m => m.id));
+                if (earliestMessageId === null || minId < earliestMessageId) {
+                    console.log("🕒 Updating earliestMessageId to", minId);
+                    earliestMessageId = minId;
+                }
+            }
+            if (messages.length > 0) {
+                const minId = Math.min(...messages.map(m => m.id));
+                if (earliestMessageId === null || minId < earliestMessageId) {
+                    console.log("🕰️ Updating earliestMessageId to", minId);
+                    earliestMessageId = minId;
+                }
+            }
+
+            console.log("✅ fetch result (full array):", messages);
+            if (prepend) {
+                messages.sort((a, b) => a.id - b.id); // oldest to newest
+            }
+
             messages.forEach(msg => {
+                console.log("Checking msg.id:", msg.id, "Already rendered?", renderedMessageIds.has(msg.id));
+                if (renderedMessageIds.has(msg.id)) return;
+                console.log("Adding new msg to renderedMessageIds:", msg.id);
+                renderedMessageIds.add(msg.id);
+                newMessages.push(msg);
                 window.appendMessage(
                     msg.user_id,
                     msg.username,
@@ -323,13 +367,12 @@ function loadMessages(beforeId = null) {
                     msg.id,
                     msg.avatar,
                     msg.bio,
-                    msg.timestamp
+                    msg.timestamp,
+                    prepend
                 );
-
-                if (!earliestMessageId || msg.id < earliestMessageId) {
-                    earliestMessageId = msg.id;
-                }
             });
+            console.log("IDs of received messages:", messages.map(m => m.id));
+            console.log("New (unrendered) messages count:", newMessages.length);
 
             if (!beforeId) scrollChatToBottom();
         })
@@ -339,16 +382,16 @@ function loadMessages(beforeId = null) {
 }
 
 function scrollChatToBottom() {
-  const container = document.querySelector('.chat-container');
-  if (!container) return;
+    const container = document.querySelector('.chat-container');
+    if (!container) return;
 
   requestAnimationFrame(() => {
     container.scrollTop = container.scrollHeight;
-    console.log("✅ Scrolled to:", container.scrollTop);
+    console.log("⬇️ Scrolled to bottom:", container.scrollTop);
   });
 
   // Double fallback in case layout isn't stable yet
   setTimeout(() => {
     container.scrollTop = container.scrollHeight;
-    console.log("⏱️ Fallback scroll to:", container.scrollTop); }, 2500);
+    console.log("⏱️ Fallback scroll to bottom:", container.scrollTop); }, 2500);
 }
