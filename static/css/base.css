@@ -225,8 +225,7 @@
 /* ========== Responsive Adjustments (≤ 768px) ========== */
 @media (width <= 768px) {
     .header-date-time,
-    #main-nav a,
-    .username {
+    #main-nav a {
         display: none;
     }
 
