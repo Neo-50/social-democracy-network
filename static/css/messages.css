@@ -204,6 +204,8 @@
     flex-direction: row;
     font-size: 0.75rem;
     align-items: center;
+    white-space: nowrap;
+    width: 100%;
     color: #bbb;
 }
 
