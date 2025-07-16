@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', formatTimestamp)
 
 function formatTimestamp(container = document) {
-  if (!container) return;
   if (!(container instanceof Element) && container !== document) {
     console.warn("formatTimestamp called with invalid container:", container);
     return;
