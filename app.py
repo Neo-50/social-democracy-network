@@ -788,11 +788,19 @@ def forgot_password():
 @app.route("/chat/get_messages", methods=["GET"])
 @login_required
 def get_messages():
-    messages = (
-        ChatMessage.query
-        .order_by(ChatMessage.timestamp.asc())
-        .all()
-    )
+    limit = int(request.args.get("limit", 25))
+    before_id = request.args.get("before_id", type=int)
+
+    query = ChatMessage.query.order_by(ChatMessage.timestamp.desc())
+
+    if before_id:
+        # Load messages older than the one with this ID
+        ref_msg = ChatMessage.query.get(before_id)
+        if ref_msg:
+            query = query.filter(ChatMessage.timestamp < ref_msg.timestamp)
+
+    messages = query.limit(limit).all()
+    messages.reverse()  # So they appear oldest → newest
 
     result = []
     for msg in messages:
