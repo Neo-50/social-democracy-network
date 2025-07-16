@@ -77,7 +77,7 @@ async function submitMessageForm(e) {
         messageDiv.innerHTML = `
             <div class="message sent">
                 <div class="content">${msg.content}</div>
-                <div class="meta">${msg.sender.display_name || msg.sender.username}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="${timestamp}"></span>
+                <div class="meta">${msg.sender.display_name || msg.sender.username} • <span class="timestamp" data-timestamp="${timestamp}"></span>
                 <button class="delete-im" type="button">🗑️ Delete</button></div>
             </div>
         `;

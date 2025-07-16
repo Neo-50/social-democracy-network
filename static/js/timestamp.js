@@ -15,7 +15,7 @@ function formatLocalDate(dateStr) {
     minute: '2-digit',
     hour12: true,
   }
-  return date.toLocaleString('en-US', options).replace(',', ' ');
+  return date.toLocaleString('en-US', options).replace(',', '•');
 }
 
 function formatTimestamp(container = document) {
