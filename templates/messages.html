@@ -39,7 +39,9 @@
                     <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
                         <div class="content">{{ msg.content | safe }}</div>
                         <div class="meta">{{ msg.sender.display_name or msg.sender.username }}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="{{ msg.timestamp.isoformat() + 'Z' }}"></span>
-                        <button class="delete-im" type="button" data-id="{{ msg.id }}">🗑️ Delete</button></div>
+                        {% if msg.sender_id == session['user_id'] or current_user.is_admin%}
+                            <button class="delete-im" type="button" data-id="{{ msg.id }}">🗑️ Delete</button></div>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
