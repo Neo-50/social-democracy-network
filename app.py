@@ -479,7 +479,7 @@ def delete_im(message_id):
     print(f"Current user ID: {session.get('user_id')}")
     msg = Message.query.get(message_id)
 
-    if msg.sender_id != user_id and not is_admin(user_id):
+    if msg.sender_id != user_id and not current_user.is_admin:
         return jsonify(success=False, error="Unauthorized"), 403
 
     if msg is None:
