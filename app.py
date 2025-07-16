@@ -465,6 +465,7 @@ def api_send_message():
             "timestamp": msg.timestamp.strftime("%m-%d-%Y %H:%M"),
             "sender": {
                 "id": user_id,
+                "display_name": getattr(current_user, "display_name", None),
                 "username": getattr(current_user, "username", "Unknown")
             }
         }

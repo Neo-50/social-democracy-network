@@ -1,4 +1,22 @@
-document.addEventListener('DOMContentLoaded', formatTimestamp)
+document.querySelectorAll('.timestamp').forEach(el => {
+  const raw = el.dataset.timestamp;
+  if (raw) {
+    el.textContent = formatLocalDate(raw);
+  }
+});
+
+function formatLocalDate(dateStr) {
+  const date = new Date(dateStr);
+  const options = {
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }
+  return date.toLocaleString('en-US', options).replace(',', ' ');
+}
 
 function formatTimestamp(container = document) {
   if (!(container instanceof Element) && container !== document) {
@@ -6,7 +24,7 @@ function formatTimestamp(container = document) {
     return;
   }
 
-  const elements = container.querySelectorAll(".comment-timestamp");
+  const elements = container.querySelectorAll(".timestamp");
   elements.forEach(el => {
     const raw = el.dataset.timestamp;
     try {

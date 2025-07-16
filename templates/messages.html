@@ -26,7 +26,7 @@
             {% for user in conversations %}
                 <div class="thread-item {% if user.username == recipient.username %}selected{% endif %}">
                     <a href="{{ url_for('messages', username=user.username) }}">
-                        💬 {{ user.username }}
+                        💬 {{ user.display_name or user.username }}
                     </a>
                 </div>
             {% else %}
@@ -38,7 +38,7 @@
                 <div class="message-wrapper">
                     <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
                         <div class="content">{{ msg.content | safe }}</div>
-                        <div class="meta">{{ msg.sender.username }}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="{{ msg.timestamp.isoformat() + 'Z' }}"></span>
+                        <div class="meta">{{ msg.sender.display_name or msg.sender.username }}&nbsp; • &nbsp;<span class="timestamp" data-timestamp="{{ msg.timestamp.isoformat() + 'Z' }}"></span>
                         <button class="delete-im" type="button" data-id="{{ msg.id }}">🗑️ Delete</button></div>
                     </div>
                 </div>
@@ -73,6 +73,7 @@
     </div>
     <script src="{{ url_for('static', filename='js/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/emojis.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 </main>
 

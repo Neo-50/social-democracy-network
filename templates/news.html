@@ -37,8 +37,8 @@
             </div>
 
             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                <span class="comment-timestamp" data-timestamp="{{ comment.timestamp.isoformat() }}Z">
-                    {{ comment.timestamp.strftime('%B %d, %Y %I:%M %p') }}
+                <span class="timestamp" data-timestamp="{{ comment.timestamp.isoformat() }}Z">
+                    {{ comment.timestamp.strftime('%m-%d-%Y %I:%M %p') }}
                 </span>
 
                 {% if depth < 3 %}
