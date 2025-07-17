@@ -117,11 +117,19 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("❌ #chat-container not found in DOM");
         return;
     }
+    let lastScrollTop = chatContainer.scrollTop;
+
     chatContainer.addEventListener("scroll", () => {
-        if (chatContainer.scrollTop === 0) {
-            console.log("🔼 Scrolling up! earliestMessageId =", earliestMessageId);
+        const currentScrollTop = chatContainer.scrollTop;
+
+        const isScrollingUp = currentScrollTop < lastScrollTop;
+
+        if (isScrollingUp && currentScrollTop <= 5 && !isLoading) {
+            console.log("⬆ Triggered load from top scroll.");
             loadMessages(earliestMessageId, true);
         }
+
+        lastScrollTop = currentScrollTop;
     });
 
     loadMessages();
@@ -342,6 +350,14 @@ function loadMessages(beforeId = null, prepend=false) {
                 const chatMessages = document.getElementById("chat-messages");
                 const firstRealMessage = chatMessages.querySelector(".chat-message");
 
+                let topMessageId = null;
+                let topOffset = 0;
+
+                if (firstRealMessage) {
+                    topMessageId = firstRealMessage.dataset.id;
+                    topOffset = firstRealMessage.getBoundingClientRect().top;
+                }
+
                 messages.sort((a, b) => a.id - b.id); // oldest to newest
                 console.log("✅ fetch result (full array):", messages);
 
@@ -377,15 +393,6 @@ function loadMessages(beforeId = null, prepend=false) {
             if (!prepend) {
                 const container = document.getElementById("chat-container");
                 const chatMessages = document.getElementById("chat-messages");
-                const firstRealMessage = chatMessages.querySelector(".chat-message");
-
-                let topMessageId = null;
-                let topOffset = 0;
-
-                if (firstRealMessage) {
-                    topMessageId = firstRealMessage.dataset.id;
-                    topOffset = firstRealMessage.getBoundingClientRect().top;
-                }
 
                 for (let i = 0; i < messages.length; i++) {
                     const msg = messages[i];
