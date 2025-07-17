@@ -56,14 +56,6 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
 
     console.log("🧱 Prepending?", prepend, "| chatMessages.childElementCount =", chatMessages.childElementCount);
     console.log("🔼 First child ID before insert:", chatMessages.firstChild?.dataset?.messageId);
-
-
-    if (prepend) {
-        console.log("📌 Prepending message ID:", msg.dataset?.messageId);
-        chatMessages.prepend(msg);
-    } else {
-        chatMessages.appendChild(msg);
-    }
     
     const replyBtn = msg.querySelector('.reply-button');
     const replyDrawer = msg.querySelector('.reply-drawer');
@@ -114,9 +106,9 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
         deleteMessage(messageId);
     });
 
-    chatMessages.appendChild(msg);
     formatTimestamp();
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    return (msg);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -136,10 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     loadMessages();
-
-    const newScrollHeight = container.scrollHeight;
-    const scrollDiff = newScrollHeight - previousScrollHeight;
-    container.scrollTop = previousScrollTop + scrollDiff;
 
     if (!fileInput || !uploadButton) {
         console.error("Missing fileInput or uploadButton");
@@ -223,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 if (data.success) {
                     const msg = data.message;
-                    appendMessage(
+                    const msgEl = appendMessage(
                         msg.user_id,
                         msg.username,
                         msg.display_name,
@@ -234,9 +222,16 @@ document.addEventListener("DOMContentLoaded", () => {
                         msg.timestamp,
                         false
                     );
+
+                    const chatMessages = document.getElementById("chat-messages");
+                    chatMessages.appendChild(msgEl); // ✅ insert to DOM
+                    msgEl.scrollIntoView({ behavior: "smooth", block: "end" });
+
+                    // ✅ Update earliestMessageId
                     if (!earliestMessageId || msg.id < earliestMessageId) {
                         earliestMessageId = msg.id;
                     }
+
                     chatEditor.innerHTML = "";
                 } else {
                     console.error("Error sending message:", data.error);
@@ -359,7 +354,10 @@ function loadMessages(beforeId = null, prepend=false) {
             }
 
             if (prepend) {
-                for (let i = messages.length - 1; i >= 0; i--) {
+                const chatMessages = document.getElementById("chat-messages");
+                const firstRealMessage = chatMessages.querySelector(".chat-message");
+
+                for (let i = 0; i < messages.length; i++) {
                     const msg = messages[i];
                     console.log("Checking msg.id:", msg.id, "Already rendered?", renderedMessageIds.has(msg.id));
                     if (renderedMessageIds.has(msg.id)) continue;
@@ -368,7 +366,7 @@ function loadMessages(beforeId = null, prepend=false) {
                     renderedMessageIds.add(msg.id);
                     newMessages.push(msg);
 
-                    window.appendMessage(
+                    const msgEl = window.appendMessage(
                         msg.user_id,
                         msg.username,
                         msg.display_name,
@@ -379,17 +377,28 @@ function loadMessages(beforeId = null, prepend=false) {
                         msg.timestamp,
                         true
                     );
+                    console.log("Generated msgEl:", msgEl);
+
+                    if (prepend) {
+                        chatMessages.insertBefore(msgEl, firstRealMessage);
+                    } else {
+                        chatMessages.appendChild(msgEl);
+                    }
                 }
-            } else {
-                messages.forEach(msg => {
+            }
+            if (!prepend) {
+                const chatMessages = document.getElementById("chat-messages");
+
+                for (let i = 0; i < messages.length; i++) {
+                    const msg = messages[i];
                     console.log("Checking msg.id:", msg.id, "Already rendered?", renderedMessageIds.has(msg.id));
-                    if (renderedMessageIds.has(msg.id)) return;
+                    if (renderedMessageIds.has(msg.id)) continue;
 
                     console.log("Adding new msg to renderedMessageIds:", msg.id);
                     renderedMessageIds.add(msg.id);
                     newMessages.push(msg);
 
-                    window.appendMessage(
+                    const msgEl = window.appendMessage(
                         msg.user_id,
                         msg.username,
                         msg.display_name,
@@ -398,9 +407,12 @@ function loadMessages(beforeId = null, prepend=false) {
                         msg.avatar,
                         msg.bio,
                         msg.timestamp,
-                        false
+                        false  // ⬅️ not prepending
                     );
-                });
+                    console.log("Generated msgEl:", msgEl);
+
+                    chatMessages.appendChild(msgEl);
+                }
             }
 
             console.log("IDs of received messages:", messages.map(m => m.id));
