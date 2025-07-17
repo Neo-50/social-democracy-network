@@ -790,6 +790,7 @@ def forgot_password():
 def get_messages():
     limit = int(request.args.get("limit", 10))
     before_id = request.args.get("before_id", type=int)
+    prepend = request.args.get("prepend", "false") == "true"
 
     query = ChatMessage.query.order_by(ChatMessage.id.desc())
 
@@ -797,7 +798,8 @@ def get_messages():
         query = query.filter(ChatMessage.id < before_id)
 
     messages = query.limit(limit).all()
-    messages.reverse()  # So they appear oldest → newest
+    if not prepend:
+        messages.reverse()  # So they appear oldest → newest
 
     result = []
     for msg in messages:
