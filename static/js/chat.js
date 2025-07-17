@@ -59,11 +59,12 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
 
 
     if (prepend) {
-        chatMessages.insertBefore(msg, chatMessages.firstChild);
+        console.log("📌 Prepending message ID:", msg.dataset?.messageId);
+        chatMessages.prepend(msg);
     } else {
         chatMessages.appendChild(msg);
     }
-
+    
     const replyBtn = msg.querySelector('.reply-button');
     const replyDrawer = msg.querySelector('.reply-drawer');
 
@@ -230,7 +231,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         msg.id,
                         msg.avatar,
                         msg.bio,
-                        msg.timestamp
+                        msg.timestamp,
+                        false
                     );
                     if (!earliestMessageId || msg.id < earliestMessageId) {
                         earliestMessageId = msg.id;
@@ -325,6 +327,9 @@ function loadMessages(beforeId = null, prepend=false) {
     if (beforeId) {
         url += `&before_id=${beforeId}`;
     }
+    if (prepend) {
+        url += `&prepend=true`;
+    }
     console.log("Fetching messages with beforeId =", beforeId);
 
     fetch(url)
@@ -353,24 +358,51 @@ function loadMessages(beforeId = null, prepend=false) {
                 messages.sort((a, b) => a.id - b.id); // oldest to newest
             }
 
-            messages.forEach(msg => {
-                console.log("Checking msg.id:", msg.id, "Already rendered?", renderedMessageIds.has(msg.id));
-                if (renderedMessageIds.has(msg.id)) return;
-                console.log("Adding new msg to renderedMessageIds:", msg.id);
-                renderedMessageIds.add(msg.id);
-                newMessages.push(msg);
-                window.appendMessage(
-                    msg.user_id,
-                    msg.username,
-                    msg.display_name,
-                    msg.content,
-                    msg.id,
-                    msg.avatar,
-                    msg.bio,
-                    msg.timestamp,
-                    prepend
-                );
-            });
+            if (prepend) {
+                for (let i = messages.length - 1; i >= 0; i--) {
+                    const msg = messages[i];
+                    console.log("Checking msg.id:", msg.id, "Already rendered?", renderedMessageIds.has(msg.id));
+                    if (renderedMessageIds.has(msg.id)) continue;
+
+                    console.log("Adding new msg to renderedMessageIds:", msg.id);
+                    renderedMessageIds.add(msg.id);
+                    newMessages.push(msg);
+
+                    window.appendMessage(
+                        msg.user_id,
+                        msg.username,
+                        msg.display_name,
+                        msg.content,
+                        msg.id,
+                        msg.avatar,
+                        msg.bio,
+                        msg.timestamp,
+                        true
+                    );
+                }
+            } else {
+                messages.forEach(msg => {
+                    console.log("Checking msg.id:", msg.id, "Already rendered?", renderedMessageIds.has(msg.id));
+                    if (renderedMessageIds.has(msg.id)) return;
+
+                    console.log("Adding new msg to renderedMessageIds:", msg.id);
+                    renderedMessageIds.add(msg.id);
+                    newMessages.push(msg);
+
+                    window.appendMessage(
+                        msg.user_id,
+                        msg.username,
+                        msg.display_name,
+                        msg.content,
+                        msg.id,
+                        msg.avatar,
+                        msg.bio,
+                        msg.timestamp,
+                        false
+                    );
+                });
+            }
+
             console.log("IDs of received messages:", messages.map(m => m.id));
             console.log("New (unrendered) messages count:", newMessages.length);
 
