@@ -20,6 +20,7 @@ from markupsafe import Markup
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app, Response, jsonify, g
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
+from flask_socketio import SocketIO, emit, join_room
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_mail import Message as flask_message
@@ -427,6 +428,8 @@ def messages(username=None):
 def debug_ids():
     return jsonify([m.id for m in Message.query.all()])
 
+
+
 @app.route('/api/send_message', methods=['POST'])
 @login_required
 def api_send_message():
@@ -760,6 +763,22 @@ def reset_password_admin(user_id):
     flash(f"Password reset for user {user.username}")
     return redirect(url_for('admin_tools'))
 
+@app.route('/admin/update_displayname/<int:user_id>', methods=['POST'])
+@login_required
+def update_displayname_admin(user_id):
+    if not current_user.is_admin:
+        flash("Access denied.")
+        return redirect(url_for('home'))
+    
+    user = User.query.get_or_404(user_id)
+    new_displayname = request.form['new_displayname']
+
+    user.display_name = new_displayname
+    db.session.commit()
+
+    flash(f"Display name changed to {new_displayname} for user {user.username}")
+    return redirect(url_for('admin_tools'))
+
 @app.route('/forgot_password', methods=['POST'])
 def forgot_password():
     email = request.form['email']
@@ -1001,6 +1020,23 @@ def emojify(content):
         return match.group(0)  # fallback, keep text if not found
 
     return Markup(re.sub(r":([a-zA-Z0-9_]+):", replace, content))
+
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+@socketio.on('new_message')
+def handle_new_message(data):
+    print("🔥 Rebroadcasting message:", data)
+    emit('new_message', data, room=data['room_id'], include_self=False)
+
+@socketio.on('join')
+def handle_join(room_id):
+    join_room(room_id)
+    print(f"🧃 Joined room: {room_id}")
+
+if __name__ == '__main__':
+    is_dev = os.environ.get("FLASK_ENV") == "development"
+    socketio.run(app, debug=is_dev, use_reloader=is_dev)
+
 
 # if __name__ == "__main__":
 #     app.run(debug=False, use_reloader=False)

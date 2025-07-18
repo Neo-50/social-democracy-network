@@ -86,7 +86,22 @@ async function submitMessageForm(e) {
         const deleteBtn = messageDiv.querySelector(".delete-im");
         deleteBtn.dataset.id = msg.id.toString();
 
-        document.querySelector(".messages-container").appendChild(messageDiv);
+        if (result.success) {
+            const msg = result.message;
+            const timestamp = msg.timestamp + 'Z';
+
+            // Render locally
+            renderNewMessage(msg, "sent");
+
+            // Also emit it via socket to update other clients
+            if (typeof socket !== 'undefined') {
+                console.log("socket ready?", typeof socket);
+                socket.emit('new_message', {
+                    ...msg,
+                    room_id: ROOM_ID
+                });
+            }
+        }
 
         // Format the new timestamp
         const timestampEl = messageDiv.querySelector(".timestamp");
@@ -114,6 +129,25 @@ function scrollChatToBottom() {
         container.scrollTop = container.scrollHeight;
         console.log("⏱️ Fallback scroll to:", container.scrollTop);
     }, 1000);
+}
+
+function renderNewMessage(msg, direction = "received") {
+    console.log("⚙️ renderNewMessage called with:", direction, msg);
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", direction);
+    messageDiv.dataset.id = msg.id;
+
+    const timestamp = msg.timestamp + 'Z';
+
+    messageDiv.innerHTML = `
+        <div class="content">${msg.content}</div>
+        <div class="meta">
+        ${msg.sender_display_name || msg.sender_username}
+        <span class="timestamp" data-timestamp="${timestamp}"></span>
+        </div>
+    `;
+
+    document.querySelector(".messages-container").appendChild(messageDiv);
 }
 
 document.addEventListener("click", (e) => {
