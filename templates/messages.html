@@ -9,7 +9,7 @@
                 <select name="recipient_id" id="recipient_id" required>
                     <option value="" disabled selected>Select a user</option>
                     {% for user in users %}
-                    <option value="{{ user.id }}">{{ user.username }}</option>
+                    <option value="{{ user.id }}">{{ user.display_name or user.username }}</option>
                     {% endfor %}
                 </select>
 
@@ -73,6 +73,31 @@
             </div>
         </form>
     </div>
+    <!-- begin-no-validate -->
+     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        {% if current_user.is_authenticated %}
+            var CURRENT_USER_ID = {{ current_user.id|tojson }};
+        {% else %}
+            var CURRENT_USER_ID = null;
+        {% endif %}
+
+        const RECIPIENT_ID = parseInt(document.querySelector('input[name="recipient_id"]').value);
+        const ROOM_ID = `thread_${Math.min(CURRENT_USER_ID, RECIPIENT_ID)}_${Math.max(CURRENT_USER_ID, RECIPIENT_ID)}`;
+
+        const socket = io();
+
+        socket.on('connect', () => {
+            socket.emit('join', ROOM_ID);
+            console.log('✅ Connected to socket and joined room:', ROOM_ID);
+        });
+
+        socket.on('new_message', (msg) => {
+            console.log('📨 New socket message:', msg);
+            renderNewMessage(msg);
+        });
+    </script>
+    <!-- end-no-validate -->
     <script src="{{ url_for('static', filename='js/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/emojis.js') }}"></script>
     <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>

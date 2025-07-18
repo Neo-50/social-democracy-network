@@ -8,12 +8,12 @@
             <thead>
                 <tr>
                     <th>Username</th>
+                    <th>Display Name</th>
                     <th>Email</th>
                     <th>Admin</th>
                     <th>Email Verified</th>
                     <th>Reset Password</th>
                     <th>Bio</th>
-                    <th>Session Active</th>
                     <th>Delete</th>
                 </tr>
             </thead>
@@ -21,6 +21,13 @@
                 {% for user in users %}
                 <tr>
                     <td>{{ user.username }}</td>
+                    <td>
+                        <div><strong>Current:</strong> {{ user.display_name or '-' }}</div>
+                        <form method="POST" class="admintool-displayname" action="{{ url_for('update_displayname_admin', user_id=user.id) }}">
+                            <input type="text" name="new_displayname" class="new-displayname" placeholder="New display name" required>
+                            <button type="submit" class="displayname-button">Submit</button>
+                        </form>
+                    </td>
                     <td>{{ user.email }}</td>
                     <td>{{ 'Yes' if user.is_admin else 'No' }}</td>
                     <td>{{ 'Yes' if user.email_verified else 'No' }}</td>
@@ -31,15 +38,11 @@
                         </form>
                     </td>
                     <td>{{ user.bio or '—' }}</td>
-                    <td>N/A</td> <!-- Replace with session logic later -->
                     <td>
                         <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}">
                         <button type="submit" class="trash-button">🗑️</button>
                         </form>
                     </td>
-                </tr>
-                <tr>
-
                 </tr>
                 {% endfor %}
             </tbody>

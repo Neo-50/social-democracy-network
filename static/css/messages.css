@@ -180,6 +180,22 @@
     z-index: 1000;
 }
 
+.size-option {
+    padding: 4px 10px;
+    background-color: #1a1a1a;
+    border: 2px solid #00e3ea;
+    border-radius: 999px;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.size-option:hover {
+    background-color: #333;
+    color: white;
+}
+
 /* custom emoji drawer */
 #custom-emoji-wrapper {
     position: absolute;
