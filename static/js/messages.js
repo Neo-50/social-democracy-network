@@ -133,10 +133,12 @@ function scrollChatToBottom() {
 
 function renderNewMessage(msg, direction = "received") {
     console.log("⚙️ renderNewMessage called with:", direction, msg);
+
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message", direction);
     messageDiv.dataset.id = msg.id;
 
+    const showDelete= msg.sender?.id === CURRENT_USER_ID || IS_ADMIN;
     const timestamp = msg.timestamp + 'Z';
     const formattedTimestamp = formatLocalDate(timestamp);
     
@@ -145,11 +147,18 @@ function renderNewMessage(msg, direction = "received") {
         <div class="meta">
         ${msg.sender?.display_name || msg.sender?.username}•
         <span class="timestamp" data-timestamp="${timestamp}">${formattedTimestamp}</span>
-        <button class="delete-im" type="button">🗑️ Delete</button></div>
+        ${showDelete ? `<button class="delete-im" type="button">🗑️ Delete</button>` : ""}</div>
         </div>
     `;
+    const deleteBtn = messageDiv.querySelector(".delete-im")
+    if (deleteBtn) {
+        deleteBtn.dataset.id = msg.id.toString();
+    }
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message-wrapper", direction);
+    wrapper.appendChild(messageDiv);
 
-    document.querySelector(".messages-container").appendChild(messageDiv);
+    document.querySelector(".messages-container").appendChild(wrapper);
 }
 
 document.addEventListener("click", (e) => {
