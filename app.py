@@ -479,15 +479,18 @@ def api_send_message():
 def delete_im(message_id):
     user_id = session.get("user_id")
     print(f"Attempting to delete message ID: {message_id}")
-    print(f"Current user ID: {session.get('user_id')}")
+    print(f"Current user ID: {user_id}")
     msg = Message.query.get(message_id)
+
+    if not msg:
+        print("Message not found!")
+        return jsonify(success=False, error="Not found"), 404
 
     if msg.sender_id != user_id and not current_user.is_admin:
         return jsonify(success=False, error="Unauthorized"), 403
 
-    if msg is None:
-        print("Message not found!")
-        return jsonify(success=False, error="Not found"), 404
+    room_name = f"thread_{min(msg.sender_id, msg.recipient_id)}_{max(msg.sender_id, msg.recipient_id)}"
+    socketio.emit('delete_message', {'message_id': message_id}, room=room_name)
 
     db.session.delete(msg)
     db.session.commit()

@@ -98,6 +98,18 @@
             console.log('📨 New socket message:', msg);
             renderNewMessage(msg);
         });
+
+        socket.on('delete_message', (data) => {
+            const messageId = data.message_id;
+            const messageWrapper = document.querySelector(
+                `.message-wrapper [data-id="${messageId}"]`
+            )?.closest(".message-wrapper");
+
+            if (messageWrapper) {
+                messageWrapper.remove();
+                console.log("🗑️ Message deleted via socket:", messageId);
+            }
+        });
     </script>
     <!-- end-no-validate -->
 
