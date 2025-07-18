@@ -78,8 +78,10 @@
     <script>
         {% if current_user.is_authenticated %}
             var CURRENT_USER_ID = {{ current_user.id|tojson }};
+            var IS_ADMIN = {{ current_user.is_admin|tojson }};
         {% else %}
             var CURRENT_USER_ID = null;
+            var IS_ADMIN = false;
         {% endif %}
 
         const RECIPIENT_ID = parseInt(document.querySelector('input[name="recipient_id"]').value);
