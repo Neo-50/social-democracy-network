@@ -85,6 +85,8 @@
 }
 
 .message.sent {
+    display: flex;
+    flex-direction: column;
     background-color: rgb(33 104 163);
     color: white;
     align-self: flex-end;
@@ -92,6 +94,8 @@
 }
 
 .message.received {
+    display: flex;
+    flex-direction: column;
     background-color: rgb(120 120 120);
     color: white;
     align-self: flex-start;

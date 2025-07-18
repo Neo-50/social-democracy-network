@@ -143,8 +143,9 @@ function renderNewMessage(msg, direction = "received") {
     messageDiv.innerHTML = `
         <div class="content">${msg.content}</div>
         <div class="meta">
-        ${msg.sender?.display_name || msg.sender?.username}
-        <span class="timestamp" data-timestamp="${timestamp}">$(formattedTimestamp)</span>
+        ${msg.sender?.display_name || msg.sender?.username}•
+        <span class="timestamp" data-timestamp="${timestamp}">${formattedTimestamp}</span>
+        <button class="delete-im" type="button">🗑️ Delete</button></div>
         </div>
     `;
 
