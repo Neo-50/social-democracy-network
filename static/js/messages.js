@@ -159,6 +159,7 @@ function renderNewMessage(msg, direction = "received") {
     wrapper.appendChild(messageDiv);
 
     document.querySelector(".messages-container").appendChild(wrapper);
+    scrollChatToBottom()
 }
 
 document.addEventListener("click", (e) => {
