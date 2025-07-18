@@ -138,12 +138,13 @@ function renderNewMessage(msg, direction = "received") {
     messageDiv.dataset.id = msg.id;
 
     const timestamp = msg.timestamp + 'Z';
-
+    const formattedTimestamp = formatLocalDate(timestamp);
+    
     messageDiv.innerHTML = `
         <div class="content">${msg.content}</div>
         <div class="meta">
-        ${msg.sender_display_name || msg.sender_username}
-        <span class="timestamp" data-timestamp="${timestamp}"></span>
+        ${msg.sender?.display_name || msg.sender?.username}
+        <span class="timestamp" data-timestamp="${timestamp}">$(formattedTimestamp)</span>
         </div>
     `;
 
