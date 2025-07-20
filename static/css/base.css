@@ -25,8 +25,8 @@
 .header-right {
     position: absolute;
     margin-left: 20px;
-    top: 0.5rem;
-    right: 1rem;
+    top: 0;
+    right: 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -38,23 +38,6 @@
     margin-left: 4px;
     font-weight: 600;
     font-size: 1.1em;
-}
-
-.user-link {
-    color: #00e3ea;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 10px 20px;
-    border-radius: 999px;
-    background-color: #1a1a1a;
-}
-
-.user-link:first-of-type {
-    margin-right: 8px;
-}
-
-.user-link:hover {
-    color: #c7c7c7;
 }
 
 /* Logo styling */
@@ -133,9 +116,25 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: min-content;
-    gap: 20px;
-    border: 1px solid red;
+    gap: 4px;
+    padding: 6px;
+    margin-right: 0;
+    border-radius: 12px;
+}
+
+.user-link {
+    color: #00e3ea;
+    text-decoration: none;
+    font-size: .8em;
+    margin-top: 0;
+    padding: 2px 6px;
+    curosor: pointer;
+    background-color: #1a1a1a;
+}
+
+.user-link:hover {
+    color: #c7c7c7;
+    background-color: #555;
 }
 
 .avatar-inline {
@@ -270,13 +269,3 @@
         background-color: #444;
     }
 
-    .user-link {
-        color: #00e3ea;
-        text-decoration: none;
-        font-size: .9em;
-        padding: 8px 16px;
-        margin: 0;
-        border-radius: 999px;
-        background-color: #1a1a1a;
-    }
-}
