@@ -35,9 +35,9 @@
 
 .username {
     color: #8a8a8a;
+    margin-left: 4px;
     font-weight: 600;
     font-size: 1.1em;
-    margin-right: 8px;
 }
 
 .user-link {
@@ -89,10 +89,12 @@
     background-color: #1a1a1a;
     border: 1px solid #444;
     border-radius: 8px;
+    min-width: 160px;
     padding: 10px;
     z-index: 10;
     margin-top: 0;
     right: 0;
+    border: 1px solid #00e3ea;
 }
 
 .dropdown-menu a {
@@ -130,7 +132,10 @@
 .user-nav {
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
+    align-items: center;
+    height: min-content;
+    gap: 20px;
+    border: 1px solid red;
 }
 
 .avatar-inline {
