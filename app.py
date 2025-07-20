@@ -496,6 +496,21 @@ def delete_im(message_id):
     db.session.commit()
     return jsonify(success=True)
 
+@app.route("/api/unread_count")
+@login_required
+def unread_count():
+    user_id = session["user_id"]
+    count = Message.query.filter_by(recipient_id=user_id, read=False).count()
+    return jsonify(count=count)
+
+@app.route("/api/mark_notifications_read", methods=["POST"])
+@login_required
+def mark_notifications_read():
+    user_id = session["user_id"]
+    Message.query.filter_by(recipient_id=user_id, read=False).update({"read": True})
+    db.session.commit()
+    return jsonify(success=True)
+
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
     try:

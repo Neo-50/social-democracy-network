@@ -111,19 +111,7 @@
                 messageWrapper.remove();
                 console.log("🗑️ Message deleted via socket:", messageId);
             }
-        });
-
-        document.getElementById("notification-icon").addEventListener("click", () => {
-                  document.getElementById("notif-badge").style.display = "none";
-                  loadNotifications(); // or toggle the panel if already loaded
-        });
-
-        function showNotificationBadge() {
-                console.log("***Notification Ping***");
-                const badge = document.getElementById("notif-badge");
-                badge.innerText = "1"; // or however many unread messages you want to show
-                badge.style.display = "inline-block";
-        }
+        }); 
     </script>
     <!-- end-no-validate -->
 

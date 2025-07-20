@@ -41,6 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+window.addEventListener("DOMContentLoaded", async () => {
+      const res = await fetch("/api/unread_count");
+      const data = await res.json();
+      if (data.count > 0) {
+              showNotificationBadge(data.count);
+            }
+});
+
 async function submitMessageForm(e) {
     e.preventDefault();
 
@@ -205,4 +213,16 @@ document.addEventListener("click", (e) => {
         });
     }
 });
+
+document.getElementById("notification-icon").addEventListener("click", async () => {
+    document.getElementById("notif-badge").style.display = "none";
+        await fetch("/api/mark_notifications_read", { method: "POST" });
+        // loadNotifications(); // or toggle the panel if already loaded
+});
+
+function showNotificationBadge(count = 1) {
+    const badge = document.getElementById("notif-badge");
+    badge.innerText = count;
+    badge.style.display = "inline-block";
+}
 
