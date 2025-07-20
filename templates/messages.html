@@ -35,7 +35,7 @@
         </div>
         <div class="messages-container">
             {% for msg in messages %}
-                <div class="message-wrapper">
+                <div class="message-wrapper" data-id="{{ msg.id }}">
                     <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
                         <div class="content">{{ msg.content | safe }}</div>
                         <div class="meta">{{ msg.sender.display_name or msg.sender.username }} • <span class="timestamp" data-timestamp="{{ msg.timestamp.isoformat() + 'Z' }}"></span>
