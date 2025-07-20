@@ -199,9 +199,9 @@
                         <a href="{{ url_for('logout') }}">Logout</a>
                     </div>
                 </div>
-                {% else %}
-                <a href="{{ url_for('login') }}" class="user-link">Login</a>
-                <a href="{{ url_for('register') }}" class="user-link">Sign Up</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="user-link">> Sign Up</a>
+                <a href="{{ url_for('login') }}" class="user-link">> Login</a>
                 {% endif %}
             </div>
         </div>
