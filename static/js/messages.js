@@ -207,6 +207,12 @@ document.addEventListener("click", (e) => {
         return;
     }
 
+    if (messageEl && !messageEl.contains(document.querySelector("#message-form"))) {
+        messageEl.remove();
+    } else {
+        console.warn("🛑 Skipping removal: would delete the input form!", messageEl);
+    }
+
     if (confirm("Delete this message?")) {
     fetch(`/api/delete_im/${messageId}`, { method: "DELETE" })
         .then((res) => {
