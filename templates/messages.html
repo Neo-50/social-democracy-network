@@ -33,7 +33,7 @@
                 No messages yet.
             {% endfor %}
         </div>
-        <div class="messages-container">
+        <div class="messages-container" id="messages-container">
             {% for msg in messages %}
                 <div class="message-wrapper" data-id="{{ msg.id }}">
                     <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
@@ -72,21 +72,18 @@
                 </div>
             </div>
         </form>
-    </div> 
-
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => { 
+            if (typeof window.initMessageThreadSocket === 'function') {
+              window.initMessageThreadSocket();
+            }
+        });
+    </script>
     <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/emojis.js') }}"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const recipientInput = document.querySelector('input[name="recipient_id"]');
-            if (recipientInput) {
-                window.initMessageThreadSocket(recipientInput.value);
-            }
-        });
-    </script>
-
 </main>
 
 {% endblock %}

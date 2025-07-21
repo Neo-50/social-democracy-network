@@ -42,11 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 window.addEventListener("DOMContentLoaded", async () => {
-      const res = await fetch("/api/unread_count");
-      const data = await res.json();
-      if (data.count > 0) {
+    const res = await fetch("/api/unread_count");
+    const data = await res.json();
+    if (data.count > 0) {
               showNotificationBadge(data.count);
-            }
+    }
 });
 
 async function submitMessageForm(e) {
@@ -106,7 +106,7 @@ async function submitMessageForm(e) {
                 console.log("socket ready?", typeof socket);
                 socket.emit('new_message', {
                     ...msg,
-                    room_id: ROOM_ID
+                    room_id: window.ROOM_ID
                 });
             }
         }
@@ -144,8 +144,7 @@ function renderNewMessage(msg, direction = "received") {
 
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message", direction);
-    messageDiv.dataset.id = msg.id;
-
+    
     const showDelete= msg.sender?.id === window.CURRENT_USER_ID || IS_ADMIN;
     const timestamp = msg.timestamp + 'Z';
     const formattedTimestamp = formatLocalDate(timestamp);
@@ -164,9 +163,24 @@ function renderNewMessage(msg, direction = "received") {
     }
     const wrapper = document.createElement("div");
     wrapper.classList.add("message-wrapper", direction);
+    wrapper.dataset.id = msg.id;
     wrapper.appendChild(messageDiv);
 
-    document.querySelector(".messages-container").appendChild(wrapper);
+    const container = document.querySelector(".messages-container");
+    const form = document.querySelector("#message-form");
+
+    // ✅ Make sure the form is outside of any .message-wrapper
+    if (form && form.parentElement?.classList.contains("message-wrapper")) {
+        container.appendChild(form);  // Move it out
+    }
+
+    // Insert *before* the form if the form accidentally got placed in the container
+    if (form && form.parentNode === container) {
+        container.insertBefore(wrapper, form);
+    } else {
+        container.appendChild(wrapper);
+    }
+
     scrollChatToBottom()
 }
 
