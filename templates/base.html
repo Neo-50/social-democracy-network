@@ -92,17 +92,17 @@
 
 <body class="has-header">
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="flashes">
-        {% for category, message in messages %}
-        {% if message %}
-        <div class="flash-message flash-{{ category }}">
-            {{ message }}
+        {% if messages %}
+        <div class="flashes">
+            {% for category, message in messages %}
+            {% if message %}
+            <div class="flash-message flash-{{ category }}">
+                {{ message }}
+            </div>
+            {% endif %}
+            {% endfor %}
         </div>
         {% endif %}
-        {% endfor %}
-    </div>
-    {% endif %}
     {% endwith %}
     
     <header class="top-bar">
@@ -212,55 +212,14 @@
             {% endblock %}
         </main>
     </div>
-
-    <script>
-        function updateDate() {
-            const currentDate = new Date();
-            const options = {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric'
-            };
-            const formattedDate = currentDate.toLocaleString('en-US', options);
-            document.getElementById('date').textContent = formattedDate;
-        }
-        updateDate();
-
-        function toggleMobileMenu() {
-            const nav = document.getElementById('mobile-nav');
-            if (nav) {
-                nav.classList.toggle('show');
-            } else {
-                console.log('❌ mobile-nav not found');
-            }
-        }
-
-        function toggleDirectory() {
-            const nav = document.getElementById('mobile-directory');
-            if (nav) {
-                nav.classList.toggle('show');
-            }
-        }
-    </script>
-    <script>
-        setTimeout(() => {
-            document.querySelectorAll('.flash-message').forEach(el => el.remove());
-        }, 4000);
-    </script>
     <div id="toast" class="toast-message"></div>
-    <script>
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
+<script>
+    window.CURRENT_USER_ID = {{ current_user.id if current_user.is_authenticated else 'null' }};
+    window.IS_ADMIN = {{ 'true' if current_user.is_authenticated and current_user.is_admin else 'false' }}; 
+</script>
 
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-        }
-    </script>
-    <script defer src="https://analytics.social-democracy.net/script.js" data-website-id="302b8be4-674b-46ed-a1e0-7a643b01a97a"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='js/base.js') }}"></script>
+<script defer src="https://analytics.social-democracy.net/script.js" data-website-id="302b8be4-674b-46ed-a1e0-7a643b01a97a"></script>
 </body>
-
 </html>

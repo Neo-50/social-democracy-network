@@ -72,53 +72,21 @@
                 </div>
             </div>
         </form>
-    </div>
-    <!-- begin-no-validate -->
-     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script>
-        {% if current_user.is_authenticated %}
-            var CURRENT_USER_ID = {{ current_user.id|tojson }};
-            var IS_ADMIN = {{ current_user.is_admin|tojson }};
-        {% else %}
-            var CURRENT_USER_ID = null;
-            var IS_ADMIN = false;
-        {% endif %}
-
-        const RECIPIENT_ID = parseInt(document.querySelector('input[name="recipient_id"]').value);
-        const ROOM_ID = `thread_${Math.min(CURRENT_USER_ID, RECIPIENT_ID)}_${Math.max(CURRENT_USER_ID, RECIPIENT_ID)}`;
-
-        const socket = io();
-
-        socket.on('connect', () => {
-            socket.emit('join', ROOM_ID);
-            console.log('✅ Connected to socket and joined room:', ROOM_ID);
-        });
-
-        socket.on('new_message', (msg) => {
-            console.log('📨 New socket message:', msg);
-            renderNewMessage(msg);  
-            showNotificationBadge();
-            
-        });
-
-        socket.on('delete_message', (data) => {
-            const messageId = data.message_id;
-            const messageWrapper = document.querySelector(
-                `.message-wrapper [data-id="${messageId}"]`
-            )?.closest(".message-wrapper");
-
-            if (messageWrapper) {
-                messageWrapper.remove();
-                console.log("🗑️ Message deleted via socket:", messageId);
-            }
-        }); 
-    </script>
-    <!-- end-no-validate -->
+    </div> 
 
     <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
     <script src="{{ url_for('static', filename='js/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/emojis.js') }}"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const recipientInput = document.querySelector('input[name="recipient_id"]');
+            if (recipientInput) {
+                window.initMessageThreadSocket(recipientInput.value);
+            }
+        });
+    </script>
+
 </main>
 
 {% endblock %}
