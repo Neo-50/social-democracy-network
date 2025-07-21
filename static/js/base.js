@@ -1,12 +1,5 @@
 const socket = io();  // Global socket instance
 
-document.getElementById("notification-icon").addEventListener("click", async () => {
-        document.getElementById("notif-badge").style.display = "none";
-            await fetch("/api/mark_notifications_read", { method: "POST" });
-            // loadNotifications(); // or toggle the panel if already loaded
-})
-
-
 window.initMessageThreadSocket = function() {
     console.log("📞 initMessageThreadSocket called");
 
@@ -33,11 +26,20 @@ window.initMessageThreadSocket = function() {
               console.warn("⚠️ Could not find message to delete:", messageId);
             }
         });
+
         socket.on('new_message', (msg) => {
             console.log("📩 New socket message:", msg);
-            renderNewMessage?.(msg);
-            showNotificationBadge?.();
-        });  
+            renderNewMessage2(msg);
+
+            // Fetch fresh unread count
+            fetch('/api/unread_count')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.count > 0) {
+                        showNotificationBadge(data.count);
+                    }
+            });
+        });
 
         socket.emit('join', window.ROOM_ID);
         console.log("📎 Joined room:", window.ROOM_ID); 

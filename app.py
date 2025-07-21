@@ -413,7 +413,7 @@ def messages(username=None):
         # Mark as read
         for msg in messages:
             if msg.recipient_id == user_id and not msg.read:
-                msg.read = True
+                msg.read = 0
         db.session.commit()
 
     return render_template(
@@ -442,7 +442,8 @@ def api_send_message():
     ALLOWED_ATTRIBUTES = {
         'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
     }
-    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height' 'max-width', 'max-height', 'border-radius', 'vertical-align'])
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height'
+        'max-width', 'max-height', 'border-radius', 'vertical-align'])
 
     content = clean(
         raw_content,
@@ -500,16 +501,8 @@ def delete_im(message_id):
 @login_required
 def unread_count():
     user_id = session["user_id"]
-    count = Message.query.filter_by(recipient_id=user_id, read=False).count()
+    count = Message.query.filter_by(recipient_id=user_id, read=0).count()
     return jsonify(count=count)
-
-@app.route("/api/mark_notifications_read", methods=["POST"])
-@login_required
-def mark_notifications_read():
-    user_id = session["user_id"]
-    Message.query.filter_by(recipient_id=user_id, read=False).update({"read": True})
-    db.session.commit()
-    return jsonify(success=True)
 
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
