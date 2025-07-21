@@ -7,7 +7,7 @@ class Message(db.Model):
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE', name='fk_message_recipient_id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    read = db.Column(db.Integer, default=False)
+    read = db.Column(db.Boolean, default=False)
 
     sender = db.relationship(
         'User',
