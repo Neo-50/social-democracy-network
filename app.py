@@ -501,7 +501,7 @@ def delete_im(message_id):
 @login_required
 def unread_count():
     user_id = session["user_id"]
-    count = Message.query.filter_by(recipient_id=user_id, read=0).count()
+    count = Message.query.filter_by(recipient_id=user_id, read=False).count()
     return jsonify(count=count)
 
 @app.template_filter('datetimeformat')
