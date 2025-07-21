@@ -146,7 +146,7 @@ function renderNewMessage(msg, direction = "received") {
     messageDiv.classList.add("message", direction);
     messageDiv.dataset.id = msg.id;
 
-    const showDelete= msg.sender?.id === CURRENT_USER_ID || IS_ADMIN;
+    const showDelete= msg.sender?.id === window.CURRENT_USER_ID || IS_ADMIN;
     const timestamp = msg.timestamp + 'Z';
     const formattedTimestamp = formatLocalDate(timestamp);
     
@@ -213,16 +213,4 @@ document.addEventListener("click", (e) => {
         });
     }
 });
-
-document.getElementById("notification-icon").addEventListener("click", async () => {
-    document.getElementById("notif-badge").style.display = "none";
-        await fetch("/api/mark_notifications_read", { method: "POST" });
-        // loadNotifications(); // or toggle the panel if already loaded
-});
-
-function showNotificationBadge(count = 1) {
-    const badge = document.getElementById("notif-badge");
-    badge.innerText = count;
-    badge.style.display = "inline-block";
-}
 
