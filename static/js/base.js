@@ -1,3 +1,16 @@
+document.addEventListener('DOMContentLoaded', () => {
+  // Check for unread messages on page load
+  fetch('/api/unread_count')
+    .then(res => res.json())
+    .then(data => {
+      if (data.count) {
+        showNotificationBadge(data.count);
+      } else {
+        hideNotificationBadge();
+      }
+    });
+});
+
 const socket = io();  // Global socket instance
 
 window.initMessageThreadSocket = function() {
@@ -29,16 +42,7 @@ window.initMessageThreadSocket = function() {
 
         socket.on('new_message', (msg) => {
             console.log("📩 New socket message:", msg);
-            renderNewMessage2(msg);
-
-            // Fetch fresh unread count
-            fetch('/api/unread_count')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.count > 0) {
-                        showNotificationBadge(data.count);
-                    }
-            });
+            renderNewMessage(msg); 
         });
 
         socket.emit('join', window.ROOM_ID);
@@ -92,4 +96,11 @@ function showNotificationBadge(count = 1) {
     const badge = document.getElementById("notif-badge");
     badge.innerText = count;
     badge.style.display = "inline-block";
+}
+
+function hideNotificationBadge() {
+    const badge = document.getElementById('notif-badge');
+    if (badge) {
+        badge.style.display = 'none';
+    }
 }

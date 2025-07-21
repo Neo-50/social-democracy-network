@@ -413,7 +413,7 @@ def messages(username=None):
         # Mark as read
         for msg in messages:
             if msg.recipient_id == user_id and not msg.read:
-                msg.read = 0
+                msg.read = True
         db.session.commit()
 
     return render_template(
