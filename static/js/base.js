@@ -1,6 +1,4 @@
 const socket = io();  // Global socket instance
-window.ROOM_ID = `thread_${Math.min(CURRENT_USER_ID, RECIPIENT_ID)}_${Math.max(CURRENT_USER_ID, RECIPIENT_ID)}`;
-window.RECIPIENT_ID = parseInt(recipientId);
 
 document.getElementById("notification-icon").addEventListener("click", async () => {
         document.getElementById("notif-badge").style.display = "none";
@@ -8,31 +6,44 @@ document.getElementById("notification-icon").addEventListener("click", async () 
             // loadNotifications(); // or toggle the panel if already loaded
 })
 
-// Always listen for new messages to trigger notification UI
-socket.on('new_message', (msg) => {
-	console.log('📩 New socket message:', msg);
-	renderNewMessage?.(msg);  // Optional chaining in case function doesn't exist
-	showNotificationBadge?.(); // Optional chaining again
-});
 
-window.initMessageThreadSocket = function(recipientId) {
-	if (!window.recipientId || !window.CURRENT_USER_ID) return;	
+window.initMessageThreadSocket = function() {
+    console.log("📞 initMessageThreadSocket called");
 
-	socket.emit('join', ROOM_ID);
-	console.log('🔌 Joined room:', ROOM_ID);
+    if (!window.CURRENT_USER_ID || !window.RECIPIENT_ID) {
+        console.warn("❌ Missing IDs:", window.CURRENT_USER_ID, window.RECIPIENT_ID);
+        return;
+    }
+ 
+    window.ROOM_ID = `thread_${Math.min(window.CURRENT_USER_ID, window.RECIPIENT_ID)}_${Math.max(window.CURRENT_USER_ID, window.RECIPIENT_ID)}`;
+    
+    
+    socket.off('new_message'); // Prevent duplicate listeners
 
-	socket.on('delete_message', (data) => {
-	  const messageId = data.message_id;
-	  const messageWrapper = document
-		.querySelector(`.message-wrapper[data-id="${messageId}"]`)
-		?.closest('.message-wrapper');
+    socket.on('connect', () => {
+        console.log("🟢 Socket connected");
+        socket.on('delete_message', (data) => {
+            const messageId = data.message_id;
+            const messageWrapper = document.querySelector(`.message-wrapper[data-id='${messageId}']`);
 
-	  if (messageWrapper) {
-		  messageWrapper.remove();
-		  console.log('❌ Message deleted via socket:', messageId);
-		}
+            if (messageWrapper) {
+              messageWrapper.remove();
+              console.log("❌ Message deleted via socket:", messageId);
+            } else {
+              console.warn("⚠️ Could not find message to delete:", messageId);
+            }
+        });
+        socket.on('new_message', (msg) => {
+            console.log("📩 New socket message:", msg);
+            renderNewMessage?.(msg);
+            showNotificationBadge?.();
+        });  
+
+        socket.emit('join', window.ROOM_ID);
+        console.log("📎 Joined room:", window.ROOM_ID); 
 	});
 }
+
 function updateDate() {
     const currentDate = new Date();
     const options = {

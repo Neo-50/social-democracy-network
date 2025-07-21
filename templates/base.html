@@ -216,6 +216,9 @@
 <script>
     window.CURRENT_USER_ID = {{ current_user.id if current_user.is_authenticated else 'null' }};
     window.IS_ADMIN = {{ 'true' if current_user.is_authenticated and current_user.is_admin else 'false' }}; 
+    {% if recipient %}
+        window.RECIPIENT_ID = {{ recipient.id }};
+    {% endif %}
 </script>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
