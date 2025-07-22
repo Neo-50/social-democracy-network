@@ -11,44 +11,66 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-const socket = io();  // Global socket instance
+const messageSocket = io('/messages'); // Global socket instance
+const chatSocket = io('/chat');
 
-window.initMessageThreadSocket = function() {
-    console.log("📞 initMessageThreadSocket called");
+window.initMessageThreadSocket = function () {
+    console.log("📡 initMessageThreadSocket called");
 
     if (!window.CURRENT_USER_ID || !window.RECIPIENT_ID) {
         console.warn("❌ Missing IDs:", window.CURRENT_USER_ID, window.RECIPIENT_ID);
         return;
     }
- 
-    window.ROOM_ID = `thread_${Math.min(window.CURRENT_USER_ID, window.RECIPIENT_ID)}_${Math.max(window.CURRENT_USER_ID, window.RECIPIENT_ID)}`;
-    
-    
-    socket.off('new_message'); // Prevent duplicate listeners
 
-    socket.on('connect', () => {
+    window.ROOM_ID = `thread_${Math.min(window.CURRENT_USER_ID, window.RECIPIENT_ID)}_${Math.max(window.CURRENT_USER_ID, window.RECIPIENT_ID)}`;
+
+    messageSocket.off('new_message');
+
+    messageSocket.on('connect', () => {
         console.log("🟢 Socket connected");
+
         socket.on('delete_message', (data) => {
             const messageId = data.message_id;
             const messageWrapper = document.querySelector(`.message-wrapper[data-id='${messageId}']`);
-
             if (messageWrapper) {
-              messageWrapper.remove();
-              console.log("❌ Message deleted via socket:", messageId);
+                messageWrapper.remove();
+                console.log("❌ Message deleted via socket:", messageId);
             } else {
-              console.warn("⚠️ Could not find message to delete:", messageId);
+                console.warn("⚠️ Could not find message to delete:", messageId);
             }
         });
 
-        socket.on('new_message', (msg) => {
-            console.log("📩 New socket message:", msg);
-            renderNewMessage(msg); 
+        messageSocket.on('new_message', (msg) => {
+            console.log("📨 New socket message:", msg);
+            renderNewMessage(msg);
         });
 
-        socket.emit('join', window.ROOM_ID);
-        console.log("📎 Joined room:", window.ROOM_ID); 
-	});
-}
+        messageSocket.emit('join', window.ROOM_ID);
+        console.log("📥 Joined room:", window.ROOM_ID);
+    });
+};
+
+window.initChatSocket = function () {
+    chatSocket.off('new_message');
+
+    chatSocket.on('new_message', msg => {
+        console.log("📥 [chat] New message received:", msg);
+        appendMessage(
+            msg.user_id,
+            msg.username,
+            msg.display_name,
+            msg.content,
+            msg.id,
+            msg.avatar,
+            msg.bio,
+            msg.timestamp,
+            false // Append to bottom
+        );
+    });
+
+    chatSocket.emit('join', 'chat_global');
+    console.log("🟢 Joined chatroom");
+};
 
 function updateDate() {
     const currentDate = new Date();
