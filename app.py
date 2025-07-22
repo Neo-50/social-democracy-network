@@ -486,7 +486,7 @@ def delete_im(message_id):
     if not msg:
         print("Message not found!")
         return jsonify(success=False, error="Not found"), 404
-    
+ 
     if msg.sender_id != current_user.id and not current_user.is_admin:
         return jsonify(success=False, error="Unauthorized"), 403
 
@@ -994,7 +994,7 @@ def upload_chat_image():
 @login_required
 def delete_message(message_id):
     message = ChatMessage.query.get_or_404(message_id)
-    if message.user_id != current_user.id:
+    if message.user_id != current_user.id and not current_user.is_admin:
         return jsonify({"error": "Unauthorized"}), 403
     
     # Delete attached images in /media/chat/ if they exist

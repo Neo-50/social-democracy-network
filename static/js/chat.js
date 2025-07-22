@@ -203,7 +203,7 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
     const chatMessages = document.getElementById("chat-messages");
     const msg = document.createElement("div");
     msg.className = "chat-message";
-    msg.dataset.messageId = messageId
+    msg.dataset.messageId = messageId 
 
     const avatarImg = avatar ? `
         <button class="avatar-wrapper"
@@ -218,6 +218,9 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
         </button>
         ` : `<div class="avatar-placeholder"></div>`;
 
+    const showDelete = Number(currentUser.id) === Number(user_id) || currentUser.is_admin === 'true';
+    console.log("showDelete =", showDelete, "user_id =", user_id, "currentUser.id =", currentUser.id, "is_admin =", currentUser.is_admin);
+
     msg.innerHTML = `
         <div class="chat-header">
             ${avatarImg}
@@ -226,8 +229,8 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
         <div class="message-body">${text}</div>
         <div class="chat-toolbar">
             <span class="timestamp" data-timestamp="${timestamp}Z"></span>
-            <button class="reply-button">Reply</button>
-            <button class="delete-btn">🗑️ Delete</button>
+            <button class="reply-button">Reply</button> 
+            ${showDelete ? `<button class="delete-btn">🗑️ Delete</button>` : ''}
         </div>
         <div class="reply-drawer" style="display: none;">
             <input class="reply-input" type="text" placeholder="Type a reply..." />
@@ -298,9 +301,12 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
 
     msg.querySelector(".message-body").innerHTML = text;
 
-    msg.querySelector(".delete-btn").addEventListener("click", () => {
-        deleteMessage(messageId);
-    });
+    const deleteBtn = msg.querySelector(".delete-btn");
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", () => {
+            deleteMessage(messageId);
+        });
+    }
 
     formatTimestamp();
     chatMessages.scrollTop = chatMessages.scrollHeight;
