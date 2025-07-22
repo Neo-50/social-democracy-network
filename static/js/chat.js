@@ -3,111 +3,6 @@
 window.chatEditor = document.getElementById("chat-editor");
 let isInitialLoad = true;
 
-function extractUrls(text) {
-    if (typeof text !== 'string') return [];
-    const urlRegex = /https?:\/\/[^\s]+/g;
-    return [...text.matchAll(urlRegex)].map(m => m[0]);
-}
-
-window.appendMessage = function(user_id, username, displayName, text, messageId, avatar, bio, timestamp, prepend=false) {
-    console.log("appendMessage called:", { user_id, username, displayName, text });
-    const chatMessages = document.getElementById("chat-messages");
-    const msg = document.createElement("div");
-    msg.className = "chat-message";
-    msg.dataset.messageId = messageId
-
-    const avatarImg = avatar ? `
-        <button class="avatar-wrapper"
-            data-id="${user_id}"
-            data-username="${username}"
-            data-display_name="${displayName}"
-            data-bio="${bio || 'No bio available'}"
-            data-avatar="/media/avatars/${avatar}"
-            onclick="showUserPopup(this)">
-            <img src="/media/avatars/${avatar}" class="avatar" alt="avatar"
-                style="width:50px; height:50px; border-radius:50%;">
-        </button>
-        ` : `<div class="avatar-placeholder"></div>`;
-
-    msg.innerHTML = `
-        <div class="chat-header">
-            ${avatarImg}
-            <strong>${displayName || username}</strong>
-        </div>
-        <div class="message-body">${text}</div>
-        <div class="chat-toolbar">
-            <span class="timestamp" data-timestamp="${timestamp}Z"></span>
-            <button class="reply-button">Reply</button>
-            <button class="delete-btn">🗑️ Delete</button>
-        </div>
-        <div class="reply-drawer" style="display: none;">
-            <input class="reply-input" type="text" placeholder="Type a reply..." />
-            <button class="reply-submit">Send</button>
-            <button class="reply-cancel">Cancel</button>
-        </div>
-    `;
-    if (isInitialLoad) {
-        scrollChatToBottom();
-        isInitialLoad = false;
-    }
-
-    console.log("🧱 Prepending?", prepend, "| chatMessages.childElementCount =", chatMessages.childElementCount);
-    console.log("🔼 First child ID before insert:", chatMessages.firstChild?.dataset?.messageId);
-    
-    const replyBtn = msg.querySelector('.reply-button');
-    const replyDrawer = msg.querySelector('.reply-drawer');
-
-    replyBtn.addEventListener('click', () => {
-        replyDrawer.style.display = replyDrawer.style.display === 'block' ? 'none' : 'block';
-    });
-
-    const replyInput = msg.querySelector('.reply-input');
-    const replySubmit = msg.querySelector('.reply-submit');
-
-    replySubmit.addEventListener('click', () => {
-        const replyText = replyInput.value.trim();
-        if (replyText) {
-            console.log(`Reply to message ID ${messageId}:`, replyText);
-            // Clear and optionally collapse drawer
-            replyInput.value = '';
-            replyDrawer.style.display = 'none';
-
-            // TODO: Send replyText to backend here
-        }
-    });
-
-    formatTimestamp();
-    
-    const urls = extractUrls(text).filter(url => {
-        const isMedia = url.includes("/media/");
-        const isImage = /\.(jpg|jpeg|png|gif|webp|avif|svg)$/i.test(url);
-        return !isMedia && !isImage; // YouTube links will pass through
-    });
-
-    urls.forEach(url => {
-        fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
-            .then(res => res.ok ? res.json() : null)
-            .then(data => {
-                if (data) {
-                    renderUrlPreview(msg, data);
-                }
-            })
-            .catch(err => console.error("URL preview error:", err));
-    });
-    console.log("Setting text:", text);
-    console.log("Target element:", msg.querySelector(".message-body"));
-
-    msg.querySelector(".message-body").innerHTML = text;
-
-    msg.querySelector(".delete-btn").addEventListener("click", () => {
-        deleteMessage(messageId);
-    });
-
-    formatTimestamp();
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    return (msg);
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     const sendButton = document.getElementById("send-button");
     const uploadButton = document.getElementById("upload-button");
@@ -117,6 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("❌ #chat-container not found in DOM");
         return;
     }
+    
+    if (!chatEditor) {
+        console.error("❌ chatEditor not found in DOM");
+        return;
+    }
+
+    if (typeof window.initChatSocket === "function") {
+        window.initChatSocket();
+    }
+
     let lastScrollTop = chatContainer.scrollTop;
 
     chatContainer.addEventListener("scroll", () => {
@@ -214,29 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then(res => res.json())
             .then(data => {
-                if (data.success) {
-                    const msg = data.message;
-                    const msgEl = appendMessage(
-                        msg.user_id,
-                        msg.username,
-                        msg.display_name,
-                        msg.content,
-                        msg.id,
-                        msg.avatar,
-                        msg.bio,
-                        msg.timestamp,
-                        false
-                    );
-
-                    const chatMessages = document.getElementById("chat-messages");
-                    chatMessages.appendChild(msgEl); // ✅ insert to DOM
-                    msgEl.scrollIntoView({ behavior: "smooth", block: "end" });
-
-                    // ✅ Update earliestMessageId
-                    if (!earliestMessageId || msg.id < earliestMessageId) {
-                        earliestMessageId = msg.id;
-                    }
-
+                if (data.success) { 
                     chatEditor.innerHTML = "";
                 } else {
                     console.error("Error sending message:", data.error);
@@ -313,6 +196,115 @@ function deleteMessage(messageId) {
         console.error("Delete failed:", err);
         alert("Error occurred while deleting message");
     });
+}
+
+window.appendMessage = function(user_id, username, displayName, text, messageId, avatar, bio, timestamp, prepend=false) {
+    console.log("appendMessage called:", { user_id, username, displayName, text });
+    const chatMessages = document.getElementById("chat-messages");
+    const msg = document.createElement("div");
+    msg.className = "chat-message";
+    msg.dataset.messageId = messageId
+
+    const avatarImg = avatar ? `
+        <button class="avatar-wrapper"
+            data-id="${user_id}"
+            data-username="${username}"
+            data-display_name="${displayName}"
+            data-bio="${bio || 'No bio available'}"
+            data-avatar="/media/avatars/${avatar}"
+            onclick="showUserPopup(this)">
+            <img src="/media/avatars/${avatar}" class="avatar" alt="avatar"
+                style="width:50px; height:50px; border-radius:50%;">
+        </button>
+        ` : `<div class="avatar-placeholder"></div>`;
+
+    msg.innerHTML = `
+        <div class="chat-header">
+            ${avatarImg}
+            <strong>${displayName || username}</strong>
+        </div>
+        <div class="message-body">${text}</div>
+        <div class="chat-toolbar">
+            <span class="timestamp" data-timestamp="${timestamp}Z"></span>
+            <button class="reply-button">Reply</button>
+            <button class="delete-btn">🗑️ Delete</button>
+        </div>
+        <div class="reply-drawer" style="display: none;">
+            <input class="reply-input" type="text" placeholder="Type a reply..." />
+            <button class="reply-submit">Send</button>
+            <button class="reply-cancel">Cancel</button>
+        </div>
+    `;
+    if (prepend) {
+        console.log("Appending with prepend =", prepend);
+        console.log("Current message ID:", messageId);
+        chatMessages.insertBefore(msg, chatMessages.firstChild);
+    } else {
+        chatMessages.appendChild(msg);
+        scrollChatToBottom();
+    }
+
+    // Scroll to bottom only on initial load
+    if (isInitialLoad) {
+        scrollChatToBottom();
+        isInitialLoad = false;
+    } 
+
+    console.log("🧱 Prepending?", prepend, "| chatMessages.childElementCount =", chatMessages.childElementCount);
+    console.log("🔼 First child ID before insert:", chatMessages.firstChild?.dataset?.messageId);
+    
+    const replyBtn = msg.querySelector('.reply-button');
+    const replyDrawer = msg.querySelector('.reply-drawer');
+
+    replyBtn.addEventListener('click', () => {
+        replyDrawer.style.display = replyDrawer.style.display === 'block' ? 'none' : 'block';
+    });
+
+    const replyInput = msg.querySelector('.reply-input');
+    const replySubmit = msg.querySelector('.reply-submit');
+
+    replySubmit.addEventListener('click', () => {
+        const replyText = replyInput.value.trim();
+        if (replyText) {
+            console.log(`Reply to message ID ${messageId}:`, replyText);
+            // Clear and optionally collapse drawer
+            replyInput.value = '';
+            replyDrawer.style.display = 'none';
+
+            // TODO: Send replyText to backend here
+        }
+    });
+
+    formatTimestamp();
+    
+    const urls = extractUrls(text).filter(url => {
+        const isMedia = url.includes("/media/");
+        const isImage = /\.(jpg|jpeg|png|gif|webp|avif|svg)$/i.test(url);
+        return !isMedia && !isImage; // YouTube links will pass through
+    });
+
+    urls.forEach(url => {
+        fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data) {
+                    renderUrlPreview(msg, data);
+                }
+            })
+            .catch(err => console.error("URL preview error:", err));
+    });
+    console.log("Setting text:", text);
+    console.log("Target element:", msg.querySelector(".message-body"));
+
+    msg.querySelector(".message-body").innerHTML = text;
+
+    msg.querySelector(".delete-btn").addEventListener("click", () => {
+        deleteMessage(messageId);
+    });
+
+    formatTimestamp();
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return (msg);
 }
 
 let isLoading = false;
@@ -436,6 +428,12 @@ function loadMessages(beforeId = null, prepend=false) {
         .finally(() => {
             isLoading = false;
         });
+}
+
+function extractUrls(text) {
+    if (typeof text !== 'string') return [];
+    const urlRegex = /https?:\/\/[^\s]+/g;
+    return [...text.matchAll(urlRegex)].map(m => m[0]);
 }
 
 function scrollChatToBottom() {

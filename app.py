@@ -889,20 +889,39 @@ def send_chat_message():
 
     db.session.add(message)
     db.session.commit()
-
+ 
+    socketio.emit("new_message", {
+        "user_id": current_user.id,
+        "username": current_user.username,
+        "display_name": current_user.display_name,
+        "avatar": current_user.avatar_filename or "",
+        "bio": current_user.bio or "No bio available",
+        "id": message.id,
+        "content": message.content,
+        "timestamp": message.timestamp.isoformat(),
+        "edited": message.edited,
+        "file_url": message.file_url,
+        "file_name": message.file_name,
+        "message_type": message.message_type,
+        "room_id": "chat_global",
+    }, room="chat_global", namespace="/chat")
+ 
     return jsonify({
         "success": True,
         "message": {
             "user_id": current_user.id,
             "username": current_user.username,
             "display_name": current_user.display_name,
-            "content": message.content,
-            "id": message.id,
             "avatar": current_user.avatar_filename or "",
             "bio": current_user.bio or "No bio available",
+            "id": message.id,
+            "content": message.content,
             "timestamp": message.timestamp.isoformat(),
+            "file_url": message.file_url,
+            "file_name": message.file_name,
+            "message_type": message.message_type,
         }
-    })
+})
 
 @app.route("/api/url-preview")
 def url_preview():
@@ -1034,15 +1053,26 @@ def emojify(content):
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-@socketio.on('new_message')
-def handle_new_message(data):
-    print("🔥 Rebroadcasting message:", data)
+@socketio.on('join', namespace='/messages')
+def handle_join_messages(room_id):
+    join_room(room_id)
+    print(f"📥 [messages] Joined room: {room_id}")
+
+@socketio.on('join', namespace='/chat')
+def handle_join_chat(room_id):
+    join_room(room_id)
+    print(f"💬 [chat] Joined room: {room_id}")
+
+@socketio.on('new_message', namespace='/messages')
+def handle_new_message_messages(data):
+    print("🔥 [messages] Rebroadcasting:", data)
     emit('new_message', data, room=data['room_id'], include_self=False)
 
-@socketio.on('join')
-def handle_join(room_id):
-    join_room(room_id)
-    print(f"🧃 Joined room: {room_id}")
+@socketio.on('new_message', namespace='/chat')
+def handle_new_message_chat(data):
+    print("🔥 [chat] Rebroadcasting:", data)
+    emit('new_message', data, room=data['room_id'])
+
 
 if __name__ == '__main__':
     is_dev = os.environ.get("FLASK_ENV") == "development"
