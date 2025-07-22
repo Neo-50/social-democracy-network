@@ -1014,7 +1014,8 @@ def delete_message(message_id):
                     print(f"Error deleting {file_path}: {e}")
 
     db.session.delete(message)
-    db.session.commit()
+    db.session.commit() 
+    socketio.emit('delete_message', {'message_id': message.id}, to='chat_global', namespace='/chat')
     return jsonify({"success": True})
 
 
