@@ -486,8 +486,8 @@ def delete_im(message_id):
     if not msg:
         print("Message not found!")
         return jsonify(success=False, error="Not found"), 404
-
-    if msg.sender_id != user_id and not current_user.is_admin:
+    
+    if msg.sender_id != current_user.id and not current_user.is_admin:
         return jsonify(success=False, error="Unauthorized"), 403
 
     room_name = f"thread_{min(msg.sender_id, msg.recipient_id)}_{max(msg.sender_id, msg.recipient_id)}"
