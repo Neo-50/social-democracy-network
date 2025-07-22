@@ -315,6 +315,9 @@ function loadMessages(beforeId = null, prepend=false) {
     if (isLoading) return;
     isLoading = true;
 
+    let topMessageId = null;
+    let topOffset = 0;
+
     let url = "/chat/get_messages?limit=10";
     if (beforeId) {
         url += `&before_id=${beforeId}`;
@@ -385,6 +388,7 @@ function loadMessages(beforeId = null, prepend=false) {
             if (!prepend) {
                 const container = document.getElementById("chat-container");
                 const chatMessages = document.getElementById("chat-messages");
+                firstRealMessage = chatMessages.querySelector(".chat-message");
 
                 for (let i = 0; i < messages.length; i++) {
                     const msg = messages[i];
@@ -409,6 +413,10 @@ function loadMessages(beforeId = null, prepend=false) {
                     console.log("Generated msgEl:", msgEl);
 
                     chatMessages.appendChild(msgEl);
+                }
+                if (firstRealMessage) {
+                    topMessageId = firstRealMessage.dataset.id;
+                    topOffset = firstRealMessage.getBoundingClientRect().top;
                 }
                 // Restore scroll position relative to the previously top message
                 if (topMessageId && newMessages.length > 0) {

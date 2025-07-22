@@ -51,6 +51,9 @@ window.initMessageThreadSocket = function () {
 };
 
 window.initChatSocket = function () {
+    chatSocket.emit('join', 'chat_global');
+            console.log("🟢 Joined chatroom");
+
     chatSocket.off('new_message');
 
     chatSocket.on('new_message', msg => {
@@ -66,10 +69,15 @@ window.initChatSocket = function () {
             msg.timestamp,
             false // Append to bottom
         );
+    }); 
+    chatSocket.on('delete_message', data => {
+        const { message_id } = data;
+        const msgEl = document.querySelector(`.chat-message[data-message-id="${message_id}"]`);
+        if (msgEl) {
+            msgEl.remove();
+            console.log(`[chat] Message ${message_id} deleted via socket`);
+        }
     });
-
-    chatSocket.emit('join', 'chat_global');
-    console.log("🟢 Joined chatroom");
 };
 
 function updateDate() {
