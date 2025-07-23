@@ -65,8 +65,7 @@
         avatar_filename: "{{ current_user.avatar_filename or '' }}",
         bio: "{{ current_user.bio or 'No bio available' }}",
         is_admin: "{{ 'true' if current_user.is_admin else 'false' }}"
-};
-
+    };
 </script>
 <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 <script src="{{ url_for('static', filename='js/emojis.js') }}"></script>
