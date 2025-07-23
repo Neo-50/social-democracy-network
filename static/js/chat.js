@@ -20,17 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (typeof window.initChatSocket === "function") {
         window.initChatSocket();
-    }
-    
+    } 
+
+    const SCROLL_TRIGGER_PERCENT = 0.40; 
+
     chatContainer.addEventListener("scroll", () => {
+        const triggerThreshold = chatContainer.clientHeight * SCROLL_TRIGGER_PERCENT;
         const currentScrollTop = chatContainer.scrollTop;
 
-        if (currentScrollTop <= 300 && !isLoading) {
+        if (currentScrollTop <= triggerThreshold && !isLoading) {
             console.log("⬆️ Triggered load from top scroll.");
             loadMessages(earliestMessageId, true);
         }
     });
-
 
     loadMessages();
 
