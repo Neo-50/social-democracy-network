@@ -49,6 +49,10 @@
     height: auto;
 }
 
+.title-mobile {
+    display: none;
+}
+
 .status {
     color: #bbb;
     font-size: .9em;
@@ -235,6 +239,15 @@
 
     .title-image {
         display: none;
+    }
+
+    .title-mobile {
+        display: flex;
+        align-items: center;
+        margin: 0 auto;
+        font-size: 1.6em;
+        font-weight: 600;
+        color: black;
     }
     
     .mobile-nav-buttons {

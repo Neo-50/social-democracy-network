@@ -1,12 +1,12 @@
 from db_init import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE', name='fk_message_sender_id'), nullable=False)
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE', name='fk_message_recipient_id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     read = db.Column(db.Boolean, default=False)
 
     sender = db.relationship(
