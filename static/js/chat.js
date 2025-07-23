@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatContainer.addEventListener("scroll", () => {
         const currentScrollTop = chatContainer.scrollTop;
 
-        if (currentScrollTop <= 5 && !isLoading) {
+        if (currentScrollTop <= 300 && !isLoading) {
             console.log("⬆️ Triggered load from top scroll.");
             loadMessages(earliestMessageId, true);
         }
