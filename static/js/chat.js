@@ -21,21 +21,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (typeof window.initChatSocket === "function") {
         window.initChatSocket();
     }
-
-    let lastScrollTop = chatContainer.scrollTop;
-
+    
     chatContainer.addEventListener("scroll", () => {
         const currentScrollTop = chatContainer.scrollTop;
 
-        const isScrollingUp = currentScrollTop < lastScrollTop;
-
-        if (isScrollingUp && currentScrollTop <= 5 && !isLoading) {
-            console.log("⬆ Triggered load from top scroll.");
+        if (currentScrollTop <= 5 && !isLoading) {
+            console.log("⬆️ Triggered load from top scroll.");
             loadMessages(earliestMessageId, true);
         }
-
-        lastScrollTop = currentScrollTop;
     });
+
 
     loadMessages();
 
