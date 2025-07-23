@@ -886,7 +886,7 @@ def send_chat_message():
         file_url=file_url,
         file_name=file_name,
         message_type=message_type,
-        timestamp=datetime.utcnow()
+        timestamp=datetime.now(timezone.utc)
     )
 
     db.session.add(message)

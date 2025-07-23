@@ -109,7 +109,7 @@
         <div class="header-date-time" id="date"></div>
         <div class="mobile-nav-buttons">
             <button id="hamburger-icon" class="hamburger-icon" onclick="toggleMobileMenu()">☰
-            <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Directory</button>
+            <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Links</button>
         </div>
         <nav id="main-nav">
             <a href="{{ url_for('home') }}">Home</a>
@@ -117,6 +117,7 @@
             <a href="{{ url_for('chat_intro') }}">Chat</a>
             <a href="{{ url_for('activism') }}">Activism</a>
             <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">
+            <div class="title-mobile">s d n</div>
             <a href="{{ url_for('environment') }}">Environment</a>
             <a href="{{ url_for('veganism') }}">Veganism</a>
             <a href="{{ url_for('about') }}">About</a>
