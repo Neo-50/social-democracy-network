@@ -638,7 +638,8 @@ def add_comment(article_id):
         db.session.add(comment)
         db.session.commit()
     flash("Comment posted successfully.", "success")
-    return redirect(url_for('news'))
+    article = NewsArticle.query.get(article_id)
+    return redirect(url_for('news', category=article.category, article=article.id))
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
@@ -651,7 +652,8 @@ def delete_comment(comment_id):
     db.session.delete(comment)
     db.session.commit()
     flash("Comment deleted successfully.", "success")
-    return redirect(url_for('news'))
+    article = NewsArticle.query.get(comment.article_id)
+    return redirect(url_for('news', category=article.category, article=article.id))
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
 def delete_article(article_id):
