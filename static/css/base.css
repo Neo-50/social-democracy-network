@@ -65,7 +65,6 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    padding-right: 140px;
     width: auto;
     gap: 5px;
 }
@@ -147,6 +146,13 @@
     border-radius: 50%;
     cursor: pointer;
     display: inline-block;
+}
+
+#onlineBtn {
+    font-size: 2em;
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 10px;
 }
 
 /* ========== Mobile Controls ========== */
