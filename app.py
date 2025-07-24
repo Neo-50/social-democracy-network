@@ -55,6 +55,8 @@ if os.environ.get("FLASK_ENV") == "production":
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'site.db')
 
+print("Using DB:", app.config['SQLALCHEMY_DATABASE_URI'])
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -86,14 +88,45 @@ login_manager.init_app(app)
 login_manager.session_protection = "strong"
 login_manager.login_view = 'login'
 
+migrate = Migrate(app, db)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Constants
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-migrate = Migrate(app, db)
+@app.before_request
+def update_user_last_active():
+    user_id = session.get('user_id')
+    if user_id:
+        user = User.query.get(user_id)
+        if user:
+            now = datetime.now(timezone.utc)
+            if not user.last_active or (
+            now - user.last_active.replace(tzinfo=timezone.utc)
+            ).total_seconds() > 30:
+                user.last_active = now
+                user.current_page = request.path  # optional
+                db.session.commit()
+            g.current_user = user
+
+def get_online_users():
+    threshold = datetime.now(timezone.utc) - timedelta(minutes=5)
+    return User.query.filter(User.last_active >= threshold).all()
+
+@app.route('/online-users')
+@login_required
+def online_users():
+    users = get_online_users()
+    user_list = [
+        {
+            'id': user.id,
+            'username': user.username,
+            'display_name': user.display_name or user.username
+        }
+        for user in users
+    ]
+    return jsonify(user_list)
 
 @app.route('/')
 def home():
@@ -428,8 +461,6 @@ def messages(username=None):
 def debug_ids():
     return jsonify([m.id for m in Message.query.all()])
 
-
-
 @app.route('/api/send_message', methods=['POST'])
 @login_required
 def api_send_message():
@@ -528,6 +559,8 @@ def update_article_category(article_id):
 @app.before_request
 def log_incoming_request():
     print("Request received:", request.method, request.path)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
     return '.' in filename and \

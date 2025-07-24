@@ -16,14 +16,14 @@ branch_labels = None
 depends_on = None
 
 
-with op.batch_alter_table('message', schema=None) as batch_op:
-    batch_op.drop_constraint('fk_message_recipient_id', type_='foreignkey', if_exists=True)
-    batch_op.drop_constraint('fk_message_sender_id', type_='foreignkey', if_exists=True)
+def upgrade():
+    with op.batch_alter_table('message', schema=None) as batch_op:
+        batch_op.drop_constraint('fk_message_recipient_id', type_='foreignkey')
+        batch_op.drop_constraint('fk_message_sender_id', type_='foreignkey')
 
-    batch_op.create_foreign_key(
-        'fk_message_recipient_id', 'user', ['recipient_id'], ['id'], ondelete='CASCADE'
-    )
-    batch_op.create_foreign_key(
-        'fk_message_sender_id', 'user', ['sender_id'], ['id'], ondelete='CASCADE'
-    )
-
+        batch_op.create_foreign_key(
+            'fk_message_recipient_id', 'user', ['recipient_id'], ['id'], ondelete='CASCADE'
+        )
+        batch_op.create_foreign_key(
+            'fk_message_sender_id', 'user', ['sender_id'], ['id'], ondelete='CASCADE'
+        )

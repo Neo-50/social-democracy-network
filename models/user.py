@@ -28,6 +28,9 @@ class User(db.Model, UserMixin):
         back_populates='recipient'
     )
 
+    last_active = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    current_page = db.Column(db.String(255), nullable=True)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
