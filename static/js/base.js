@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Check for unread messages on page load
-  fetch('/api/unread_count')
+    // Check for unread messages on page load
+    fetch('/api/unread_count')
     .then(res => res.json())
     .then(data => {
       if (data.count) {
@@ -8,6 +8,34 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         hideNotificationBadge();
       }
+    });
+    
+    const btn = document.getElementById("onlineBtn");
+    if (!btn) {
+        console.warn("onlineBtn not found in DOM");
+        return;
+    }
+
+    btn.addEventListener("click", async () => {
+        console.log("onlineBtn clicked");
+        const drawer = document.getElementById("onlineDrawer");
+        const list = document.getElementById("onlineUserList");
+
+        // Toggle visibility
+        drawer.style.display = drawer.style.display === "none" ? "block" : "none";
+
+        // Fetch and render users
+        if (drawer.style.display === "block") {
+            const res = await fetch("/online-users");
+            const users = await res.json();
+
+            list.innerHTML = "";
+            users.forEach(user => {
+                const li = document.createElement("li");
+                li.textContent = user.display_name;
+                list.appendChild(li);
+            });
+        }
     });
 });
 
@@ -80,6 +108,32 @@ window.initChatSocket = function () {
     });
 };
 
+setTimeout(() => {
+        document.querySelectorAll('.flash-message').forEach(el => el.remove());
+}, 4000);
+
+document.getElementById("onlineBtn").addEventListener("click", async () => {
+    console.log('onlineBtn clicked');
+    const drawer = document.getElementById("onlineDrawer");
+    const list = document.getElementById("onlineUserList");
+
+    // Toggle visibility
+    drawer.style.display = (drawer.style.display === "none") ? "block" : "none";
+
+    // Fetch and render users
+    if (drawer.style.display === "block") {
+        const res = await fetch("/online-users");
+        const users = await res.json();
+
+        list.innerHTML = ""; // clear previous
+        users.forEach(user => {
+            const li = document.createElement("li");
+            li.textContent = user.display_name;
+            list.appendChild(li);
+        });
+    }
+});
+
 function updateDate() {
     const currentDate = new Date();
     const options = {
@@ -109,10 +163,6 @@ function toggleDirectory() {
     }
 }
 
-setTimeout(() => {
-    document.querySelectorAll('.flash-message').forEach(el => el.remove());
-}, 4000);
-
 function showToast(message) {
     const toast = document.getElementById('toast');
     toast.textContent = message;
@@ -134,3 +184,4 @@ function hideNotificationBadge() {
         badge.style.display = 'none';
     }
 }
+
