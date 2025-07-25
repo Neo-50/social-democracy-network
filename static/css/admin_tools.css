@@ -27,6 +27,12 @@
     flex-direction: row;
 }
 
+.admintools-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%
+}
+
 .password-form {
     display: flex;
     flex-direction: row;
@@ -39,14 +45,15 @@
 }
 
 .reset-button,
-.displayname-button {
+.displayname-button,
+.avatar-button {
     background-color: #1a1a1a;
-    border: 3px solid #00e3ea;
+    border: 2px solid #00e3ea;
     color: #00e3ea;
     padding: 2px 10px;
     max-height: 32px;
     margin-left: 0;
-    font-size: 1em;
+    font-size: .9em;
     border-radius: 24px;
     cursor: pointer;
     transition: color 0.2s ease;
@@ -60,6 +67,25 @@
     align-items: center;
 }
 
+.avatar-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: .9em;
+    background-color: #1a1a1a;
+    border: 2px solid #00e3ea;
+    color: white;
+    border-radius: 24px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.avatar-input {
+    display: none;
+}
+
 .new-displayname {
     background-color: #1a1a1a;
     padding: 10px 12px;
@@ -70,7 +96,8 @@
 }
 
 .reset-button:hover,
-.displayname-button:hover {
+.displayname-button:hover,
+.avatar-upload:hover {
     background-color: #333;
     color: white;
 }
