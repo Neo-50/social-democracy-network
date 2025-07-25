@@ -184,6 +184,9 @@
 }
 
 .user-status {
+    color: #888;
+    font-size: 1em;
+    font-weight: 600;
     margin-bottom: 0;
     padding-bottom: 0;
     margin: 0;

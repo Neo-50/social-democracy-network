@@ -42,7 +42,7 @@
 h2 {
     margin-top: 10px;
     margin-bottom: 12px;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 600;
 }
 
@@ -59,6 +59,10 @@ p {
     font-size: 1em;
     margin-bottom: 4px;
     margin-top: 0;
+}
+
+#popup-bio {
+    margin-bottom: 20px;
 }
 
 .news-embed-wrapper {
