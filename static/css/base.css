@@ -51,7 +51,7 @@
 
 .title-mobile {
     display: none;
-    margin-right: 50px;
+    margin-right: 100px;
 }
 
 .status {
@@ -304,6 +304,11 @@
         gap: 0;
         margin-bottom: 5px;
         padding: 0;
+    }
+
+    #onlineBtn {
+        margin-bottom: 0;
+        margin-right: 4px;
     }
 
     .directory-button,
