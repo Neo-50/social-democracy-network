@@ -1022,6 +1022,10 @@ def url_preview():
 @app.route("/chat/upload_chat_image", methods=["POST"])
 @login_required
 def upload_chat_image():
+    MAX_FILE_SIZE = 16 * 1024 * 1024
+    if request.content_length is not None and request.content_length > MAX_FILE_SIZE:
+        return jsonify({"success": False, "error": "File too large (max 16 MB)"}), 400
+
     if "file" not in request.files:
         return jsonify({"success": False, "error": "No file provided"}), 400
 
@@ -1032,16 +1036,6 @@ def upload_chat_image():
 
     if not file.mimetype.startswith("image/"):
         return jsonify({"success": False, "error": "Invalid file type"}), 400
-
-    MAX_FILE_SIZE = 16 * 1024 * 1024
-
-    # Read file into memory to check size
-    file_contents = file.read()
-    if len(file_contents) > MAX_FILE_SIZE:
-        return jsonify({"success": False, "error": "File too large (max 16 MB)"}), 400
-
-    # Reset pointer to beginning before saving
-    file.stream.seek(0)
 
     # Ensure unique name: chatimg0001.jpg, etc.
     ext = os.path.splitext(file.filename)[1]
