@@ -287,6 +287,30 @@ def upload_avatar():
         flash("Avatar updated", "success")
     return redirect(url_for('profile'))
 
+@app.route('/admin/upload_avatar/<int:user_id>', methods=['POST'])
+@login_required
+def admin_upload_avatar(user_id):
+    if not current_user.is_admin:
+        abort(403)
+
+    user = User.query.get_or_404(user_id)
+    file = request.files.get('avatar')
+
+    if file and allowed_file(file.filename):
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = f"{user.username}.{ext}"
+        path = get_media_path('avatars', filename)
+        file.save(path)
+
+        user.avatar_filename = filename
+        db.session.commit()
+
+        flash(f"Updated avatar for {user.username}", "success")
+    else:
+        flash("Invalid file format", "error")
+
+    return redirect(url_for('admin_tools'))
+
 @app.route('/update_display_name', methods=['POST'])
 @login_required
 def update_display_name():

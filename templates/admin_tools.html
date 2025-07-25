@@ -7,6 +7,7 @@
         <table class="user-table">
             <thead>
                 <tr>
+                    <th>Avatar</th>
                     <th>Username</th>
                     <th>Display Name</th>
                     <th>Email</th>
@@ -20,6 +21,19 @@
             <tbody>
                 {% for user in users %}
                 <tr>
+                    <td>
+                        <img class="admintools-avatar" src="{{ url_for('media', filename='avatars/' ~ user.avatar_filename) }}">
+                        <form method="POST"
+                                action="{{ url_for('admin_upload_avatar', user_id=user.id) }}"
+                                enctype="multipart/form-data"
+                                id="avatar-form-{{ user.id }}">
+                            <label class="avatar-upload">
+                                Browse
+                                <input type="file" name="avatar" class="avatar-input" accept="image/*">
+                            </label>
+                            <button type="submit" class="avatar-button">Upload</button>
+                        </form>
+                    </td>
                     <td>{{ user.username }}</td>
                     <td>
                         <div><strong>Current:</strong> {{ user.display_name or '-' }}</div>
