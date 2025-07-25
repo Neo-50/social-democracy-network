@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const offlineList = document.getElementById("offlineUserList");
 
         const isHidden = window.getComputedStyle(drawer).display === "none";
-        console.log("Drawer currently hidden?", isHidden); 
 
         if (isHidden) {
             drawer.style.display = "block";
@@ -78,6 +77,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
         } else {
+            drawer.style.display = "none";
+        }
+    });
+    
+    document.addEventListener("click", function (e) {
+        const drawer = document.getElementById("onlineDrawer");
+        const toggleBtn = document.getElementById("onlineBtn");
+
+        if (!drawer) return;
+
+        const isClickInside = drawer.contains(e.target) || toggleBtn.contains(e.target);
+
+        if (!isClickInside && drawer.style.display === "block") {
             drawer.style.display = "none";
         }
     });
