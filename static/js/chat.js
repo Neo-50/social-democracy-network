@@ -64,13 +64,23 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         body: formData,
     })
+
         .then(async res => {
-            const data = await res.json();
-            if (!res.ok || !data.success) {
-            throw new Error(data.error || "Upload failed.");
+            let data;
+            try {
+                data = await res.json();
+            } catch {
+                const text = await res.text();
+                throw new Error(text || "Upload failed.");
             }
+
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || "Upload failed.");
+            }
+
             return data;
         })
+
         .then(data => {
             const img = document.createElement("img");
             img.src = data.url;
