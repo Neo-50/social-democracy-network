@@ -19,22 +19,38 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener("click", async () => {
         console.log("onlineBtn clicked");
         const drawer = document.getElementById("onlineDrawer");
-        const list = document.getElementById("onlineUserList");
+        const onlineList = document.getElementById("onlineUserList");
+        const offlineList = document.getElementById("offlineUserList");
 
-        // Toggle visibility
-        drawer.style.display = drawer.style.display === "none" ? "block" : "none";
+        const isHidden = window.getComputedStyle(drawer).display === "none";
+        console.log("Drawer currently hidden?", isHidden); 
 
-        // Fetch and render users
-        if (drawer.style.display === "block") {
-            const res = await fetch("/online-users");
-            const users = await res.json();
+        if (isHidden) {
+            drawer.style.display = "block";
+            
+            const res = await fetch("/active-users", { credentials: "include" });
+            const data = await res.json();
+            
+            document.getElementById("onlineSection").style.display = data.online.length ? "block" : "none";
+            document.getElementById("offlineSection").style.display = data.offline.length ? "block" : "none";
+            
+            onlineList.innerHTML = "";
+            offlineList.innerHTML = "";
 
-            list.innerHTML = "";
-            users.forEach(user => {
-                const li = document.createElement("li");
-                li.textContent = user.display_name;
-                list.appendChild(li);
+            data.online.forEach(user => {
+              const li = document.createElement("li");
+              li.textContent = `🟢 ${user.display_name}`;
+              onlineList.appendChild(li);
             });
+
+            data.offline.forEach(user => {
+              const li = document.createElement("li");
+              li.textContent = `⚫ ${user.display_name}`;
+              offlineList.appendChild(li);
+            });
+            
+        } else {
+            drawer.style.display = "none";
         }
     });
 });
@@ -111,28 +127,6 @@ window.initChatSocket = function () {
 setTimeout(() => {
         document.querySelectorAll('.flash-message').forEach(el => el.remove());
 }, 4000);
-
-document.getElementById("onlineBtn").addEventListener("click", async () => {
-    console.log('onlineBtn clicked');
-    const drawer = document.getElementById("onlineDrawer");
-    const list = document.getElementById("onlineUserList");
-
-    // Toggle visibility
-    drawer.style.display = (drawer.style.display === "none") ? "block" : "none";
-
-    // Fetch and render users
-    if (drawer.style.display === "block") {
-        const res = await fetch("/online-users");
-        const users = await res.json();
-
-        list.innerHTML = ""; // clear previous
-        users.forEach(user => {
-            const li = document.createElement("li");
-            li.textContent = user.display_name;
-            list.appendChild(li);
-        });
-    }
-});
 
 function updateDate() {
     const currentDate = new Date();
