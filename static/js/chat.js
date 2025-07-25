@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => {
             console.error("Upload error:", err);
-            alert(err.message || "A network error occurred while uploading.");
+            showToast(err.message || "A network error occurred while uploading.");
         });
     });
 

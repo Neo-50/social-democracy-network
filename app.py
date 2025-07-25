@@ -126,14 +126,14 @@ def get_offline_users():
 def active_users(): 
     online = get_online_users()
     offline = get_offline_users()
-    app.logger.info('Route called')
     def user_data(user):
         return {
             'id': user.id,
             'username': user.username,
-            'display_name': user.display_name or user.username
+            'display_name': user.display_name or user.username,
+            'bio': user.bio or "No bio available",
+            'avatar_url': url_for('media', filename=f'avatars/{user.avatar_filename}') if user.avatar_filename else url_for('media', filename='avatars/default_avatar.png')
         }
-
     return jsonify({
         'online': [user_data(u) for u in online],
         'offline': [user_data(u) for u in offline],

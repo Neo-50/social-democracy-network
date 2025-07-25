@@ -38,15 +38,43 @@ document.addEventListener('DOMContentLoaded', () => {
             offlineList.innerHTML = "";
 
             data.online.forEach(user => {
-              const li = document.createElement("li");
-              li.textContent = `🟢 ${user.display_name}`;
-              onlineList.appendChild(li);
+                const li = document.createElement("li");
+                const link = document.createElement("a");
+
+                link.textContent = `🟢 ${user.display_name}`;
+                link.href = "#";
+                link.className = "user-popup-link";
+                link.dataset.id = user.id;
+                link.dataset.username = user.username;
+                link.dataset.display_name = user.display_name;
+                link.dataset.bio = user.bio || "No bio available";
+                link.dataset.avatar = user.avatar_url;
+                link.onclick = function () {
+                    showUserPopup(this);
+                };
+
+                li.appendChild(link);
+                onlineList.appendChild(li);
             });
 
             data.offline.forEach(user => {
-              const li = document.createElement("li");
-              li.textContent = `⚫ ${user.display_name}`;
-              offlineList.appendChild(li);
+                const li = document.createElement("li");
+                const link = document.createElement("a");
+
+                link.textContent = `⚫ ${user.display_name}`;
+                link.href = "#";
+                link.className = "user-popup-link";
+                link.dataset.id = user.id;
+                link.dataset.username = user.username;
+                link.dataset.display_name = user.display_name;
+                link.dataset.bio = user.bio || "No bio available";
+                link.dataset.avatar = user.avatar_url;
+                link.onclick = function () {
+                    showUserPopup(this);
+                };
+
+                li.appendChild(link);
+                offlineList.appendChild(li);
             });
             
         } else {
