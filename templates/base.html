@@ -183,10 +183,15 @@
             <div class="user-nav">
                 {% if current_user.is_authenticated %}
                     <button id="onlineBtn">👥</button>
-                    <div id="onlineDrawer" style="display: none; position: fixed; right: 0; top: 50px; width: 250px;
-                        background: #fff; border-left: 1px solid #ccc; padding: 1rem; box-shadow: -2px 0 5px rgba(0,0,0,0.2); z-index: 1000;">
-                        <h3>Online Users</h3>
-                        <ul id="onlineUserList"></ul>
+                    <div id="onlineDrawer">
+                        <div id="onlineSection">
+                            <h3 class="user-status">Active Users</h3>
+                            <ul id="onlineUserList"></ul>
+                        </div>
+                        <div id="offlineSection">
+                            <h3 class="user-status">Offline Users</h3>
+                            <ul id="offlineUserList"></ul>
+                        </div>
                     </div>
                     <div class="notif-wrapper">
                         <img src="{{ url_for('media', filename='icons/notification.png') }}" class="notification-icon" 

@@ -69,7 +69,7 @@ def login_required(f):
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 
-from sqlalchemy import event
+from sqlalchemy import event, or_
 from sqlalchemy.engine import Engine
 from sqlite3 import Connection as SQLite3Connection
 
@@ -111,22 +111,33 @@ def update_user_last_active():
             g.current_user = user
 
 def get_online_users():
-    threshold = datetime.now(timezone.utc) - timedelta(minutes=5)
+    app.logger.info('Handler reached')
+    threshold = datetime.now(timezone.utc) - timedelta(minutes=15)
     return User.query.filter(User.last_active >= threshold).all()
 
-@app.route('/online-users')
+def get_offline_users():
+    threshold = datetime.now(timezone.utc) - timedelta(minutes=15)
+    return User.query.filter(
+        or_(User.last_active < threshold, User.last_active == None)
+    ).all()
+
+@app.route('/active-users')
 @login_required
-def online_users():
-    users = get_online_users()
-    user_list = [
-        {
+def active_users(): 
+    online = get_online_users()
+    offline = get_offline_users()
+    app.logger.info('Route called')
+    def user_data(user):
+        return {
             'id': user.id,
             'username': user.username,
             'display_name': user.display_name or user.username
         }
-        for user in users
-    ]
-    return jsonify(user_list)
+
+    return jsonify({
+        'online': [user_data(u) for u in online],
+        'offline': [user_data(u) for u in offline],
+})
 
 @app.route('/')
 def home():
