@@ -69,13 +69,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', () => {
-            const box = form.querySelector(".comment-box");
+    // COMMENT SYNC ON SUBMIT
+    document.querySelectorAll("form[action^='/comment/']").forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();  // 🔸 Prevent immediate submission
+
             const editor = form.querySelector('.comment-editor');
-            const hidden = form.querySelector('.hidden-content');
-            if (editor && hidden) {
-                hidden.value = editor.innerHTML;
+            const hiddenInput = form.querySelector('input[name="comment-content"]');
+
+            console.log("SUBMIT FIRED");
+            console.log("editor content:", editor?.innerHTML);
+            console.log("hidden input before:", hiddenInput?.value);
+
+            if (editor) {
+                await handleBase64Images(editor);  // 🔸 Wait for base64 → upload → URL replace
+            }
+
+            if (editor && hiddenInput) {
+                hiddenInput.value = editor.innerHTML;
+                console.log("Set hidden input to:", hiddenInput.value);
+                form.submit();  // 🔸 Now safely submit the form with updated content
+            } else {
+                console.log("Editor or hidden input not found", editor, hiddenInput);
             }
         });
     });
