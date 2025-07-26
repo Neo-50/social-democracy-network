@@ -21,17 +21,61 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   
     // FILE UPLOAD
-    uploadButton.addEventListener("click", () => {
-        fileInput.click();
+    let activeEditor = null;
+    document.querySelectorAll(".upload-button").forEach(button => {
+        uploadButton.addEventListener("click", (e) => {
+            // Find the nearest textarea before opening file dialog
+            const wrapper = e.target.closest(".comment-box");
+            activeEditor = wrapper?.querySelector(".comment-editor") || null;
+
+            if (!activeEditor) {
+                showToast('No valid comment editor found.')
+                return;
+            }
+
+            document.getElementById("file-input").click();
     });
 
     fileInput.addEventListener("change", () => {
         const file = fileInput.files[0];
-        if (file) {
-            console.log("Selected file:", file.name);
-            // you would upload this file to the server or Matrix API here
-        }
+        if (!file || !file.type.startsWith("image/")) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/news/upload_news_image", {
+            method: "POST",
+            body: formData,
+        })
+            .then(async res => {
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || "Upload failed");
+                }
+                return data;
+            })
+            .then(data => {
+                const img = document.createElement("img");
+                img.src = data.url;
+                img.alt = file.name;
+                img.style.maxWidth = "450px";
+                img.style.maxHeight = "450px";
+                img.style.borderRadius = "24px";
+                img.style.margin = "6px 0";
+
+                if (activeEditor) {
+                    insertNodeAtCursor(activeEditor, img);
+                } else {
+                    console.warn("No active editor for inserting image");
+                }
+            })
+            .catch(err => {
+                console.error("Upload failed:", err);
+                showToast(err.message || "Upload error");
+            });
     });
+});
+
     document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', () => {
             const editor = form.querySelector('.comment-editor');
@@ -171,6 +215,22 @@ function insertAtCursor(editable, text) {
 
     // move cursor after the inserted text
     range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+function insertNodeAtCursor(editable, node) {
+    editable.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+
+    // Optional: move cursor after inserted node
+    range.setStartAfter(node);
+    range.setEndAfter(node);
     sel.removeAllRanges();
     sel.addRange(range);
 }
