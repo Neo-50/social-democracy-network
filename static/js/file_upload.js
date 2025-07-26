@@ -16,6 +16,7 @@ async function handleBase64Images(editor) {
         const data = await res.json();
         if (data.success && data.url) {
             img.src = data.url;
+            img.classList.add("uploaded-image");
         } else {
             throw new Error(data.error || "Upload failed");
         }
