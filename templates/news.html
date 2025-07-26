@@ -250,7 +250,9 @@
                         <div class="youtube-placeholder" data-src="{{ article.embed_html | safe }}"></div>
                     </div>
                     {% else %}
-                    <img src="{{ article.image_url }}" onerror="this.style.display='none'" class="news-image">
+                        {% if article.image_url %}
+                            <img src="{{ article.image_url }}" class="news-image">
+                        {% endif %}
                     {% endif %}
 
                     <div class="comments-wrapper">
@@ -353,7 +355,8 @@
     </div>
 
     <!-- JAVASCRIPT -->
-    <script src="{{ url_for('static', filename='js/custom-emojis.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom_emojis.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/file_upload.js') }}"></script>
     <script src="{{ url_for('static', filename='js/news.js') }}"></script>
     <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
     <script src="{{ url_for('static', filename='js/user_popup.js') }}"></script>
