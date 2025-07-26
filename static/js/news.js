@@ -21,63 +21,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   
     // FILE UPLOAD
-    let activeEditor = null;
-    document.querySelectorAll(".upload-button").forEach(button => {
-        uploadButton.addEventListener("click", (e) => {
-            // Find the nearest textarea before opening file dialog
-            const wrapper = e.target.closest(".comment-box");
-            activeEditor = wrapper?.querySelector(".comment-editor") || null;
+    document.querySelectorAll("form").forEach(form => {
+        const editor = form.querySelector(".comment-editor");
+        const fileInput = form.querySelector(".file-input");
+        const uploadButton = form.querySelector(".upload-button");
 
-            if (!activeEditor) {
-                showToast('No valid comment editor found.')
-                return;
-            }
+        if (!editor || !fileInput || !uploadButton) {
+            console.log('Not found', editor, fileInput, uploadButton)
+            return;
+        }
 
-            document.getElementById("file-input").click();
-    });
+        uploadButton.addEventListener("click", () => {
+            fileInput.click();
+        });
+    
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files[0];
+            if (!file || !file.type.startsWith("image/")) return;
 
-    fileInput.addEventListener("change", () => {
-        const file = fileInput.files[0];
-        if (!file || !file.type.startsWith("image/")) return;
+            const formData = new FormData();
+            formData.append("file", file);
 
-        const formData = new FormData();
-        formData.append("file", file);
-
-        fetch("/news/upload_news_image", {
-            method: "POST",
-            body: formData,
-        })
-            .then(async res => {
-                const data = await res.json();
-                if (!res.ok || !data.success) {
-                    throw new Error(data.error || "Upload failed");
-                }
-                return data;
+            fetch("/news/upload_news_image", {
+                method: "POST",
+                body: formData,
             })
-            .then(data => {
-                const img = document.createElement("img");
-                img.src = data.url;
-                img.alt = file.name;
-                img.style.maxWidth = "450px";
-                img.style.maxHeight = "450px";
-                img.style.borderRadius = "24px";
-                img.style.margin = "6px 0";
+                .then(async res => {
+                    const data = await res.json();
+                    if (!res.ok || !data.success) {
+                        throw new Error(data.error || "Upload failed");
+                    }
+                    return data;
+                })
+                .then(data => {
+                    const img = document.createElement("img");
+                    img.src = data.url;
+                    img.alt = file.name;
+                    img.className = "uploaded-image";
 
-                if (activeEditor) {
-                    insertNodeAtCursor(activeEditor, img);
-                } else {
-                    console.warn("No active editor for inserting image");
-                }
-            })
-            .catch(err => {
-                console.error("Upload failed:", err);
-                showToast(err.message || "Upload error");
-            });
+                    insertNodeAtCursor(editor, img);
+                })
+                .catch(err => {
+                    console.error("Upload failed:", err);
+                    showToast(err.message || "Upload error");
+                });
+            fileInput.value = "";
+        });
     });
-});
 
     document.querySelectorAll('form').forEach(form => {
         form.addEventListener('submit', () => {
+            const box = form.querySelector(".comment-box");
             const editor = form.querySelector('.comment-editor');
             const hidden = form.querySelector('.hidden-content');
             if (editor && hidden) {
@@ -220,18 +214,28 @@ function insertAtCursor(editable, text) {
 }
 
 function insertNodeAtCursor(editable, node) {
-    editable.focus();
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
+  if (!editable || typeof editable.focus !== "function") {
+    console.error("insertNodeAtCursor: invalid editable target", editable);
+    return;
+  }
 
-    const range = sel.getRangeAt(0);
-    range.deleteContents();
-    range.insertNode(node);
+  editable.focus();
 
-    // Optional: move cursor after inserted node
-    range.setStartAfter(node);
-    range.setEndAfter(node);
-    sel.removeAllRanges();
-    sel.addRange(range);
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) {
+    // Put it at the end as a fallback
+    editable.appendChild(node);
+    return;
+  }
+
+  const range = sel.getRangeAt(0);
+  range.deleteContents();
+  range.insertNode(node);
+
+  // Place caret after the inserted node
+  range.setStartAfter(node);
+  range.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(range);
 }
 

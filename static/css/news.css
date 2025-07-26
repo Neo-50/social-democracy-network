@@ -381,6 +381,14 @@ p {
     cursor: pointer;
 }
 
+.uploaded-image {
+    max-width: 450px;
+    max-height: 450px;
+    border-radius: 24px;
+    margin: 6px 0;
+    display: block;
+}
+
 /* upload button */
 .upload-button {
     background: transparent;
