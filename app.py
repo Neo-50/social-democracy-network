@@ -1,8 +1,5 @@
 import os
-import sys
 import logging
-import time
-import bleach
 import random
 import string
 from bleach.css_sanitizer import CSSSanitizer
@@ -14,11 +11,10 @@ from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import re
 import subprocess
-from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, current_app, Response, jsonify, g
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, Response, jsonify, g
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_socketio import SocketIO, emit, join_room
 from flask_migrate import Migrate
@@ -502,22 +498,9 @@ def api_send_message():
     print('SENDING MESSAGE')
     user_id = session.get("user_id")
     recipient_id = request.form.get('recipient_id', type=int)
-    raw_content = request.form.get('content', '').strip()
     
-    ALLOWED_TAGS = ['img']
-    ALLOWED_ATTRIBUTES = {
-        'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
-    }
-    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height'
-        'max-width', 'max-height', 'border-radius', 'vertical-align'])
-
-    content = clean(
-        raw_content,
-        tags=ALLOWED_TAGS,
-        attributes=ALLOWED_ATTRIBUTES,
-        css_sanitizer=css_sanitizer,
-        strip=True
-    )
+    raw_content = request.form.get('content', '').strip()
+    content = sanitize_comment_html(raw_content)
 
     msg = Message(sender_id=user_id, recipient_id=recipient_id, content=content)
     db.session.add(msg)
@@ -672,24 +655,28 @@ def admin_tools():
     users = User.query.all()
     return render_template('admin_tools.html', users=users)
 
+
+def sanitize_comment_html(raw_html):
+    allowed_tags = ['img']
+    allowed_attributes = {
+        'img': ['width', 'height', 'src', 'alt', 'class', 'style'],
+    }
+    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height', 'vertical-align'])
+
+    return clean(
+        raw_html,
+        tags=allowed_tags,
+        attributes=allowed_attributes,
+        strip=True,
+        css_sanitizer=css_sanitizer,
+    )
+
 @app.route('/comment/<int:article_id>', methods=['POST'])
 @login_required
 def add_comment(article_id):
 
-    ALLOWED_TAGS = ['img']
-    ALLOWED_ATTRIBUTES = {
-        'img': ['width', 'height', 'src', 'alt', 'class', 'style']
-    }
-
-    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height', 'vertical-align'])
-
-    cleaned_html = bleach.clean(
-        request.form['comment-content'],
-        tags=ALLOWED_TAGS,
-        attributes=ALLOWED_ATTRIBUTES,
-        strip=True,
-        css_sanitizer=css_sanitizer
-    )
+    raw_html = request.form['comment-content']
+    cleaned_html = sanitize_comment_html(raw_html)
 
     parent_id = request.form.get('parent_id')
     if parent_id:
@@ -929,19 +916,8 @@ def send_chat_message():
     file_name = data.get("file_name")
     message_type = data.get("message_type", "text")
 
-    ALLOWED_TAGS = ['img']
-    ALLOWED_ATTRIBUTES = {
-        'img': ['src', 'alt', 'width', 'height', 'style', 'class'],
-    }
-    css_sanitizer = CSSSanitizer(allowed_css_properties=['width', 'height' 'max-width', 'max-height', 'border-radius', 'vertical-align'])
-
-    content = clean(
-        data.get("content", "").strip(),
-        tags=ALLOWED_TAGS,
-        attributes=ALLOWED_ATTRIBUTES,
-        strip=True,
-        css_sanitizer=css_sanitizer
-    )
+    raw_content = data.get("content", "").strip()
+    content = sanitize_comment_html(raw_content)
 
     if not content and not file_url:
         return jsonify({"error": "Empty message"}), 400
