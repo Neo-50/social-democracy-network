@@ -2,8 +2,8 @@ import os
 import logging
 import random
 import string
-from bleach.css_sanitizer import CSSSanitizer
 from bleach import clean
+from bleach.css_sanitizer import CSSSanitizer
 from bs4 import BeautifulSoup
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message, ChatMessage
