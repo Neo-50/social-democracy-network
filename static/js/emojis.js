@@ -190,6 +190,22 @@ function insertAtCursor(editable, text) {
   sel.addRange(range);
 }
 
+function insertNodeAtCursor(editable, node) {
+    editable.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+
+    // Optional: move cursor after inserted node
+    range.setStartAfter(node);
+    range.setEndAfter(node);
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
 function insertAtCaret(node) {
     const sel = window.getSelection();
     if (!sel || !sel.rangeCount) return;
@@ -216,20 +232,4 @@ function placeCaretAtEnd(el) {
         sel.removeAllRanges();
         sel.addRange(range);
     }
-}
-
-function insertNodeAtCursor(editable, node) {
-    editable.focus();
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-
-    const range = sel.getRangeAt(0);
-    range.deleteContents();
-    range.insertNode(node);
-
-    // Optional: move cursor after inserted node
-    range.setStartAfter(node);
-    range.setEndAfter(node);
-    sel.removeAllRanges();
-    sel.addRange(range);
 }

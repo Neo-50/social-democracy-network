@@ -1054,6 +1054,42 @@ def upload_chat_image():
 
     return jsonify({"success": True, "url": file_url, "filename": filename})
 
+@app.route("/news/upload_news_image", methods=["POST"])
+@login_required
+def upload_news_image():
+    print("***UPLOAD ROUTE HIT***")
+    MAX_FILE_SIZE = 16 * 1024 * 1024
+    if request.content_length is not None and request.content_length > MAX_FILE_SIZE:
+        return jsonify({"success": False, "error": "File too large (max 16 MB)"}), 400
+
+    if "file" not in request.files:
+        return jsonify({"success": False, "error": "No file provided"}), 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"success": False, "error": "Empty filename"}), 400
+
+    if not file.mimetype.startswith("image/"):
+        return jsonify({"success": False, "error": "Invalid file type"}), 400
+
+    # Ensure unique name: newsimg0001.jpg, etc.
+    ext = os.path.splitext(file.filename)[1]
+    prefix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
+    base = f"{prefix}_newsimg"
+    i = 1
+    while True:
+        filename = f"{base}{i:03}{ext}"
+        path = get_media_path("news", filename)
+        if not os.path.exists(path):
+            break
+        i += 1
+
+    file.save(path)
+    file_url = url_for("media", filename=f"news/{filename}", _external=True)
+
+    return jsonify({"success": True, "url": file_url, "filename": filename})
+
 @app.route("/chat/delete_message/<int:message_id>", methods=["DELETE"])
 @login_required
 def delete_message(message_id):
