@@ -117,6 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    document.querySelectorAll(".comment-content img").forEach(img => {
+        if (img.src.includes("/media/news/") && !img.className) {
+            img.classList.add("uploaded-image");
+        }
+    });
 });
 
 function toggleUnicodeEmojiDrawer(commentBox) {
