@@ -411,19 +411,29 @@ p {
 }
 
 .size-option {
-    padding: 4px 10px;
-    border: 1px solid rgb(150 150 150 / 50%);
+    padding: 2px 8px;
+    border: 2px solid #00e3ea;
     border-radius: 999px;
     background-color: transparent;
     color: white;
     font-size: 0.9rem;
+    max-height: 26px;
+    margin-top: 10px;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .size-option.active {
-    background-color: rgb(0 255 255 / 20%);
-    border-color: cyan;
+    padding: 2px 8px;
+    border: 2px solid limegreen;
+    border-radius: 999px;
+    background-color: transparent;
+    color: white;
+    font-size: 0.9rem;
+    max-height: 26px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .emoji-wrapper {
