@@ -38,7 +38,7 @@ app.config['MAIL_SERVER'] = 'smtp.zoho.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
-app.config['MAIL_PASSWORD'] = 'fLuffy2feRret$arENice7'  # use Zoho app password here
+app.config['MAIL_PASSWORD'] = 'QA50y5Xp320F'  # use Zoho app password here
 app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
 print("MAX_CONTENT_LENGTH:", app.config["MAX_CONTENT_LENGTH"])
 
