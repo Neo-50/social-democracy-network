@@ -1,8 +1,6 @@
 let activeCommentBox = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const fileInput = document.getElementById("file-input");
-    const uploadButton = document.getElementById("upload-button");
 
     // UNICODE EMOJI DRAWER
     document.addEventListener("click", e => {
