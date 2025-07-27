@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const uploadButton = form.querySelector(".upload-button");
 
         if (!editor || !fileInput || !uploadButton) {
-            console.log('Not found', editor, fileInput, uploadButton)
             return;
         }
 
@@ -154,6 +153,86 @@ function toggleCustomEmojiDrawer(button) {
     activeCommentBox = commentBox;
 }
 
+function toggleEmojiPicker(event) {
+  const button = event.target.closest(".emoji-button");
+  const toolbar = button.closest(".comment-toolbar");
+  const box = button.closest(".comment-box");
+
+  if (box) {
+    // Existing reply logic
+    const pickerWrapper = box.querySelector(".emoji-wrapper");
+    const picker = pickerWrapper.querySelector("emoji-picker");
+
+    pickerWrapper.style.display =
+      pickerWrapper.style.display === "none" || !pickerWrapper.style.display
+        ? "block"
+        : "none";
+
+    if (!picker.dataset.bound) {
+      picker.addEventListener("emoji-click", (e) => {
+        const editor = box.querySelector(".comment-editor");
+        const hidden = box.querySelector(".hidden-content");
+        editor.focus();
+        insertAtCursor(editor, e.detail.unicode);
+        if (hidden) hidden.value = editor.innerHTML;
+      });
+      picker.dataset.bound = "true";
+    }
+
+    return;
+  }
+
+  if (toolbar) {
+    console.log("****Toolbar Branch*****")
+    const picker = document.querySelector("#unicode-emoji-picker");
+    let wrapper = document.querySelector("#emoji-wrapper");
+
+    // Move it into the clicked toolbar (if it's not already there)
+    if (!toolbar.contains(wrapper)) {
+        toolbar.appendChild(wrapper);
+    }
+
+    wrapper.classList.toggle("visible");
+    console.log(wrapper.classList.value);
+
+    if (!picker.dataset.bound) {
+      picker.addEventListener("emoji-click", (e) => {
+        const commentContent = toolbar.parentElement.querySelector(".comment-content");
+        addUnicodeReaction(commentContent, e.detail.unicode);
+      });
+      picker.dataset.bound = "true";
+    }
+  }
+}
+
+function addUnicodeReaction(target, emoji) {
+    console.log("*****Firing addUnicodeReaction()*******")
+    const span = document.createElement("span");
+    span.className = "emoji-reaction";
+    span.textContent = emoji;
+    target.appendChild(span);
+}
+
+// function toggleEmojiPicker(event) {
+//     const button = event.target;
+//     const box = button.closest(".comment-box");
+//     const pickerWrapper = box.querySelector(".emoji-wrapper");
+//     const picker = pickerWrapper.querySelector("emoji-picker");
+
+//     pickerWrapper.style.display = pickerWrapper.style.display === "none" || !pickerWrapper.style.display ? "block" : "none";
+
+//     if (!picker.dataset.bound) {
+//         picker.addEventListener("emoji-click", (e) => {
+//             const editor = box.querySelector(".comment-editor");
+//             const hidden = box.querySelector(".hidden-content");
+//             editor.focus();
+//             insertAtCursor(editor, e.detail.unicode);
+//             if (hidden) hidden.value = editor.innerHTML;
+//         });
+//     picker.dataset.bound = "true";
+//     }
+// }
+
 document.querySelectorAll('.reply-toggle').forEach(button => {
     button.addEventListener('click', () => {
         const wrapper = button.closest('.comment-container');
@@ -176,26 +255,6 @@ document.querySelectorAll('.cancel-reply').forEach(button => {
         }
     });
 });
-
-function toggleEmojiPicker(event) {
-    const button = event.target;
-    const box = button.closest(".comment-box");
-    const pickerWrapper = box.querySelector(".emoji-wrapper");
-    const picker = pickerWrapper.querySelector("emoji-picker");
-
-    pickerWrapper.style.display = pickerWrapper.style.display === "none" || !pickerWrapper.style.display ? "block" : "none";
-
-    if (!picker.dataset.bound) {
-        picker.addEventListener("emoji-click", (e) => {
-            const editor = box.querySelector(".comment-editor");
-            const hidden = box.querySelector(".hidden-content");
-            editor.focus();
-            insertAtCursor(editor, e.detail.unicode);
-            if (hidden) hidden.value = editor.innerHTML;
-        });
-    picker.dataset.bound = "true";
-    }
-}
 
 window.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".youtube-placeholder").forEach(placeholder => {
