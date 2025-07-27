@@ -3,7 +3,7 @@
 {% block content %}
 {% macro render_comment(comment, article, depth=0) %}
     <div class="comments-thread" data-comment-id="{{ comment.id }}">
-        <div class="comment-container">
+        <div class="comment-container" style="margin-left: {{ depth * 60 }}px;">
             <div class="comment-header">
                 {% if comment.user %}
                     <button class="avatar-wrapper"
@@ -29,6 +29,9 @@
                     {% else %}
                         Anonymous
                     {% endif %}
+                    <span class="timestamp" data-timestamp="{{ comment.timestamp.isoformat() }}Z">
+                        {{ comment.timestamp.strftime('%m-%d-%Y %I:%M %p') }}
+                    </span>
                 </strong>
             </div>
             
@@ -37,13 +40,27 @@
             </div>
 
             <div class="comment-toolbar" data-comment-id="{{ comment.id }}">
-                <span class="timestamp" data-timestamp="{{ comment.timestamp.isoformat() }}Z">
-                    {{ comment.timestamp.strftime('%m-%d-%Y %I:%M %p') }}
-                </span>
 
-                {% if depth < 3 %}
+                <!-- Unicode reactions button -->
+                <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode"">
+                    <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
+                </button>
+                <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
+                    <emoji-picker></emoji-picker>
+                </div>
+                
+                <!-- Custom reactions button -->
+                <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
+                <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
+                    <!-- JS will inject emoji drawer below -->
+                </div>
+
+                <!-- Reply toggle -->
+                {% if depth < 5 %}
                     <button class="newsfeed-button reply-toggle">Reply</button>
                 {% endif %}
+
+                <!-- Delete button -->
                 {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user_obj.is_admin) %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
                         class="delete-form">
@@ -52,7 +69,7 @@
                     </form>
                 {% endif %}
             </div>
-            {% if depth < 3 %}
+            {% if depth < 5 %}
                 <div class="reply-drawer" style="display: none;">
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                         <input type="hidden" name="parent_id" value="{{ comment.id }}">
@@ -87,17 +104,15 @@
                 </div>
             {% endif %}
         </div>
-        <div class="reply-container">
-            {% if session.get('user_id') %}
-                {% if comment.replies %}
-                    {% for reply in comment.replies %}
-                        {{ render_comment(reply, article, depth + 1) }}
-                    {% endfor %}
-                {% endif %}
-            {% else %}
-                <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to view replies.</p>
+        {% if session.get('user_id') %}
+            {% if comment.replies %}
+                {% for reply in comment.replies %}
+                    {{ render_comment(reply, article, depth + 1) }}
+                {% endfor %}
             {% endif %}
-        </div>
+        {% else %}
+            <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to view replies.</p>
+        {% endif %}
     </div>
 {% endmacro %}
 

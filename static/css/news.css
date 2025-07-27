@@ -332,10 +332,9 @@ p {
 .comment-box {
     display: flex;
     color: white;
-    justify-content: space-between;
     align-items: center;
     margin-bottom: 0;
-    gap: 4px;
+    gap: 0;
     position: relative;
     overflow: visible;
 }
@@ -364,12 +363,16 @@ p {
 .emoji-button {
     background-color: transparent;
     padding: 0;
-    margin: 0;
-    border-radius: 999px;
+    align-items: center;
     min-width: 40px;
     min-height: 40px;
+    border-radius: 0;
     cursor: pointer;
     font-size: 24px;
+}
+
+#unicode-emoji-button {
+    margin-left: 8px;
 }
 
 .icon {
@@ -393,13 +396,15 @@ p {
 .upload-button {
     background: transparent;
     font-size: 1.8em;
-    margin-bottom: 8px;
     cursor: pointer;
     padding: 0;
+    margin: 0;
+    border-radius: 0;
 }
 
 .inline-emoji {
-    vertical-align: middle;
+    vertical-align: baseline;
+    margin-bottom: 0;
     image-rendering: auto;
 }
 
@@ -472,13 +477,39 @@ p {
     color: white;
 }
 
-.comment-toolbar {
+.comment-container {
     display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    min-height: 80px;
+    padding-left: 10px;
+    border-left: 6px solid #333;
+}
+
+.comment-container:hover {
+    background-color: black;
+}
+
+.comment-container:hover .comment-toolbar {
+    display: flex;
+}
+
+.comment-toolbar {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
     align-items: center;
-    gap: 8px;
+    gap: 0;
     margin-top: 0;
     font-size: 1em;
     color: #ccc;
+    background-color: black;
+    border: 1px solid teal;
+    border-radius: 24px;
 }
 
 .newsfeed-button {
@@ -514,28 +545,6 @@ p {
     align-items: flex-end;
 }
 
-.reply-container {
-    position: relative;
-    padding-left: 10px;
-    margin-left: 60px;
-    margin-bottom: 0;
-    margin-top: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.comment-container {
-    display: inline-flex;
-    max-width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    padding-left: 10px;
-    border-left: 6px solid #333;
-}
-
 .reply strong {
     display: inline-block;
     margin-bottom: 2px;
@@ -545,7 +554,7 @@ p {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .reply p {
