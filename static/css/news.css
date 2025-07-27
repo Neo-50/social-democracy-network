@@ -441,7 +441,7 @@ p {
     transition: background-color 0.2s;
 }
 
-.emoji-wrapper {
+/* .emoji-wrapper {
   position: absolute;
   z-index: 1000;
   top: 85px;
@@ -452,6 +452,19 @@ p {
   padding: 8px;
   box-shadow: 0 2px 12px #1a1a1a;
   overflow-y: auto;
+} */
+
+#emoji-wrapper {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: -100px;
+  min-width: 450px;
+  z-index: 9999;
+  display: none;
+}
+
+#emoji-wrapper.visible {
+  display: block;
 }
 
 .custom-emoji-drawer {

@@ -45,10 +45,7 @@
                 <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode"">
                     <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
                 </button>
-                <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
-                    <emoji-picker></emoji-picker>
-                </div>
-                
+
                 <!-- Custom reactions button -->
                 <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
                 <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
@@ -84,7 +81,6 @@
                             <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
                                 <emoji-picker></emoji-picker>
                             </div>
-
                             <!-- Custom emoji picker -->
                             <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
                             <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
@@ -353,10 +349,11 @@
                 </div>
             {% endif %}
         {% endfor %}
-        <div id="emoji-wrapper" style="display: none;">
-            <emoji-picker id="unicode-emoji-picker"></emoji-picker>
-        </div>
-        </section>
+    </section>
+
+    <div id="emoji-wrapper">
+        <emoji-picker id="unicode-emoji-picker"></emoji-picker>
+    </div>
 
     <div id="user-popup" class="popup" style="display: none;">
         <div class="popup-inner" id="popup-header">
