@@ -58,36 +58,40 @@ function makeDraggable(popup) {
     });
 }
 
-document.getElementById("popup-send-message").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
+const popupInput = document.getElementById("popup-send-message")
 
-    const input = e.target;
-    const content = input.value.trim();
-    const recipientId = input.dataset.recipientId;
+if (popupInput) {
+  	popupInput.addEventListener("keypress", function (e) {
+    	if (e.key === "Enter") {
+			e.preventDefault();
 
-    console.log("📤 Sending message to", recipientId, "with content:", content);
+			const input = e.target;
+			const content = input.value.trim();
+			const recipientId = input.dataset.recipientId;
 
-    if (!content || !recipientId) {
-        console.warn("⛔ Missing data", { recipientId, content });
-        return;
-    }
+			console.log("📤 Sending message to", recipientId, "with content:", content);
 
-    fetch("/api/send_message", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `recipient_id=${recipientId}&content=${encodeURIComponent(content)}`
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        input.value = ""; // Clear input
-        showToast('Message sent!')
-      } else {
-        console.error("Failed to send:", data.error);
-      }
-    });
-  }
-});
+			if (!content || !recipientId) {
+				console.warn("⛔ Missing data", { recipientId, content });
+				return;
+			}
+
+			fetch("/api/send_message", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `recipient_id=${recipientId}&content=${encodeURIComponent(content)}`
+			})
+			.then(res => res.json())
+			.then(data => {
+			if (data.success) {
+				input.value = ""; // Clear input
+				showToast('Message sent!')
+			} else {
+				console.error("Failed to send:", data.error);
+			}
+    		});
+		}
+	});
+}
