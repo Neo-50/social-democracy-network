@@ -1,5 +1,5 @@
-const messageSocket = io('/messages');
-const chatSocket = io('/chat');
+window.messageSocket = io('/messages');
+chatSocket = io('/chat');
 
 document.addEventListener('DOMContentLoaded', () => {
     // Check for unread messages on page load
