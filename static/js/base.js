@@ -120,7 +120,7 @@ window.initMessageThreadSocket = function () {
                 messageWrapper.remove();
                 console.log("❌ Message deleted via socket:", messageId);
             } else {
-                console.warn("⚠️ Could not find message to delete:", messageId);
+                console.log("ℹ️ Message already deleted on this client:", messageId);
             }
         });
 
