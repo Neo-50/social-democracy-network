@@ -2,7 +2,7 @@ let activeCommentBox = null;
 let activeCommentContent = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // UNICODE EMOJI DRAWER
     document.addEventListener("click", e => {
         const emojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleCustomEmojiDrawer(customButton);
         }
     });
-  
+
     // FILE UPLOAD
     document.querySelectorAll("form").forEach(form => {
         const editor = form.querySelector(".comment-editor");
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadButton.addEventListener("click", () => {
             fileInput.click();
         });
-    
+
         fileInput.addEventListener("change", () => {
             const file = fileInput.files[0];
             if (!file || !file.type.startsWith("image/")) return;
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             activeCommentBox = null;
         }
     });
-  
+
     document.addEventListener("click", (e) => {
         const isEmojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
         const isInUnicodeDrawer = e.target.closest(".emoji-wrapper");
@@ -133,73 +133,74 @@ function toggleUnicodeEmojiDrawer(commentBox) {
 function toggleCustomEmojiDrawer(button) {
     console.log('Toggling custom emoji drawer');
     const commentBox = button.closest(".comment-box");
-
     console.log('Comment box:', commentBox);
 
+    const toolbar = button.closest(".comment-toolbar");
+    console.log('Toolbar value: ', toolbar);
+    let drawer = null;
+    let wrapper = null;
+    if (toolbar) {
+        wrapper = toolbar.querySelector("#custom-emoji-wrapper");
+        console.log('Wrapper:', wrapper);
+
+        drawer = wrapper.querySelector(".custom-reaction-drawer")
+        console.log('Drawer:', drawer);
+    }
+
     if (!commentBox) {
-        const toolbar = button.closest(".comment-toolbar");
-        console.log('Toolbar value: ', toolbar);
-
-        // const picker = document.querySelector("#unicode-emoji-picker");
-        let wrapper = toolbar.querySelector(".custom-wrapper");
-
-        if (!toolbar.contains(wrapper)) {
-            console.log('Toolbar does not contain custom-wrapper!');
+        console.log('No comment box here!')
+        // If drawer exists and is visible, hide it and clean up
+        if (drawer && wrapper.style.display === "flex") {
+            console.log('Drawer exists and is not hidden')
+            wrapper.style.display = "none";
+            activeCommentBox = null;
             return;
         }
-        injectCustomReactionDrawer(wrapper);
-        wrapper.style.display = "flex";
-        console.log('Wrapper value: ', wrapper);
-        return;
-    }
 
-    const wrapper = commentBox.querySelector(".custom-wrapper");
-
-    if (wrapper && wrapper.style.display === "flex") {
-        console.log('Wapper detected with flex display');
-        wrapper.style.display = "none";
-        const drawer = wrapper.querySelector(".custom-emoji-drawer");
-        if (drawer) drawer.remove();
-        activeCommentBox = null;
-        console.log('Emoji drawer has been closed!');
-        return;
-    }
-    if (wrapper && wrapper.style.display === "none") {
-        console.log('Wapper detected with hidden display');
-        wrapper.style.display = "flex";
-
-        let drawer = wrapper.querySelector(".custom-emoji-drawer");
-        if (!drawer) {
-            initializeEmojiDrawer(commentBox, wrapper);
+        // If drawer already exists but was hidden, just show it
+        if (drawer && wrapper.style.display === "none") {
+            console.log('Drawer exists but is hidden so showing it')
+            wrapper.style.display = "flex";
+            activeCommentBox = commentBox;
+            return;
         }
-        activeCommentBox = commentBox;
+
+        // If no drawer exists, inject it and show
+        if (!drawer) {
+            console.log('Drawer doesnt exist, injecting')
+            injectCustomReactionDrawer(wrapper);
+            wrapper.style.display = "flex";
+        }
+    }
+    if (commentBox) {
+        console.log('Comment box dectected!')
+        let wrapper = commentBox.querySelector(".custom-wrapper");
+        let drawer = wrapper.querySelector(".custom-emoji-drawer");
+        if (wrapper.style.display === "flex") {
+            console.log('Wapper detected with flex display');
+            wrapper.style.display = "none";
+            if (drawer) drawer.remove();
+            activeCommentBox = null;
+            console.log('Emoji drawer has been closed!');
+            return;
+        }
+        if (wrapper.style.display === "none") {
+            console.log('Wapper detected with hidden display');
+            wrapper.style.display = "flex";
+            if (!drawer || !wrapper.querySelector(".custom-emoji-drawer")) {
+                initializeEmojiDrawer(commentBox, wrapper);
+            }
+            activeCommentBox = commentBox;
+        }
     }
 }
 
 function injectCustomReactionDrawer(wrapper) {
     console.log('injectCustomReactionDrawer reached!')
     const drawer = document.createElement('div');
-    drawer.className = 'custom-emoji-drawer';
+    drawer.className = 'custom-reaction-drawer';
     drawer.textContent = '👋 Drawer is working!';
-    drawer.style.border = '1px solid red';
     wrapper.appendChild(drawer);
-
-    // const toggleWrapper = document.createElement('div');
-    // toggleWrapper.className = 'emoji-size-toggle';
-
-    // const smallBtn = document.createElement('button');
-    // smallBtn.textContent = 'Small';
-    // smallBtn.className = 'size-option active';
-    // smallBtn.type = 'button'; // prevent accidental submit
-
-    // const largeBtn = document.createElement('button');
-    // largeBtn.textContent = 'Large';
-    // largeBtn.className = 'size-option';
-    // largeBtn.type = 'button'; // prevent accidental submit
-
-    // toggleWrapper.appendChild(smallBtn);
-    // toggleWrapper.appendChild(largeBtn);
-    // drawer.appendChild(toggleWrapper);
 }
 
 function toggleEmojiPicker(event) {

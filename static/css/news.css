@@ -336,7 +336,6 @@ p {
     align-items: center;
     margin-bottom: 0;
     gap: 0;
-    position: relative;
     overflow: visible;
 }
 
@@ -355,7 +354,6 @@ p {
     border-radius: 4px;
     font-size: 16px;
     box-sizing: border-box;
-    border: 1px solid limegreen;
 }
 
 .news-right textarea[name="description"] {
@@ -394,7 +392,6 @@ p {
     display: block;
 }
 
-/* upload button */
 .upload-button {
     background: transparent;
     font-size: 1.8em;
@@ -436,6 +433,50 @@ p {
     transition: background-color 0.2s;
 }
 
+
+
+.inline-emoji {
+    vertical-align: baseline;
+    image-rendering: auto;
+}
+
+.emoji-reaction {
+    border: 1px solid #00e3ea;
+    border-radius: 6px;
+    padding: 4px;
+    margin-right: 2px;
+}
+
+.emoji-reaction:hover {
+    cursor: pointer;
+    background-color: #333;
+}
+
+.custom-emoji-drawer {
+    position: absolute;
+    max-height: 300px;
+    min-width: 360px;
+    z-index: 1000;
+    top: 80px;
+    left: 340px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    box-shadow: 0 2px 12px #1a1a1a;
+    border-radius: 6px;
+}
+
+.custom-reaction-drawer {
+    position: absolute;
+    top: calc(100% + 4px);
+    z-index: 999;
+    border: 1px solid yellow;
+}
+
 #unicode-wrapper-input {
     position: absolute;
     z-index: 1000;
@@ -462,40 +503,25 @@ p {
   display: block;
 }
 
-.inline-emoji {
-    vertical-align: baseline;
-    image-rendering: auto;
-}
-
-.emoji-reaction {
-    border: 1px solid #00e3ea;
-    border-radius: 6px;
-    padding: 4px;
-    margin-right: 2px;
-}
-
-.emoji-reaction:hover {
-    cursor: pointer;
-    background-color: #333;
-}
-
-/* .custom-emoji-drawer {
+.comment-toolbar {
+    display: none;
     position: absolute;
-    max-height: 300px;
-    min-width: 360px;
-    z-index: 1000;
-    top: 80px;
-    left: 340px;
-    overflow-y: auto;
+    top: 0;
+    right: 0;
+    align-items: center;
+    overflow: visible;
+    gap: 0;
+    margin-top: 0;
+    font-size: 1em;
+    color: #ccc;
+    background-color: black;
+    border: 1px solid teal;
+    border-radius: 24px;
+}
+
+.comment-container:hover .comment-toolbar {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px;
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    box-shadow: 0 2px 12px #1a1a1a;
-    border-radius: 6px;
-} */
+}
 
 .post-comment:hover {
     background-color: #333;
@@ -516,25 +542,6 @@ p {
 
 .comment-container:hover {
     background-color: black;
-}
-
-.comment-container:hover .comment-toolbar {
-    display: flex;
-}
-
-.comment-toolbar {
-    display: none;
-    position: absolute;
-    top: 0;
-    right: 0;
-    align-items: center;
-    gap: 0;
-    margin-top: 0;
-    font-size: 1em;
-    color: #ccc;
-    background-color: black;
-    border: 1px solid teal;
-    border-radius: 24px;
 }
 
 .newsfeed-button {
