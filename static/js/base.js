@@ -1,3 +1,6 @@
+const messageSocket = io('/messages');
+const chatSocket = io('/chat');
+
 document.addEventListener('DOMContentLoaded', () => {
     // Check for unread messages on page load
     fetch('/api/unread_count')
@@ -95,9 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-const messageSocket = io('/messages'); // Global socket instance
-const chatSocket = io('/chat');
-
 window.initMessageThreadSocket = function () {
     console.log("📡 initMessageThreadSocket called");
 
@@ -113,7 +113,7 @@ window.initMessageThreadSocket = function () {
     messageSocket.on('connect', () => {
         console.log("🟢 Socket connected");
 
-        socket.on('delete_message', (data) => {
+        messageSocket.on('delete_message', (data) => {
             const messageId = data.message_id;
             const messageWrapper = document.querySelector(`.message-wrapper[data-id='${messageId}']`);
             if (messageWrapper) {
