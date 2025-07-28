@@ -442,6 +442,7 @@ p {
 
 .emoji-reaction {
     border: 1px solid #00e3ea;
+    font-size: 1.4em;
     border-radius: 6px;
     padding: 4px;
     margin-right: 2px;
@@ -473,8 +474,19 @@ p {
 .custom-reaction-drawer {
     position: absolute;
     top: calc(100% + 4px);
-    z-index: 999;
-    border: 1px solid yellow;
+    right: 0;
+    max-height: 300px;
+    min-width: 360px;
+    z-index: 1200;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    box-shadow: 0 2px 12px #1a1a1a;
+    border-radius: 6px;
 }
 
 #unicode-wrapper-input {
