@@ -130,79 +130,6 @@ function toggleUnicodeEmojiDrawer(commentBox) {
     wrapper.style.display = wrapper.style.display === "none" ? "block" : "none";
 }
 
-function toggleCustomEmojiDrawer(button) {
-    console.log('Toggling custom emoji drawer');
-    const commentBox = button.closest(".comment-box");
-    console.log('Comment box:', commentBox);
-
-    const toolbar = button.closest(".comment-toolbar");
-    console.log('Toolbar value: ', toolbar);
-    let drawer = null;
-    let wrapper = null;
-    if (toolbar) {
-        wrapper = toolbar.querySelector("#custom-emoji-wrapper");
-        console.log('Wrapper:', wrapper);
-
-        drawer = wrapper.querySelector(".custom-reaction-drawer")
-        console.log('Drawer:', drawer);
-    }
-
-    if (!commentBox) {
-        console.log('No comment box here!')
-        // If drawer exists and is visible, hide it and clean up
-        if (drawer && wrapper.style.display === "flex") {
-            console.log('Drawer exists and is not hidden')
-            wrapper.style.display = "none";
-            activeCommentBox = null;
-            return;
-        }
-
-        // If drawer already exists but was hidden, just show it
-        if (drawer && wrapper.style.display === "none") {
-            console.log('Drawer exists but is hidden so showing it')
-            wrapper.style.display = "flex";
-            activeCommentBox = commentBox;
-            return;
-        }
-
-        // If no drawer exists, inject it and show
-        if (!drawer) {
-            console.log('Drawer doesnt exist, injecting')
-            injectCustomReactionDrawer(wrapper);
-            wrapper.style.display = "flex";
-        }
-    }
-    if (commentBox) {
-        console.log('Comment box dectected!')
-        let wrapper = commentBox.querySelector(".custom-wrapper");
-        let drawer = wrapper.querySelector(".custom-emoji-drawer");
-        if (wrapper.style.display === "flex") {
-            console.log('Wapper detected with flex display');
-            wrapper.style.display = "none";
-            if (drawer) drawer.remove();
-            activeCommentBox = null;
-            console.log('Emoji drawer has been closed!');
-            return;
-        }
-        if (wrapper.style.display === "none") {
-            console.log('Wapper detected with hidden display');
-            wrapper.style.display = "flex";
-            if (!drawer || !wrapper.querySelector(".custom-emoji-drawer")) {
-                initializeEmojiDrawer(commentBox, wrapper);
-            }
-            activeCommentBox = commentBox;
-        }
-    }
-}
-
-function injectCustomReactionDrawer(wrapper) {
-    console.log('injectCustomReactionDrawer reached!')
-    const drawer = document.createElement('div');
-    drawer.className = 'custom-reaction-drawer';
-    drawer.textContent = '👋 Drawer is working!';
-    wrapper.appendChild(drawer);
-}
-
 function toggleEmojiPicker(event) {
     const button = event.target.closest(".emoji-button");
     const toolbar = button.closest(".comment-toolbar");
@@ -326,28 +253,27 @@ function insertAtCursor(editable, text) {
 }
 
 function insertNodeAtCursor(editable, node) {
-  if (!editable || typeof editable.focus !== "function") {
-    console.error("insertNodeAtCursor: invalid editable target", editable);
-    return;
-  }
+    if (!editable || typeof editable.focus !== "function") {
+        console.error("insertNodeAtCursor: invalid editable target", editable);
+        return;
+    }
 
-  editable.focus();
+    editable.focus();
 
-  const sel = window.getSelection();
-  if (!sel || !sel.rangeCount) {
-    // Put it at the end as a fallback
-    editable.appendChild(node);
-    return;
-  }
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) {
+        // Put it at the end as a fallback
+        editable.appendChild(node);
+        return;
+    }
 
-  const range = sel.getRangeAt(0);
-  range.deleteContents();
-  range.insertNode(node);
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
 
-  // Place caret after the inserted node
-  range.setStartAfter(node);
-  range.collapse(true);
-  sel.removeAllRanges();
-  sel.addRange(range);
+    // Place caret after the inserted node
+    range.setStartAfter(node);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
-
