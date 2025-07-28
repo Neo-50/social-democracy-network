@@ -331,6 +331,7 @@ p {
 
 .comment-box {
     display: flex;
+    position: relative;
     color: white;
     align-items: center;
     margin-bottom: 0;
@@ -354,6 +355,7 @@ p {
     border-radius: 4px;
     font-size: 16px;
     box-sizing: border-box;
+    border: 1px solid limegreen;
 }
 
 .news-right textarea[name="description"] {
@@ -402,13 +404,6 @@ p {
     border-radius: 0;
 }
 
-.inline-emoji {
-    vertical-align: baseline;
-    margin-bottom: 0;
-    image-rendering: auto;
-}
-
-
 .emoji-size-toggle {
     display: flex;
     gap: 6px;
@@ -441,20 +436,20 @@ p {
     transition: background-color 0.2s;
 }
 
-/* .emoji-wrapper {
-  position: absolute;
-  z-index: 1000;
-  top: 85px;
-  left: 280px;
-  background-color: #1a1a1a;
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 2px 12px #1a1a1a;
-  overflow-y: auto;
-} */
+#unicode-wrapper-input {
+    position: absolute;
+    z-index: 1000;
+    top: 85px;
+    left: 280px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 12px #1a1a1a;
+    overflow-y: auto;
+}
 
-#emoji-wrapper {
+#unicode-wrapper-reaction {
   position: absolute;
   top: calc(100% + 4px);
   right: -100px;
@@ -463,11 +458,28 @@ p {
   display: none;
 }
 
-#emoji-wrapper.visible {
+#unicode-wrapper-reaction.visible {
   display: block;
 }
 
-.custom-emoji-drawer {
+.inline-emoji {
+    vertical-align: baseline;
+    image-rendering: auto;
+}
+
+.emoji-reaction {
+    border: 1px solid #00e3ea;
+    border-radius: 6px;
+    padding: 4px;
+    margin-right: 2px;
+}
+
+.emoji-reaction:hover {
+    cursor: pointer;
+    background-color: #333;
+}
+
+/* .custom-emoji-drawer {
     position: absolute;
     max-height: 300px;
     min-width: 360px;
@@ -483,7 +495,7 @@ p {
     border: 1px solid #444;
     box-shadow: 0 2px 12px #1a1a1a;
     border-radius: 6px;
-}
+} */
 
 .post-comment:hover {
     background-color: #333;
