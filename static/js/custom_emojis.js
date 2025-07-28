@@ -16,6 +16,7 @@ document.addEventListener("click", (e) => {
 });
 
 function initializeEmojiDrawer(commentBox, wrapper) {
+    console.log('***Initialize Emoji Drawer Fired!***')
     if (wrapper.querySelector('.custom-emoji-drawer')) return;
 
     const drawer = document.createElement('div');
@@ -83,43 +84,24 @@ function initializeEmojiDrawer(commentBox, wrapper) {
             'style',
             `width:${selectedEmojiSize}px;height:${selectedEmojiSize}px;vertical-align:middle;`
         );
-
-        img.addEventListener('click', () => {
-            const editor = wrapper.closest('.comment-box')?.querySelector(".comment-editor");
-            const hidden = wrapper.closest('.comment-box')?.querySelector(".hidden-content");
-
+        
+        img.addEventListener("click", () => {
+            const editor = wrapper.closest(".comment-box")?.querySelector(".comment-editor");
             if (editor) {
-                const emoji = document.createElement('img');
-                emoji.src = `media/emojis/${filename}`;
-                emoji.alt = filename.split('.')[0];
-                emoji.className = 'inline-emoji';
-                emoji.style.width = `${selectedEmojiSize}px`;
-                emoji.style.height = `${selectedEmojiSize}px`;
-                emoji.style.verticalAlign = 'middle';
+                const emojiNode = document.createElement("img");
+                emojiNode.src = img.src;
+                emojiNode.className = "inline-emoji";
+                emojiNode.alt = filename.split(".")[0];
+                emojiNode.style.width = `${selectedEmojiSize}px`;
+                emojiNode.style.height = `${selectedEmojiSize}px`;
+                emojiNode.style.verticalAlign = "middle";
 
-                insertAtCaret(editor, emoji);
-                editor.focus();
+                insertCustomEmoji(editor, emojiNode);
+
+                // update hidden field
+                const hidden = wrapper.closest(".comment-box")?.querySelector(".hidden-content");
                 if (hidden) hidden.value = editor.innerHTML;
             }
-        });
-        
-            img.addEventListener("click", () => {
-                const editor = wrapper.closest(".comment-box")?.querySelector(".comment-editor");
-                if (editor) {
-                    const emojiNode = document.createElement("img");
-                    emojiNode.src = img.src;
-                    emojiNode.className = "inline-emoji";
-                    emojiNode.alt = filename.split(".")[0];
-                    emojiNode.style.width = `${selectedEmojiSize}px`;
-                    emojiNode.style.height = `${selectedEmojiSize}px`;
-                    emojiNode.style.verticalAlign = "middle";
-
-                    insertEmojiAtEditorCaret(editor, emojiNode);
-
-                    // update hidden field
-                    const hidden = wrapper.closest(".comment-box")?.querySelector(".hidden-content");
-                    if (hidden) hidden.value = editor.innerHTML;
-                }
         });
 
         drawer.appendChild(img);
@@ -135,7 +117,7 @@ function updateDrawerEmojiSizes(drawer) {
     });
 }
 
-function insertEmojiAtEditorCaret(editor, node) {
+function insertCustomEmoji(editor, node) {
     editor.focus();
 
     const sel = window.getSelection();

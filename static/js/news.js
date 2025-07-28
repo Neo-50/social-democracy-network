@@ -1,7 +1,8 @@
 let activeCommentBox = null;
+let activeCommentContent = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-
+    
     // UNICODE EMOJI DRAWER
     document.addEventListener("click", e => {
         const emojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
@@ -130,11 +131,32 @@ function toggleUnicodeEmojiDrawer(commentBox) {
 }
 
 function toggleCustomEmojiDrawer(button) {
-    console.log('Toggling custom emoji drawer')
+    console.log('Toggling custom emoji drawer');
     const commentBox = button.closest(".comment-box");
+
+    console.log('Comment box:', commentBox);
+
+    if (!commentBox) {
+        const toolbar = button.closest(".comment-toolbar");
+        console.log('Toolbar value: ', toolbar);
+
+        // const picker = document.querySelector("#unicode-emoji-picker");
+        let wrapper = toolbar.querySelector(".custom-wrapper");
+
+        if (!toolbar.contains(wrapper)) {
+            console.log('Toolbar does not contain custom-wrapper!');
+            return;
+        }
+        injectCustomReactionDrawer(wrapper);
+        wrapper.style.display = "flex";
+        console.log('Wrapper value: ', wrapper);
+        return;
+    }
+
     const wrapper = commentBox.querySelector(".custom-wrapper");
 
-    if (wrapper.style.display === "flex") {
+    if (wrapper && wrapper.style.display === "flex") {
+        console.log('Wapper detected with flex display');
         wrapper.style.display = "none";
         const drawer = wrapper.querySelector(".custom-emoji-drawer");
         if (drawer) drawer.remove();
@@ -142,67 +164,93 @@ function toggleCustomEmojiDrawer(button) {
         console.log('Emoji drawer has been closed!');
         return;
     }
+    if (wrapper && wrapper.style.display === "none") {
+        console.log('Wapper detected with hidden display');
+        wrapper.style.display = "flex";
 
-    // open it
-    wrapper.style.display = "flex";
-
-    let drawer = wrapper.querySelector(".custom-emoji-drawer");
-    if (!drawer) {
-        initializeEmojiDrawer(commentBox, wrapper);
+        let drawer = wrapper.querySelector(".custom-emoji-drawer");
+        if (!drawer) {
+            initializeEmojiDrawer(commentBox, wrapper);
+        }
+        activeCommentBox = commentBox;
     }
-    activeCommentBox = commentBox;
+}
+
+function injectCustomReactionDrawer(wrapper) {
+    console.log('injectCustomReactionDrawer reached!')
+    const drawer = document.createElement('div');
+    drawer.className = 'custom-emoji-drawer';
+    drawer.textContent = '👋 Drawer is working!';
+    drawer.style.border = '1px solid red';
+    wrapper.appendChild(drawer);
+
+    // const toggleWrapper = document.createElement('div');
+    // toggleWrapper.className = 'emoji-size-toggle';
+
+    // const smallBtn = document.createElement('button');
+    // smallBtn.textContent = 'Small';
+    // smallBtn.className = 'size-option active';
+    // smallBtn.type = 'button'; // prevent accidental submit
+
+    // const largeBtn = document.createElement('button');
+    // largeBtn.textContent = 'Large';
+    // largeBtn.className = 'size-option';
+    // largeBtn.type = 'button'; // prevent accidental submit
+
+    // toggleWrapper.appendChild(smallBtn);
+    // toggleWrapper.appendChild(largeBtn);
+    // drawer.appendChild(toggleWrapper);
 }
 
 function toggleEmojiPicker(event) {
-  const button = event.target.closest(".emoji-button");
-  const toolbar = button.closest(".comment-toolbar");
-  const box = button.closest(".comment-box");
+    const button = event.target.closest(".emoji-button");
+    const toolbar = button.closest(".comment-toolbar");
+    const box = button.closest(".comment-box");
 
-  if (box) {
-    // Existing reply logic
-    const pickerWrapper = box.querySelector(".emoji-wrapper");
-    const picker = pickerWrapper.querySelector("emoji-picker");
+    if (box) {
+        const pickerWrapper = box.querySelector(".emoji-wrapper");
+        const picker = pickerWrapper.querySelector("emoji-picker");
 
-    pickerWrapper.style.display =
-      pickerWrapper.style.display === "none" || !pickerWrapper.style.display
-        ? "block"
-        : "none";
+        pickerWrapper.style.display =
+            pickerWrapper.style.display === "none" || !pickerWrapper.style.display
+            ? "block"
+            : "none";
 
-    if (!picker.dataset.bound) {
-      picker.addEventListener("emoji-click", (e) => {
-        const editor = box.querySelector(".comment-editor");
-        const hidden = box.querySelector(".hidden-content");
-        editor.focus();
-        insertAtCursor(editor, e.detail.unicode);
-        if (hidden) hidden.value = editor.innerHTML;
-      });
-      picker.dataset.bound = "true";
-    }
-
+        if (!picker.dataset.bound) {
+            picker.addEventListener("emoji-click", (e) => {
+            const editor = box.querySelector(".comment-editor");
+            const hidden = box.querySelector(".hidden-content");
+            editor.focus();
+            insertAtCursor(editor, e.detail.unicode);
+            if (hidden) hidden.value = editor.innerHTML;
+            });
+            picker.dataset.bound = "true";
+        }
     return;
-  }
-
-  if (toolbar) {
-    console.log("****Toolbar Branch*****")
-    const picker = document.querySelector("#unicode-emoji-picker");
-    let wrapper = document.querySelector("#emoji-wrapper");
-
-    // Move it into the clicked toolbar (if it's not already there)
-    if (!toolbar.contains(wrapper)) {
-        toolbar.appendChild(wrapper);
     }
 
-    wrapper.classList.toggle("visible");
-    console.log(wrapper.classList.value);
+    if (toolbar) {
+        const picker = document.querySelector("#unicode-emoji-picker");
+        let wrapper = document.querySelector("#unicode-wrapper-reaction");
 
-    if (!picker.dataset.bound) {
-      picker.addEventListener("emoji-click", (e) => {
-        const commentContent = toolbar.parentElement.querySelector(".comment-content");
-        addUnicodeReaction(commentContent, e.detail.unicode);
-      });
-      picker.dataset.bound = "true";
+        if (!toolbar.contains(wrapper)) {
+            toolbar.appendChild(wrapper);
+        }
+
+        // Set current target for emoji insert
+        activeCommentContent = toolbar.parentElement.querySelector(".comment-content");
+
+        wrapper.classList.toggle("visible");
+
+        if (!picker.dataset.bound) {
+            picker.addEventListener("emoji-click", (e) => {
+                if (activeCommentContent) {
+                    addUnicodeReaction(activeCommentContent, e.detail.unicode);
+                }
+            });
+            picker.dataset.bound = "true";
+        }
     }
-  }
 }
 
 function addUnicodeReaction(target, emoji) {
@@ -211,27 +259,12 @@ function addUnicodeReaction(target, emoji) {
     span.className = "emoji-reaction";
     span.textContent = emoji;
     target.appendChild(span);
+    // Add margin to any inline-emoji images in this comment
+    const inlineEmojis = target.querySelectorAll("img.inline-emoji");
+    inlineEmojis.forEach(img => {
+        img.style.marginBottom = "10px";
+    });
 }
-
-// function toggleEmojiPicker(event) {
-//     const button = event.target;
-//     const box = button.closest(".comment-box");
-//     const pickerWrapper = box.querySelector(".emoji-wrapper");
-//     const picker = pickerWrapper.querySelector("emoji-picker");
-
-//     pickerWrapper.style.display = pickerWrapper.style.display === "none" || !pickerWrapper.style.display ? "block" : "none";
-
-//     if (!picker.dataset.bound) {
-//         picker.addEventListener("emoji-click", (e) => {
-//             const editor = box.querySelector(".comment-editor");
-//             const hidden = box.querySelector(".hidden-content");
-//             editor.focus();
-//             insertAtCursor(editor, e.detail.unicode);
-//             if (hidden) hidden.value = editor.innerHTML;
-//         });
-//     picker.dataset.bound = "true";
-//     }
-// }
 
 document.querySelectorAll('.reply-toggle').forEach(button => {
     button.addEventListener('click', () => {
@@ -241,7 +274,7 @@ document.querySelectorAll('.reply-toggle').forEach(button => {
             drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
             const pickerWrapper = drawer.querySelector('.emoji-wrapper');
             if (pickerWrapper) {
-                initializeEmojiDrawer(pickerWrapper);
+                initializeEmojiDrawer(wrapper, pickerWrapper);
             }
         }
     });

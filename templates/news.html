@@ -70,7 +70,7 @@
                 <div class="reply-drawer" style="display: none;">
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                         <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                        <div class="comment-box" style="position: relative;">
+                        <div class="comment-box">
                             <div class="comment-editor" contenteditable="true" placeholder="Write a reply..." id="comment-content-{{ comment.id }}" required></div>
                             <input type="hidden" name="comment-content" class="hidden-content">
                             
@@ -78,7 +78,7 @@
                             <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode"">
                                 <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
                             </button>
-                            <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
+                            <div class="emoji-wrapper" id="unicode-wrapper-input" style="display: none;">
                                 <emoji-picker></emoji-picker>
                             </div>
                             <!-- Custom emoji picker -->
@@ -281,26 +281,27 @@
                             {% if session.get('user_id') %}
                                 <div class="comment-box" style="position: relative;">
                                     <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
-                                    <input type="hidden" name="comment-content" class="hidden-content">
-                                    <!-- Unicode emoji picker -->
-                                    <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
-                                        <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
-                                    </button>
-                                    <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
-                                        <emoji-picker></emoji-picker>
-                                    </div>
+                                        <input type="hidden" name="comment-content" class="hidden-content">
+                                    
+                                        <!-- Unicode emoji picker -->
+                                        <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
+                                            <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                                        </button>
+                                        <div class="emoji-wrapper" id="unicode-wrapper-input" style="display: none;">
+                                            <emoji-picker></emoji-picker>
+                                        </div>
 
-                                    <!-- Custom emoji picker -->
-                                    <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
-                                    <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
-                                    <!-- JS will inject emoji drawer below -->
-                                    </div>
-                                    <!-- Upload button -->
-                                    <button type="button" class="upload-button">
-                                        📎
-                                    </button>
-                                    <input type="file" class="file-input" style="display: none;" />
-                                    <button type="submit" class="newsfeed-button">Post Comment</button>
+                                        <!-- Custom emoji picker -->
+                                        <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
+                                        <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
+                                        <!-- JS will inject emoji drawer below -->
+                                        
+                                        <!-- Upload button -->
+                                        <button type="button" class="upload-button">
+                                            📎
+                                        </button>
+                                        <input type="file" class="file-input" style="display: none;" />
+                                        <button type="submit" class="newsfeed-button">Post Comment</button>
                                 </div>
                             {% else %}
                                 <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
@@ -351,7 +352,7 @@
         {% endfor %}
     </section>
 
-    <div id="emoji-wrapper">
+    <div id="unicode-wrapper-reaction">
         <emoji-picker id="unicode-emoji-picker"></emoji-picker>
     </div>
 
