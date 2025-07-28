@@ -540,12 +540,13 @@ def delete_im(message_id):
         return jsonify(success=False, error="Unauthorized"), 403
 
     room_name = f"thread_{min(msg.sender_id, msg.recipient_id)}_{max(msg.sender_id, msg.recipient_id)}"
-    
+
+    print(f"🧨 Broadcasting delete_message to /messages room: {room_name}")
     socketio.emit(
         'delete_message',
         {'message_id': message_id},
         room=room_name,
-        namespace='/chat'
+        namespace='/messages'
     )
 
     db.session.delete(msg)
