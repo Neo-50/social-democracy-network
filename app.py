@@ -18,7 +18,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_socketio import SocketIO, emit, join_room
 from flask_migrate import Migrate
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
@@ -1179,6 +1179,11 @@ def emojify(content):
         return match.group(0)  # fallback, keep text if not found
 
     return Markup(re.sub(r":([a-zA-Z0-9_]+):", replace, content))
+
+@app.after_request
+def add_csrf_cookie(response):
+    response.set_cookie('csrf_token', generate_csrf())
+    return response
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
