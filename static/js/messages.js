@@ -55,6 +55,7 @@ async function submitMessageForm(e) {
     const hiddenInput = document.getElementById("content-hidden");
     hiddenInput.value = chatEditor.innerHTML.trim();
     const formData = new FormData(messageForm);
+    formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
 
     const recipientInput = messageForm.querySelector('input[name="recipient_id"]');
     if (!recipientInput || !recipientInput.value) {

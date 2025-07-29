@@ -27,6 +27,7 @@
         <meta property="og:image" content="{{ url_for('static', filename='img/og-default.jpg', _external=True) }}">
         <meta property="og:url" content="{{ request.url }}">
     {% endif %}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('media', filename='icons/favicon.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -198,7 +199,10 @@
                             id="notification-icon" alt="Notification Icon">
                         <div class="notif-badge" id="notif-badge"></div>
                         <div id="notifDrawer" class="notif-drawer hidden">
-                            <div class="notif-header">Notifications</div>
+                            <div class="notif-header">
+                                Notifications
+                                <button class="clear-notifs">Clear</button>
+                            </div>
                             <div class="notif-content">
                                 <!-- Insert messages via JS -->
                                 <p class="placeholder">No new notifications</p>

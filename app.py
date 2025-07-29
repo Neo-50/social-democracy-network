@@ -18,6 +18,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_socketio import SocketIO, emit, join_room
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
@@ -85,11 +86,11 @@ login_manager.session_protection = "strong"
 login_manager.login_view = 'login'
 
 migrate = Migrate(app, db)
+csrf = CSRFProtect(app)
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
 
 @app.before_request
 def update_user_last_active():
@@ -487,6 +488,21 @@ def messages(username=None):
         recipient=recipient,
         conversations=conversations
     )
+
+@app.route('/clear-notifs', methods=['POST'])
+@login_required
+def clear_notifs():
+    user_id = session.get('user_id')
+    if user_id:
+        messages = Message.query.filter(
+            Message.recipient_id == user_id,
+            Message.read == False
+        ).all()
+        for msg in messages:
+            msg.read = True
+        db.session.commit()
+        return {'success': True}
+    return {'success': False}, 400
 
 @app.route('/api/debug_message_ids')
 def debug_ids():
