@@ -65,6 +65,12 @@ html, body {
   padding: 0;
 }
 
+.message-body img {
+  max-height: 450px;
+  width: auto;
+  border-radius: 24px;
+}
+
 @media (width < 600px) {
   .chat-message .message-body {
       margin-left: 0;
