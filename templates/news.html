@@ -61,6 +61,7 @@
                 {% if current_user.is_authenticated and (current_user.id == comment.user_id or current_user_obj.is_admin) %}
                     <form method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}"
                         class="delete-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <button type="submit" onclick="return confirm('Delete this comment?')"
                         class="delete-button">🗑 Delete</button>
                     </form>
@@ -69,6 +70,7 @@
             {% if depth < 5 %}
                 <div class="reply-drawer" style="display: none;">
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="parent_id" value="{{ comment.id }}">
                         <div class="comment-box">
                             <div class="comment-editor" contenteditable="true" placeholder="Write a reply..." id="comment-content-{{ comment.id }}" required></div>
@@ -115,6 +117,7 @@
 <main class="news-page">
     <section class="news-left">
         <form method="POST" id="submit-news" action="{{ url_for('news') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="submit-article-container">
                 <input type="url" name="url" placeholder="Paste news article URL here..." required>
                 <button type="submit" class="submit-article">Submit</button>
@@ -277,6 +280,7 @@
                         {% endif %}
                     </div>
                     <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="post-comment-container">
                             {% if session.get('user_id') %}
                                 <div class="comment-box" style="position: relative;">
@@ -311,6 +315,7 @@
                     </div>
                     {% if is_admin() %}
                         <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" class="article-edit-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             Title: <input name="title" value="{{ article.title or '' }}">
                             Description: <textarea name="description">{{ article.description or '' }}</textarea>
                             Authors: <input name="authors" value="{{ article.authors or '' }}">
@@ -322,6 +327,7 @@
                         </form>
                     {% endif %}
                     <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="new-category-container">
                             {% if is_admin() or current_user_obj.id == article.user_id %}
                                 <select name="new-category" id="new-category">
@@ -343,6 +349,7 @@
                     </form>
                     {% if is_admin() or current_user_obj.id == article.user_id %}
                         <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
                                 Article</button>
                         </form>
