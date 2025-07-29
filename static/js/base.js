@@ -126,6 +126,24 @@ document.addEventListener('DOMContentLoaded', () => {
             drawer.style.display = "none";
         }
     });
+
+	document.querySelector('.clear-notifs').addEventListener('click', async () => {
+		e.preventDefault();
+		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+		const res = await fetch('/clear-notifs', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': csrfToken
+			},
+		});
+
+		if (res.ok) {
+			// Clear the visual badge and drawer content
+			hideNotificationBadge();
+			document.querySelector('.notif-content').innerHTML = '<p class="placeholder">No new notifications</p>';
+		}
+	});
     
     document.addEventListener("click", function (e) {
         const drawer = document.getElementById("onlineDrawer");
