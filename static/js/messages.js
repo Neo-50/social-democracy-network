@@ -215,23 +215,28 @@ document.addEventListener("click", (e) => {
     }
 
     if (confirm("Delete this message?")) {
-    fetch(`/api/delete_im/${messageId}`, { method: "DELETE" })
-        .then((res) => {
-            console.log("Response status:", res.status);
-            return res.json();
-        })
-        .then((data) => {
-        if (data.success) {
-            console.log("Removing message element:", messageEl);
-            messageEl.remove();
-        } else {
-            showToast(data.error || "Failed to delete message.");
+        fetch(`/api/delete_im/${messageId}`, {
+                method: "DELETE",
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then((res) => {
+                console.log("Response status:", res.status);
+                return res.json();
+            })
+            .then((data) => {
+            if (data.success) {
+                console.log("Removing message element:", messageEl);
+                messageEl.remove();
+            } else {
+                showToast(data.error || "Failed to delete message.");
+            }
+            })
+            .catch((err) => {
+                console.error("Fetch failed:", err);
+                showToast("Failed to send delete request.");
+            });
         }
-        })
-        .catch((err) => {
-            console.error("Fetch failed:", err);
-            showToast("Failed to send delete request.");
-        });
-    }
 });
 
