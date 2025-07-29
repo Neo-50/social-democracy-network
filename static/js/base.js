@@ -1,17 +1,31 @@
 window.messageSocket = io('/messages');
 chatSocket = io('/chat');
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Check for unread messages on page load
+messageSocket.on('notification', data => {
+    console.log('🔔 Notification received:', data);
+    showToast(`New message from ${data.from}`);
+
+    // Refresh the count after new message
     fetch('/api/unread_count')
     .then(res => res.json())
     .then(data => {
-      if (data.count) {
+        if (data.count) {
         showNotificationBadge(data.count);
-      } else {
-        hideNotificationBadge();
-      }
+        }
     });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+	// Check for unread messages on page load
+	fetch('/api/unread_count')
+	.then(res => res.json())
+	.then(data => {
+		if (data.count) {
+		showNotificationBadge(data.count);
+		} else {
+		hideNotificationBadge();
+		}
+	});
     
     const btn = document.getElementById("onlineBtn");
     if (!btn) {
@@ -130,9 +144,10 @@ window.initMessageThreadSocket = function () {
         });
 
         messageSocket.emit('join', window.ROOM_ID);
-        console.log("📥 Joined room:", window.ROOM_ID);
+            console.log("📥 Joined room:", window.ROOM_ID);
     });
 };
+
 
 window.initChatSocket = function () {
     chatSocket.emit('join', 'chat_global');
