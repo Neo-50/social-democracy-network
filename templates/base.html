@@ -197,6 +197,13 @@
                         <img src="{{ url_for('media', filename='icons/notification.png') }}" class="notification-icon" 
                             id="notification-icon" alt="Notification Icon">
                         <div class="notif-badge" id="notif-badge"></div>
+                        <div id="notifDrawer" class="notif-drawer hidden">
+                            <div class="notif-header">Notifications</div>
+                            <div class="notif-content">
+                                <!-- Insert messages via JS -->
+                                <p class="placeholder">No new notifications</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="avatar-dropdown">{% set avatar_file = current_user_obj.avatar_filename 
                         if current_user_obj.avatar_filename else 'default_avatar.png' %}

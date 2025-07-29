@@ -575,6 +575,20 @@ def unread_count():
     count = Message.query.filter_by(recipient_id=user_id, read=False).count()
     return jsonify(count=count)
 
+@app.route('/api/unread_notifications')
+@login_required
+def unread_notifications():
+    messages = Message.query.filter_by(recipient_id=current_user.id, read=False).order_by(Message.timestamp.desc()).all()
+    result = [
+        {
+            "from": m.sender.display_name or m.sender.username,
+            "message": m.content,
+            "timestamp": m.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        for m in messages
+    ]
+    return jsonify(result)
+
 @app.template_filter('datetimeformat')
 def datetimeformat(value, format="%B %d, %Y"):
     try:
