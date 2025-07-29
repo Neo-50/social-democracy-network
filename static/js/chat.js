@@ -2,6 +2,7 @@
 
 window.chatEditor = document.getElementById("chat-editor");
 let isInitialLoad = true;
+window.csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
 
 document.addEventListener("DOMContentLoaded", () => {
     const sendButton = document.getElementById("send-button");
@@ -59,6 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const formData = new FormData();
     formData.append("file", file);
+    
+    formData.append("csrf_token", window.csrfToken);
 
     fetch("/chat/upload_chat_image", {
         method: "POST",
@@ -119,8 +122,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (message !== "") {
             fetch("/chat/send", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
+                    headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": window.csrfToken
                 },
                 body: JSON.stringify({
                     content: message,
@@ -193,6 +197,9 @@ function deleteMessage(messageId) {
 
     fetch(`/chat/delete_message/${messageId}`, {
         method: "DELETE",
+          headers: {
+            "X-CSRFToken": window.csrfToken,
+        },
     })
     .then(res => {
         if (res.ok) {
