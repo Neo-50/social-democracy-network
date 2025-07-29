@@ -168,9 +168,9 @@ function createNotificationElement({ from, timestamp, message }) {
 	const div = document.createElement('div');
 	div.classList.add('notif-item');
 	div.innerHTML = `
-	<div><strong>${from}</strong> 
+	<strong>${from}</strong> 
+	<div class="notif-message-content">${message}</div>
 	<span class="timestamp" data-timestamp="${timestamp}" style="opacity: 0.5; float: right;"></span>
-	<div>${message}</div>
 	`;
 	return div;
 }

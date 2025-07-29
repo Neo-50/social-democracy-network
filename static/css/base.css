@@ -157,6 +157,8 @@
 }
 
 .notif-item {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     background-color: #1a1a1a;
     padding: 10px;
@@ -169,6 +171,16 @@
 
 .notif-item:hover {
     background-color: #000;
+}
+
+.notif-message-content {
+    margin-top: 5px;
+}
+
+.timestamp {
+    font-size: .8em;
+    font-weight: 1;
+    margin-top: 5px;
 }
 
 
