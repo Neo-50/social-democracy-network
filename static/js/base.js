@@ -2,29 +2,56 @@ window.messageSocket = io('/messages');
 chatSocket = io('/chat');
 
 messageSocket.on('notification', data => {
-    console.log('🔔 Notification received:', data);
-    showToast(`New message from ${data.from}`);
+	console.log('🔔 Notification received:', data);
+	showToast(`New message from ${data.from}`);
 
-    // Refresh the count after new message
-    fetch('/api/unread_count')
-    .then(res => res.json())
-    .then(data => {
-        if (data.count) {
-        showNotificationBadge(data.count);
-        }
-    });
+	// Insert notification preview
+	const container = document.querySelector('.notif-content');
+	if (!container) return;
+
+	// Remove placeholder if present
+	const placeholder = container.querySelector('.placeholder');
+	if (placeholder) {
+		placeholder.remove();
+	}
+
+	container.prepend(createNotificationElement(data));
+
+	// Update count
+	fetch('/api/unread_count')
+		.then(res => res.json())
+		.then(data => {
+		if (data.count) {
+			showNotificationBadge(data.count);
+		}
+		});
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
 	// Check for unread messages on page load
 	fetch('/api/unread_count')
-	.then(res => res.json())
-	.then(data => {
-		if (data.count) {
-		showNotificationBadge(data.count);
-		} else {
-		hideNotificationBadge();
-		}
+		.then(res => res.json())
+		.then(data => {
+			if (data.count) {
+			showNotificationBadge(data.count);
+			} else {
+			hideNotificationBadge();
+			}
+	});
+
+	fetch('/api/unread_notifications')
+  		.then(res => res.json())
+		.then(data => {
+    	const container = document.querySelector('.notif-content');
+		if (!container || !data.length) return;
+
+    	const placeholder = container.querySelector('.placeholder');
+    	if (placeholder) placeholder.remove();
+
+		data.forEach(item => {
+			container.appendChild(createNotificationElement(item));
+		});
 	});
     
     const btn = document.getElementById("onlineBtn");
@@ -110,7 +137,40 @@ document.addEventListener('DOMContentLoaded', () => {
             drawer.style.display = "none";
         }
     });
+
+	// Notification drawer
+	const bellIcon = document.getElementById("notification-icon");
+    const drawer = document.getElementById("notifDrawer");
+
+    if (!bellIcon || !drawer) {
+		console.log('Not found: ', bellIcon, drawer);
+		return;
+	}else {
+		console.log('Found ', bellIcon, drawer)
+	};
+    bellIcon.addEventListener("click", (e) => {
+        e.stopPropagation(); // prevent global click handler from immediately hiding it
+        drawer.classList.toggle("show");
+    });
+
+    // Hide drawer when clicking outside of it
+    document.addEventListener("click", (e) => {
+        const isClickInside = drawer.contains(e.target) || bellIcon.contains(e.target);
+        if (!isClickInside) {
+            drawer.classList.remove("show");
+        }
+    });
 });
+
+function createNotificationElement({ from, timestamp, message }) {
+	const div = document.createElement('div');
+	div.classList.add('notif-item');
+	div.innerHTML = `
+	<div><strong>${from}</strong> <span style="opacity: 0.5; float: right;">${timestamp}</span></div>
+	<div>${message}</div>
+	`;
+	return div;
+}
 
 window.initMessageThreadSocket = function () {
     console.log("📡 initMessageThreadSocket called");

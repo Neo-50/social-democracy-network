@@ -116,6 +116,62 @@
     background-color: #444;
 }
 
+/* Notification drawer */
+.notif-drawer {
+    position: absolute;
+    right: -50px;
+    top: 40px;
+    width: 300px;
+    max-height: 400px;
+    overflow: auto;
+    background: #1a1a1a;
+    color: white;
+    border: 2px solid #00e3ea;
+    border-radius: 24px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    z-index: 5;
+    padding: 10px;
+    display: none;
+}
+
+.notif-drawer .notif-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.notif-drawer .placeholder {
+    opacity: 0.6;
+    text-align: center;
+    padding: 20px;
+}
+
+.notif-drawer.show {
+    display: block;
+}
+
+.notif-content {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* spacing between messages */
+}
+
+.notif-item {
+    width: 100%;
+    background-color: #1a1a1a;
+    padding: 10px;
+    border: 2px solid #bbb;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    word-wrap: break-word;
+    transition: background-color 0.2s ease;
+}
+
+.notif-item:hover {
+    background-color: #000;
+}
+
+
 /* User navigation */
 .user-nav {
     display: flex;
