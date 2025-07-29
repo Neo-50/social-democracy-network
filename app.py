@@ -508,6 +508,21 @@ def api_send_message():
     db.session.refresh(msg)
     db.session.commit()
 
+    # emit WebSocket notification to recipient
+    socketio.emit(
+        'notification',
+        {
+            "type": "message",
+            "from": getattr(current_user, 'display_name', 'Unknown'),
+            "chat_id": msg.chat_id if hasattr(msg, 'chat_id') else None,
+            "message": msg.content,
+            "timestamp": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            "unread_count": 1  # optional, you could query the actual count
+        },
+        namespace='/messages',
+        room=recipient_id  # user joins room with ID on connect
+    )
+
     debug_ids()
 
     return jsonify ({
@@ -1156,6 +1171,12 @@ def handle_new_message_messages(data):
 def handle_new_message_chat(data):
     print("🔥 [chat] Rebroadcasting:", data)
     emit('new_message', data, room=data['room_id'])
+
+@socketio.on('connect', namespace='/messages')
+def handle_messages_connect():
+    if current_user.is_authenticated:
+        join_room(current_user.id)
+        print('Joined notifications room')
 
 
 if __name__ == '__main__':
