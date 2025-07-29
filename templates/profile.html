@@ -16,15 +16,18 @@
         <div class="profile-container-left">
             <h2>Upload Avatar (max 2MB):</h2>
             <form method="POST" action="{{ url_for('upload_avatar') }}" enctype="multipart/form-data" id="avatar-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="file" name="avatar" accept="image/*">
             </form>
             <h2>Display Name:</h2>
             <form action="{{ url_for('update_display_name') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="text" name="display_name" id="display_name" value="{{ current_user.display_name or '' }}">
                 <button type="submit">Save</button>
             </form>
             <h2>About Me</h2>
             <form method="POST" action="{{ url_for('update_bio') }}" id="update-bio"> 
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <textarea name="bio" class="bio-text"></textarea>
                 <button type="submit">Save</button>
             </form>
@@ -32,6 +35,7 @@
         <div class="profile-container-left">
             <h2>Change Password:</h2>
             <form method="POST" class="change-password-form" action="{{ url_for('profile_change_password') }}" id="profile-change-password">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <label for="new_password">New Password:</label>
                 <input type="password" class="password" name="new_password" required minlength="8" />
                 
@@ -42,6 +46,7 @@
             </form>
             <form action="{{ url_for('delete_account') }}" method="POST" id="delete-account"
                 onsubmit="return confirm('Are you sure you want to delete your account? All comments and messages will be deleted');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="user_id" value="{{ current_user.id }}">
                 <button type="delete-account" class="btn btn-danger">Delete Account</button>
             </form>
