@@ -16,6 +16,7 @@ messageSocket.on('notification', data => {
 	}
 
 	container.prepend(createNotificationElement(data));
+	formatTimestamp(container);
 
 	// Update count
 	fetch('/api/unread_count')
@@ -51,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		data.forEach(item => {
 			container.appendChild(createNotificationElement(item));
+			formatTimestamp(container);
 		});
 	});
     
@@ -166,7 +168,8 @@ function createNotificationElement({ from, timestamp, message }) {
 	const div = document.createElement('div');
 	div.classList.add('notif-item');
 	div.innerHTML = `
-	<div><strong>${from}</strong> <span style="opacity: 0.5; float: right;">${timestamp}</span></div>
+	<div><strong>${from}</strong> 
+	<span class="timestamp" data-timestamp="${timestamp}" style="opacity: 0.5; float: right;"></span>
 	<div>${message}</div>
 	`;
 	return div;
