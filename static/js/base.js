@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-	document.querySelector('.clear-notifs').addEventListener('click', async () => {
+	document.querySelector('.clear-notifs').addEventListener('click', async (e) => {
 		e.preventDefault();
 		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 		const res = await fetch('/clear-notifs', {
