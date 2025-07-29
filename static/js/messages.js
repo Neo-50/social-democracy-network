@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         newMessageForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const formData = new FormData(newMessageForm);
+            formData.append('csrf_token', document.querySelector('meta[name="csrf-token"]').content);
             const response = await fetch('/api/send_message', {
                 method: 'POST',
                 body: formData
