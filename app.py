@@ -90,6 +90,9 @@ csrf = CSRFProtect(app)
 
 @login_manager.user_loader
 def load_user(user_id):
+    user = User.query.get(int(user_id))
+    if user and not user.locked:
+        return user
     return User.query.get(int(user_id))
 
 @app.before_request
@@ -98,6 +101,10 @@ def update_user_last_active():
     if user_id:
         user = User.query.get(user_id)
         if user:
+            if user.locked:
+                logout_user()
+                flash("Your account has been locked.", "error")
+                return redirect(url_for('login'))
             now = datetime.now(timezone.utc)
             if not user.last_active or (
             now - user.last_active.replace(tzinfo=timezone.utc)
@@ -898,6 +905,18 @@ def update_displayname_admin(user_id):
 
     flash(f"Display name changed to {new_displayname} for user {user.username}")
     return redirect(url_for('admin_tools'))
+
+@app.route("/admin/toggle-lock/<int:user_id>", methods=["POST"])
+@login_required
+def toggle_lock(user_id):
+    if not current_user.is_admin:
+        flash("Access denied.")
+        return redirect(url_for('home'))
+    user = User.query.get_or_404(user_id)
+    user.locked = not user.locked
+    db.session.commit()
+    flash(f"User {'locked' if user.locked else 'unlocked'}.", "info")
+    return redirect(url_for('admin_tools')) 
 
 @app.route('/forgot_password', methods=['POST'])
 def forgot_password():

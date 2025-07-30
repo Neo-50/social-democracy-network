@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     avatar_url = db.Column(db.String(500), nullable=True)
     bio = db.Column(db.Text, nullable=True)
     avatar_filename = db.Column(db.String(120))
+    locked = db.Column(db.Boolean, default=False)
 
     sent_messages = db.relationship(
         'Message',
