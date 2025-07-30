@@ -6,7 +6,7 @@ from bleach import clean
 from bleach.css_sanitizer import CSSSanitizer
 from bs4 import BeautifulSoup
 from db_init import db
-from models import User, NewsArticle, NewsComment, Message, ChatMessage
+from models import User, NewsArticle, NewsComment, Message, ChatMessage, Reaction
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import re
@@ -87,6 +87,7 @@ login_manager.login_view = 'login'
 
 migrate = Migrate(app, db)
 csrf = CSRFProtect(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -378,42 +379,46 @@ def delete_account():
     flash("Your account has been deleted.", "success")
     return redirect(url_for('home'))
 
-@csrf.exempt
-@app.route("/toggle-reaction", methods=["POST"])
+@socketio.on("toggle_reaction", namespace="/reactions")
 @login_required
-def toggle_reaction():
-    from models.reactions import Reaction
-    data = request.get_json()
-    target_id = data.get("target_id")
-    target_type = data.get("target_type")
+def toggle_reaction(data):
     emoji = data.get("emoji")
+    target_type = data.get("target_type")
+    target_id = data.get("target_id")
     action = data.get("action")
+    
+    if not emoji or not target_type or not target_id or action not in {"add", "remove"}:
+        return
 
-    if not target_id or not target_type or not emoji or action not in {"add", "remove"}:
-        return jsonify(success=False, error="Invalid data"), 400
-
-    existing = Reaction.query.filter_by(
+    reaction = Reaction.query.filter_by(
         user_id=current_user.id,
         target_type=target_type,
         target_id=target_id,
         emoji=emoji
     ).first()
 
-    if action == "add":
-        if not existing:
-            reaction = Reaction(
-                user_id=current_user.id,
-                target_type=target_type,
-                target_id=target_id,
-                emoji=emoji
-            )
-            db.session.add(reaction)
-    elif action == "remove":
-        if existing:
-            db.session.delete(existing)
+    if action == "add" and not reaction:
+        reaction = Reaction(
+            user_id=current_user.id,
+            target_type=target_type,
+            target_id=target_id,
+            emoji=emoji
+        )
+        db.session.add(reaction)
+
+    elif action == "remove" and reaction:
+        db.session.delete(reaction)
 
     db.session.commit()
-    return jsonify(success=True)
+
+    emit("reaction_update", {
+        "emoji": emoji,
+        "target_type": target_type,
+        "target_id": target_id,
+        "user_id": current_user.id,
+        "action": action
+    }, broadcast=True)
+
 
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):
@@ -1246,7 +1251,6 @@ def add_csrf_cookie(response):
     response.set_cookie('csrf_token', generate_csrf())
     return response
 
-socketio = SocketIO(app, cors_allowed_origins="*")
 
 @socketio.on('join', namespace='/messages')
 def handle_join_messages(room_id):

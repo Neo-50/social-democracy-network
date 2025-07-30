@@ -1,5 +1,6 @@
 window.messageSocket = io('/messages');
-chatSocket = io('/chat');
+window.chatSocket = io('/chat');
+window.reactionSocket = io("/reactions");
 
 messageSocket.on('notification', data => {
 	console.log('🔔 Notification received:', data);
@@ -28,6 +29,25 @@ messageSocket.on('notification', data => {
 		});
 });
 
+reactionSocket.on("reaction_update", (data) => {
+    const { emoji, target_type, target_id, CURRENT_USER_ID, action } = data;
+
+    if (target_type !== "news_comment") return;
+
+    const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
+    if (!thread) return;
+
+    const content = thread.querySelector(".comment-content");
+
+    if (action === "add") {
+        if (!thread.querySelector(`[data-emoji="${emoji}"]`)) {
+            addUnicodeReaction(content, emoji, target_id, target_type, "add");
+        }
+    } else if (action === "remove") {
+        const span = thread.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
+        if (span) span.remove();
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
 	// Check for unread messages on page load
@@ -263,6 +283,31 @@ window.initChatSocket = function () {
 setTimeout(() => {
         document.querySelectorAll('.flash-message').forEach(el => el.remove());
 }, 4000);
+
+window.initReactionSocket = function () {
+    console.log("⚡ initReactionSocket called");
+
+    reactionSocket.on("reaction_update", (data) => {
+        const { emoji, target_type, target_id, user_id, action } = data;
+
+        if (target_type !== "news_comment") return;
+
+        const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
+        if (!thread) return;
+
+        const content = thread.querySelector(".comment-content");
+        if (!content) return;
+
+        if (action === "add") {
+            if (!thread.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`)) {
+                addUnicodeReaction(content, emoji, target_id, target_type, "add");
+            }
+        } else if (action === "remove") {
+            const span = thread.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
+            if (span) span.remove();
+        }
+    });
+};
 
 function updateDate() {
     const currentDate = new Date();
