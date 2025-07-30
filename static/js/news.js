@@ -160,6 +160,7 @@ function toggleEmojiPicker(event) {
     if (toolbar) {
         const picker = document.querySelector("#unicode-emoji-picker");
         let wrapper = document.querySelector("#unicode-wrapper-reaction");
+        const commentId = toolbar.closest(".comments-thread").dataset.commentId;
 
         if (!toolbar.contains(wrapper)) {
             toolbar.appendChild(wrapper);
@@ -173,7 +174,7 @@ function toggleEmojiPicker(event) {
         if (!picker.dataset.bound) {
             picker.addEventListener("emoji-click", (e) => {
                 if (activeCommentContent) {
-                    addUnicodeReaction(activeCommentContent, e.detail.unicode);
+                    addUnicodeReaction(activeCommentContent, e.detail.unicode, commentId, "news_comment");
                 }
             });
             picker.dataset.bound = "true";
@@ -181,18 +182,31 @@ function toggleEmojiPicker(event) {
     }
 }
 
-function addUnicodeReaction(target, emoji) {
-    console.log("*****Firing addUnicodeReaction()*******")
+function addUnicodeReaction(target, emoji, targetId, targetType) {
+    console.log("******Firing addUnicodeReaction()******");
+
     const span = document.createElement("span");
     span.className = "emoji-reaction";
-    span.textContent = emoji;
+    span.dataset.emoji = emoji;
+    span.dataset.targetId = targetId;
+    span.dataset.targetType = targetType;
+    span.dataset.users = JSON.stringify([CURRENT_USER_ID]);
+
+    // 👇 Set up count element
+    span.innerHTML = `${emoji} <span class="reaction-count">1</span>`;
+
+    // ✅ ADD CLICK HANDLER
+    span.addEventListener("click", handleReactionClick);
+
     target.appendChild(span);
-    // Add margin to any inline-emoji images in this comment
+
+    // 👇 Optional: layout fix for inline emojis
     const inlineEmojis = target.querySelectorAll("img.inline-emoji");
     inlineEmojis.forEach(img => {
-        img.style.marginBottom = "10px";
+        img.style.marginBottom = "0.25em";
     });
 }
+
 
 document.querySelectorAll('.reply-toggle').forEach(button => {
     button.addEventListener('click', () => {
@@ -277,3 +291,37 @@ function insertNodeAtCursor(editable, node) {
     sel.removeAllRanges();
     sel.addRange(range);
 }
+
+function handleReactionClick(event) {
+    const span = event.currentTarget;
+    const emoji = span.dataset.emoji;
+    const countSpan = span.querySelector(".reaction-count");
+
+    // Parse current users
+    let users = JSON.parse(span.dataset.users || "[]");
+
+    if (users.includes(CURRENT_USER_ID)) {
+        // Remove user from list
+        console.log("Before filter:", span.dataset.users);
+        users = users.filter(id => id !== CURRENT_USER_ID);
+        console.log("After filter:", users);
+
+        if (users.length === 0) {
+            // Remove the reaction element entirely
+            span.remove();
+            console.log("Users after removal:", users);
+        } else {
+            // Update count and user list
+            countSpan.textContent = users.length;
+            span.dataset.users = JSON.stringify(users);
+        }
+    } else {
+        // Add user
+        users.push(CURRENT_USER_ID);
+        countSpan.textContent = users.length;
+        span.dataset.users = JSON.stringify(users);
+    }
+
+    // TODO: Optionally: send update to server here via fetch or socket
+}
+

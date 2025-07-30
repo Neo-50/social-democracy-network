@@ -12,8 +12,9 @@ class Reaction(db.Model):
     __tablename__ = 'reaction'
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     target_type = db.Column(db.String(50), nullable=False)  # 'chat', 'news', 'comment', etc.
-    target_id = db.Column(db.Integer, nullable=False)
+    target_id = db.Column(db.Integer, nullable=False) # data-comment-id, data-message-id
     emoji = db.Column(db.String(32), nullable=False)
 
     users = db.relationship("User", secondary=reaction_user, backref="reactions")
