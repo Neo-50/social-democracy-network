@@ -15,6 +15,7 @@
                     <th>Email Verified</th>
                     <th>Reset Password</th>
                     <th>Bio</th>
+                    <th>Locked</th>
                     <th>Delete</th>
                 </tr>
             </thead>
@@ -27,6 +28,7 @@
                                 action="{{ url_for('admin_upload_avatar', user_id=user.id) }}"
                                 enctype="multipart/form-data"
                                 id="avatar-form-{{ user.id }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <label class="avatar-upload">
                                 Browse
                                 <input type="file" name="avatar" class="avatar-input" accept="image/*">
@@ -38,6 +40,7 @@
                     <td>
                         <div><strong>Current:</strong> {{ user.display_name or '-' }}</div>
                         <form method="POST" class="admintool-displayname" action="{{ url_for('update_displayname_admin', user_id=user.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <input type="text" name="new_displayname" class="new-displayname" placeholder="New display name" required>
                             <button type="submit" class="displayname-button">Submit</button>
                         </form>
@@ -47,14 +50,29 @@
                     <td>{{ 'Yes' if user.email_verified else 'No' }}</td>
                     <td>
                         <form method="POST" class="password-form" action="{{ url_for('reset_password_admin', user_id=user.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <input type="password" name="new_password" class="change-password" placeholder="New password"  autocomplete="new-password" required>
                             <button type="submit" class="reset-button">Reset</button>
                         </form>
                     </td>
                     <td>{{ user.bio or '—' }}</td>
                     <td>
+                        <form method="POST" action="{{ url_for('toggle_lock', user_id=user.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {% if user.locked %}
+                                <span class="status locked">🔒 Locked</span>
+                            {% else %}
+                                <span class="status unlocked">✅ Active</span>
+                            {% endif %}
+                            <button type="submit" class="lock-toggle">
+                                {{ 'Unlock' if user.locked else 'Lock' }}
+                            </button>
+                        </form>
+                    </td>
+                    <td>
                         <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}">
-                        <button type="submit" class="trash-button">🗑️</button>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="trash-button">🗑️</button>
                         </form>
                     </td>
                 </tr>
