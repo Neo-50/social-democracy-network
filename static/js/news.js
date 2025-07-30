@@ -1,5 +1,6 @@
 let activeCommentBox = null;
 let activeCommentContent = null;
+window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -183,7 +184,7 @@ function toggleEmojiPicker(event) {
 }
 
 function addUnicodeReaction(target, emoji, targetId, targetType) {
-    console.log("******Firing addUnicodeReaction()******");
+    console.log("***Firing addUnicodeReaction()***");
 
     const span = document.createElement("span");
     span.className = "emoji-reaction";
@@ -299,12 +300,11 @@ function handleReactionClick(event) {
 
     // Parse current users
     let users = JSON.parse(span.dataset.users || "[]");
+    console.log('Current users in emoji reaction: ', users)
 
     if (users.includes(CURRENT_USER_ID)) {
         // Remove user from list
-        console.log("Before filter:", span.dataset.users);
         users = users.filter(id => id !== CURRENT_USER_ID);
-        console.log("After filter:", users);
 
         if (users.length === 0) {
             // Remove the reaction element entirely
@@ -321,6 +321,21 @@ function handleReactionClick(event) {
         countSpan.textContent = users.length;
         span.dataset.users = JSON.stringify(users);
     }
+    console.log('Initiating reaction Flask route');
+    fetch("/toggle-reaction", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": window.csrfToken,
+        },
+        body: JSON.stringify({
+            target_id: span.dataset.targetId,
+            target_type: span.dataset.targetType,
+            emoji: emoji,
+            action: users.includes(CURRENT_USER_ID) ? "remove" : "add",
+        }),
+    });
+
 
     // TODO: Optionally: send update to server here via fetch or socket
 }
