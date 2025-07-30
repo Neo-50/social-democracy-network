@@ -378,6 +378,43 @@ def delete_account():
     flash("Your account has been deleted.", "success")
     return redirect(url_for('home'))
 
+@csrf.exempt
+@app.route("/toggle-reaction", methods=["POST"])
+@login_required
+def toggle_reaction():
+    from models.reactions import Reaction
+    data = request.get_json()
+    target_id = data.get("target_id")
+    target_type = data.get("target_type")
+    emoji = data.get("emoji")
+    action = data.get("action")
+
+    if not target_id or not target_type or not emoji or action not in {"add", "remove"}:
+        return jsonify(success=False, error="Invalid data"), 400
+
+    existing = Reaction.query.filter_by(
+        user_id=current_user.id,
+        target_type=target_type,
+        target_id=target_id,
+        emoji=emoji
+    ).first()
+
+    if action == "add":
+        if not existing:
+            reaction = Reaction(
+                user_id=current_user.id,
+                target_type=target_type,
+                target_id=target_id,
+                emoji=emoji
+            )
+            db.session.add(reaction)
+    elif action == "remove":
+        if existing:
+            db.session.delete(existing)
+
+    db.session.commit()
+    return jsonify(success=True)
+
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):
     article = NewsArticle.query.get(article_id)
