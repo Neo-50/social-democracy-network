@@ -101,17 +101,22 @@ def update_user_last_active():
     if user_id:
         user = User.query.get(user_id)
         if user:
-            if user.locked:
+            if current_user.is_authenticated and user.locked:
                 logout_user()
-                flash("Your account has been locked.", "error")
-                return redirect(url_for('login'))
+                if 'locked_flash_sent' not in session:
+                    flash("Your account has been locked.", "error")
+                    session['locked_flash_sent'] = True
+                if request.endpoint != 'login':
+                    return redirect(url_for('login'))
+
             now = datetime.now(timezone.utc)
             if not user.last_active or (
-            now - user.last_active.replace(tzinfo=timezone.utc)
+                now - user.last_active.replace(tzinfo=timezone.utc)
             ).total_seconds() > 30:
                 user.last_active = now
                 user.current_page = request.path  # optional
                 db.session.commit()
+
             g.current_user = user
 
 def get_online_users():
