@@ -3,6 +3,7 @@
 {% block content %}
     <h2>Register</h2>
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>Username:</label><br>
         <input type="text" name="username" required><br>
 
@@ -26,6 +27,7 @@
 <br>
 <p>Didn't receive the verification email?</p>
 <form method="POST" action="{{ url_for('resend_verification_email') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="email" name="email" placeholder="Enter your email" required>
     <button type="submit">Resend Verification Email</button>
 </form>
