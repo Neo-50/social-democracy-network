@@ -235,7 +235,7 @@ html, body {
 }
 
 .inline-emoji {
-    border-radius: 0;
+    border-radius: 0 !important;
     padding: 0;
     margin: 0;
 }
