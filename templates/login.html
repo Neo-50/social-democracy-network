@@ -3,6 +3,7 @@
 {% block content %}
 <h2>Login</h2>
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>Email:</label><br>
     <input type="email" name="email" required><br>
 
@@ -13,6 +14,7 @@
 </form>
 <h2>Forgot Password?</h2>
 <form method="POST" action="{{ url_for('forgot_password') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="email" name="email" placeholder="Enter your account email" required>
     <button type="submit">Send Reset Link</button>
 </form>
