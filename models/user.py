@@ -2,7 +2,7 @@ from db_init import db
 from flask_login import UserMixin
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
-from .reactions import Reaction, reaction_user
+from .reactions import Reaction
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -51,9 +51,3 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.id)
-
-Reaction.users = db.relationship(
-    lambda: User,
-    secondary=reaction_user,
-    backref="reactions"
-)

@@ -147,11 +147,13 @@ function toggleEmojiPicker(event) {
 
         if (!picker.dataset.bound) {
             picker.addEventListener("emoji-click", (e) => {
-            const editor = box.querySelector(".comment-editor");
-            const hidden = box.querySelector(".hidden-content");
-            editor.focus();
-            insertAtCursor(editor, e.detail.unicode);
-            if (hidden) hidden.value = editor.innerHTML;
+                const editor = box.querySelector(".comment-editor");
+                const hidden = box.querySelector(".hidden-content");
+                editor.focus();
+                
+                insertAtCursor(editor, e.detail.unicode);
+                console.log('Emoji inserted: ', editor, e.detail.unicode);
+                if (hidden) hidden.value = editor.innerHTML;
             });
             picker.dataset.bound = "true";
         }
@@ -175,7 +177,9 @@ function toggleEmojiPicker(event) {
         if (!picker.dataset.bound) {
             picker.addEventListener("emoji-click", (e) => {
                 if (activeCommentContent) {
+                    console.log('Inserting emoji: ', e.detail.unicode, commentId);
                     addUnicodeReaction(activeCommentContent, e.detail.unicode, commentId, "news_comment");
+                    console.log('Emoji inserted: ', e.detail.unicode, commentId);
                 }
             });
             picker.dataset.bound = "true";
@@ -183,7 +187,7 @@ function toggleEmojiPicker(event) {
     }
 }
 
-function addUnicodeReaction(target, emoji, targetId, targetType) {
+function addUnicodeReaction(target, emoji, targetId, targetType, action) {
     console.log("***Firing addUnicodeReaction()***");
 
     const span = document.createElement("span");
@@ -205,6 +209,12 @@ function addUnicodeReaction(target, emoji, targetId, targetType) {
     const inlineEmojis = target.querySelectorAll("img.inline-emoji");
     inlineEmojis.forEach(img => {
         img.style.marginBottom = "0.25em";
+    });
+    reactionSocket.emit("toggle_reaction", {
+        emoji: emoji,
+        target_type: targetType,
+        target_id: targetId,
+        action: action // "add" or "remove"
     });
 }
 
