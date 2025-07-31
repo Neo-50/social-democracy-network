@@ -222,6 +222,12 @@ function addUnicodeReaction(target, emoji, targetId, targetType) {
         action: action,
         room_id: NEWS_ROOM_ID
     });
+    reactionSocket.emit("toggle_reaction", {
+        emoji,
+        target_type: targetType,
+        target_id: targetId,
+        action,
+    });
 }
 
 function handleReactionClick(event) {

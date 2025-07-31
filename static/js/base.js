@@ -67,6 +67,11 @@ window.initReactionSocket = function () {
             span.dataset.users = JSON.stringify([user_id]);
             span.innerText = emoji;
 
+            const count = document.createElement("span");
+            count.className = "reaction-count";
+            count.textContent = "1";
+            span.appendChild(count);
+
             // Append if it doesn't exist already
             const exists = [...content.querySelectorAll(".emoji-reaction")]
                 .some(s => s.dataset.emoji === emoji && s.dataset.targetId === String(target_id));
