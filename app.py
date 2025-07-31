@@ -382,13 +382,20 @@ def delete_account():
 @socketio.on("toggle_reaction", namespace="/reactions")
 @login_required
 def toggle_reaction(data):
+    app.logger.info("Something happened")
+    print("Hello is anybody home?")
     emoji = data.get("emoji")
     target_type = data.get("target_type")
     target_id = data.get("target_id")
     action = data.get("action")
     
     if not emoji or not target_type or not target_id or action not in {"add", "remove"}:
+        print('Data error on toggle_reaction: ', emoji, target_type, target_id, action)
         return
+    elif (emoji and target_type and target_id and action in {"add", "remove"}):
+        print('Toggle_reaction data exists: ', emoji, target_type, target_id, action)
+    else:
+        print('Toggle_reaction else hit: ', emoji, target_type, target_id, action)
 
     reaction = Reaction.query.filter_by(
         user_id=current_user.id,
@@ -403,7 +410,6 @@ def toggle_reaction(data):
             target_type=target_type,
             target_id=target_id,
             emoji=emoji,
-            action=action
         )
         db.session.add(reaction)
 
