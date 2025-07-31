@@ -26,28 +26,59 @@ messageSocket.on('notification', data => {
 		if (data.count) {
 			showNotificationBadge(data.count);
 		}
-		});
+	});
 });
 
-reactionSocket.on("reaction_update", (data) => {
-    const { emoji, target_type, target_id, CURRENT_USER_ID, action } = data;
+window.initReactionSocket = function () {
+    console.log("⚡ initReactionSocket called");
 
-    if (target_type !== "news_comment") return;
+    reactionSocket.on("reaction_update", (data) => {
+        const { emoji, target_type, target_id, user_id, action } = data;
 
-    const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
-    if (!thread) return;
+        if (target_type !== "news") return;
 
-    const content = thread.querySelector(".comment-content");
+        const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
+        if (!thread) return;
 
-    if (action === "add") {
-        if (!thread.querySelector(`[data-emoji="${emoji}"]`)) {
-            addUnicodeReaction(content, emoji, target_id, target_type, "add");
+        const content = thread.querySelector(".comment-content");
+        if (!content) return;
+
+        // You can put any DOM updates based on the action (e.g. 'add', 'remove') here
+        console.log("Received reaction update:", { emoji, user_id, action });
+
+        // Example: Maybe highlight the reaction or increment/decrement count
+    });
+};
+
+window.initChatSocket = function () {
+    chatSocket.emit('join', 'chat_global');
+    console.log("🟢 Joined chatroom");
+
+    chatSocket.off('new_message');
+
+    chatSocket.on('new_message', msg => {
+        console.log("📥 [chat] New message received:", msg);
+        appendMessage(
+            msg.user_id,
+            msg.username,
+            msg.display_name,
+            msg.content,
+            msg.id,
+            msg.avatar,
+            msg.bio,
+            msg.timestamp,
+            false // Append to bottom
+        );
+    });
+    chatSocket.on('delete_message', data => {
+        const { message_id } = data;
+        const msgEl = document.querySelector(`.chat-message[data-message-id="${message_id}"]`);
+        if (msgEl) {
+            msgEl.remove();
+            console.log(`[chat] Message ${message_id} deleted via socket`);
         }
-    } else if (action === "remove") {
-        const span = thread.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
-        if (span) span.remove();
-    }
-});
+    });
+};
 
 document.addEventListener('DOMContentLoaded', () => {
 	// Check for unread messages on page load
@@ -249,65 +280,9 @@ window.initMessageThreadSocket = function () {
     });
 };
 
-
-window.initChatSocket = function () {
-    chatSocket.emit('join', 'chat_global');
-            console.log("🟢 Joined chatroom");
-
-    chatSocket.off('new_message');
-
-    chatSocket.on('new_message', msg => {
-        console.log("📥 [chat] New message received:", msg);
-        appendMessage(
-            msg.user_id,
-            msg.username,
-            msg.display_name,
-            msg.content,
-            msg.id,
-            msg.avatar,
-            msg.bio,
-            msg.timestamp,
-            false // Append to bottom
-        );
-    }); 
-    chatSocket.on('delete_message', data => {
-        const { message_id } = data;
-        const msgEl = document.querySelector(`.chat-message[data-message-id="${message_id}"]`);
-        if (msgEl) {
-            msgEl.remove();
-            console.log(`[chat] Message ${message_id} deleted via socket`);
-        }
-    });
-};
-
 setTimeout(() => {
         document.querySelectorAll('.flash-message').forEach(el => el.remove());
 }, 4000);
-
-window.initReactionSocket = function () {
-    console.log("⚡ initReactionSocket called");
-
-    reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_type, target_id, user_id, action } = data;
-
-        if (target_type !== "news_comment") return;
-
-        const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
-        if (!thread) return;
-
-        const content = thread.querySelector(".comment-content");
-        if (!content) return;
-
-        if (action === "add") {
-            if (!thread.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`)) {
-                addUnicodeReaction(content, emoji, target_id, target_type, "add");
-            }
-        } else if (action === "remove") {
-            const span = thread.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
-            if (span) span.remove();
-        }
-    });
-};
 
 function updateDate() {
     const currentDate = new Date();

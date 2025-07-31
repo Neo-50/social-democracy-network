@@ -98,7 +98,6 @@ async function submitMessageForm(e) {
 
         if (result.success) {
             const msg = result.message;
-            const timestamp = msg.timestamp + 'Z';
 
             // Render locally
             renderNewMessage(msg, "sent");

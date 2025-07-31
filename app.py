@@ -417,7 +417,8 @@ def toggle_reaction(data):
         "target_id": target_id,
         "user_id": current_user.id,
         "action": action
-    }, broadcast=True)
+    }, room='reactions',
+       namespace='/reactions')
 
 
 @app.route('/check_metadata_status/<int:article_id>')
@@ -1251,32 +1252,35 @@ def add_csrf_cookie(response):
     response.set_cookie('csrf_token', generate_csrf())
     return response
 
+@socketio.on('join', namespace='/chat')
+def handle_join_chat(room_id):
+    join_room(room_id)
+    print(f"💬 [chat] Joined room: {room_id}")
 
 @socketio.on('join', namespace='/messages')
 def handle_join_messages(room_id):
     join_room(room_id)
     print(f"📥 [messages] Joined room: {room_id}")
 
-@socketio.on('join', namespace='/chat')
-def handle_join_chat(room_id):
+@socketio.on('join', namespace='/reactions')
+def handle_join_reactions(room_id):
     join_room(room_id)
-    print(f"💬 [chat] Joined room: {room_id}")
-
-@socketio.on('new_message', namespace='/messages')
-def handle_new_message_messages(data):
-    print("🔥 [messages] Rebroadcasting:", data)
-    emit('new_message', data, room=data['room_id'], include_self=False)
+    print(f"😮 [reactions] Joined room: {room_id}")
 
 @socketio.on('new_message', namespace='/chat')
 def handle_new_message_chat(data):
     print("🔥 [chat] Rebroadcasting:", data)
     emit('new_message', data, room=data['room_id'])
 
-@socketio.on('connect', namespace='/messages')
-def handle_messages_connect():
-    if current_user.is_authenticated:
-        join_room(current_user.id)
-        print('Joined notifications room')
+@socketio.on('new_message', namespace='/messages')
+def handle_new_message_messages(data):
+    print("🔥 [messages] Rebroadcasting:", data)
+    emit('new_message', data, room=data['room_id'], include_self=False)
+
+@socketio.on('reaction_update', namespace='/reactions')
+def handle_reaction_update(data):
+    print("🔥 [reactions] Rebroadcasting:", data)
+    emit('reaction_update', data, room=data['room_id'])
 
 
 if __name__ == '__main__':
