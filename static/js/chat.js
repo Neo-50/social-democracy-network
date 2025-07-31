@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (typeof window.initChatSocket === "function") {
         window.initChatSocket();
-    } 
+    }
 
     console.log({
           scrollTop: chatContainer.scrollTop,

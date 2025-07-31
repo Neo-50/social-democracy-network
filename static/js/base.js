@@ -30,12 +30,24 @@ messageSocket.on('notification', data => {
 });
 
 window.initReactionSocket = function () {
-    console.log("⚡ initReactionSocket called");
+    console.log("🔥 initReactionSocket called");
+    reactionSocket.off('connect');
 
-    reactionSocket.on("reaction_update", (data) => {
+    if (reactionSocket.connected) {
+        console.log("🟢 Reaction socket already connected");
+    } else {
+        reactionSocket.on('connect', () => {
+            console.log("🟢 Reaction socket connected");
+        });
+    }
+    
+    window.reactionSocket.emit("join", NEWS_ROOM_ID);
+
+    window.reactionSocket.on("reaction_update", (data) => {
         const { emoji, target_type, target_id, user_id, action } = data;
 
-        if (target_type !== "news") return;
+        // Only proceed if this update is for this section (like "news")
+        if (target_type !== NEWS_ROOM_ID) return;
 
         const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
         if (!thread) return;
@@ -43,21 +55,63 @@ window.initReactionSocket = function () {
         const content = thread.querySelector(".comment-content");
         if (!content) return;
 
-        // You can put any DOM updates based on the action (e.g. 'add', 'remove') here
-        console.log("Received reaction update:", { emoji, user_id, action });
+        console.log("⚡ Reaction update received:", { emoji, target_id, user_id, action });
 
-        // Example: Maybe highlight the reaction or increment/decrement count
+        // Add or remove the reaction span
+        if (action === "add") {
+            const span = document.createElement("span");
+            span.className = "emoji-reaction";
+            span.dataset.emoji = emoji;
+            span.dataset.targetId = target_id;
+            span.dataset.targetType = target_type;
+            span.dataset.users = JSON.stringify([user_id]);
+            span.innerText = emoji;
+
+            // Append if it doesn't exist already
+            const exists = [...content.querySelectorAll(".emoji-reaction")]
+                .some(s => s.dataset.emoji === emoji && s.dataset.targetId === String(target_id));
+            if (!exists) {
+                content.appendChild(span);
+            }
+        } else if (action === "remove") {
+            const spans = content.querySelectorAll(`.emoji-reaction[data-emoji="${emoji}"]`);
+            spans.forEach(span => {
+                const users = JSON.parse(span.dataset.users || "[]");
+                const updatedUsers = users.filter(uid => uid !== user_id);
+                if (updatedUsers.length === 0) {
+                    span.remove(); // No more users reacted, remove it
+                } else {
+                    span.dataset.users = JSON.stringify(updatedUsers);
+                    span.querySelector(".reaction-count").textContent = updatedUsers.length;
+                }
+            });
+        }
     });
 };
 
 window.initChatSocket = function () {
-    chatSocket.emit('join', 'chat_global');
-    console.log("🟢 Joined chatroom");
+    console.log("💬 initChatSocket called");
 
     chatSocket.off('new_message');
+    chatSocket.off('delete_message');
+
+    const joinRoom = () => {
+        chatSocket.emit('join', 'chat_global');
+        console.log("🟢 Joined chatroom");
+    };
+
+    if (chatSocket.connected) {
+        console.log("🟢 Chat socket already connected");
+        joinRoom();
+    } else {
+        chatSocket.on('connect', () => {
+            console.log("🟢 Chat socket just connected");
+            joinRoom();
+        });
+    }
 
     chatSocket.on('new_message', msg => {
-        console.log("📥 [chat] New message received:", msg);
+        console.log("📩 [chat] New message received:", msg);
         appendMessage(
             msg.user_id,
             msg.username,
@@ -70,6 +124,7 @@ window.initChatSocket = function () {
             false // Append to bottom
         );
     });
+
     chatSocket.on('delete_message', data => {
         const { message_id } = data;
         const msgEl = document.querySelector(`.chat-message[data-message-id="${message_id}"]`);
@@ -256,28 +311,20 @@ window.initMessageThreadSocket = function () {
 
     messageSocket.off('new_message');
 
-    messageSocket.on('connect', () => {
-        console.log("🟢 Socket connected");
-
-        messageSocket.on('delete_message', (data) => {
-            const messageId = data.message_id;
-            const messageWrapper = document.querySelector(`.message-wrapper[data-id='${messageId}']`);
-            if (messageWrapper) {
-                messageWrapper.remove();
-                console.log("❌ Message deleted via socket:", messageId);
-            } else {
-                console.log("ℹ️ Message already deleted on this client:", messageId);
-            }
-        });
-
-        messageSocket.on('new_message', (msg) => {
-            console.log("📨 New socket message:", msg);
-            renderNewMessage(msg);
-        });
-
+    const joinRoom = () => {
         messageSocket.emit('join', window.ROOM_ID);
-            console.log("📥 Joined room:", window.ROOM_ID);
-    });
+        console.log("🟢 Joined room:", window.ROOM_ID);
+    };
+
+    if (messageSocket.connected) {
+        console.log("🟢 Socket already connected");
+        joinRoom();
+    } else {
+        messageSocket.on('connect', () => {
+            console.log("🟢 Socket just connected");
+            joinRoom();
+        });
+    }
 };
 
 setTimeout(() => {

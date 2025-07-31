@@ -4,7 +4,9 @@ const NEWS_ROOM_ID = 'news'
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.reactionSocket.emit("join", NEWS_ROOM_ID);
+    if (typeof window.initChatSocket === "function") {
+        window.initReactionSocket();
+    }
     // UNICODE EMOJI DRAWER
     document.addEventListener("click", e => {
         const emojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
@@ -162,7 +164,8 @@ function toggleEmojiPicker(event) {
     if (toolbar) {
         const picker = document.querySelector("#unicode-emoji-picker");
         let wrapper = document.querySelector("#unicode-wrapper-reaction");
-        const commentId = toolbar.closest(".comments-thread").dataset.commentId;
+        picker.dataset.commentId = toolbar.closest(".comments-thread").dataset.commentId;
+
 
         if (!toolbar.contains(wrapper)) {
             toolbar.appendChild(wrapper);
@@ -175,10 +178,11 @@ function toggleEmojiPicker(event) {
 
         if (!picker.dataset.bound) {
             picker.addEventListener("emoji-click", (e) => {
+                const commentId = picker.dataset.commentId;
                 if (activeCommentContent) {
-                    console.log('Inserting emoji: ', e.detail.unicode, commentId);
+                    console.log('Inserting emoji: ', activeCommentContent, e.detail.unicode, commentId, NEWS_ROOM_ID);
                     addUnicodeReaction(activeCommentContent, e.detail.unicode, commentId, NEWS_ROOM_ID);
-                    console.log('Emoji inserted: ', e.detail.unicode, commentId);
+                    console.log('Emoji inserted: ', activeCommentContent, e.detail.unicode, commentId, NEWS_ROOM_ID);
                 }
             });
             picker.dataset.bound = "true";
