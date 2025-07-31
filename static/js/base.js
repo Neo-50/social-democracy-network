@@ -55,7 +55,7 @@ window.initReactionSocket = function () {
         const content = thread.querySelector(".comment-content");
         if (!content) return;
 
-        console.log("⚡ Reaction update received:", { emoji, target_id, user_id, action });
+        console.log("⚡ Reaction update received:", { emoji, target_type, target_id, user_id, action });
 
         // Add or remove the reaction span
         if (action === "add") {
@@ -134,6 +134,7 @@ window.initChatSocket = function () {
         }
     });
 };
+
 
 document.addEventListener('DOMContentLoaded', () => {
 	// Check for unread messages on page load

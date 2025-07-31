@@ -402,7 +402,8 @@ def toggle_reaction(data):
             user_id=current_user.id,
             target_type=target_type,
             target_id=target_id,
-            emoji=emoji
+            emoji=emoji,
+            action=action
         )
         db.session.add(reaction)
 

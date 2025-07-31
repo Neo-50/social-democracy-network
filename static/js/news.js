@@ -190,7 +190,7 @@ function toggleEmojiPicker(event) {
     }
 }
 
-function addUnicodeReaction(target, emoji, targetId, targetType, action) {
+function addUnicodeReaction(target, emoji, targetId, targetType) {
     console.log("***Firing addUnicodeReaction()***");
 
     const span = document.createElement("span");
@@ -199,6 +199,7 @@ function addUnicodeReaction(target, emoji, targetId, targetType, action) {
     span.dataset.targetId = targetId;
     span.dataset.targetType = targetType;
     span.dataset.users = JSON.stringify([CURRENT_USER_ID]);
+    let action = "add";
 
     // 👇 Set up count element
     span.innerHTML = `${emoji} <span class="reaction-count">1</span>`;
@@ -217,6 +218,7 @@ function addUnicodeReaction(target, emoji, targetId, targetType, action) {
         emoji: emoji,
         target_type: targetType,
         target_id: targetId,
+        user_id: CURRENT_USER_ID,
         action: action,
         room_id: NEWS_ROOM_ID
     });
