@@ -238,7 +238,8 @@
     <div id="toast" class="toast-message"></div>
 <script>
     window.CURRENT_USER_ID = {{ current_user.id if current_user.is_authenticated else 'null' }};
-    window.IS_ADMIN = {{ 'true' if current_user.is_authenticated and current_user.is_admin else 'false' }}; 
+    window.IS_ADMIN = {{ 'true' if current_user.is_authenticated and current_user.is_admin else 'false' }};
+    window.NEWS_ROOM_ID = 'news';
     {% if recipient %}
         window.RECIPIENT_ID = {{ recipient.id }};
     {% endif %}

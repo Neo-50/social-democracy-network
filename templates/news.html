@@ -35,7 +35,7 @@
                 </strong>
             </div>
             
-            <div class="comment-content">
+            <div class="comment-content" data-comment-id="{{ comment.id }}">
                 <p>{{ comment.formatted_content() | emojify|  safe }}</p>
             </div>
 
