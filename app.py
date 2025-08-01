@@ -7,6 +7,7 @@ from bleach.css_sanitizer import CSSSanitizer
 from bs4 import BeautifulSoup
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message, ChatMessage, Reaction
+from sqlalchemy import func
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import re
@@ -250,6 +251,63 @@ def news():
             if scraped and scraped.get("embed_html"):
                 article.embed_html = scraped["embed_html"]
 
+    # Use `group_concat` on SQLite and `array_agg` on Postgres
+    if app.config['SQLALCHEMY_DATABASE_URI'].startswith("sqlite"):
+        reactions = (
+            db.session.query(
+                Reaction.target_id,
+                Reaction.emoji,
+                func.count(Reaction.id).label("count"),
+                func.group_concat(Reaction.user_id).label("user_ids")
+            )
+            .filter(Reaction.target_type == "news")
+            .group_by(Reaction.target_id, Reaction.emoji)
+            .all()
+        )
+
+        # Convert the user_ids string into list of ints (safe for empty strings)
+        reaction_map = {}
+        for r in reactions:
+            key = f"news:{r.target_id}"  # Use string key from the beginning
+
+            if key not in reaction_map:
+                reaction_map[key] = []
+
+            user_ids = [int(uid) for uid in r.user_ids.split(",")] if r.user_ids else []
+
+            reaction_map[key].append({
+                "emoji": r.emoji,
+                "count": r.count,
+                "user_ids": user_ids,
+                "target_id": r.target_id,
+            })
+
+    else:
+        # Assume Postgres
+        reactions = (
+            db.session.query(
+                Reaction.target_id,
+                Reaction.emoji,
+                func.count(Reaction.id).label("count"),
+                func.array_agg(Reaction.user_id).label("user_ids")
+            )
+            .filter(Reaction.target_type == "news")
+            .group_by(Reaction.target_id, Reaction.emoji)
+            .all()
+        )
+
+        reaction_map = {}
+        for r in reactions:
+            key = ("news", r.target_id)
+            if key not in reaction_map:
+                reaction_map[key] = []
+
+            reaction_map[key].append({
+                "emoji": r.emoji,
+                "count": r.count,
+                "user_ids": r.user_ids
+            })
+
     return render_template(
         'news.html',
         articles=articles,
@@ -259,6 +317,7 @@ def news():
         article_to_highlight=highlighted,
         selected_category=selected_category,
         count=count,
+        reaction_map=reaction_map
     )
 
 @app.route('/activism')
@@ -382,8 +441,7 @@ def delete_account():
 @socketio.on("toggle_reaction", namespace="/reactions")
 @login_required
 def toggle_reaction(data):
-    app.logger.info("Something happened")
-    print("Hello is anybody home?")
+    app.logger.info("Toggle reaction called")
     emoji = data.get("emoji")
     target_type = data.get("target_type")
     target_id = data.get("target_id")
@@ -392,10 +450,6 @@ def toggle_reaction(data):
     if not emoji or not target_type or not target_id or action not in {"add", "remove"}:
         print('Data error on toggle_reaction: ', emoji, target_type, target_id, action)
         return
-    elif (emoji and target_type and target_id and action in {"add", "remove"}):
-        print('Toggle_reaction data exists: ', emoji, target_type, target_id, action)
-    else:
-        print('Toggle_reaction else hit: ', emoji, target_type, target_id, action)
 
     reaction = Reaction.query.filter_by(
         user_id=current_user.id,
