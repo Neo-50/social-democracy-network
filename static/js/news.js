@@ -197,7 +197,7 @@ document.querySelectorAll('.reply-toggle').forEach(button => {
         const drawer = wrapper.querySelector('.reply-drawer');
         if (drawer) {
             drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
-            const pickerWrapper = drawer.querySelector('.emoji-wrapper');
+            const pickerWrapper = drawer.querySelector('.custom-wrapper');
             if (pickerWrapper) {
                 initializeEmojiDrawer(wrapper, pickerWrapper);
             }
