@@ -417,15 +417,16 @@ def toggle_reaction(data):
         db.session.delete(reaction)
 
     db.session.commit()
-
-    emit("reaction_update", {
-        "emoji": emoji,
-        "target_type": target_type,
-        "target_id": target_id,
-        "user_id": current_user.id,
-        "action": action
-    }, room='reactions',
-       namespace='/reactions')
+    
+    print(f"[toggle_reaction] Emitting reaction_update: {emoji=} {target_type=} {target_id=} {current_user.id=} {action=}")
+    socketio.emit("reaction_update", {
+		"emoji": emoji,
+		"target_type": target_type,
+		"target_id": target_id,
+		"user_id": current_user.id,
+		"action": action,
+		"room_id": "news",  # Include room_id!
+	}, namespace="/reactions")
 
 
 @app.route('/check_metadata_status/<int:article_id>')

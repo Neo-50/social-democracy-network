@@ -45,7 +45,7 @@ window.initReactionSocket = function () {
 
     window.reactionSocket.on("reaction_update", (data) => {
         const { emoji, target_type, target_id, user_id, action } = data;
-
+        console.log("⚡ Reaction update received:", { emoji, target_type, target_id, user_id, action });
         // Only proceed if this update is for this section (like "news")
         if (target_type !== NEWS_ROOM_ID) return;
 
@@ -55,10 +55,9 @@ window.initReactionSocket = function () {
         const content = thread.querySelector(".comment-content");
         if (!content) return;
 
-        console.log("⚡ Reaction update received:", { emoji, target_type, target_id, user_id, action });
-
         // Add or remove the reaction span
         if (action === "add") {
+            console.log('Add reaction for receiver called')
             const span = document.createElement("span");
             span.className = "emoji-reaction";
             span.dataset.emoji = emoji;
@@ -70,7 +69,9 @@ window.initReactionSocket = function () {
             const count = document.createElement("span");
             count.className = "reaction-count";
             count.textContent = "1";
+            console.log('Add reaction for receiver')
             span.appendChild(count);
+            console.log('Reaction added')
 
             // Append if it doesn't exist already
             const exists = [...content.querySelectorAll(".emoji-reaction")]
@@ -79,12 +80,15 @@ window.initReactionSocket = function () {
                 content.appendChild(span);
             }
         } else if (action === "remove") {
+            console.log('Remove reaction for receiver called')
             const spans = content.querySelectorAll(`.emoji-reaction[data-emoji="${emoji}"]`);
             spans.forEach(span => {
                 const users = JSON.parse(span.dataset.users || "[]");
                 const updatedUsers = users.filter(uid => uid !== user_id);
                 if (updatedUsers.length === 0) {
+                    console.log('Removing reaction for receiver')
                     span.remove(); // No more users reacted, remove it
+                    console.log('Reaction removed')
                 } else {
                     span.dataset.users = JSON.stringify(updatedUsers);
                     span.querySelector(".reaction-count").textContent = updatedUsers.length;
