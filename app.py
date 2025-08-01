@@ -289,7 +289,7 @@ def news():
                 Reaction.target_id,
                 Reaction.emoji,
                 func.count(Reaction.id).label("count"),
-                func.array_agg(Reaction.user_id).label("user_ids")
+                func.array_agg(Reaction.user_id).label("user_ids"),
             )
             .filter(Reaction.target_type == "news")
             .group_by(Reaction.target_id, Reaction.emoji)
@@ -298,14 +298,15 @@ def news():
 
         reaction_map = {}
         for r in reactions:
-            key = ("news", r.target_id)
-            if key not in reaction_map:
-                reaction_map[key] = []
+            key_str = f"news:{r.target_id}"
+            if key_str not in reaction_map:
+                reaction_map[key_str] = []
 
-            reaction_map[key].append({
+            reaction_map[key_str].append({
                 "emoji": r.emoji,
                 "count": r.count,
-                "user_ids": r.user_ids
+                "user_ids": r.user_ids,
+                "target_id": r.target_id,
             })
 
     return render_template(
