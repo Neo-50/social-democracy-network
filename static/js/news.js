@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof window.initChatSocket === "function") {
         window.initReactionSocket();
     }
+
     // UNICODE EMOJI DRAWER
     document.addEventListener("click", e => {
         const emojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
@@ -188,88 +189,6 @@ function toggleEmojiPicker(event) {
             picker.dataset.bound = "true";
         }
     }
-}
-
-function addUnicodeReaction(target, emoji, targetId, targetType) {
-    console.log("***Firing addUnicodeReaction()***");
-
-    const span = document.createElement("span");
-    span.className = "emoji-reaction";
-    span.dataset.emoji = emoji;
-    span.dataset.targetId = targetId;
-    span.dataset.targetType = targetType;
-    span.dataset.users = JSON.stringify([CURRENT_USER_ID]);
-    let action = "add";
-
-    // 👇 Set up count element
-    span.innerHTML = `${emoji} <span class="reaction-count">1</span>`;
-
-    // ✅ ADD CLICK HANDLER
-    span.addEventListener("click", handleReactionClick);
-
-    target.appendChild(span);
-
-    // 👇 Optional: layout fix for inline emojis
-    const inlineEmojis = target.querySelectorAll("img.inline-emoji");
-    inlineEmojis.forEach(img => {
-        img.style.marginBottom = "0.25em";
-    });
-    window.reactionSocket.emit("reaction_update", {
-        emoji: emoji,
-        target_type: targetType,
-        target_id: targetId,
-        user_id: CURRENT_USER_ID,
-        action: action,
-        room_id: NEWS_ROOM_ID
-    });
-    reactionSocket.emit("toggle_reaction", {
-        emoji,
-        target_type: targetType,
-        target_id: targetId,
-        action,
-    });
-}
-
-function handleReactionClick(event) {
-    const span = event.currentTarget;
-    const emoji = span.dataset.emoji;
-    const targetId = span.dataset.targetId;
-    const countSpan = span.querySelector(".reaction-count");
-    let action;
-
-    // Parse current users
-    let users = JSON.parse(span.dataset.users || "[]");
-    console.log('Current users in emoji reaction: ', users)
-
-    if (users.includes(CURRENT_USER_ID)) {
-        // Remove user from list
-        users = users.filter(id => id !== CURRENT_USER_ID);
-
-        if (users.length === 0) {
-            // Remove the reaction element entirely
-            span.remove();
-            console.log("Users after removal:", users);
-            action = "remove";
-        } else {
-            // Update count and user list
-            countSpan.textContent = users.length;
-            span.dataset.users = JSON.stringify(users);
-        }
-    } else {
-        // Add user
-        users.push(CURRENT_USER_ID);
-        countSpan.textContent = users.length;
-        span.dataset.users = JSON.stringify(users);
-        action = "add";
-    }
-    console.log('Initiating reaction Flask route');
-    console.log('Data payload: ', emoji, NEWS_ROOM_ID, targetId, action)
-    reactionSocket.emit("toggle_reaction", {
-        emoji,
-        target_type: NEWS_ROOM_ID,
-        target_id: targetId,
-        action,
-    });
 }
 
 document.querySelectorAll('.reply-toggle').forEach(button => {

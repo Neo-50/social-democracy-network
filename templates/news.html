@@ -378,9 +378,13 @@
     <script src="{{ url_for('static', filename='js/custom_emoji_list.js') }}"></script>
     <script src="{{ url_for('static', filename='js/custom_emojis.js') }}"></script>
     <script src="{{ url_for('static', filename='js/file_upload.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/news.js') }}"></script>
     <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script>
+        window.reactionMap = {{ reaction_map | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/news_reactions.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/news.js') }}"></script>
     {% if scrape_id %}
         <script>
             document.addEventListener('DOMContentLoaded', () => {
