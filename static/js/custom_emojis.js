@@ -60,8 +60,12 @@ function toggleCustomEmojiDrawer(button) {
         }
     }
     if (commentBox) {
-        console.log('Comment box dectected!')
+        console.log('Comment box dectected!', commentBox)
         let wrapper = commentBox.querySelector(".custom-wrapper");
+        if (!wrapper) {
+            console.warn("No custom-wrapper found inside this commentBox:", commentBox);
+            return;
+        }
         let drawer = wrapper.querySelector(".custom-emoji-drawer");
         if (wrapper.style.display === "flex") {
             console.log('Wapper detected with flex display');
