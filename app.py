@@ -474,7 +474,7 @@ def toggle_reaction(data):
 
     db.session.commit()
     
-    print(f"[toggle_reaction] Emitting reaction_update: {emoji=} {target_type=} {target_id=} {current_user.id=} {users} {action=}")
+    print(f"[toggle_reaction] Emitting reaction_update: emoji='{emoji}' target_type='{target_type}' target_id='{target_id}' user_id={current_user.id} users={users} action='{action}'")
     socketio.emit("reaction_update", {
 		"emoji": emoji,
 		"target_type": target_type,
