@@ -3,25 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const [key, reactions] of Object.entries(window.reactionMap)) {
         const [targetType, targetId] = key.split(":");
 
-        reactions.forEach(({ emoji, user_ids, target_id }) => {
-            const commentEl = document.querySelector(`[data-comment-id="${targetId}"] .comment-content`);
+        const commentEl = document.querySelector(`[data-comment-id="${targetId}"] .comment-content`);
+        if (!commentEl) continue;
 
-            if (commentEl) {
-                addUnicodeReaction(commentEl, emoji, target_id, targetType, false);
-            }
+        reactions.forEach(({ emoji, user_ids }) => {
+            addUnicodeReaction(commentEl, emoji, targetId, targetType, user_ids, false);
         });
     }
 });
 
-function addUnicodeReaction(target, emoji, targetId, targetType, emit = true) {
+function addUnicodeReaction(target, emoji, targetId, targetType, users, emit = true) {
     console.log("***Firing addUnicodeReaction()***");
-
+    console.log("Value of users in addUnicodeReaction: ", users)
     const span = document.createElement("span");
     span.className = "emoji-reaction";
     span.dataset.emoji = emoji;
     span.dataset.targetId = targetId;
     span.dataset.targetType = targetType;
-    span.dataset.users = JSON.stringify([CURRENT_USER_ID]);
+    span.dataset.users = JSON.stringify(users);
     let action = "add";
 
     // 👇 Set up count element
@@ -36,24 +35,25 @@ function addUnicodeReaction(target, emoji, targetId, targetType, emit = true) {
     });
 
     if (emit) {
-    window.reactionSocket.emit("reaction_update", {
-        emoji,
-        target_type: targetType,
-        target_id: targetId,
-        user_id: CURRENT_USER_ID,
-        action,
-        room_id: NEWS_ROOM_ID,
-    });
+        window.reactionSocket.emit("reaction_update", {
+            emoji,
+            target_type: targetType,
+            target_id: targetId,
+            user_id: CURRENT_USER_ID,
+            users: [users],
+            action,
+            room_id: NEWS_ROOM_ID,
+        });
 
-    reactionSocket.emit("toggle_reaction", {
-        emoji,
-        target_type: targetType,
-        target_id: targetId,
-        action,
-    });
+        reactionSocket.emit("toggle_reaction", {
+            emoji,
+            target_type: targetType,
+            target_id: targetId,
+            users: users,
+            action
+        });
     }
 }
-
 
 function handleReactionClick(event) {
     const span = event.currentTarget;
@@ -64,7 +64,7 @@ function handleReactionClick(event) {
 
     // Parse current users
     let users = JSON.parse(span.dataset.users || "[]");
-    console.log('Current users in emoji reaction: ', users)
+    console.log("Parsed users type:", typeof users, "Value:", users);
 
     if (users.includes(CURRENT_USER_ID)) {
         // Remove user from list
@@ -88,11 +88,12 @@ function handleReactionClick(event) {
         action = "add";
     }
     console.log('Initiating reaction Flask route');
-    console.log('Data payload: ', emoji, NEWS_ROOM_ID, targetId, action)
+    console.log('Data payload: ', emoji, NEWS_ROOM_ID, targetId, users, action)
     reactionSocket.emit("toggle_reaction", {
         emoji,
         target_type: NEWS_ROOM_ID,
         target_id: targetId,
-        action,
+        users,
+        action
     });
 }

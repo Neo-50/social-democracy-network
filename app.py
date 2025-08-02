@@ -446,6 +446,7 @@ def toggle_reaction(data):
     emoji = data.get("emoji")
     target_type = data.get("target_type")
     target_id = data.get("target_id")
+    users = data.get("users")
     action = data.get("action")
     
     if not emoji or not target_type or not target_id or action not in {"add", "remove"}:
@@ -473,14 +474,15 @@ def toggle_reaction(data):
 
     db.session.commit()
     
-    print(f"[toggle_reaction] Emitting reaction_update: {emoji=} {target_type=} {target_id=} {current_user.id=} {action=}")
+    print(f"[toggle_reaction] Emitting reaction_update: {emoji=} {target_type=} {target_id=} {current_user.id=} {users} {action=}")
     socketio.emit("reaction_update", {
 		"emoji": emoji,
 		"target_type": target_type,
 		"target_id": target_id,
 		"user_id": current_user.id,
+        "users": users,
 		"action": action,
-		"room_id": "news",  # Include room_id!
+		"room_id": "news",
 	}, namespace="/reactions")
 
 
