@@ -79,6 +79,7 @@ function handleReactionClick(event) {
             // Update count and user list
             countSpan.textContent = users.length;
             span.dataset.users = JSON.stringify(users);
+            action = "remove";
         }
     } else {
         // Add user
