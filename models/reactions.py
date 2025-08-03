@@ -1,4 +1,11 @@
 from db_init import db
+from . import db
+
+reaction_user = db.Table(
+    "reaction_user",
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+    db.Column("reaction_id", db.Integer, db.ForeignKey("reaction.id")),
+)
 
 class Reaction(db.Model):
     __tablename__ = 'reaction'
@@ -13,6 +20,12 @@ class Reaction(db.Model):
         db.UniqueConstraint('target_type', 'target_id', 'emoji', name='_unique_reaction_per_target_emoji'),
     )
 
+    users = db.relationship(
+        "User",
+        secondary=reaction_user,
+        backref="reactions"
+    )
+
     def count(self):
         return 1  # each row is one user's reaction
 
@@ -20,5 +33,5 @@ class Reaction(db.Model):
         return {
             "emoji": self.emoji,
             "count": self.count(),
-            "user_ids": [self.user.id],
+            "user_ids": [u.id for u in self.users],
         }

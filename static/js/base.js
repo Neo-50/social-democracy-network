@@ -43,62 +43,29 @@ window.initReactionSocket = function () {
     
     window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
 
-    window.reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_type, target_id, user_id, users, action, room_id } = data;
-        if (!Array.isArray(users)) {
-            console.warn("Missing or invalid users array, exiting");
-            console.log(users)
-            return;
+    reactionSocket.on("reaction_update", (data) => {
+        const { emoji, target_id, user_ids, count } = data;
+
+        const span = document.querySelector(
+            `.reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
+        );
+
+        if (!span) return;
+
+        // Update count
+        const countSpan = span.querySelector(".reaction-count");
+        countSpan.textContent = count;
+
+        // Add or remove highlight for this user
+        if (user_ids.includes(CURRENT_USER_ID)) {
+            span.classList.add("reacted-by-me");
+        } else {
+            span.classList.remove("reacted-by-me");
         }
-        console.log("⚡ Reaction update received:", { emoji, target_type, target_id, user_id, action });
-        // Only proceed if this update is for this section (like "news")
-        if (target_type !== room_id) return;
 
-        const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
-        if (!thread) return;
-
-        const content = thread.querySelector(".comment-content");
-        if (!content) return;
-
-        // Add or remove the reaction span
-        if (action === "add") {
-            console.log('Add reaction for receiver called')
-            const span = document.createElement("span");
-            span.className = "emoji-reaction";
-            span.dataset.emoji = emoji;
-            span.dataset.targetId = target_id;
-            span.dataset.targetType = target_type;
-            span.dataset.users = JSON.stringify([user_id]);
-            span.innerText = emoji;
-
-            const count = document.createElement("span");
-            count.className = "reaction-count";
-            span.dataset.users = JSON.stringify(users);
-            count.textContent = users.length;
-            console.log('Add reaction for receiver')
-            span.appendChild(count);
-            console.log('Reaction added')
-
-            // Append if it doesn't exist already
-            const exists = [...content.querySelectorAll(".emoji-reaction")]
-                .some(s => s.dataset.emoji === emoji && s.dataset.targetId === String(target_id));
-            if (!exists) {
-                content.appendChild(span);
-            }
-        } else if (action === "remove") {
-            console.log('Remove reaction for receiver called')
-            const spans = content.querySelectorAll(`.emoji-reaction[data-emoji="${emoji}"]`);
-            spans.forEach(span => {
-                span.dataset.users = JSON.stringify(users);
-                span.querySelector(".reaction-count").textContent = users.length;
-
-                if (users.length === 0) {
-                    console.log("Removing reaction for receiver");
-                    span.remove();
-                    console.log("Reaction removed");
-                }
-            });
-
+        // Optionally remove reaction span if nobody has it
+        if (count === 0) {
+            span.remove();
         }
     });
 };
