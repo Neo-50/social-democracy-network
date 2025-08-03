@@ -41,10 +41,10 @@ window.initReactionSocket = function () {
         });
     }
     
-    window.reactionSocket.emit("join", NEWS_ROOM_ID);
+    window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
 
     window.reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_type, target_id, user_id, users, action } = data;
+        const { emoji, target_type, target_id, user_id, users, action, room_id } = data;
         if (!Array.isArray(users)) {
             console.warn("Missing or invalid users array, exiting");
             console.log(users)
@@ -52,7 +52,7 @@ window.initReactionSocket = function () {
         }
         console.log("⚡ Reaction update received:", { emoji, target_type, target_id, user_id, action });
         // Only proceed if this update is for this section (like "news")
-        if (target_type !== NEWS_ROOM_ID) return;
+        if (target_type !== room_id) return;
 
         const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
         if (!thread) return;

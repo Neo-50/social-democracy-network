@@ -42,7 +42,7 @@ function addUnicodeReaction(target, emoji, targetId, targetType, users, emit = t
             user_id: CURRENT_USER_ID,
             users: [users],
             action,
-            room_id: NEWS_ROOM_ID,
+            room_id: window.NEWS_ROOM_ID,
         });
 
         reactionSocket.emit("toggle_reaction", {
@@ -88,11 +88,11 @@ function handleReactionClick(event) {
         span.dataset.users = JSON.stringify(users);
         action = "add";
     }
-    console.log('Initiating reaction Flask route');
-    console.log('Data payload: ', emoji, NEWS_ROOM_ID, targetId, users, action)
+    console.log('reactionSocket.emit toggle_reaction');
+    console.log('Data payload: ', emoji, window.NEWS_ROOM_ID, targetId, users, action)
     reactionSocket.emit("toggle_reaction", {
         emoji,
-        target_type: NEWS_ROOM_ID,
+        target_type: window.NEWS_ROOM_ID,
         target_id: targetId,
         users,
         action
