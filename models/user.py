@@ -2,7 +2,6 @@ from db_init import db
 from flask_login import UserMixin
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
-from .reactions import Reaction
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'

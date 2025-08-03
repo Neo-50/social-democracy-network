@@ -301,6 +301,8 @@ def news():
             key_str = f"news:{r.target_id}"
             if key_str not in reaction_map:
                 reaction_map[key_str] = []
+            
+            user_ids = [int(uid) for uid in r.user_ids] if r.user_ids else []
 
             reaction_map[key_str].append({
                 "emoji": r.emoji,
@@ -443,48 +445,49 @@ def delete_account():
 @login_required
 def toggle_reaction(data):
     app.logger.info("Toggle reaction called")
+
     emoji = data.get("emoji")
     target_type = data.get("target_type")
     target_id = data.get("target_id")
-    users = data.get("users")
     action = data.get("action")
-    
+
     if not emoji or not target_type or not target_id or action not in {"add", "remove"}:
-        print('Data error on toggle_reaction: ', emoji, target_type, target_id, action)
+        print('Data error on toggle_reaction:', emoji, target_type, target_id, action)
         return
 
+    # 1. Look up existing reaction row for this emoji/target (NOT tied to user)
     reaction = Reaction.query.filter_by(
-        user_id=current_user.id,
         target_type=target_type,
         target_id=target_id,
         emoji=emoji
     ).first()
 
-    if action == "add" and not reaction:
-        reaction = Reaction(
-            user_id=current_user.id,
-            target_type=target_type,
-            target_id=target_id,
-            emoji=emoji,
-        )
-        db.session.add(reaction)
+    # 2. If not found and user is adding, create the reaction
+    if action == "add":
+        if not reaction:
+            reaction = Reaction(
+                target_type=target_type,
+                target_id=target_id,
+                emoji=emoji
+            )
+            db.session.add(reaction)
 
+        if current_user not in reaction.users:
+            reaction.users.append(current_user)
+
+    # 3. If removing, detach user
     elif action == "remove" and reaction:
-        db.session.delete(reaction)
+        if current_user in reaction.users:
+            reaction.users.remove(current_user)
 
-    db.session.commit()
+            # Optionally delete the reaction entirely if no users remain
+            if len(reaction.users) == 0:
+                db.session.delete(reaction)
     
-    print(f"[toggle_reaction] Emitting reaction_update: emoji='{emoji}' target_type='{target_type}' target_id='{target_id}' user_id={current_user.id} users={users} action='{action}'")
-    socketio.emit("reaction_update", {
-		"emoji": emoji,
-		"target_type": target_type,
-		"target_id": target_id,
-		"user_id": current_user.id,
-        "users": users,
-		"action": action,
-		"room_id": "news",
-	}, namespace="/reactions")
+    db.session.commit()
 
+    # Emit updated data to all clients in the same room
+    socketio.emit("reaction_update", reaction.to_dict(), to=target_type)
 
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):
