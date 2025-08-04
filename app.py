@@ -291,8 +291,9 @@ def news():
                 Reaction.target_id,
                 Reaction.emoji,
                 func.count(Reaction.id).label("count"),
-                func.array_agg(Reaction.user_id).label("user_ids"),
+                func.array_agg(reaction_user.c.user_id).label("user_ids"),
             )
+            .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
             .filter(Reaction.target_type == "news")
             .group_by(Reaction.target_id, Reaction.emoji)
             .all()
