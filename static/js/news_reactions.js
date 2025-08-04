@@ -12,29 +12,74 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function addUnicodeReaction(target, emoji, targetId, targetType, user_ids) {
-    user_ids = user_ids || [];
+function addUnicodeReaction(target, emoji, targetId, targetType, user_ids = []) {
+    const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
+    const alreadyReacted = user_ids.includes(CURRENT_USER_ID);
+
+    if (existing) {
+        const countSpan = existing.querySelector(".reaction-count");
+        let count = parseInt(countSpan.textContent) || 0;
+
+        if (alreadyReacted) {
+            // User already reacted, so remove their reaction
+            user_ids = [...user_ids, CURRENT_USER_ID];
+            count = Math.max(0, count - 1);
+
+            if (user_ids.length === 0) {
+                // No more users, remove the emoji entirely
+                existing.remove();
+                window.reactionSocket.emit("toggle_reaction", {
+                    emoji,
+                    target_type: targetType,
+                    target_id: targetId,
+                    action: "remove",
+                });
+                return;
+            } else {
+                // Update count and class
+                countSpan.textContent = count;
+                existing.classList.remove("reacted-by-me");
+                return;
+            }
+        } else {
+            // Someone else reacted, user is adding their reaction
+            user_ids = [...user_ids, CURRENT_USER_ID];
+            count += 1;
+
+            existing.classList.add("reacted-by-me");
+            countSpan.textContent = count;
+            return;
+        }
+    }
+
+    // No existing reaction for this emoji — create a new span
     const span = document.createElement("span");
     span.className = "emoji-reaction reaction";
     span.dataset.emoji = emoji;
     span.dataset.targetId = targetId;
     span.dataset.targetType = targetType;
 
-    // ✅ Set highlight class on initial render
-    if (user_ids.includes(CURRENT_USER_ID)) {
-        span.classList.add("reacted-by-me");
+    // New reaction from this user
+    if (!user_ids.includes(CURRENT_USER_ID)) {
+        user_ids.push(CURRENT_USER_ID);
     }
 
-    // Inner structure
-    span.innerHTML = `${emoji} <span class="reaction-count">${user_ids.length}</span>`;
+    span.classList.add("reacted-by-me");
+    span.innerHTML = `${emoji} <span class="reaction-count">1</span>`;
     span.addEventListener("click", handleReactionClick);
     target.appendChild(span);
 
-    // Fix inline emoji spacing
+    // Fix spacing
     const inlineEmojis = target.querySelectorAll("img.inline-emoji");
     inlineEmojis.forEach(img => img.style.marginBottom = "0.25em");
-}
 
+    window.reactionSocket.emit("toggle_reaction", {
+        emoji,
+        target_type: targetType,
+        target_id: targetId,
+        action: "add",
+    });
+}
 
 
 function handleReactionClick(event) {

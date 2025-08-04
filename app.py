@@ -7,6 +7,7 @@ from bleach.css_sanitizer import CSSSanitizer
 from bs4 import BeautifulSoup
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message, ChatMessage, Reaction
+from models.reactions import reaction_user
 from sqlalchemy import func
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
@@ -258,8 +259,9 @@ def news():
                 Reaction.target_id,
                 Reaction.emoji,
                 func.count(Reaction.id).label("count"),
-                func.group_concat(Reaction.user_id).label("user_ids")
+                func.group_concat(reaction_user.c.user_id).label("user_ids"),
             )
+            .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
             .filter(Reaction.target_type == "news")
             .group_by(Reaction.target_id, Reaction.emoji)
             .all()
@@ -474,6 +476,8 @@ def toggle_reaction(data):
 
         if current_user not in reaction.users:
             reaction.users.append(current_user)
+            print("Dirty:", db.session.dirty)
+            print("New:", db.session.new)
 
     # 3. If removing, detach user
     elif action == "remove" and reaction:
@@ -486,8 +490,24 @@ def toggle_reaction(data):
     
     db.session.commit()
 
-    # Emit updated data to all clients in the same room
-    socketio.emit("reaction_update", reaction.to_dict(), to=target_type)
+    reaction = (
+        Reaction.query
+        .filter_by(target_type=target_type, target_id=target_id, emoji=emoji)
+        .options(db.joinedload(Reaction.users))
+        .first()
+    )
+
+    user_ids = [user.id for user in reaction.users] if reaction else []
+
+    # ✅ Send update to clients with user list
+    emit("reaction_update", {
+        "emoji": emoji,
+        "target_type": target_type,
+        "target_id": target_id,
+        "user_id": current_user.id,
+        "action": action,
+        "user_ids": user_ids,
+    }, room=f"{target_type}:{target_id}")
 
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):

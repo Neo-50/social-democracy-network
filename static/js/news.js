@@ -180,9 +180,15 @@ function toggleEmojiPicker(event) {
             picker.addEventListener("emoji-click", (e) => {
                 const commentId = picker.dataset.commentId;
                 if (activeCommentContent) {
-                    console.log('Inserting emoji: ', activeCommentContent, e.detail.unicode, commentId, window.NEWS_ROOM_ID);
-                    addUnicodeReaction(activeCommentContent, e.detail.unicode, commentId, window.NEWS_ROOM_ID);
-                    console.log('Emoji inserted: ', activeCommentContent, e.detail.unicode, commentId, window.NEWS_ROOM_ID);
+                    const emoji = e.detail.unicode;
+                    const key = `${commentId}-${emoji}`;
+                    const user_ids = [...(window.reactionUserMap[key] || [])];
+
+                    console.log("Inserting emoji:", emoji, "with users", user_ids);
+
+                    addUnicodeReaction(activeCommentContent, emoji, commentId, window.NEWS_ROOM_ID, user_ids);
+
+                    console.log("Emoji inserted:", emoji);
                 }
             });
             picker.dataset.bound = "true";
