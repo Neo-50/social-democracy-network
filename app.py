@@ -451,6 +451,7 @@ def toggle_reaction(data):
     emoji = data.get("emoji")
     target_type = data.get("target_type")
     target_id = data.get("target_id")
+    count = data.get("count")
     action = data.get("action")
 
     if not emoji or not target_type or not target_id or action not in {"add", "remove"}:
@@ -499,16 +500,17 @@ def toggle_reaction(data):
 
     user_ids = [user.id for user in reaction.users] if reaction else []
 
-    print('Emit reaction_update', 'emoji: ', emoji, 'target_type: ', target_type, 'target id: ', target_id, 'user id: ', current_user.id, 'action: ', action, 'user ids: ', user_ids)
+    print('Emit reaction_update: ', 'emoji: ', emoji, 'target_type: ', target_type, 'target id: ', target_id, 'user id: ', current_user.id, 'action: ', action, 'user ids: ', user_ids)
     socketio.emit("reaction_update", {
         "emoji": emoji,
         "target_type": target_type,
         "target_id": target_id,
         "user_id": current_user.id,
         "action": action,
+        "count": count,
         "user_ids": user_ids,
         "room_id": 'news'
-    }, room=f"{target_type}:{target_id}")
+    }, namespace="/reactions")
 
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):
@@ -1370,7 +1372,6 @@ def handle_new_message_messages(data):
 def handle_reaction_update(data):
     print("🔥 [reactions] Rebroadcasting:", data)
     emit('reaction_update', data, room=data['room_id'])
-
 
 if __name__ == '__main__':
     is_dev = os.environ.get("FLASK_ENV") == "development"

@@ -35,48 +35,62 @@ window.initReactionSocket = function () {
 
     if (reactionSocket.connected) {
         console.log("🟢 Reaction socket already connected");
+        window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
     } else {
         reactionSocket.on('connect', () => {
             console.log("🟢 Reaction socket connected");
+            window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
         });
     }
-    
-    window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
 
-    reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_type, target_id, user_id, action, user_ids } = data;
+    // Reaction update listener
+    window.reactionSocket.on("reaction_update", (data) => {
+        const { emoji, target_type, target_id, user_id, action, count, user_ids } = data;
 
-        console.log('Received reaction_update: ', 
-            'emoji: ', emoji, 
-            'target_type: ', target_type, 
-            'target id: ', target_id,
-            'user id: ', user_id, 
-            'action: ', action, 
-            'user ids: ', user_ids)
-        return;
-        // const span = document.querySelector(
-        //     `.reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
-        // );
+        console.log('Received reaction_update: ', data);
 
-        // if (!span) return;
+        let span = document.querySelector(`.reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`);
+        const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
+        const content = document.querySelector(".comment-content");
 
-        // // Update count
-        // const countSpan = span.querySelector(".reaction-count");
-        // countSpan.textContent = count;
+        if (!content || !thread) {
+            console.log('Not found, exiting: ', content, thread);
+            return;
+        }
 
-        // // Add or remove highlight for this user
-        // if (user_ids.includes(CURRENT_USER_ID)) {
-        //     span.classList.add("reacted-by-me");
-        // } else {
-        //     span.classList.remove("reacted-by-me");
-        // }
+        console.log('Found :', content, thread);
 
-        // // Optionally remove reaction span if nobody has it
-        // if (count === 0) {
-        //     span.remove();
-        // }
-    });
-};
+        if (action === "add") {
+            console.log('Add reaction called');
+
+            if (!span) {
+                span = document.createElement("span");
+                span.className = "emoji-reaction";
+                span.dataset.emoji = emoji;
+                span.dataset.targetId = target_id;
+                span.dataset.targetType = target_type;
+                span.dataset.users = JSON.stringify([user_id]);
+                span.innerText = emoji;
+
+                const countSpan = document.createElement("span");
+                countSpan.className = "reaction-count";
+                countSpan.textContent = count;
+                span.appendChild(countSpan);
+
+                content.appendChild(span);
+                console.log('Reaction created and added');
+            } else {
+                const countSpan = span.querySelector(".reaction-count");
+                if (countSpan) countSpan.textContent = count;
+            }
+        }
+
+        // Optionally remove reaction span if nobody has it
+        if (count === 0 && span) {
+            span.remove();
+        }
+    }); // ✅ closes reaction_update listener
+}; // ✅ closes initReactionSocket function
 
 window.initChatSocket = function () {
     console.log("💬 initChatSocket called");

@@ -184,11 +184,11 @@ function toggleEmojiPicker(event) {
                     const key = `${commentId}-${emoji}`;
                     const user_ids = [...(window.reactionUserMap[key] || [])];
 
-                    console.log("Inserting emoji:", emoji, "with users", user_ids);
+                    console.log("Inserting reaction:", emoji, "with users", user_ids);
 
                     addUnicodeReaction(activeCommentContent, emoji, commentId, window.NEWS_ROOM_ID, user_ids);
 
-                    console.log("Emoji inserted:", emoji);
+                    console.log("Reaction inserted:", emoji);
                 }
             });
             picker.dataset.bound = "true";

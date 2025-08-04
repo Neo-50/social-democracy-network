@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function addUnicodeReaction(target, emoji, targetId, targetType, user_ids = []) {
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
     const alreadyReacted = user_ids.includes(CURRENT_USER_ID);
+    let count = 0;
 
     if (existing) {
         const countSpan = existing.querySelector(".reaction-count");
-        let count = parseInt(countSpan.textContent) || 0;
+        count = parseInt(countSpan.textContent) || 0;
 
         if (alreadyReacted) {
             // User already reacted, so remove their reaction
@@ -32,6 +33,7 @@ function addUnicodeReaction(target, emoji, targetId, targetType, user_ids = []) 
                     emoji,
                     target_type: targetType,
                     target_id: targetId,
+                    count: count,
                     action: "remove",
                 });
                 return;
@@ -73,14 +75,16 @@ function addUnicodeReaction(target, emoji, targetId, targetType, user_ids = []) 
     const inlineEmojis = target.querySelectorAll("img.inline-emoji");
     inlineEmojis.forEach(img => img.style.marginBottom = "0.25em");
 
+    count += 1;
+
     window.reactionSocket.emit("toggle_reaction", {
         emoji,
         target_type: targetType,
         target_id: targetId,
+        count: count,
         action: "add",
     });
 }
-
 
 function handleReactionClick(event) {
     const span = event.currentTarget;
