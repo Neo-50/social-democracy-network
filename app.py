@@ -499,14 +499,15 @@ def toggle_reaction(data):
 
     user_ids = [user.id for user in reaction.users] if reaction else []
 
-    # ✅ Send update to clients with user list
-    emit("reaction_update", {
+    print('Emit reaction_update', 'emoji: ', emoji, 'target_type: ', target_type, 'target id: ', target_id, 'user id: ', current_user.id, 'action: ', action, 'user ids: ', user_ids)
+    socketio.emit("reaction_update", {
         "emoji": emoji,
         "target_type": target_type,
         "target_id": target_id,
         "user_id": current_user.id,
         "action": action,
         "user_ids": user_ids,
+        "room_id": 'news'
     }, room=f"{target_type}:{target_id}")
 
 @app.route('/check_metadata_status/<int:article_id>')

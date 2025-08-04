@@ -44,29 +44,37 @@ window.initReactionSocket = function () {
     window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
 
     reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_id, user_ids, count } = data;
+        const { emoji, target_type, target_id, user_id, action, user_ids } = data;
 
-        const span = document.querySelector(
-            `.reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
-        );
+        console.log('Received reaction_update: ', 
+            'emoji: ', emoji, 
+            'target_type: ', target_type, 
+            'target id: ', target_id,
+            'user id: ', user_id, 
+            'action: ', action, 
+            'user ids: ', user_ids)
+        return;
+        // const span = document.querySelector(
+        //     `.reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
+        // );
 
-        if (!span) return;
+        // if (!span) return;
 
-        // Update count
-        const countSpan = span.querySelector(".reaction-count");
-        countSpan.textContent = count;
+        // // Update count
+        // const countSpan = span.querySelector(".reaction-count");
+        // countSpan.textContent = count;
 
-        // Add or remove highlight for this user
-        if (user_ids.includes(CURRENT_USER_ID)) {
-            span.classList.add("reacted-by-me");
-        } else {
-            span.classList.remove("reacted-by-me");
-        }
+        // // Add or remove highlight for this user
+        // if (user_ids.includes(CURRENT_USER_ID)) {
+        //     span.classList.add("reacted-by-me");
+        // } else {
+        //     span.classList.remove("reacted-by-me");
+        // }
 
-        // Optionally remove reaction span if nobody has it
-        if (count === 0) {
-            span.remove();
-        }
+        // // Optionally remove reaction span if nobody has it
+        // if (count === 0) {
+        //     span.remove();
+        // }
     });
 };
 
