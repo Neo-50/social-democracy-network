@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const emojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
         if (!emojiButton) return;
 
-        toggleEmojiPicker({ target: emojiButton });
+        unicodeEmojiDrawer(emojiButton);
         });
 
     // CUSTOM EMOJI DRAWER
@@ -127,72 +127,62 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function toggleUnicodeEmojiDrawer(commentBox) {
-    const wrapper = commentBox.querySelector(".emoji-wrapper");
-    if (!wrapper) return;
-
-    wrapper.style.display = wrapper.style.display === "none" ? "block" : "none";
-}
-
-function toggleEmojiPicker(event) {
-    const button = event.target.closest(".emoji-button");
-    const toolbar = button.closest(".comment-toolbar");
+function unicodeEmojiDrawer(target) {
+    const button = target.closest(".emoji-button");
     const box = button.closest(".comment-box");
+    const pickerWrapper = box.querySelector(".emoji-wrapper");
+    const picker = pickerWrapper.querySelector("emoji-picker");
 
-    if (box) {
-        const pickerWrapper = box.querySelector(".emoji-wrapper");
-        const picker = pickerWrapper.querySelector("emoji-picker");
-
-        pickerWrapper.style.display =
-            pickerWrapper.style.display === "none" || !pickerWrapper.style.display
+    pickerWrapper.style.display =
+        pickerWrapper.style.display === "none" || !pickerWrapper.style.display
             ? "block"
             : "none";
 
-        if (!picker.dataset.bound) {
-            picker.addEventListener("emoji-click", (e) => {
-                const editor = box.querySelector(".comment-editor");
-                const hidden = box.querySelector(".hidden-content");
-                editor.focus();
-                insertAtCursor(editor, e.detail.unicode);
-                if (hidden) hidden.value = editor.innerHTML;
-            });
-            picker.dataset.bound = "true";
-        }
+    if (!picker.dataset.bound) {
+        picker.addEventListener("emoji-click", (e) => {
+            const editor = box.querySelector(".comment-editor");
+            const hidden = box.querySelector(".hidden-content");
+            editor.focus();
+            insertAtCursor(editor, e.detail.unicode);
+            if (hidden) hidden.value = editor.innerHTML;
+        });
+        picker.dataset.bound = "true";
+    }
     return;
+}
+
+function unicodeReactionDrawer(event) {
+    const button = event.target.closest(".emoji-button");
+    const toolbar = button.closest(".comment-toolbar");
+    const picker = document.querySelector("#unicode-emoji-picker");
+    let wrapper = document.querySelector("#unicode-wrapper-reaction");
+    picker.dataset.commentId = toolbar.closest(".comments-thread").dataset.commentId;
+
+    if (!toolbar.contains(wrapper)) {
+        toolbar.appendChild(wrapper);
     }
 
-    if (toolbar) {
-        const picker = document.querySelector("#unicode-emoji-picker");
-        let wrapper = document.querySelector("#unicode-wrapper-reaction");
-        picker.dataset.commentId = toolbar.closest(".comments-thread").dataset.commentId;
+    // Set current target for emoji insert
+    activeCommentContent = toolbar.parentElement.querySelector(".comment-content");
 
+    wrapper.classList.toggle("visible");
 
-        if (!toolbar.contains(wrapper)) {
-            toolbar.appendChild(wrapper);
-        }
+    if (!picker.dataset.bound) {
+        picker.addEventListener("emoji-click", (e) => {
+            const commentId = picker.dataset.commentId;
+            if (activeCommentContent) {
+                const emoji = e.detail.unicode;
+                const key = `${commentId}-${emoji}`;
+                const user_ids = [...(window.reactionUserMap[key] || [])];
 
-        // Set current target for emoji insert
-        activeCommentContent = toolbar.parentElement.querySelector(".comment-content");
+                console.log("Inserting reaction:", emoji, "from user: ", window.CURRENT_USER_ID);
 
-        wrapper.classList.toggle("visible");
+                addUnicodeReaction(activeCommentContent, emoji, commentId, window.NEWS_ROOM_ID, window.CURRENT_USER_ID, user_ids, true);
 
-        if (!picker.dataset.bound) {
-            picker.addEventListener("emoji-click", (e) => {
-                const commentId = picker.dataset.commentId;
-                if (activeCommentContent) {
-                    const emoji = e.detail.unicode;
-                    const key = `${commentId}-${emoji}`;
-                    const user_ids = [...(window.reactionUserMap[key] || [])];
-
-                    console.log("Inserting reaction:", emoji, "with users", user_ids);
-
-                    addUnicodeReaction(activeCommentContent, emoji, commentId, window.NEWS_ROOM_ID, user_ids);
-
-                    console.log("Reaction inserted:", emoji);
-                }
-            });
-            picker.dataset.bound = "true";
-        }
+                console.log("Reaction inserted:", emoji);
+            }
+        });
+        picker.dataset.bound = "true";
     }
 }
 
