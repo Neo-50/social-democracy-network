@@ -183,7 +183,7 @@ function unicodeReactionDrawer(toolbar) {
 
                 console.log("Inserting reaction:", emoji, "from user: ", window.CURRENT_USER_ID);
 
-                renderReaction({
+                window.renderReaction({
                     target: activeCommentContent,
                     emoji: emoji,
                     targetId: commentId,

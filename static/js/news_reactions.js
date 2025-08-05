@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!commentEl) continue;
 
         reactions.forEach(({ emoji, user_ids, target_id }) => {
-            renderReaction({
+            window.renderReaction({
                 target: commentEl,
                 emoji,
                 targetId,
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-function renderReaction({ 
+window.renderReaction = function({ 
     target, 
     emoji, 
     targetId, 
@@ -47,12 +47,14 @@ function renderReaction({
 
     // Emit socket event only when explicitly told (e.g. user insertion)
     if (emit && result) {
+        console.log('emit toggle_reaction')
         window.reactionSocket.emit("toggle_reaction", {
             emoji,
-            target_type: targetType,
             target_id: targetId,
+            target_type: targetType,
             action: result.action,
-            user_id,
+            user_id: user_id,
+            user_ids: user_ids,
         });
     }
 }

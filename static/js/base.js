@@ -45,12 +45,12 @@ window.initReactionSocket = function () {
 
     // Reaction update listener
     window.reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_id, action, user_ids } = data;
+        const { emoji, targetId, action, user_id, user_ids } = data;
 
         console.log('Received reaction_update: ', data);
 
-        let span = document.querySelector(`.reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`);
-        const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
+        let span = document.querySelector(`.reaction[data-emoji="${emoji}"][data-target-id="${targetId}"]`);
+        const thread = document.querySelector(`[data-comment-id="${targetId}"]`);
         const content = thread.querySelector(".comment-content");
         let count = user_ids.length;
 
@@ -64,38 +64,15 @@ window.initReactionSocket = function () {
         if (action === "add") {
             console.log('Add reaction called');
 
-
-            // renderReaction({
-            //     target: commentEl,
-            //     emoji,
-            //     targetId,
-            //     targetType: 'news',
-            //     user_id,
-            //     user_ids,
-            //     mode: 'update'
-            // });
-
-
-            if (!span) {
-                span = document.createElement("span");
-                span.className = "emoji-reaction";
-                span.dataset.emoji = emoji;
-                span.dataset.targetId = target_id;
-                span.dataset.targetType = target_type;
-                span.dataset.users = JSON.stringify([user_ids]);
-                span.innerText = emoji;
-
-                const countSpan = document.createElement("span");
-                countSpan.className = "reaction-count";
-                countSpan.textContent = count;
-                span.appendChild(countSpan);
-
-                content.appendChild(span);
-                console.log('Reaction created and added');
-            } else {
-                const countSpan = span.querySelector(".reaction-count");
-                if (countSpan) countSpan.textContent = count;
-            }
+            window.renderReaction({
+                target: content,
+                emoji,
+                targetId,
+                targetType: 'news',
+                user_id,
+                user_ids,
+                mode: 'update'
+            });
         }
 
         // Remove reaction span if nobody has it
