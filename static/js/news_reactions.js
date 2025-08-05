@@ -5,10 +5,59 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!commentEl) continue;
 
         reactions.forEach(({ emoji, user_ids, target_id }) => {
-            createNewReaction(commentEl, emoji, target_id, 'news', null, user_ids, false);
+            renderReaction({
+                target: commentEl,
+                emoji,
+                targetId,
+                targetType: 'news',
+                user_ids,
+                mode: 'load'
+            });
         });
     }
 });
+
+
+function renderReaction({ 
+    target, 
+    emoji, 
+    targetId, 
+    targetType, 
+    user_id = null, 
+    user_ids = [], 
+    mode = "update", // "load" | "update" | "insert"
+    emit = false 
+}) {
+    const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
+
+    // On page load, skip if it already exists
+    if (mode === "load" && existing) return;
+
+    let result;
+
+    if (existing) {
+        // Only update/remove if not load mode
+        if (mode !== "load") {
+            result = handleExistingReaction(existing, [...user_ids], user_id);
+            if (result.removed) return;
+        }
+    } else {
+        result = createNewReaction(target, emoji, targetId, targetType, user_id);
+    }
+
+    // Emit socket event only when explicitly told (e.g. user insertion)
+    if (emit && result) {
+        window.reactionSocket.emit("toggle_reaction", {
+            emoji,
+            target_type: targetType,
+            target_id: targetId,
+            action: result.action,
+            user_id,
+        });
+    }
+}
+
+
 
 function handleExistingReaction(existing, user_ids, user_id) {
     const countSpan = existing.querySelector(".reaction-count");
@@ -47,27 +96,6 @@ function createNewReaction(target, emoji, targetId, targetType, user_id) {
     return { user_ids: [user_id], action: "add" };
 }
 
-function addUnicodeReaction(target, emoji, targetId, targetType, user_id = null, user_ids = [], emit = true) {
-    const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
-    let result;
-
-    if (existing) {
-        result = handleExistingReaction(existing, [...user_ids], user_id);
-        if (result.removed) return;
-    } else {
-        result = createNewReaction(target, emoji, targetId, targetType, user_id);
-    }
-
-    if (emit) {
-        window.reactionSocket.emit("toggle_reaction", {
-            emoji,
-            target_type: targetType,
-            target_id: targetId,
-            action: result.action,
-            user_id,
-        });
-    }
-}
 
 function handleReactionClick(event) {
     const span = event.currentTarget;

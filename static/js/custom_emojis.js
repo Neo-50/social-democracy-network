@@ -17,7 +17,7 @@ document.addEventListener("click", (e) => {
     }
 });
 
-function toggleCustomEmojiDrawer(button) {
+function customEmojiDrawer(button) {
     console.log('Toggling custom emoji drawer');
     const commentBox = button.closest(".comment-box");
     console.log('Comment box:', commentBox);

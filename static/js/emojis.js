@@ -138,7 +138,7 @@ function initializeEmojiDrawer(wrapper) {
 
 }
 
-function toggleCustomEmojiDrawer() {
+function customEmojiDrawer() {
     const wrapper = document.querySelector('.custom-emoji-wrapper');
     const drawer = wrapper.querySelector('.custom-emoji-drawer');
 
