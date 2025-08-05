@@ -450,11 +450,10 @@ def toggle_reaction(data):
     target_id = data.get("target_id")
     target_type = "news"
     action = data.get("action")
+    user_id = data.get("user_id")
     user_ids = data.get("user_ids")
 
-    if not emoji or not target_id or not target_type or not user_ids or not action not in {"add", "remove"}:
-        print('Data error on toggle_reaction:', emoji, target_type, target_id, action)
-        return
+    print('Data received in toggle_reaction:', emoji, target_type, target_id, action)
 
     # 1. Look up existing reaction row for this emoji/target (NOT tied to user)
     reaction = Reaction.query.filter_by(
@@ -493,8 +492,9 @@ def toggle_reaction(data):
     print('Emit reaction_update: ', 'emoji: ', emoji, 'target id: ', target_id, 'user id: ', current_user.id, 'action: ', action,)
     socketio.emit("reaction_update", {
         "emoji": emoji,
-        "target_id": target_id,
+        "targetId": target_id,
         "action": action,
+        "user_id": user_id,
         "user_ids": user_ids,
         
     }, namespace="/reactions", include_self=False)
