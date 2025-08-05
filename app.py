@@ -258,7 +258,7 @@ def news():
             db.session.query(
                 Reaction.target_id,
                 Reaction.emoji,
-                func.count(Reaction.id).label("count"),
+                func.count(Reaction.id).label("reactionCount"),
                 func.group_concat(reaction_user.c.user_id).label("user_ids"),
             )
             .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
@@ -279,18 +279,16 @@ def news():
 
             reaction_map[key].append({
                 "emoji": r.emoji,
-                "count": r.count,
                 "user_ids": user_ids,
                 "target_id": r.target_id,
             })
-
     else:
         # Assume Postgres
         reactions = (
             db.session.query(
                 Reaction.target_id,
                 Reaction.emoji,
-                func.count(Reaction.id).label("count"),
+                func.count(Reaction.id).label("reactionCount"),
                 func.array_agg(reaction_user.c.user_id).label("user_ids"),
             )
             .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
@@ -309,7 +307,6 @@ def news():
 
             reaction_map[key_str].append({
                 "emoji": r.emoji,
-                "count": r.count,
                 "user_ids": r.user_ids,
                 "target_id": r.target_id,
             })
@@ -450,19 +447,19 @@ def toggle_reaction(data):
     app.logger.info("Toggle reaction called")
 
     emoji = data.get("emoji")
-    target_type = data.get("target_type")
     target_id = data.get("target_id")
-    count = data.get("count")
+    target_type = "news"
     action = data.get("action")
+    user_ids = data.get("user_ids")
 
-    if not emoji or not target_type or not target_id or action not in {"add", "remove"}:
+    if not emoji or not target_id or not target_type or not user_ids or not action not in {"add", "remove"}:
         print('Data error on toggle_reaction:', emoji, target_type, target_id, action)
         return
 
     # 1. Look up existing reaction row for this emoji/target (NOT tied to user)
     reaction = Reaction.query.filter_by(
-        target_type=target_type,
         target_id=target_id,
+        target_type=target_type,
         emoji=emoji
     ).first()
 
@@ -470,16 +467,14 @@ def toggle_reaction(data):
     if action == "add":
         if not reaction:
             reaction = Reaction(
-                target_type=target_type,
                 target_id=target_id,
+                target_type=target_type,
                 emoji=emoji
             )
             db.session.add(reaction)
 
         if current_user not in reaction.users:
             reaction.users.append(current_user)
-            print("Dirty:", db.session.dirty)
-            print("New:", db.session.new)
 
     # 3. If removing, detach user
     elif action == "remove" and reaction:
@@ -490,28 +485,19 @@ def toggle_reaction(data):
             if len(reaction.users) == 0:
                 db.session.delete(reaction)
     
+    db.session.refresh(reaction)
     db.session.commit()
-
-    reaction = (
-        Reaction.query
-        .filter_by(target_type=target_type, target_id=target_id, emoji=emoji)
-        .options(db.joinedload(Reaction.users))
-        .first()
-    )
 
     user_ids = [user.id for user in reaction.users] if reaction else []
 
-    print('Emit reaction_update: ', 'emoji: ', emoji, 'target_type: ', target_type, 'target id: ', target_id, 'user id: ', current_user.id, 'action: ', action, 'user ids: ', user_ids)
+    print('Emit reaction_update: ', 'emoji: ', emoji, 'target id: ', target_id, 'user id: ', current_user.id, 'action: ', action,)
     socketio.emit("reaction_update", {
         "emoji": emoji,
-        "target_type": target_type,
         "target_id": target_id,
-        "user_id": current_user.id,
         "action": action,
-        "count": count,
         "user_ids": user_ids,
-        "room_id": 'news'
-    }, namespace="/reactions")
+        
+    }, namespace="/reactions", include_self=False)
 
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):

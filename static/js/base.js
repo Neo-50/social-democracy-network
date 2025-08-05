@@ -45,13 +45,14 @@ window.initReactionSocket = function () {
 
     // Reaction update listener
     window.reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_type, target_id, user_id, action, count, user_ids } = data;
+        const { emoji, target_id, action, user_ids } = data;
 
         console.log('Received reaction_update: ', data);
 
         let span = document.querySelector(`.reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`);
         const thread = document.querySelector(`[data-comment-id="${target_id}"]`);
-        const content = document.querySelector(".comment-content");
+        const content = thread.querySelector(".comment-content");
+        let count = user_ids.length;
 
         if (!content || !thread) {
             console.log('Not found, exiting: ', content, thread);
@@ -69,7 +70,7 @@ window.initReactionSocket = function () {
                 span.dataset.emoji = emoji;
                 span.dataset.targetId = target_id;
                 span.dataset.targetType = target_type;
-                span.dataset.users = JSON.stringify([user_id]);
+                span.dataset.users = JSON.stringify([user_ids]);
                 span.innerText = emoji;
 
                 const countSpan = document.createElement("span");
@@ -85,12 +86,12 @@ window.initReactionSocket = function () {
             }
         }
 
-        // Optionally remove reaction span if nobody has it
+        // Remove reaction span if nobody has it
         if (count === 0 && span) {
             span.remove();
         }
-    }); // ✅ closes reaction_update listener
-}; // ✅ closes initReactionSocket function
+    });
+};
 
 window.initChatSocket = function () {
     console.log("💬 initChatSocket called");
