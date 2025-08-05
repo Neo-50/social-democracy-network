@@ -9,17 +9,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // UNICODE EMOJI DRAWER
     document.addEventListener("click", e => {
-        const emojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
-        if (!emojiButton) return;
+        console.log('Click')
+        const emojiButton = e.target.closest(".emoji-button");
+        if (!emojiButton) return; // No emoji button clicked
+        const toolbar = emojiButton.closest(".comment-toolbar");
+        const box = emojiButton.closest(".comment-box");
 
-        unicodeEmojiDrawer(emojiButton);
-        });
+        console.log('emojiButton: ', emojiButton, 'toolbar: ', toolbar, 'box: ', box);
+        if (toolbar) {
+            console.log('Toolbar found!')
+            unicodeReactionDrawer(toolbar);
+        }
+        if (box) {
+            unicodeEmojiDrawer(box);
+        }
+    });
 
     // CUSTOM EMOJI DRAWER
     document.addEventListener("click", e => {
         const customButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
         if (customButton) {
-            toggleCustomEmojiDrawer(customButton);
+            customEmojiDrawer(customButton);
         }
     });
 
@@ -127,9 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function unicodeEmojiDrawer(target) {
-    const button = target.closest(".emoji-button");
-    const box = button.closest(".comment-box");
+function unicodeEmojiDrawer(box) {
     const pickerWrapper = box.querySelector(".emoji-wrapper");
     const picker = pickerWrapper.querySelector("emoji-picker");
 
@@ -151,9 +159,7 @@ function unicodeEmojiDrawer(target) {
     return;
 }
 
-function unicodeReactionDrawer(event) {
-    const button = event.target.closest(".emoji-button");
-    const toolbar = button.closest(".comment-toolbar");
+function unicodeReactionDrawer(toolbar) {
     const picker = document.querySelector("#unicode-emoji-picker");
     let wrapper = document.querySelector("#unicode-wrapper-reaction");
     picker.dataset.commentId = toolbar.closest(".comments-thread").dataset.commentId;
@@ -177,7 +183,16 @@ function unicodeReactionDrawer(event) {
 
                 console.log("Inserting reaction:", emoji, "from user: ", window.CURRENT_USER_ID);
 
-                addUnicodeReaction(activeCommentContent, emoji, commentId, window.NEWS_ROOM_ID, window.CURRENT_USER_ID, user_ids, true);
+                renderReaction({
+                    target: activeCommentContent,
+                    emoji: emoji,
+                    targetId: commentId,
+                    targetType: window.NEWS_ROOM_ID,
+                    user_id: window.CURRENT_USER_ID,
+                    user_ids: user_ids,
+                    mode: "insert",
+                    emit: true
+                });
 
                 console.log("Reaction inserted:", emoji);
             }

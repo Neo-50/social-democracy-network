@@ -64,6 +64,18 @@ window.initReactionSocket = function () {
         if (action === "add") {
             console.log('Add reaction called');
 
+
+            // renderReaction({
+            //     target: commentEl,
+            //     emoji,
+            //     targetId,
+            //     targetType: 'news',
+            //     user_id,
+            //     user_ids,
+            //     mode: 'update'
+            // });
+
+
             if (!span) {
                 span = document.createElement("span");
                 span.className = "emoji-reaction";
