@@ -444,7 +444,7 @@ def delete_account():
 @socketio.on("toggle_reaction", namespace="/reactions")
 @login_required
 def toggle_reaction(data):
-    app.logger.info("Toggle reaction called")
+    print("Toggle reaction called")
 
     emoji = data.get("emoji")
     target_id = data.get("target_id")
@@ -453,16 +453,14 @@ def toggle_reaction(data):
     user_id = data.get("user_id")
     user_ids = data.get("user_ids")
 
-    print('Data received in toggle_reaction:', emoji, target_type, target_id, action)
+    print('Data received in toggle_reaction:', data)
 
-    # 1. Look up existing reaction row for this emoji/target (NOT tied to user)
     reaction = Reaction.query.filter_by(
         target_id=target_id,
         target_type=target_type,
         emoji=emoji
     ).first()
 
-    # 2. If not found and user is adding, create the reaction
     if action == "add":
         if not reaction:
             reaction = Reaction(
@@ -475,16 +473,15 @@ def toggle_reaction(data):
         if current_user not in reaction.users:
             reaction.users.append(current_user)
 
-    # 3. If removing, detach user
     elif action == "remove" and reaction:
-        if current_user in reaction.users:
-            reaction.users.remove(current_user)
-
-            # Optionally delete the reaction entirely if no users remain
+        print('toggle_reaction remove')
+        print(user_id, ' in ', reaction.users)
+        user_to_remove = next((user for user in reaction.users if user.id == user_id), None)
+        if user_to_remove:
+            reaction.users.remove(user_to_remove)
             if len(reaction.users) == 0:
                 db.session.delete(reaction)
     
-    db.session.refresh(reaction)
     db.session.commit()
 
     user_ids = [user.id for user in reaction.users] if reaction else []
