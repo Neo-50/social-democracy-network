@@ -9,15 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // UNICODE EMOJI DRAWER
     document.addEventListener("click", e => {
-        console.log('Click')
         const emojiButton = e.target.closest(".emoji-button");
         if (!emojiButton) return; // No emoji button clicked
         const toolbar = emojiButton.closest(".comment-toolbar");
         const box = emojiButton.closest(".comment-box");
 
-        console.log('emojiButton: ', emojiButton, 'toolbar: ', toolbar, 'box: ', box);
         if (toolbar) {
-            console.log('Toolbar found!')
             unicodeReactionDrawer(toolbar);
         }
         if (box) {

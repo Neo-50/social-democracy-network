@@ -71,7 +71,7 @@ window.initReactionSocket = function () {
                 targetType: 'news',
                 user_id,
                 user_ids,
-                mode: 'update'
+                mode: 'insert'
             });
         }
 

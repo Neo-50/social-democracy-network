@@ -18,47 +18,58 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-window.renderReaction = function({ 
-    target, 
-    emoji, 
-    targetId, 
-    targetType, 
-    user_id = null, 
-    user_ids = [], 
+window.renderReaction = function({
+    target,
+    emoji,
+    targetId,
+    targetType,
+    user_id = null,
+    user_ids = [],
     mode = "update", // "load" | "update" | "insert"
-    emit = false 
+    emit = false
 }) {
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
-
-    // On page load, skip if it already exists
-    if (mode === "load" && existing) return;
-
     let result;
 
-    if (existing) {
-        // Only update/remove if not load mode
-        if (mode !== "load") {
-            result = handleExistingReaction(existing, [...user_ids], user_id);
-            if (result.removed) return;
-        }
-    } else {
-        result = createNewReaction(target, emoji, targetId, targetType, user_id);
+    switch (mode) {
+        case "load":
+            // On page load, skip if it already exists
+            if (existing) return;
+            result = createNewReaction(target, emoji, targetId, targetType, user_id);
+            break;
+
+        case "update":
+            if (existing) {
+                result = handleExistingReaction(existing, [...user_ids], user_id);
+                if (result.removed) return; // No further action needed if it was removed
+            } else {
+                result = createNewReaction(target, emoji, targetId, targetType, user_id);
+            }
+            break;
+
+        case "insert":
+            // Always create new reaction for insertion
+            result = createNewReaction(target, emoji, targetId, targetType, user_id);
+            break;
+
+        default:
+            console.warn(`Unknown mode: ${mode}`);
+            return;
     }
 
     // Emit socket event only when explicitly told (e.g. user insertion)
     if (emit && result) {
-        console.log('emit toggle_reaction')
+        console.log("emit toggle_reaction");
         window.reactionSocket.emit("toggle_reaction", {
             emoji,
             target_id: targetId,
             target_type: targetType,
             action: result.action,
             user_id: user_id,
-            user_ids: user_ids,
+            user_ids: result.user_ids
         });
     }
-}
-
+};
 
 
 function handleExistingReaction(existing, user_ids, user_id) {
