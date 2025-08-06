@@ -109,19 +109,26 @@ function createNewReaction(target, emoji, targetId, targetType, user_id) {
     return { user_ids: [user_id], action: "add" };
 }
 
-
 function handleReactionClick(event) {
     const span = event.currentTarget;
     const emoji = span.dataset.emoji;
     const targetId = span.dataset.targetId;
-    const hasReacted = span.classList.contains("reacted-by-me");
+    const userIds = JSON.parse(span.dataset.userIds || "[]");
+    const hasReacted = userIds.includes(window.CURRENT_USER_ID);
 
+    console.log('handleReactionClilck data: ', emoji, targetId, userIds, window.CURRENT_USER_ID, hasReacted);
+    return;
     const action = hasReacted ? "remove" : "add";
 
-    window.reactionSocket.emit("toggle_reaction", {
+    window.renderReaction({
+        target: span.parentElement,
         emoji,
-        target_type: window.NEWS_ROOM_ID,
-        target_id: targetId,
-        action
+        targetId,
+        targetType: window.NEWS_ROOM_ID,
+        user_id: window.CURRENT_USER_ID,
+        user_ids: userIds,
+        mode: "update",
+        emit: true
     });
 }
+
