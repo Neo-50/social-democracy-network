@@ -42,45 +42,93 @@ window.initReactionSocket = function () {
             window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
         });
     }
-
-    // Reaction update listener
     window.reactionSocket.on("reaction_update", (data) => {
         const { emoji, targetId, action, user_id, user_ids } = data;
 
-        console.log('Received reaction_update: ', data);
+        const comment = document.querySelector(`[data-comment-id="${targetId}"]`);
+        const target = comment?.querySelector(".comment-content");
+        if (!target) return;
 
-        let span = document.querySelector(`.reaction[data-emoji="${emoji}"][data-target-id="${targetId}"]`);
-        const thread = document.querySelector(`[data-comment-id="${targetId}"]`);
-        const content = thread.querySelector(".comment-content");
-        let count = user_ids.length;
+        handleReactionUpdate(action, target, emoji, targetId, "news", user_id, user_ids);
+    });
+}
 
-        if (!content || !thread) {
-            console.log('Not found, exiting: ', content, thread);
-            return;
-        }
+    // Reaction update listener
+//     window.reactionSocket.on("reaction_update", (data) => {
+//         const { emoji, targetId, action, user_id, user_ids } = data;
 
-        console.log('Found :', content, thread);
+//         console.log('Received reaction_update: ', data);
 
-        if (action === "add") {
-            console.log('Add reaction called');
+//         let span = document.querySelector(`.reaction[data-emoji="${emoji}"][data-target-id="${targetId}"]`);
+//         const comment = document.querySelector(`[data-comment-id="${targetId}"]`);
+//         const target = thread.querySelector(".comment-content");
+//         let count = user_ids.length;
 
+//         if (!target || !comment) {
+//             console.log('Not found, exiting: ', target, comment);
+//             return;
+//         }
+
+//         console.log('Found :', target, comment);
+
+//         if (action === "add") {
+//             console.log('Add reaction called');
+
+//             window.renderReaction({
+//                 target: target,
+//                 emoji,
+//                 targetId,
+//                 targetType: 'news',
+//                 user_id,
+//                 user_ids,
+//                 mode: 'insert'
+//             });
+//         }
+
+//         // Remove reaction span if nobody has it
+//         if (count === 0 && span) {
+//             span.remove();
+//         }
+//     });
+// };
+
+
+function handleReactionUpdate(action, target, emoji, targetId, targetType, user_id, user_ids) {
+    const span = document.querySelector(
+        `.emoji-reaction[data-emoji="${emoji}"][data-target-id="${targetId}"]`
+    );
+
+    if (action === "add") {
+        if (span) {
+            // Update existing reaction count
+            const countEl = span.querySelector(".reaction-count");
+            if (countEl) countEl.textContent = user_ids.length;
+        } else {
+            // Create new reaction
             window.renderReaction({
-                target: content,
+                target,
                 emoji,
                 targetId,
-                targetType: 'news',
+                targetType,
                 user_id,
                 user_ids,
-                mode: 'insert'
+                mode: "insert"
             });
         }
+    }
+    else if (action === "remove") {
+        if (!span) return;
 
-        // Remove reaction span if nobody has it
-        if (count === 0 && span) {
+        if (user_ids.length === 0) {
+            // Remove entire reaction if no users left
             span.remove();
+        } else {
+            // Update count if users remain
+            const countEl = span.querySelector(".reaction-count");
+            if (countEl) countEl.textContent = user_ids.length;
         }
-    });
-};
+    }
+}
 
 window.initChatSocket = function () {
     console.log("💬 initChatSocket called");
