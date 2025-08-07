@@ -78,7 +78,7 @@ function handleExistingReaction(existing, user_ids, user_id) {
     console.log('handleExistingReaction called')
     const countSpan = existing.querySelector(".reaction-count");
     const alreadyReacted = user_ids.includes(user_id);
-    console.log('alreadyReacted: ', alreadyReacted, 'existing: ', existing, 'user ids: ', user_ids, 'user id: ', user_id);
+    console.log('alreadyReacted: ', alreadyReacted, 'user ids: ', user_ids, 'user id: ', user_id);
 
     if (alreadyReacted) {
         user_ids = user_ids.filter(id => id !== user_id);
@@ -92,25 +92,31 @@ function handleExistingReaction(existing, user_ids, user_id) {
             return { user_ids, action: "remove" };
         }
     } else {
-        user_ids.push(user_id);
         existing.classList.add("reacted-by-me");
         countSpan.textContent = user_ids.length;
+        if (!user_ids.includes(user_id)) {
+            user_ids.push(user_id);
+        }
         return { user_ids, action: "add" };
     }
 }
 
 function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
+    console.log('createNewReaction: ', 'target | ', target, 'emoji | ', emoji, 'target_id | ', target_id,
+        'targetType | ', targetType, 'user_id | ', user_id, 'user_ids | ', user_ids)
     const span = document.createElement("span");
     span.className = "emoji-reaction reaction reacted-by-me";
     span.dataset.emoji = emoji;
     span.dataset.targetId = target_id;
     span.dataset.targetType = targetType;
-    span.dataset.userIds = JSON.stringify(user_ids);
+    span.dataset.user_ids = JSON.stringify(user_ids);
     span.innerHTML = `${emoji} <span class="reaction-count">1</span>`;
     span.addEventListener("click", handleReactionClick);
     console.log('createNewReaction data: ', span)
     target.appendChild(span);
-    user_ids.push(user_id);
+    if (!user_ids.includes(user_id)) {
+        user_ids.push(user_id);
+    }
     return { user_ids, action: "add" };
 }
 
@@ -118,11 +124,9 @@ function handleReactionClick(event) {
     const span = event.currentTarget;
     const emoji = span.dataset.emoji;
     const targetId = span.dataset.targetId;
-    const userIds = JSON.parse(span.dataset.userIds || "[]");
-    const hasReacted = userIds.includes(window.CURRENT_USER_ID);
+    const user_ids = JSON.parse(span.dataset.user_ids || "[]");
 
-    console.log('handleReactionClick data: ', emoji, targetId, userIds, window.CURRENT_USER_ID, hasReacted);
-    console.log('Span parent element: ', span.parentElement)
+    console.log('handleReactionClick data: ', emoji, targetId, user_ids, window.CURRENT_USER_ID);
 
     window.renderReaction({
         target: span.parentElement,
@@ -130,7 +134,7 @@ function handleReactionClick(event) {
         target_id: targetId,
         targetType: window.NEWS_ROOM_ID,
         user_id: window.CURRENT_USER_ID,
-        user_ids: userIds,
+        user_ids: user_ids,
         mode: "update",
         emit: true
     });

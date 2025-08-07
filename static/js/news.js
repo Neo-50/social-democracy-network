@@ -175,10 +175,8 @@ function unicodeReactionDrawer(toolbar) {
             const commentId = picker.dataset.commentId;
             if (activeCommentContent) {
                 const emoji = e.detail.unicode;
-                const key = `${commentId}-${emoji}`;
-                const user_ids = [...(window.reactionUserMap[key] || [])];
 
-                console.log("Inserting reaction:", emoji, "from user: ", window.CURRENT_USER_ID);
+                console.log("unicodeReactionDrawer: ", 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, "user_id | ", window.CURRENT_USER_ID);
 
                 window.renderReaction({
                     target: activeCommentContent,
@@ -186,7 +184,7 @@ function unicodeReactionDrawer(toolbar) {
                     target_id: commentId,
                     targetType: window.NEWS_ROOM_ID,
                     user_id: window.CURRENT_USER_ID,
-                    user_ids: user_ids,
+                    user_ids: [window.CURRENT_USER_ID],
                     mode: "insert",
                     emit: true
                 });
