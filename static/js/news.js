@@ -183,7 +183,7 @@ function unicodeReactionDrawer(toolbar) {
                 window.renderReaction({
                     target: activeCommentContent,
                     emoji: emoji,
-                    targetId: commentId,
+                    target_id: commentId,
                     targetType: window.NEWS_ROOM_ID,
                     user_id: window.CURRENT_USER_ID,
                     user_ids: user_ids,
