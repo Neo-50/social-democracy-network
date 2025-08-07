@@ -108,12 +108,10 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     span.dataset.userIds = JSON.stringify(user_ids);
     span.innerHTML = `${emoji} <span class="reaction-count">1</span>`;
     span.addEventListener("click", handleReactionClick);
-    // Fix spacing
-    // const inlineEmojis = target.querySelectorAll("img.inline-emoji");
-    // inlineEmojis.forEach(img => img.style.marginBottom = "0.25em");
     console.log('createNewReaction data: ', span)
     target.appendChild(span);
-    return { user_ids: [user_id], action: "add" };
+    user_ids.push(user_id);
+    return { user_ids, action: "add" };
 }
 
 function handleReactionClick(event) {
@@ -125,7 +123,6 @@ function handleReactionClick(event) {
 
     console.log('handleReactionClick data: ', emoji, targetId, userIds, window.CURRENT_USER_ID, hasReacted);
     console.log('Span parent element: ', span.parentElement)
-    // const action = hasReacted ? "remove" : "add";
 
     window.renderReaction({
         target: span.parentElement,
