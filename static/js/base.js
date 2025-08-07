@@ -30,85 +30,52 @@ messageSocket.on('notification', data => {
 });
 
 window.initReactionSocket = function () {
-    console.log("🔥 initReactionSocket called");
+    console.log("🔄 initReactionSocket called");
     reactionSocket.off('connect');
 
     if (reactionSocket.connected) {
         console.log("🟢 Reaction socket already connected");
         window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
     } else {
-        reactionSocket.on('connect', () => {
+        reactionSocket.on("connect", () => {
             console.log("🟢 Reaction socket connected");
             window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
         });
+
+        // 💡 Only register listener once
+        reactionSocket.off("reaction_update");
+        reactionSocket.on("reaction_update", (data) => {
+            const { emoji, target_id, action, user_id, user_ids } = data;
+            const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
+            const target = comment?.querySelector(".comment-content");
+            if (!target) return;
+
+            handleReactionUpdate(action, target, emoji, target_id, "news", user_id, user_ids);
+        });
     }
-    window.reactionSocket.on("reaction_update", (data) => {
-        const { emoji, targetId, action, user_id, user_ids } = data;
+};
 
-        const comment = document.querySelector(`[data-comment-id="${targetId}"]`);
-        const target = comment?.querySelector(".comment-content");
-        if (!target) return;
-
-        handleReactionUpdate(action, target, emoji, targetId, "news", user_id, user_ids);
-    });
-}
-
-    // Reaction update listener
-//     window.reactionSocket.on("reaction_update", (data) => {
-//         const { emoji, targetId, action, user_id, user_ids } = data;
-
-//         console.log('Received reaction_update: ', data);
-
-//         let span = document.querySelector(`.reaction[data-emoji="${emoji}"][data-target-id="${targetId}"]`);
-//         const comment = document.querySelector(`[data-comment-id="${targetId}"]`);
-//         const target = thread.querySelector(".comment-content");
-//         let count = user_ids.length;
-
-//         if (!target || !comment) {
-//             console.log('Not found, exiting: ', target, comment);
-//             return;
-//         }
-
-//         console.log('Found :', target, comment);
-
-//         if (action === "add") {
-//             console.log('Add reaction called');
-
-//             window.renderReaction({
-//                 target: target,
-//                 emoji,
-//                 targetId,
-//                 targetType: 'news',
-//                 user_id,
-//                 user_ids,
-//                 mode: 'insert'
-//             });
-//         }
-
-//         // Remove reaction span if nobody has it
-//         if (count === 0 && span) {
-//             span.remove();
-//         }
-//     });
-// };
-
-
-function handleReactionUpdate(action, target, emoji, targetId, targetType, user_id, user_ids) {
+function handleReactionUpdate(action, target, emoji, target_id, targetType, user_id, user_ids) {
+    
+    console.log('handleReactionUpdate data: ', 'action | ', action, 'target | ', target, 'emoji | ', emoji, 
+        'target_id | ', target_id, 'target_type | ', targetType, 'user_id | ', 'user_id | ', user_id, 'user_ids | ', user_ids);
     const span = document.querySelector(
-        `.emoji-reaction[data-emoji="${emoji}"][data-target-id="${targetId}"]`
+        `.emoji-reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
     );
 
     if (action === "add") {
+        console.log("handleReactionUpdate add branch");
         if (span) {
             // Update existing reaction count
             const countEl = span.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
         } else {
             // Create new reaction
+            console.log('renderReaction called from handleReactionUpdate')
             window.renderReaction({
                 target,
                 emoji,
-                targetId,
+                target_id,
                 targetType,
                 user_id,
                 user_ids,
@@ -128,7 +95,7 @@ function handleReactionUpdate(action, target, emoji, targetId, targetType, user_
             if (countEl) countEl.textContent = user_ids.length;
         }
     }
-}
+};
 
 window.initChatSocket = function () {
     console.log("💬 initChatSocket called");

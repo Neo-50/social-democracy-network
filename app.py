@@ -489,7 +489,7 @@ def toggle_reaction(data):
     print('Emit reaction_update: ', 'emoji: ', emoji, 'target id: ', target_id, 'user id: ', current_user.id, 'action: ', action,)
     socketio.emit("reaction_update", {
         "emoji": emoji,
-        "targetId": target_id,
+        "target_id": target_id,
         "action": action,
         "user_id": user_id,
         "user_ids": user_ids,
