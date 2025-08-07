@@ -277,12 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	const bellIcon = document.getElementById("notification-icon");
     const drawer = document.getElementById("notifDrawer");
 
-    if (!bellIcon || !drawer) {
-		console.log('Not found: ', bellIcon, drawer);
-		return;
-	}else {
-		console.log('Found ', bellIcon, drawer)
-	};
     bellIcon.addEventListener("click", (e) => {
         e.stopPropagation(); // prevent global click handler from immediately hiding it
         drawer.classList.toggle("show");
