@@ -310,7 +310,11 @@ def news():
                 "user_ids": r.user_ids,
                 "target_id": r.target_id,
             })
-
+    user_map = {
+        user.id: user.display_name
+        for user in db.session.query(User.id, User.display_name).all()
+    }
+    print('user_map ', user_map)
     return render_template(
         'news.html',
         articles=articles,
@@ -320,7 +324,8 @@ def news():
         article_to_highlight=highlighted,
         selected_category=selected_category,
         count=count,
-        reaction_map=reaction_map
+        reaction_map=reaction_map,
+        user_map=user_map
     )
 
 @app.route('/activism')
