@@ -106,15 +106,17 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     console.log('createNewReaction: ', 'target ', target, '| emoji ', emoji, '| target_id ', target_id,
         '| targetType ', targetType, '| user_id ', user_id, '| user_ids ', user_ids)
     const span = document.createElement("span");
+    const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
+    const tooltip = `${usernames.join(", ")}`;
+    console.log("Tooltip:", tooltip);
+    
     span.className = "emoji-reaction reaction reacted-by-me";
+    span.title = tooltip;
     span.dataset.emoji = emoji;
     span.dataset.targetId = target_id;
     span.dataset.targetType = targetType;
     span.dataset.user_ids = JSON.stringify(user_ids);
-    const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-    const tooltip = `${usernames.join(", ")}`;
-    console.log("Tooltip:", tooltip);
-    span.innerHTML = `${emoji} <span class="reaction-count"  title="${tooltip}">${user_ids.length}</span>`;
+    span.innerHTML = `${emoji} <span class="reaction-count">${user_ids.length}</span>`;
     span.addEventListener("click", handleReactionClick);
     console.log('createNewReaction data: ', span)
     target.appendChild(span);
