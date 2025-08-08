@@ -41,18 +41,16 @@ window.initReactionSocket = function () {
             console.log("🟢 Reaction socket connected");
             window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
         });
-
-        // 💡 Only register listener once
-        reactionSocket.off("reaction_update");
-        reactionSocket.on("reaction_update", (data) => {
-            const { emoji, target_id, action, user_id, user_ids } = data;
-            const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
-            const target = comment?.querySelector(".comment-content");
-            if (!target) return;
-
-            handleReactionUpdate(action, target, emoji, target_id, "news", user_id, user_ids);
-        });
     }
+    reactionSocket.off("reaction_update");
+    reactionSocket.on("reaction_update", (data) => {
+        const { emoji, target_id, action, user_id, user_ids } = data;
+        const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
+        const target = comment?.querySelector(".comment-content");
+        if (!target) return;
+
+        handleReactionUpdate(action, target, emoji, target_id, "news", user_id, user_ids);
+    });
 };
 
 function handleReactionUpdate(action, target, emoji, target_id, targetType, user_id, user_ids) {
