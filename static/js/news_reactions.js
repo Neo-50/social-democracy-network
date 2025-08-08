@@ -81,6 +81,7 @@ function handleExistingReaction(existing, user_ids, user_id) {
 
     if (alreadyReacted) {
         user_ids = user_ids.filter(id => id !== user_id);
+        const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
         if (user_ids.length === 0) {
             existing.remove();
             console.log('Reaction removed, user_ids: ', user_id)
@@ -88,6 +89,7 @@ function handleExistingReaction(existing, user_ids, user_id) {
         } else {
             existing.classList.remove("reacted-by-me");
             existing.dataset.user_ids = JSON.stringify(user_ids);
+            existing.title = `${usernames.join(", ")}`;
             countSpan.textContent = user_ids.length;
             return { user_ids, action: "remove" };
         }
@@ -97,7 +99,9 @@ function handleExistingReaction(existing, user_ids, user_id) {
             user_ids.push(user_id);
         }
         existing.dataset.user_ids = JSON.stringify(user_ids);
-        countSpan.textContent = user_ids.length
+        const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
+        existing.title = `${usernames.join(", ")}`;
+        countSpan.textContent = user_ids.length;
         return { user_ids, action: "add" };
     }
 }
@@ -109,7 +113,7 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
     const tooltip = `${usernames.join(", ")}`;
     console.log("Tooltip:", tooltip);
-    
+
     span.className = "emoji-reaction reaction reacted-by-me";
     span.title = tooltip;
     span.dataset.emoji = emoji;
