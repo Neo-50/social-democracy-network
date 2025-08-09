@@ -133,33 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-
-    // COMMENT SYNC ON SUBMIT
-    document.querySelectorAll("form[action^='/comment/']").forEach(form => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();  // 🔸 Prevent immediate submission
-
-            const editor = form.querySelector('.comment-editor');
-            const hiddenInput = form.querySelector('input[name="comment-content"]');
-
-            console.log("SUBMIT FIRED");
-            console.log("editor content:", editor?.innerHTML);
-            console.log("hidden input before:", hiddenInput?.value);
-
-            if (editor) {
-                await handleBase64Images(editor);  // 🔸 Wait for base64 → upload → URL replace
-            }
-
-            if (editor && hiddenInput) {
-                hiddenInput.value = editor.innerHTML;
-                console.log("Set hidden input to:", hiddenInput.value);
-                form.submit();  // 🔸 Now safely submit the form with updated content
-            } else {
-                console.log("Editor or hidden input not found", editor, hiddenInput);
-            }
-        });
-    });
-
     document.addEventListener("click", (e) => {
         const isCustomButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
         const isInCustomDrawer = e.target.closest(".custom-wrapper");
@@ -190,48 +163,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function initAjaxCommentForms() {
-    document.addEventListener('submit', async (e) => {
-        const form = e.target;
-        if (!form.matches('.comment-form')) return;
+window.initCommentSocket = function () {
+    // always clear old handlers first
+    commentSocket.off('connect');
+    commentSocket.off('disconnect');
+    commentSocket.off('new_comment');
+    commentSocket.off('delete_comment');
 
-        e.preventDefault();
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const textarea = form.querySelector('textarea[name="comment-content"]');
-        if (!textarea) return;
-
-        submitBtn?.setAttribute('disabled', 'disabled');
-
-        try {
-            const res = await fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': window.csrfToken,
-                },
-                body: new FormData(form),
-            });
-
-            const data = await res.json();
-            if (!data.ok) {
-                console.error('Comment failed:', data.error || res.statusText);
-                return;
-            }
-
-            // Don’t insert here — the socket echo (include_self=True) handles it.
-            textarea.value = '';
-        } catch (err) {
-            console.error('Comment error:', err);
-        } finally {
-            submitBtn?.removeAttribute('disabled');
-        }
+    // log connect/disconnect
+    commentSocket.on('connect', () => {
+        console.log('🟢 /news_comments connected', commentSocket.id);
     });
-}
+    commentSocket.on('disconnect', (reason) => {
+        console.log('🔴 /news_comments disconnected:', reason);
+    });
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (typeof window.initReactionSocket === 'function') window.initReactionSocket();
-    if (typeof window.initCommentSocket === 'function') window.initCommentSocket();
-    initAjaxCommentForms();
-});
+    // bind the event handlers only after we’re actually connected
+    onceConnected(commentSocket, () => {
+        console.log('✅ binding comment handlers');
+
+        commentSocket.on('new_comment', (data) => {
+            console.log('[WS] new_comment:', data);
+
+            const article = document.querySelector(`[data-article-id="${data.article_id}"]`);
+            if (!article) return;
+
+            const container = data.parent_id
+            ? article.querySelector(`[data-comment-id="${data.parent_id}"] .replies`)
+            : article.querySelector('.comments-list');
+            if (!container) return;
+
+            const tmp = document.createElement('div');
+            tmp.innerHTML = (data.html || data.content_html || '').trim();
+            const node = tmp.firstElementChild;
+            if (node) container.appendChild(node);
+        });
+
+        commentSocket.on('delete_comment', ({ comment_id }) => {
+            document.querySelector(`[data-comment-id="${comment_id}"]`)?.remove();
+        });
+    });
+
+  // NOW connect (after handlers are ready)
+  if (!commentSocket.connected) commentSocket.connect();
+};
+
+// helper: run fn when socket is connected
+function onceConnected(socket, fn) {
+    if (socket.connected) {
+        fn();
+    } else {
+        socket.once('connect', fn);
+    }
+}
 
 
 function unicodeEmojiDrawer(box) {
