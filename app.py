@@ -892,11 +892,12 @@ def add_comment(article_id):
             "new_comment",
             payload,
             namespace="/news_comments",
-            room=f"article_{article_id}",
             include_self=True
         )
 
         flash("Comment posted successfully.", "success")
+
+        return jsonify({"ok": True, "comment_id": comment.id})
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
@@ -920,6 +921,8 @@ def delete_comment(comment_id):
     )
 
     flash("Comment deleted successfully.", "success")
+
+    return jsonify({"ok": True})
 
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
@@ -1375,7 +1378,7 @@ def handle_join_reactions(room_id):
 @socketio.on('join', namespace='/news_comments')
 def handle_join_news_comments(room_id):
     join_room(room_id)
-    print(f"😮 [news_comments] Joined room: {room_id}")
+    print(f"🗞️ [news_comments] Joined room: {room_id}")
 
 @socketio.on('new_message', namespace='/chat')
 def handle_new_message_chat(data):
@@ -1392,6 +1395,7 @@ def handle_reaction_update(data):
     print("🔥 [reactions] Rebroadcasting:", data)
     emit('reaction_update', data, room=data['room_id'])
 
+# -------- News comments namespace --------
 @socketio.on('connect', namespace='/news_comments')
 def news_comments_connect():
     print('Client connected to /news_comments')
@@ -1399,22 +1403,6 @@ def news_comments_connect():
 @socketio.on('disconnect', namespace='/news_comments')
 def news_comments_disconnect():
     print('Client disconnected from /news_comments')
-
-@socketio.on('new_comment', namespace='/news_comments')
-def handle_post_comment(data):
-    article_id = data.get('article_id')
-    comment_html = data.get('comment_html')
-    parent_id = data.get('parent_id')
-    user_id = data.get('user_id')  # optional for display, you already track session
-    
-    # You can save to DB here or require the client to POST via HTTP then emit
-    emit('new_comment', {
-        'article_id': article_id,
-        'comment_html': comment_html,
-        'parent_id': parent_id,
-        'user_id': user_id,
-    }, room=f'article_{article_id}', include_self=False)
-
 
 if __name__ == '__main__':
     is_dev = os.environ.get("FLASK_ENV") == "development"

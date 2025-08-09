@@ -1,7 +1,9 @@
 window.messageSocket = io('/messages');
 window.chatSocket = io('/chat');
 window.reactionSocket = io("/reactions");
-window.commentSocket = io('/news_comments');
+window.commentSocket = io('/news_comments', {
+  autoConnect: false,
+});
 
 messageSocket.on('notification', data => {
 	console.log('🔔 Notification received:', data);
@@ -29,25 +31,6 @@ messageSocket.on('notification', data => {
 		}
 	});
 });
-
-// news.js
-window.initCommentSocket = function () {
-    if (window.commentSocket) return;
-    window.commentSocket = io('/news_comments');
-    commentSocket.emit('join_article_room', { article_id });
-
-    commentSocket.on('new_comment', (data) => {
-        console.log('New comment received:', data);
-        // TODO: insert into DOM (parent_id ? reply thread : top-level list)
-    });
-
-    commentSocket.on('delete_comment', (data) => {
-        const el = document.querySelector(`[data-comment-id="${data.comment_id}"]`);
-        if (el) el.remove();
-    });
-};
-
-
 
 window.initReactionSocket = function () {
     console.log("🔄 initReactionSocket called");
