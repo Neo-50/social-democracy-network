@@ -3,8 +3,12 @@ let activeCommentContent = null;
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof window.initChatSocket === "function") {
+    
+    if (typeof window.initReactionSocket === "function") {
         window.initReactionSocket();
+    }
+    if (typeof window.initCommentSocket === "function") {
+        window.initCommentSocket();
     }
 
     // UNICODE EMOJI DRAWER
@@ -78,6 +82,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // COMMENT SYNC ON SUBMIT (AJAX + sockets, no reload)
+    document.querySelectorAll('form[action^="/comment/"]').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const editor = form.querySelector('.comment-editor');
+            const hiddenInput = form.querySelector('input[name="comment-content"]');
+            const submitBtn = form.querySelector('[type="submit"]');
+
+            try {
+                if (editor) {
+                    // 1) Convert any base64 imgs to uploads (your existing helper)
+                    await handleBase64Images(editor);
+                }
+
+                if (!editor || !hiddenInput) {
+                    console.warn('Editor or hidden input not found', { editor, hiddenInput });
+                    return;
+                }
+
+                // 2) Move sanitized HTML into hidden input for server
+                hiddenInput.value = editor.innerHTML;
+
+                // 3) POST via fetch (AJAX)
+                submitBtn?.setAttribute('disabled', 'disabled');
+                const fd = new FormData(form);
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': window.csrfToken }, // you already have this set
+                    body: fd,
+                });
+
+                // Expect JSON {"ok": true, "comment_id": ...} from route
+                const data = await res.json();
+                if (!res.ok || !data.ok) {
+                    console.error('Comment failed', data);
+                    return;
+                }
+
+                // 4) Do NOT insert HTML here; let the socket echo handle it
+                // (server emits "new_comment" include_self=True)
+                editor.innerHTML = '';           // clear composer
+                form.querySelector('[name="parent_id"]')?.setAttribute('value', ''); // optional: reset reply
+            } catch (err) {
+                console.error('Comment submit error:', err);
+            } finally {
+                submitBtn?.removeAttribute('disabled');
+            }
+        });
+    });
+
+
     // COMMENT SYNC ON SUBMIT
     document.querySelectorAll("form[action^='/comment/']").forEach(form => {
         form.addEventListener('submit', async (e) => {
@@ -133,6 +189,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function initAjaxCommentForms() {
+    document.addEventListener('submit', async (e) => {
+        const form = e.target;
+        if (!form.matches('.comment-form')) return;
+
+        e.preventDefault();
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const textarea = form.querySelector('textarea[name="comment-content"]');
+        if (!textarea) return;
+
+        submitBtn?.setAttribute('disabled', 'disabled');
+
+        try {
+            const res = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': window.csrfToken,
+                },
+                body: new FormData(form),
+            });
+
+            const data = await res.json();
+            if (!data.ok) {
+                console.error('Comment failed:', data.error || res.statusText);
+                return;
+            }
+
+            // Don’t insert here — the socket echo (include_self=True) handles it.
+            textarea.value = '';
+        } catch (err) {
+            console.error('Comment error:', err);
+        } finally {
+            submitBtn?.removeAttribute('disabled');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.initReactionSocket === 'function') window.initReactionSocket();
+    if (typeof window.initCommentSocket === 'function') window.initCommentSocket();
+    initAjaxCommentForms();
+});
+
 
 function unicodeEmojiDrawer(box) {
     const pickerWrapper = box.querySelector(".emoji-wrapper");
