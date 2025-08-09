@@ -1,6 +1,7 @@
 window.messageSocket = io('/messages');
 window.chatSocket = io('/chat');
 window.reactionSocket = io("/reactions");
+window.commentSocket = io('/news_comments');
 
 messageSocket.on('notification', data => {
 	console.log('🔔 Notification received:', data);
@@ -28,6 +29,25 @@ messageSocket.on('notification', data => {
 		}
 	});
 });
+
+// news.js
+window.initCommentSocket = function () {
+    if (window.commentSocket) return;
+    window.commentSocket = io('/news_comments');
+    commentSocket.emit('join_article_room', { article_id });
+
+    commentSocket.on('new_comment', (data) => {
+        console.log('New comment received:', data);
+        // TODO: insert into DOM (parent_id ? reply thread : top-level list)
+    });
+
+    commentSocket.on('delete_comment', (data) => {
+        const el = document.querySelector(`[data-comment-id="${data.comment_id}"]`);
+        if (el) el.remove();
+    });
+};
+
+
 
 window.initReactionSocket = function () {
     console.log("🔄 initReactionSocket called");
@@ -67,6 +87,8 @@ function handleReactionUpdate(action, target, emoji, target_id, targetType, user
             // Update existing reaction count
             const countEl = span.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
+
+            updateReactionTooltip(span, user_ids);
         } else {
             // Create new reaction
             console.log('renderReaction called from handleReactionUpdate')
@@ -91,9 +113,15 @@ function handleReactionUpdate(action, target, emoji, target_id, targetType, user
             // Update count if users remain
             const countEl = span.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
+            updateReactionTooltip(span, user_ids);
         }
     }
 };
+
+function updateReactionTooltip(span, user_ids) {
+    const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
+    span.title = `Reacted by: ${usernames.join(", ")}`;
+}
 
 window.initChatSocket = function () {
     console.log("💬 initChatSocket called");

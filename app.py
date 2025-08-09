@@ -879,9 +879,24 @@ def add_comment(article_id):
 
         db.session.add(comment)
         db.session.commit()
-    flash("Comment posted successfully.", "success")
-    article = NewsArticle.query.get(article_id)
-    return redirect(url_for('news', category=article.category, article=article.id))
+        payload = {
+            "comment_id": comment.id,
+            "article_id": article_id,
+            "parent_id": parent_id,
+            "user_id": int(current_user.get_id()),
+            "display_name": current_user.display_name,
+            "content_html": comment.content,   # already sanitized
+            "created_at": comment.created_at.isoformat() if hasattr(comment, "created_at") else None,
+        }
+        socketio.emit(
+            "new_comment",
+            payload,
+            namespace="/news_comments",
+            room=f"article_{article_id}",
+            include_self=True
+        )
+
+        flash("Comment posted successfully.", "success")
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
@@ -891,11 +906,21 @@ def delete_comment(comment_id):
     if int(current_user.get_id()) != comment.user_id and not is_admin():
         abort(403)
 
+    article_id = comment.article_id
     db.session.delete(comment)
     db.session.commit()
     flash("Comment deleted successfully.", "success")
-    article = NewsArticle.query.get(comment.article_id)
-    return redirect(url_for('news', category=article.category, article=article.id))
+
+    socketio.emit(
+        "delete_comment",
+        {"comment_id": comment_id, "article_id": article_id},
+        namespace="/news_comments",
+        room=f"article_{article_id}",
+        include_self=True
+    )
+
+    flash("Comment deleted successfully.", "success")
+
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
 def delete_article(article_id):
@@ -1347,6 +1372,11 @@ def handle_join_reactions(room_id):
     join_room(room_id)
     print(f"😮 [reactions] Joined room: {room_id}")
 
+@socketio.on('join', namespace='/news_comments')
+def handle_join_news_comments(room_id):
+    join_room(room_id)
+    print(f"😮 [news_comments] Joined room: {room_id}")
+
 @socketio.on('new_message', namespace='/chat')
 def handle_new_message_chat(data):
     print("🔥 [chat] Rebroadcasting:", data)
@@ -1361,6 +1391,30 @@ def handle_new_message_messages(data):
 def handle_reaction_update(data):
     print("🔥 [reactions] Rebroadcasting:", data)
     emit('reaction_update', data, room=data['room_id'])
+
+@socketio.on('connect', namespace='/news_comments')
+def news_comments_connect():
+    print('Client connected to /news_comments')
+
+@socketio.on('disconnect', namespace='/news_comments')
+def news_comments_disconnect():
+    print('Client disconnected from /news_comments')
+
+@socketio.on('new_comment', namespace='/news_comments')
+def handle_post_comment(data):
+    article_id = data.get('article_id')
+    comment_html = data.get('comment_html')
+    parent_id = data.get('parent_id')
+    user_id = data.get('user_id')  # optional for display, you already track session
+    
+    # You can save to DB here or require the client to POST via HTTP then emit
+    emit('new_comment', {
+        'article_id': article_id,
+        'comment_html': comment_html,
+        'parent_id': parent_id,
+        'user_id': user_id,
+    }, room=f'article_{article_id}', include_self=False)
+
 
 if __name__ == '__main__':
     is_dev = os.environ.get("FLASK_ENV") == "development"
