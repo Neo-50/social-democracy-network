@@ -172,7 +172,7 @@ window.initCommentSocket = function () {
 
     // log connect/disconnect
     commentSocket.on('connect', () => {
-        console.log('🟢 /news_comments connected', commentSocket.id);
+        console.log('🟢 /news_comments connected');
     });
     commentSocket.on('disconnect', (reason) => {
         console.log('🔴 /news_comments disconnected:', reason);
@@ -184,19 +184,7 @@ window.initCommentSocket = function () {
 
         commentSocket.on('new_comment', (data) => {
             console.log('[WS] new_comment:', data);
-
-            const article = document.querySelector(`[data-article-id="${data.article_id}"]`);
-            if (!article) return;
-
-            const container = data.parent_id
-            ? article.querySelector(`[data-comment-id="${data.parent_id}"] .replies`)
-            : article.querySelector('.comments-list');
-            if (!container) return;
-
-            const tmp = document.createElement('div');
-            tmp.innerHTML = (data.html || data.content_html || '').trim();
-            const node = tmp.firstElementChild;
-            if (node) container.appendChild(node);
+            renderNewsComment(data);
         });
 
         commentSocket.on('delete_comment', ({ comment_id }) => {
@@ -215,6 +203,80 @@ function onceConnected(socket, fn) {
     } else {
         socket.once('connect', fn);
     }
+}
+
+function renderNewsComment(data) {
+  // 1) Find the correct article + container
+  const article = document.querySelector(`[data-article-id="${data.article_id}"]`);
+  if (!article) return;
+
+  const container = data.parent_id
+    ? article.querySelector(`[data-comment-id="${data.parent_id}"] .replies`)
+    : article.querySelector('.comments-list');
+  if (!container) return;
+
+  // 2) Prefer full HTML if the server ever sends it; otherwise build it
+  let html = (data.html || '').trim();
+  if (!html) {
+    const ts = data.created_at || new Date().toISOString();
+    const content = (data.content_html || '').trim(); // already sanitized on server
+
+    html = `
+      <div class="comment-thread" data-comment-id="${data.comment_id}">
+        <div class="comment-container" style="margin-left: ${data.parent_id ? 60 : 0}px;">
+          <div class="comment-header">
+            <span class="username">
+              <strong>${escapeHtml(data.display_name || 'Anonymous')}</strong>
+              <span class="timestamp" data-timestamp="${ts}"></span>
+            </span>
+          </div>
+
+          <div class="comment-content" data-comment-id="${data.comment_id}">
+            <p>${content}</p>
+          </div>
+
+          <div class="comment-toolbar" data-comment-id="${data.comment_id}">
+            <!-- Unicode reactions button -->
+            <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
+              <img class="icon" src="/media/icons/emoji.png" alt="emoji">
+            </button>
+
+            <!-- Custom reactions button -->
+            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
+
+            <!-- Drawers your existing JS populates -->
+            <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
+            <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
+
+            <!-- Optional upload hook -->
+            <button type="button" class="upload-button">Upload</button>
+          </div>
+
+          <!-- Where replies will be appended -->
+          <div class="replies"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 3) Insert
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const node = tmp.firstElementChild;
+  if (!node) return;
+
+  container.appendChild(node);
+
+  // 4) Optional niceties
+  if (typeof formatTimestamp === 'function') formatTimestamp(node);
+  // If you have any per-node initializers (e.g., tooltips), call them here
+}
+
+// tiny helper; your content_html is already sanitized, this is for display_name etc.
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
 }
 
 
