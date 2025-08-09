@@ -895,8 +895,6 @@ def add_comment(article_id):
             include_self=True
         )
 
-        flash("Comment posted successfully.", "success")
-
         return jsonify({"ok": True, "comment_id": comment.id})
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
@@ -910,7 +908,6 @@ def delete_comment(comment_id):
     article_id = comment.article_id
     db.session.delete(comment)
     db.session.commit()
-    flash("Comment deleted successfully.", "success")
 
     socketio.emit(
         "delete_comment",
@@ -920,7 +917,6 @@ def delete_comment(comment_id):
         include_self=True
     )
 
-    flash("Comment deleted successfully.", "success")
 
     return jsonify({"ok": True})
 
