@@ -86,50 +86,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('form[action^="/comment/"]').forEach(form => {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const editor = form.querySelector('.comment-editor');
             const hiddenInput = form.querySelector('input[name="comment-content"]');
             const submitBtn = form.querySelector('[type="submit"]');
 
-            try {
-                // if (editor) {
-                //     // 1) Convert any base64 imgs to uploads (your existing helper)
-                //     await handleBase64Images(editor);
-                // }
-
-                if (!editor || !hiddenInput) {
-                    console.warn('Editor or hidden input not found', { editor, hiddenInput });
-                    return;
-                }
-
-                // 2) Move sanitized HTML into hidden input for server
-                hiddenInput.value = editor.innerHTML;
-
-                // 3) POST via fetch (AJAX)
-                submitBtn?.setAttribute('disabled', 'disabled');
-                const fd = new FormData(form);
-                const res = await fetch(form.action, {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': window.csrfToken }, // you already have this set
-                    body: fd,
-                });
-
-                // Expect JSON {"ok": true, "comment_id": ...} from route
-                const data = await res.json();
-                if (!res.ok || !data.ok) {
-                    console.error('Comment failed', data);
-                    return;
-                }
-
-                // 4) Do NOT insert HTML here; let the socket echo handle it
-                // (server emits "new_comment" include_self=True)
-                editor.innerHTML = '';           // clear composer
-                form.querySelector('[name="parent_id"]')?.setAttribute('value', ''); // optional: reset reply
-            } catch (err) {
-                console.error('Comment submit error:', err);
-            } finally {
-                submitBtn?.removeAttribute('disabled');
+            if (!editor || !hiddenInput) {
+                console.warn('Editor or hidden input not found', { editor, hiddenInput });
+                return;
             }
+            await maybeHandleBase64Images(editor);
+
+            // 2) Move sanitized HTML into hidden input for server
+            hiddenInput.value = editor.innerHTML;
+
+            // 3) POST via fetch (AJAX)
+            submitBtn?.setAttribute('disabled', 'disabled');
+            const fd = new FormData(form);
+            const res = await fetch(form.action, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': window.csrfToken }, // you already have this set
+                body: fd,
+            });
+
+            // Expect JSON {"ok": true, "comment_id": ...} from route
+            const data = await res.json();
+            if (!res.ok || !data.ok) {
+                console.error('Comment failed', data);
+                return;
+            }
+
+            editor.innerHTML = '';
+            form.querySelector('[name="parent_id"]')?.setAttribute('value', '');
         });
     });
 
@@ -155,6 +142,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Intercept only delete forms to prevent page navigation
+    document.addEventListener('submit', async (e) => {
+        console.log('Submit form')
+        const form = e.target;
+        if (!form.matches('.delete-form')) return;
+        console.log('Delete form')
+        e.preventDefault();
+
+        try {
+            const res = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': window.csrfToken || '' },
+            body: new FormData(form)
+            });
+            const data = await res.json();
+            if (!data.ok) return;
+
+            // optional optimistic remove (socket will also remove it)
+            // form.closest('.comment-container')?.remove();
+
+        } catch (err) {
+            console.error('Delete failed:', err);
+        }
+    });
+
 
     document.querySelectorAll(".comment-content img").forEach(img => {
         if (img.src.includes("/media/news/") && !img.className) {
@@ -188,7 +201,9 @@ window.initCommentSocket = function () {
         });
 
         commentSocket.on('delete_comment', ({ comment_id }) => {
-            document.querySelector(`[data-comment-id="${comment_id}"]`)?.remove();
+            document.querySelector(
+                `.comment-container[data-comment-id="${comment_id}"]`
+            )?.remove();
         });
     });
 
@@ -280,6 +295,7 @@ function renderNewsComment(data) {
             </form>` : ''}
         </div>
     `;
+    attachReplyToggle(node, data.article_id, data.comment_id);
 
     // insert: append for top-level; for replies, insert after parent's subtree
     if (!data.parent_id) {
@@ -310,7 +326,97 @@ function renderNewsComment(data) {
     }[c]));
 }
 
+function attachReplyToggle(node, articleId, commentId) {
+  const btn = node.querySelector('.reply-toggle');
+  if (!btn) return;
 
+  btn.addEventListener('click', () => {
+    let drawer = node.querySelector('.reply-drawer');
+    if (!drawer) {
+      drawer = buildReplyDrawer(commentId, articleId);   // input UI only
+      node.appendChild(drawer);
+    }
+    drawer.style.display = drawer.style.display === 'block' ? 'none' : 'block';
+  });
+}
+
+
+function buildReplyDrawer(parentId, articleId) {
+  const el = document.createElement('div');
+  el.className = 'reply-drawer';
+  el.style.display = 'none';
+  el.innerHTML = `
+    <form class="reply-form" data-article-id="${articleId}">
+      <input type="hidden" name="csrf_token" value="${window.csrfToken || ''}">
+      <input type="hidden" name="parent_id" value="${parentId}">
+      <div class="comment-box">
+        <div class="comment-editor" contenteditable="true" placeholder="Write a reply…"></div>
+        <input type="hidden" name="comment-content" class="hidden-content">
+      </div>
+      <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
+        <img class="icon" src="/media/icons/emoji.png" alt="emoji">
+      </button>
+      <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
+      <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
+      <div class="custom-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
+      <div class="submit-cancel">
+        <button type="submit" class="newsfeed-button">Submit</button>
+        <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+      </div>
+    </form>`;
+  wireReplyForm(el);
+  if (typeof initEmojiToolbar === 'function') initEmojiToolbar(el);
+  return el;
+}
+
+function wireReplyForm(scope) {
+  const form   = scope.querySelector('.reply-form');
+  const editor = form.querySelector('.comment-editor');
+  const hidden = form.querySelector('input[name="comment-content"]');
+  const cancel = form.querySelector('.cancel-reply');
+
+  cancel.addEventListener('click', () => { editor.innerHTML = ''; scope.style.display = 'none'; });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // only run image uploads if there are non-emoji data URIs
+    await maybeHandleBase64Images(editor);
+
+    hidden.value = editor.innerHTML;
+    const fd = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn?.setAttribute('disabled', 'disabled');
+
+    try {
+      const articleId = form.dataset.articleId;
+      const res = await fetch(`/comment/${articleId}`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': window.csrfToken || '' },
+        body: fd
+      });
+      const data = await res.json();
+      if (!data.ok) return;
+
+      // optional optimistic render:
+      // renderNewsComment({ ...data, parent_id: Number(fd.get('parent_id')) });
+
+      editor.innerHTML = '';
+      scope.style.display = 'none';
+    } finally {
+      submitBtn?.removeAttribute('disabled');
+    }
+  });
+}
+
+function maybeHandleBase64Images(editor) {
+  // only run handler if there’s at least one non-emoji data URI
+  const imgs = editor.querySelectorAll('img:not(.inline-emoji)');
+  if ([...imgs].some(img => (img.src || '').startsWith('data:image/'))) {
+    return handleBase64Images(editor); // your existing function
+  }
+  return Promise.resolve();
+}
 
 function unicodeEmojiDrawer(box) {
     const pickerWrapper = box.querySelector(".emoji-wrapper");
@@ -375,9 +481,11 @@ function unicodeReactionDrawer(toolbar) {
 }
 
 document.querySelectorAll('.reply-toggle').forEach(button => {
+    console.log('reply-toggle triggered')
     button.addEventListener('click', () => {
         const wrapper = button.closest('.comment-container');
         const drawer = wrapper.querySelector('.reply-drawer');
+        console.log('reply-toggle | ', 'wrapper ', wrapper, '| drawer ', drawer)
         if (drawer) {
             drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
         }
