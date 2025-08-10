@@ -18,25 +18,21 @@ document.addEventListener("click", (e) => {
 });
 
 function customEmojiDrawer(button) {
-    console.log('Toggling custom emoji drawer');
-    const commentBox = button.closest(".comment-box");
-    console.log('Comment box:', commentBox);
+    console.log('customEmojiDrawer');
+    let commentBox;
 
-    const toolbar = button.closest(".comment-toolbar");
-    console.log('Toolbar value: ', toolbar);
-    let drawer = null;
-    let wrapper = null;
-    if (toolbar) {
-        wrapper = toolbar.querySelector("#custom-emoji-wrapper");
-        console.log('Wrapper:', wrapper);
+    console.log('button parent element class: ', button.parentElement.classList);
 
-        drawer = wrapper.querySelector(".custom-reaction-drawer")
-        console.log('Drawer:', drawer);
+    if (button.parentElement.classList.contains('comment-box' || 'reply-form')) {
+        commentBox = button.parentElement;
     }
 
-    if (!commentBox) {
-        console.log('No comment box here!')
-        // If drawer exists and is visible, hide it and clean up
+    if (commentBox) {
+        const wrapper = commentBox.querySelector('.custom-wrapper');
+        let drawer = commentBox.querySelector('.custom-reaction-drawer');
+    
+        console.log('wrapper', wrapper, 'drawer ', drawer);
+
         if (drawer && wrapper.style.display === "flex") {
             console.log('Drawer exists and is not hidden')
             wrapper.style.display = "none";
@@ -59,11 +55,11 @@ function customEmojiDrawer(button) {
             wrapper.style.display = "flex";
         }
     }
-    if (commentBox) {
-        console.log('Comment box dectected!', commentBox)
+
+    if (!commentBox) {
         let wrapper = commentBox.querySelector(".custom-wrapper");
         if (!wrapper) {
-            console.warn("No custom-wrapper found inside this commentBox:", commentBox);
+            console.warn("No custom-wrapper found inside this replyForm:", commentBox);
             return;
         }
         let drawer = wrapper.querySelector(".custom-emoji-drawer");
