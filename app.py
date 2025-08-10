@@ -883,7 +883,7 @@ def add_comment(article_id):
             "comment_id": comment.id,
             "article_id": article_id,
             "parent_id": parent_id,
-            "avatar_url": current_user.avatar_url,
+            "avatar_filename": current_user.avatar_filename,
             "user_id": int(current_user.get_id()),
             "display_name": current_user.display_name,
             "content_html": comment.content,   # already sanitized

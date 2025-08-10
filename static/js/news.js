@@ -228,9 +228,15 @@ function renderNewsComment(data) {
     const inner = (data.content_html || '').trim();
     const contentHTML = inner.startsWith('<') ? inner : `<p>${escapeHtml(inner)}</p>`;
 
-    const canReply  = depth < 5 && !!window.currentUser?.id;
-    const canDelete = !!window.currentUser &&
-                        (window.currentUser.id === data.user_id || window.currentUser.is_admin);
+    const curId   = Number(window.CURRENT_USER_ID ?? NaN);
+    const isAdmin = !!window.CURRENT_USER_IS_ADMIN;
+    const author  = Number(data.user_id);
+
+    // reply allowed if logged in and depth limit not exceeded
+    const canReply  = Number.isFinite(curId) && depth < 5;
+
+    // delete allowed if author or admin
+    const canDelete = Number.isFinite(curId) && (curId === author || isAdmin);
 
     const node = document.createElement('div');
     node.className = 'comment-container';
@@ -252,20 +258,22 @@ function renderNewsComment(data) {
         </div>
 
         <div class="comment-content" data-comment-id="${String(data.comment_id)}">
-        ${contentHTML}
+            ${contentHTML}
         </div>
 
         <div class="comment-toolbar" data-comment-id="${String(data.comment_id)}">
-        <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
-            <img class="icon" src="/media/icons/emoji.png" alt="emoji">
-        </button>
-        <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
-        <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
-        <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
+            <!-- Unicode reactions button -->
+            <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode"">
+                <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
+            </button>
 
-        ${canReply ? `<button class="newsfeed-button reply-toggle">Reply</button>` : ''}
-
-        ${canDelete ? `
+            <!-- Custom reactions button -->
+            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
+            <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
+                <!-- JS will inject emoji drawer below -->
+            </div>
+            ${canReply ? `<button class="newsfeed-button reply-toggle">Reply</button>` : ''}
+            ${canDelete ? `
             <form method="POST" action="/delete_comment/${data.comment_id}" class="delete-form">
             <input type="hidden" name="csrf_token" value="${window.csrfToken || ''}">
             <button type="submit" class="delete-button" onclick="return confirm('Delete this comment?')">Delete</button>
