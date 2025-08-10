@@ -898,11 +898,11 @@ def add_comment(article_id):
 
         return jsonify({"ok": True, "comment_id": comment.id})
 
+
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
     comment = NewsComment.query.get_or_404(comment_id)
-
     if int(current_user.get_id()) != comment.user_id and not is_admin():
         abort(403)
 
@@ -910,16 +910,15 @@ def delete_comment(comment_id):
     db.session.delete(comment)
     db.session.commit()
 
+    # notify all clients
     socketio.emit(
-        "delete_comment",
-        {"comment_id": comment_id, "article_id": article_id},
-        namespace="/news_comments",
-        room=f"article_{article_id}",
-        include_self=True
+        'delete_comment',
+        {'comment_id': comment_id, 'article_id': article_id},
+        namespace='/news_comments'
     )
 
-
-    return jsonify({"ok": True})
+    # IMPORTANT: no redirect here — return JSON
+    return jsonify({'ok': True, 'comment_id': comment_id})
 
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
