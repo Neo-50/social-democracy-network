@@ -206,77 +206,92 @@ function onceConnected(socket, fn) {
 }
 
 function renderNewsComment(data) {
-  // 1) Find the correct article + container
-  const article = document.querySelector(`[data-article-id="${data.article_id}"]`);
-  if (!article) return;
+    console.log('renderNewsComment', data);
+    const article = document.querySelector(`#article-${data.article_id}`);
+    if (!article) {
+        console.warn(`renderNewsComment: no article for #article-${data.article_id}`, data);
+        return;
+    }
 
-  const container = data.parent_id
-    ? article.querySelector(`[data-comment-id="${data.parent_id}"] .replies`)
-    : article.querySelector('.comments-list');
-  if (!container) return;
+    // Ensure a top-level list exists
+    function ensureCommentsList(el) {
+        let list = el.querySelector('.comments-thread');
+        if (!list) {
+            console.warn('renderNewsComment: .comments-thread missing, creating…');
+            list = document.createElement('div');
+            list.className = 'comments-list';
+            el.appendChild(list);
+        }
+        return list;
+    }
 
-  // 2) Prefer full HTML if the server ever sends it; otherwise build it
-  let html = (data.html || '').trim();
-  if (!html) {
-    const ts = data.created_at || new Date().toISOString();
-    const content = (data.content_html || '').trim(); // already sanitized on server
+    const isReply = !!data.parent_id;
+    const container = isReply
+        ? article.querySelector(`[data-comment-id="${String(data.parent_id)}"] .replies`)
+        : ensureCommentsList(article);
 
-    html = `
-      <div class="comment-thread" data-comment-id="${data.comment_id}">
-        <div class="comment-container" style="margin-left: ${data.parent_id ? 60 : 0}px;">
-          <div class="comment-header">
-            <span class="username">
-              <strong>${escapeHtml(data.display_name || 'Anonymous')}</strong>
-              <span class="timestamp" data-timestamp="${ts}"></span>
-            </span>
-          </div>
+    if (!container) {
+        console.warn('renderNewsComment: no container',
+            isReply ? 'replies under parent' : '.comments-list',
+            { parent_id: data.parent_id, article });
+        return;
+    }
 
-          <div class="comment-content" data-comment-id="${data.comment_id}">
-            <p>${content}</p>
-          </div>
+    // Build node (use server html if present, else wrap content_html)
+    const inner = (data.html || data.content_html || '').trim();
+    if (!inner) {
+        console.warn('renderNewsComment: empty html/content_html', data);
+        return;
+    }
 
-          <div class="comment-toolbar" data-comment-id="${data.comment_id}">
-            <!-- Unicode reactions button -->
-            <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
-              <img class="icon" src="/media/icons/emoji.png" alt="emoji">
-            </button>
-
-            <!-- Custom reactions button -->
-            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
-
-            <!-- Drawers your existing JS populates -->
-            <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
-            <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
-
-            <!-- Optional upload hook -->
-            <button type="button" class="upload-button">Upload</button>
-          </div>
-
-          <!-- Where replies will be appended -->
-          <div class="replies"></div>
+    let node;
+    if (data.html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = inner;
+        node = tmp.firstElementChild;
+    } else {
+        node = document.createElement('div');
+        node.className = 'comment-thread';
+        node.setAttribute('data-comment-id', String(data.comment_id));
+        node.innerHTML = `
+      <div class="comment-container" style="margin-left:${isReply ? 60 : 0}px;">
+        <div class="comment-header">
+          <span class="username">
+            <strong>${escapeHtml(data.display_name || 'Anonymous')}</strong>
+            <span class="timestamp" data-timestamp="${data.created_at || ''}"></span>
+          </span>
         </div>
+        <div class="comment-content" data-comment-id="${String(data.comment_id)}">
+          <p>${inner}</p>
+        </div>
+        <div class="comment-toolbar" data-comment-id="${String(data.comment_id)}">
+          <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
+            <img class="icon" src="/media/icons/emoji.png" alt="emoji">
+          </button>
+          <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
+          <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
+          <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
+          <button type="button" class="upload-button">Upload</button>
+        </div>
+        <div class="replies"></div>
       </div>
     `;
-  }
+    }
 
-  // 3) Insert
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  const node = tmp.firstElementChild;
-  if (!node) return;
+    if (!node) {
+        console.warn('renderNewsComment: built node is null', data);
+        return;
+    }
 
-  container.appendChild(node);
-
-  // 4) Optional niceties
-  if (typeof formatTimestamp === 'function') formatTimestamp(node);
-  // If you have any per-node initializers (e.g., tooltips), call them here
+    container.appendChild(node);
+    if (typeof formatTimestamp === 'function') formatTimestamp(node);
+    console.log('renderNewsComment: appended', { article, parent_id: data.parent_id, node });
 }
 
-// tiny helper; your content_html is already sanitized, this is for display_name etc.
 function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
+    return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
 }
 
 
