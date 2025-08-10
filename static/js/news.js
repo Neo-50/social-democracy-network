@@ -27,10 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // CUSTOM EMOJI DRAWER
-    document.addEventListener("click", e => {
-        const customButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
-        if (customButton) {
-            customEmojiDrawer(customButton);
+    document.addEventListener('click', (e) => {
+        const customBtn = e.target.closest('button.emoji-button');
+        if (!customBtn) return;
+        console.log('Custom emoji drawer customBtn', customBtn)
+        const type = customBtn.dataset.emojiType; // "custom" | "unicode" | undefined
+        console.log('Type of button', type)
+        if (type === 'custom') {
+            customEmojiDrawer(customBtn);
         }
     });
 
@@ -244,7 +248,7 @@ function renderNewsComment(data) {
     const contentHTML = inner.startsWith('<') ? inner : `<p>${escapeHtml(inner)}</p>`;
 
     const curId   = Number(window.CURRENT_USER_ID ?? NaN);
-    const isAdmin = !!window.CURRENT_USER_IS_ADMIN;
+    const isAdmin = !!window.IS_ADMIN;
     const author  = Number(data.user_id);
 
     // reply allowed if logged in and depth limit not exceeded
@@ -283,7 +287,7 @@ function renderNewsComment(data) {
             </button>
 
             <!-- Custom reactions button -->
-            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">😺</button>
+            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🐱</button>
             <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
                 <!-- JS will inject emoji drawer below -->
             </div>
@@ -356,7 +360,7 @@ function buildReplyDrawer(parentId, articleId) {
       <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
         <img class="icon" src="/media/icons/emoji.png" alt="emoji">
       </button>
-      <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
+      <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🐱</button>
       <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
       <div class="custom-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
       <div class="submit-cancel">
