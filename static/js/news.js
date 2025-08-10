@@ -92,10 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = form.querySelector('[type="submit"]');
 
             try {
-                if (editor) {
-                    // 1) Convert any base64 imgs to uploads (your existing helper)
-                    await handleBase64Images(editor);
-                }
+                // if (editor) {
+                //     // 1) Convert any base64 imgs to uploads (your existing helper)
+                //     await handleBase64Images(editor);
+                // }
 
                 if (!editor || !hiddenInput) {
                     console.warn('Editor or hidden input not found', { editor, hiddenInput });
@@ -206,93 +206,102 @@ function onceConnected(socket, fn) {
 }
 
 function renderNewsComment(data) {
-    console.log('renderNewsComment', data);
-    const article = document.querySelector(`#article-${data.article_id}`);
-    if (!article) {
-        console.warn(`renderNewsComment: no article for #article-${data.article_id}`, data);
-        return;
+    const article = document.querySelector(`.news-article[id="${data.article_id}"]`)
+                || document.querySelector(`.news-article[data-article-id="${data.article_id}"]`);
+    if (!article) return;
+
+    const thread = article.querySelector('.comments-thread');
+    if (!thread) return;
+
+    const INDENT = 60;
+    let depth = 0;
+    if (data.parent_id) {
+        const parent = thread.querySelector(`.comment-container[data-comment-id="${data.parent_id}"]`);
+        if (parent) depth = (parseInt(parent.style.marginLeft || '0', 10) || 0) / INDENT + 1;
     }
 
-    // Ensure a top-level list exists
-    function ensureCommentsList(el) {
-        let list = el.querySelector('.comments-thread');
-        if (!list) {
-            console.warn('renderNewsComment: .comments-thread missing, creating…');
-            list = document.createElement('div');
-            list.className = 'comments-list';
-            el.appendChild(list);
-        }
-        return list;
-    }
+    const avatarSrc =
+        data.avatar_url ||
+        (data.avatar_filename ? `/media/avatars/${data.avatar_filename}` : '/media/avatars/default_avatar.png');
 
-    const isReply = !!data.parent_id;
-    const container = isReply
-        ? article.querySelector(`[data-comment-id="${String(data.parent_id)}"] .replies`)
-        : ensureCommentsList(article);
+    const ts = data.created_at || new Date().toISOString();
+    const inner = (data.content_html || '').trim();
+    const contentHTML = inner.startsWith('<') ? inner : `<p>${escapeHtml(inner)}</p>`;
 
-    if (!container) {
-        console.warn('renderNewsComment: no container',
-            isReply ? 'replies under parent' : '.comments-list',
-            { parent_id: data.parent_id, article });
-        return;
-    }
+    const canReply  = depth < 5 && !!window.currentUser?.id;
+    const canDelete = !!window.currentUser &&
+                        (window.currentUser.id === data.user_id || window.currentUser.is_admin);
 
-    // Build node (use server html if present, else wrap content_html)
-    const inner = (data.html || data.content_html || '').trim();
-    if (!inner) {
-        console.warn('renderNewsComment: empty html/content_html', data);
-        return;
-    }
+    const node = document.createElement('div');
+    node.className = 'comment-container';
+    node.dataset.commentId = String(data.comment_id);
+    node.style.marginLeft = `${depth * INDENT}px`;
 
-    let node;
-    if (data.html) {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = inner;
-        node = tmp.firstElementChild;
-    } else {
-        node = document.createElement('div');
-        node.className = 'comment-thread';
-        node.setAttribute('data-comment-id', String(data.comment_id));
-        node.innerHTML = `
-      <div class="comment-container" style="margin-left:${isReply ? 60 : 0}px;">
+    node.innerHTML = `
         <div class="comment-header">
-          <span class="username">
-            <strong>${escapeHtml(data.display_name || 'Anonymous')}</strong>
-            <span class="timestamp" data-timestamp="${data.created_at || ''}"></span>
-          </span>
+        <button class="avatar-wrapper"
+                data-id="${data.user_id || ''}"
+                data-username="${escapeHtml(data.username || '')}"
+                data-display_name="${escapeHtml(data.display_name || '')}">
+            <img class="avatar-inline" src="${avatarSrc}" alt="User Avatar">
+        </button>
+        <span class="username">
+            <strong>${escapeHtml(data.display_name || data.username || 'Anonymous')}</strong>
+            <span class="timestamp" data-timestamp="${ts}"></span>
+        </span>
         </div>
+
         <div class="comment-content" data-comment-id="${String(data.comment_id)}">
-          <p>${inner}</p>
+        ${contentHTML}
         </div>
+
         <div class="comment-toolbar" data-comment-id="${String(data.comment_id)}">
-          <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
+        <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
             <img class="icon" src="/media/icons/emoji.png" alt="emoji">
-          </button>
-          <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
-          <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
-          <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
-          <button type="button" class="upload-button">Upload</button>
+        </button>
+        <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🦊</button>
+        <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
+        <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
+
+        ${canReply ? `<button class="newsfeed-button reply-toggle">Reply</button>` : ''}
+
+        ${canDelete ? `
+            <form method="POST" action="/delete_comment/${data.comment_id}" class="delete-form">
+            <input type="hidden" name="csrf_token" value="${window.csrfToken || ''}">
+            <button type="submit" class="delete-button" onclick="return confirm('Delete this comment?')">Delete</button>
+            </form>` : ''}
         </div>
-        <div class="replies"></div>
-      </div>
     `;
+
+    // insert: append for top-level; for replies, insert after parent's subtree
+    if (!data.parent_id) {
+        thread.appendChild(node);
+    } else {
+        const parent = thread.querySelector(`.comment-container[data-comment-id="${data.parent_id}"]`);
+        if (!parent) thread.appendChild(node);
+        else {
+        const parentDepthPx = parseInt(parent.style.marginLeft || '0', 10) || 0;
+        let after = parent, cur = parent.nextElementSibling;
+        while (cur && cur.classList?.contains('comment-container') &&
+                (parseInt(cur.style.marginLeft || '0', 10) || 0) > parentDepthPx) {
+            after = cur; cur = cur.nextElementSibling;
+        }
+        after.after(node);
+        }
     }
 
-    if (!node) {
-        console.warn('renderNewsComment: built node is null', data);
-        return;
-    }
-
-    container.appendChild(node);
     if (typeof formatTimestamp === 'function') formatTimestamp(node);
-    console.log('renderNewsComment: appended', { article, parent_id: data.parent_id, node });
-}
+    // Re-init any per-node behaviors for the new toolbar/avatar:
+    if (typeof initEmojiToolbar === 'function') initEmojiToolbar(node);
+    if (typeof wireAvatarPopups === 'function') wireAvatarPopups(node);
+    }
 
-function escapeHtml(s) {
+    function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[c]));
 }
+
 
 
 function unicodeEmojiDrawer(box) {

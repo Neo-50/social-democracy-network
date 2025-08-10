@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="comments-thread">
 {% macro render_comment(comment, article, depth=0) %}
-    <div class="comments-thread" data-comment-id="{{ comment.id }}">
-        <div class="comment-container" style="margin-left: {{ depth * 60 }}px;">
+        <div class="comment-container" style="margin-left: {{ depth * 60 }}px;"  data-comment-id="{{ comment.id }}">
             <div class="comment-header">
                 {% if comment.user %}
                     <button class="avatar-wrapper"
@@ -111,8 +111,8 @@
         {% else %}
             <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to view replies.</p>
         {% endif %}
-    </div>
 {% endmacro %}
+</div>
 
 <main class="news-page">
     <section class="news-left">
@@ -233,7 +233,7 @@
                 <div class="spinner"></div> Fetching metadata...
                 </div>
             {% else %}
-                <div class="news-article">
+                <div class="news-article" id="{{ article.id }}">
                     <div class="article-info-wrapper">
                         <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
                         {% if article.description %}
