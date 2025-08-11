@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const customBtn = e.target.closest('button.emoji-button');
         if (!customBtn) return;
         console.log('Custom emoji drawer customBtn', customBtn)
-        const type = customBtn.dataset.emojiType; // "custom" | "unicode" | undefined
+        const type = customBtn.dataset.emojiType;
         console.log('Type of button', type)
         if (type === 'custom') {
             customEmojiDrawer(customBtn);
@@ -351,22 +351,28 @@ function buildReplyDrawer(parentId, articleId) {
   el.style.display = 'none';
   el.innerHTML = `
     <form class="reply-form" data-article-id="${articleId}">
-      <input type="hidden" name="csrf_token" value="${window.csrfToken || ''}">
-      <input type="hidden" name="parent_id" value="${parentId}">
-      <div class="comment-box">
-        <div class="comment-editor" contenteditable="true" placeholder="Write a reply…"></div>
-        <input type="hidden" name="comment-content" class="hidden-content">
-      </div>
-      <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
-        <img class="icon" src="/media/icons/emoji.png" alt="emoji">
-      </button>
-      <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🐱</button>
-      <div class="emoji-wrapper" id="unicode-wrapper-input" style="display:none;"></div>
-      <div class="custom-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
-      <div class="submit-cancel">
-        <button type="submit" class="newsfeed-button">Submit</button>
-        <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
-      </div>
+        <input type="hidden" name="csrf_token" value="${window.csrfToken || ''}">
+        <input type="hidden" name="parent_id" value="${parentId}">
+        <div class="comment-box">
+            <div class="comment-editor" contenteditable="true" placeholder="Write a reply…"></div>
+            <input type="hidden" name="comment-content" class="hidden-content">
+      
+            <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
+                <img class="icon" src="/media/icons/emoji.png" alt="emoji">
+            </button>
+            <div class="emoji-wrapper" id="unicode-wrapper-input" style="display: none;">
+                <emoji-picker></emoji-picker>
+            </div>
+            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🐱</button>
+                <div class="custom-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
+            </button>
+            <button type="button" class="upload-button">📎 </button>
+            <input type="file" class="file-input" style="display: none;" />
+            <div class="submit-cancel">
+                <button type="submit" class="newsfeed-button">Submit</button>
+                <button type="button" class="newsfeed-button cancel-reply">Cancel</button>
+            </div>
+        </div>
     </form>`;
   wireReplyForm(el);
   if (typeof initEmojiToolbar === 'function') initEmojiToolbar(el);
@@ -423,6 +429,7 @@ function maybeHandleBase64Images(editor) {
 }
 
 function unicodeEmojiDrawer(box) {
+    console.log('unicodeEmojiDrawer: box: ', box)
     const pickerWrapper = box.querySelector(".emoji-wrapper");
     const picker = pickerWrapper.querySelector("emoji-picker");
 

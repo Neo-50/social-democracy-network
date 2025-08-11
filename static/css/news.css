@@ -455,8 +455,8 @@ p {
 
 .custom-emoji-drawer {
     position: absolute;
-    max-height: 300px;
-    min-width: 360px;
+    max-height: 440px;
+    min-width: 400px;
     z-index: 1000;
     top: 80px;
     left: 340px;
@@ -475,8 +475,8 @@ p {
     position: absolute;
     top: calc(100% + 4px);
     right: 0;
-    max-height: 300px;
-    min-width: 360px;
+    max-height: 440px;
+    min-width: 320px;
     z-index: 1200;
     overflow-y: auto;
     display: flex;
