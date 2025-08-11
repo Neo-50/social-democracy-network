@@ -248,7 +248,7 @@ function renderNewsComment(data) {
 
     const ts = data.created_at || new Date().toISOString();
     const inner = (data.content_html || '').trim();
-    const contentHTML = inner.startsWith('<') ? inner : `<p>${escapeHtml(inner)}</p>`;
+    const contentHTML = inner.startsWith('<') ? inner : `<p>${inner}</p>`;
 
     const curId   = Number(window.CURRENT_USER_ID ?? NaN);
     const isAdmin = !!window.IS_ADMIN;
