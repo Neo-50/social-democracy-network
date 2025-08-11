@@ -42,7 +42,7 @@ class NewsComment(db.Model):
     )
     parent_id = db.Column(
         db.Integer,
-        db.ForeignKey('news_comment.id', name='fk_news_comment_parent_id'),
+        db.ForeignKey('news_comment.id',  ondelete='CASCADE', name='fk_news_comment_parent_id'),
         nullable=True
     )
     def formatted_content(self):
@@ -51,5 +51,7 @@ class NewsComment(db.Model):
     replies = db.relationship(
         'NewsComment',
         backref=db.backref('parent', remote_side=[id]),
-        cascade='all, delete-orphan'
+        cascade='all, delete-orphan',
+        single_parent=True,
+        lazy='selectin'
     )
