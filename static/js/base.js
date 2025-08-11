@@ -58,8 +58,8 @@ window.initReactionSocket = function () {
 
 function handleReactionUpdate(action, target, emoji, target_id, targetType, user_id, user_ids) {
     
-    console.log('handleReactionUpdate data: ', 'action | ', action, 'target | ', target, 'emoji | ', emoji, 
-        'target_id | ', target_id, 'target_type | ', targetType, 'user_id | ', 'user_id | ', user_id, 'user_ids | ', user_ids);
+    console.log('handleReactionUpdate data: ', 'action: ', action, '| target: ', target, '| emoji: ', emoji, 
+        '| target_id: ', target_id, '| target_type: ', targetType, '| user_id: ', 'user_id | ', user_id, 'user_ids | ', user_ids);
     const span = document.querySelector(
         `.emoji-reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
     );
@@ -70,7 +70,7 @@ function handleReactionUpdate(action, target, emoji, target_id, targetType, user
             // Update existing reaction count
             const countEl = span.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
-
+            span.dataset.user_ids = JSON.stringify(user_ids);
             updateReactionTooltip(span, user_ids);
         } else {
             // Create new reaction
@@ -96,6 +96,7 @@ function handleReactionUpdate(action, target, emoji, target_id, targetType, user
             // Update count if users remain
             const countEl = span.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
+            span.dataset.user_ids = JSON.stringify(user_ids);
             updateReactionTooltip(span, user_ids);
         }
     }
