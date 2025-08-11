@@ -109,6 +109,13 @@ function handleExistingReaction(existing, user_ids, user_id) {
 function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
     console.log('createNewReaction: ', 'target ', target, '| emoji ', emoji, '| target_id ', target_id,
         '| targetType ', targetType, '| user_id ', user_id, '| user_ids ', user_ids)
+
+    const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
+    if (existing) {
+        console.warn('Existing emoji reaction found:', existing);
+        return;
+    }
+
     const span = document.createElement("span");
     const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
     const tooltip = `${usernames.join(", ")}`;
