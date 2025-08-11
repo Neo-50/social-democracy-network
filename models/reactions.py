@@ -1,10 +1,9 @@
 from db_init import db
-from . import db
 
 reaction_user = db.Table(
     "reaction_user",
     db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
-    db.Column("reaction_id", db.Integer, db.ForeignKey("reaction.id")),
+    db.Column("reaction_id", db.Integer, db.ForeignKey("reaction.id",  ondelete="CASCADE")),
 )
 
 class Reaction(db.Model):
@@ -22,11 +21,13 @@ class Reaction(db.Model):
     users = db.relationship(
         "User",
         secondary=reaction_user,
-        backref="reactions"
+        backref=db.backref("reactions", lazy="dynamic"),
+        passive_deletes=True,
+        lazy="selectin",
     )
 
     def count(self):
-        return 1  # each row is one user's reaction
+        return len(self.users)
 
     def to_dict(self):  
         return {
@@ -34,3 +35,4 @@ class Reaction(db.Model):
             "count": self.count(),
             "user_ids": [u.id for u in self.users],
         }
+

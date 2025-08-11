@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 from db_init import db
 from models import User, NewsArticle, NewsComment, Message, ChatMessage, Reaction
 from models.reactions import reaction_user
-from sqlalchemy import func
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
 import re
@@ -68,11 +67,10 @@ def login_required(f):
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 
-from sqlalchemy import event, or_
-from sqlalchemy.engine import Engine
+import sqlalchemy as sa
 from sqlite3 import Connection as SQLite3Connection
 
-@event.listens_for(Engine, "connect")
+@sa.event.listens_for(sa.engine.Engine, "connect")
 def enable_sqlite_foreign_keys(dbapi_connection, connection_record):
     if isinstance(dbapi_connection, SQLite3Connection):
         cursor = dbapi_connection.cursor()
@@ -130,7 +128,7 @@ def get_online_users():
 def get_offline_users():
     threshold = datetime.now(timezone.utc) - timedelta(minutes=15)
     return User.query.filter(
-        or_(User.last_active < threshold, User.last_active == None)
+        sa.or_(User.last_active < threshold, User.last_active == None)
     ).all()
 
 @app.route('/active-users')
@@ -258,8 +256,8 @@ def news():
             db.session.query(
                 Reaction.target_id,
                 Reaction.emoji,
-                func.count(Reaction.id).label("reactionCount"),
-                func.group_concat(reaction_user.c.user_id).label("user_ids"),
+                sa.func.count(Reaction.id).label("reactionCount"),
+                sa.func.group_concat(reaction_user.c.user_id).label("user_ids"),
             )
             .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
             .filter(Reaction.target_type == "news")
@@ -288,8 +286,8 @@ def news():
             db.session.query(
                 Reaction.target_id,
                 Reaction.emoji,
-                func.count(Reaction.id).label("reactionCount"),
-                func.array_agg(reaction_user.c.user_id).label("user_ids"),
+                sa.func.count(Reaction.id).label("reactionCount"),
+                sa.func.array_agg(reaction_user.c.user_id).label("user_ids"),
             )
             .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
             .filter(Reaction.target_type == "news")
@@ -898,6 +896,38 @@ def add_comment(article_id):
 
         return jsonify({"ok": True, "comment_id": comment.id})
 
+def reactions_q_for_comment(comment_id: int):
+    return (Reaction.query
+            .filter(Reaction.target_type == "news",
+                    Reaction.target_id == comment_id))
+
+def get_comment_subtree_ids(root_id: int) -> list[int]:
+    sql = sa.text("""
+        WITH RECURSIVE sub(id) AS (
+            SELECT :root
+            UNION ALL
+            SELECT nc.id
+            FROM news_comment AS nc
+            JOIN sub s ON nc.parent_id = s.id
+        )
+        SELECT id FROM sub
+    """)
+    return db.session.execute(sql, {"root": root_id}).scalars().all()
+
+# --- bulk-delete reactions for a set of comment ids
+def purge_reactions_for_comments(comment_ids: list[int], target_type: str = "news") -> None:
+    if not comment_ids:
+        return
+    (Reaction.query
+        .filter(Reaction.target_type == target_type,
+                Reaction.target_id.in_(comment_ids))
+        .delete(synchronize_session=False))
+
+def purge_reactions_for_article(article_id: int):
+    ids = db.session.execute(sa.text(
+        "SELECT id FROM news_comment WHERE article_id = :aid"
+    ), {"aid": article_id}).scalars().all()
+    purge_reactions_for_comments(ids, "news")
 
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
@@ -907,8 +937,11 @@ def delete_comment(comment_id):
         abort(403)
 
     article_id = comment.article_id
-    db.session.delete(comment)
-    db.session.commit()
+
+    with db.session.begin():
+        ids = get_comment_subtree_ids(comment.id)     # parent + all descendants
+        purge_reactions_for_comments(ids, "news")
+        db.session.delete(comment)
 
     # notify all clients
     socketio.emit(
@@ -934,8 +967,9 @@ def delete_article(article_id):
         flash("Access denied.")
         return redirect(url_for('news'))
 
-    db.session.delete(article)
-    db.session.commit()
+    with db.session.begin():
+        purge_reactions_for_article(article.id)  # purge all comment reactions for this article
+        db.session.delete(article)
     flash("Article deleted.")
     return redirect(url_for('news'))
 
