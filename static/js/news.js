@@ -42,52 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // FILE UPLOAD
-    document.querySelectorAll("form").forEach(form => {
-        const editor = form.querySelector(".comment-editor");
-        const fileInput = form.querySelector(".file-input");
-        const uploadButton = form.querySelector(".upload-button");
-
-        if (!editor || !fileInput || !uploadButton) {
-            return;
-        }
-
-        uploadButton.addEventListener("click", () => {
-            fileInput.click();
-        });
-
-        fileInput.addEventListener("change", () => {
-            const file = fileInput.files[0];
-            if (!file || !file.type.startsWith("image/")) return;
-
-            const formData = new FormData();
-            formData.append("file", file);
-
-            fetch("/news/upload_news_image", {
-                method: "POST",
-                body: formData,
-            })
-                .then(async res => {
-                    const data = await res.json();
-                    if (!res.ok || !data.success) {
-                        throw new Error(data.error || "Upload failed");
-                    }
-                    return data;
-                })
-                .then(data => {
-                    const img = document.createElement("img");
-                    img.src = data.url;
-                    img.alt = file.name;
-                    img.className = "uploaded-image";
-
-                    insertNodeAtCursor(editor, img);
-                })
-                .catch(err => {
-                    console.error("Upload failed:", err);
-                    showToast(err.message || "Upload error");
-                });
-            fileInput.value = "";
-        });
-    });
+    document.querySelectorAll(".reply-drawer, .new-comment, .post-comment-container",).forEach(wireUpload);
 
     // COMMENT SYNC ON SUBMIT (AJAX + sockets, no reload)
     document.querySelectorAll('form[action^="/comment/"]').forEach(form => {
@@ -377,9 +332,10 @@ function buildReplyDrawer(parentId, articleId) {
             </div>
         </div>
     </form>`;
-  wireReplyForm(el);
-  if (typeof initEmojiToolbar === 'function') initEmojiToolbar(el);
-  return el;
+    wireUpload(el); 
+    wireReplyForm(el);
+    if (typeof initEmojiToolbar === 'function') initEmojiToolbar(el);
+    return el;
 }
 
 function wireReplyForm(scope) {
@@ -418,6 +374,50 @@ function wireReplyForm(scope) {
       scope.style.display = 'none';
     } finally {
       submitBtn?.removeAttribute('disabled');
+    }
+  });
+}
+
+function wireUpload(scope) {
+    if (!scope || scope.dataset.uploadWired) return; // guard against double wiring
+    const editor       = scope.querySelector(".comment-editor");
+    const fileInput    = scope.querySelector(".file-input");
+    const uploadButton = scope.querySelector(".upload-button");
+    if (!(editor && fileInput && uploadButton)) return;
+
+    scope.dataset.uploadWired = "1";
+
+    uploadButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", async () => {
+        const file = fileInput.files[0];
+        if (!file || !file.type.startsWith("image/")) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+    try {
+        const res  = await fetch("/news/upload_news_image", {
+            method: "POST",
+            headers: window.csrfToken ? { "X-CSRFToken": window.csrfToken } : undefined,
+            body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || "Upload failed");
+
+        const img = document.createElement("img");
+        img.src = data.url;
+        img.alt = file.name;
+        img.className = "uploaded-image";
+        insertNodeAtCursor(editor, img);
+
+        fileInput.value = "";
+    } catch (err) {
+      console.error("Upload failed:", err);
+      showToast(err.message || "Upload error");
     }
   });
 }
