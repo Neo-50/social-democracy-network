@@ -18,7 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const toolbar = emojiButton.closest(".comment-toolbar");
         const box = emojiButton.closest(".comment-box");
 
+        console.log('click toolbar: ', toolbar, 'box: ', box);
+
         if (toolbar) {
+            console.log('***unicodeReactionDrawer***')
             unicodeReactionDrawer(toolbar);
         }
         if (box) {
@@ -453,8 +456,11 @@ function unicodeEmojiDrawer(box) {
 
 function unicodeReactionDrawer(toolbar) {
     const picker = document.querySelector("#unicode-emoji-picker");
+    console.log('unicodeReactionDrawer picker: ', picker);
     let wrapper = document.querySelector("#unicode-wrapper-reaction");
+    console.log('unicodeReactionDrawer wrapper: ', wrapper);
     picker.dataset.commentId = toolbar.closest(".comments-thread").dataset.commentId;
+
 
     if (!toolbar.contains(wrapper)) {
         toolbar.appendChild(wrapper);
@@ -467,7 +473,8 @@ function unicodeReactionDrawer(toolbar) {
 
     if (!picker.dataset.bound) {
         picker.addEventListener("emoji-click", (e) => {
-            const commentId = picker.dataset.commentId;
+            const commentId = picker.closest('.comment-container')?.dataset.commentId;
+
             if (activeCommentContent) {
                 const emoji = e.detail.unicode;
 
