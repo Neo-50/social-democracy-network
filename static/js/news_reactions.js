@@ -84,7 +84,7 @@ function handleExistingReaction(existing, user_ids, user_id) {
         const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
         if (user_ids.length === 0) {
             existing.remove();
-            console.log('Reaction removed, user_ids: ', user_id)
+            console.log('Reaction removed, user_ids: ', user_ids)
             return { user_id, action: "remove", removed: true };
         } else {
             existing.classList.remove("reacted-by-me");
@@ -137,7 +137,6 @@ function handleReactionClick(event) {
     const user_ids = JSON.parse(span.dataset.user_ids || "[]");
 
     console.log('handleReactionClick data: ', emoji, targetId, user_ids, window.CURRENT_USER_ID);
-    console.log('handleReactionClick span: ', span)
 
     window.renderReaction({
         target: span.parentElement,
