@@ -933,25 +933,29 @@ def purge_reactions_for_article(article_id: int):
 @login_required
 def delete_comment(comment_id):
     comment = NewsComment.query.get_or_404(comment_id)
+
+    # return JSON (don't abort HTML)
     if int(current_user.get_id()) != comment.user_id and not is_admin():
-        abort(403)
+        return jsonify({"ok": False, "error": "forbidden"}), 403
 
     article_id = comment.article_id
 
-    with db.session.begin():
-        ids = get_comment_subtree_ids(comment.id)     # parent + all descendants
-        purge_reactions_for_comments(ids, "news")
-        db.session.delete(comment)
+    try:
+        ids = get_comment_subtree_ids(comment.id)   # parent + descendants
+        purge_reactions_for_comments(ids, "news")   # bulk delete reactions
+        db.session.delete(comment)                  # replies removed via cascade
+        db.session.commit()                         # <-- no with .begin()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("delete_comment failed")
+        return jsonify({"ok": False, "error": "server_error"}), 500
 
-    # notify all clients
     socketio.emit(
         'delete_comment',
         {'comment_id': comment_id, 'article_id': article_id},
         namespace='/news_comments'
     )
-
-    # IMPORTANT: no redirect here — return JSON
-    return jsonify({'ok': True, 'comment_id': comment_id})
+    return jsonify({"ok": True, "comment_id": comment_id})
 
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
