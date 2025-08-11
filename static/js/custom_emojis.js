@@ -18,21 +18,31 @@ document.addEventListener("click", (e) => {
 });
 
 function customEmojiDrawer(button) {
-    console.log('customEmojiDrawer');
-    let commentBox;
+    console.log('Toggling custom emoji drawer');
+    console.log('Parent element of button: ', button.parentElement.classList);
+    
 
-    console.log('button parent element class: ', button.parentElement.classList);
-
-    if (button.parentElement.classList.contains('comment-box' || 'reply-form')) {
-        commentBox = button.parentElement;
+    const commentBox = button.closest(".comment-box");
+    console.log('Comment box:', commentBox);
+    if (!commentBox) {
+        console.warn('commentBox not found!')
     }
 
-    if (commentBox) {
-        const wrapper = commentBox.querySelector('.custom-wrapper');
-        let drawer = commentBox.querySelector('.custom-reaction-drawer');
-    
-        console.log('wrapper', wrapper, 'drawer ', drawer);
+    const toolbar = button.closest(".comment-toolbar");
+    console.log('Toolbar value: ', toolbar);
+    let drawer = null;
+    let wrapper = null;
+    if (toolbar) {
+        wrapper = toolbar.querySelector("#custom-emoji-wrapper");
+        console.log('Wrapper:', wrapper);
 
+        drawer = wrapper.querySelector(".custom-reaction-drawer")
+        console.log('Drawer:', drawer);
+    }
+
+    if (!commentBox) {
+        console.log('No comment box here!')
+        // If drawer exists and is visible, hide it and clean up
         if (drawer && wrapper.style.display === "flex") {
             console.log('Drawer exists and is not hidden')
             wrapper.style.display = "none";
@@ -55,11 +65,11 @@ function customEmojiDrawer(button) {
             wrapper.style.display = "flex";
         }
     }
-
-    if (!commentBox) {
+    if (commentBox) {
+        console.log('Comment box dectected!', commentBox)
         let wrapper = commentBox.querySelector(".custom-wrapper");
         if (!wrapper) {
-            console.warn("No custom-wrapper found inside this replyForm:", commentBox);
+            console.warn("No custom-wrapper found inside this commentBox:", commentBox);
             return;
         }
         let drawer = wrapper.querySelector(".custom-emoji-drawer");
@@ -84,6 +94,7 @@ function customEmojiDrawer(button) {
 
 function injectCustomReactionDrawer(wrapper) {
     console.log('injectCustomReactionDrawer reached!')
+    
     const drawer = document.createElement('div');
     drawer.className = 'custom-reaction-drawer';
     
@@ -143,7 +154,7 @@ function sizeButtonHelper(drawer) {
 }
 
 function initializeEmojiDrawer(commentBox, wrapper) {
-    console.log('***Initialize Emoji Drawer Fired!***')
+    console.log('***initializeEmojiDrawer*** commentBox: ', commentBox, 'wrapper: ', wrapper);
     if (wrapper.querySelector('.custom-emoji-drawer')) return;
 
     const drawer = document.createElement('div');
@@ -155,12 +166,15 @@ function initializeEmojiDrawer(commentBox, wrapper) {
 
     // get editor inside this comment box
     const editorBox = commentBox.querySelector('.comment-editor');
-    if (!editorBox || !editorBox.id) {
-        console.error("Editor missing or missing id in commentBox", commentBox);
-        return;
-    }
-    drawer.dataset.targetEditorId = editorBox.id;
-
+    // if (!editorBox || !editorBox.id) {
+    //     console.error("Editor missing or missing id in commentBox:", 'commentBox ', commentBox, 
+    //         '| wrapper', wrapper, '| editorBox: ', editorBox, '| editorBox.id ', editorBox.id);
+    //     return;
+    // }
+    // drawer.dataset.targetEditorId = editorBox.id;
+    console.log("initializeEmojiDrawer: ", 'commentBox ', commentBox, '| drawer: ', drawer,
+             '| wrapper', wrapper, '| editorBox: ', editorBox, '| editorBox.id ', editorBox.id);
+    console.log('Appending drawer as child of wrapper')
     wrapper.appendChild(drawer);
 
     sizeButtonHelper(drawer);
