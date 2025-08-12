@@ -123,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
     document.querySelectorAll(".comment-content img").forEach(img => {
         if (img.src.includes("/media/news/") && !img.className) {
             img.classList.add("uploaded-image");
@@ -138,35 +137,63 @@ window.initCommentSocket = function () {
     commentSocket.off('new_comment');
     commentSocket.off('delete_comment');
 
-    // log connect/disconnect
-    commentSocket.on('connect', () => {
-        console.log('🟢 /news_comments connected');
+    commentSocket.on("connect", () => {
+        console.log("🟢 Comment socket connected");
     });
+
     commentSocket.on('disconnect', (reason) => {
         console.log('🔴 /news_comments disconnected:', reason);
     });
 
     // bind the event handlers only after we’re actually connected
     onceConnected(commentSocket, () => {
-        console.log('✅ binding comment handlers');
+        console.log('✅ Comment socket binding comment handlers');
 
         commentSocket.on('new_comment', (data) => {
             console.log('[WS] new_comment:', data);
             renderNewsComment(data);
         });
 
-        commentSocket.on('delete_comment', ({ comment_id }) => {
-            document.querySelector(
-                `.comment-container[data-comment-id="${comment_id}"]`
-            )?.remove();
-        });
-    });
+        // Safe CSS escape (FF/older)
+        const cssEscape = (s) =>
+        (window.CSS && CSS.escape) ? CSS.escape(String(s)) : String(s).replace(/"/g, '\\"');
 
-  // NOW connect (after handlers are ready)
-  if (!commentSocket.connected) commentSocket.connect();
+        // Rebind cleanly
+        commentSocket.off('delete_comment');
+        commentSocket.on('delete_comment', (payload = {}) => {
+            // tolerate either key: descendant_ids or decendant_ids (typo)
+            const {
+                comment_id,
+                descendant_ids = payload.decendant_ids || [],
+            } = payload;
+
+            if (comment_id == null) {
+                console.warn('[delete_comment] missing comment_id', payload);
+                return;
+            }
+
+            // Parent + descendants as strings
+            const ids = [String(comment_id), ...descendant_ids.map(String)];
+            console.debug('[delete_comment] ids ->', ids);
+
+            ids.forEach((id) => {
+                const sel = `.comment-container[data-comment-id="${cssEscape(id)}"]`;
+                const nodes = document.querySelectorAll(sel);
+                console.debug('[delete_comment] removing', id, 'matches:', nodes.length, 'selector:', sel);
+                nodes.forEach((el) => el.remove());
+
+                // optional: clear any client caches
+                if (window.reactionMap) delete window.reactionMap[`comment:${id}`];
+            });
+        });
+    
+    });
+    if (!commentSocket.connected) {
+        commentSocket.connect();
+        console.log('🟢 commentSocket just connected');
+    }
 };
 
-// helper: run fn when socket is connected
 function onceConnected(socket, fn) {
     if (socket.connected) {
         fn();
@@ -414,6 +441,35 @@ function wireUpload(scope) {
     }
   });
 }
+
+// Remove a comment and all of its descendants (by walking data-parent-id)
+// function removeCommentBranch(rootId) {
+//     const toRemove = new Set([String(rootId)]);
+//     let grew = true;
+
+//     // Expand the set until no new descendants are found
+//     while (grew) {
+//         grew = false;
+//         document.querySelectorAll('.comment-container[data-parent-id]').forEach(el => {
+//         const pid = el.dataset.parentId;
+//         const id  = el.dataset.commentId;
+//         if (toRemove.has(pid) && !toRemove.has(id)) {
+//             toRemove.add(id);
+//             grew = true;
+//         }
+//         });
+//     }
+
+//     // Remove all nodes in the branch
+//     toRemove.forEach(id => {
+//         document.querySelector(`.comment-container[data-comment-id="${id}"]`)?.remove();
+//         // optional: clean up any client caches/maps
+//         if (window.reactionMap) delete window.reactionMap[`comment:${id}`];
+//     });
+
+//     // if you draw connector lines, refresh them
+//     window.renderThreadConnectors?.();
+// }
 
 function maybeHandleBase64Images(editor) {
   // only run handler if there’s at least one non-emoji data URI
