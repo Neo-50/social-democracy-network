@@ -106,34 +106,85 @@ function handleExistingReaction(existing, user_ids, user_id) {
     }
 }
 
-function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
-    console.log('createNewReaction: ', 'target ', target, '| emoji ', emoji, '| target_id ', target_id,
-        '| targetType ', targetType, '| user_id ', user_id, '| user_ids ', user_ids)
+// function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
+//     console.log('createNewReaction: ', 'target ', target, '| emoji ', emoji, '| target_id ', target_id,
+//         '| targetType ', targetType, '| user_id ', user_id, '| user_ids ', user_ids)
 
+//     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
+//     if (existing) {
+//         console.warn('Existing emoji reaction found:', existing);
+//         return;
+//     }
+
+//     const span = document.createElement("span");
+//     const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
+//     const tooltip = `${usernames.join(", ")}`;
+//     console.log("Tooltip:", tooltip);
+
+//     span.className = "emoji-reaction reaction reacted-by-me";
+//     span.title = tooltip;
+//     span.dataset.emoji = emoji;
+//     span.dataset.targetId = target_id;
+//     span.dataset.targetType = targetType;
+//     span.dataset.user_ids = JSON.stringify(user_ids);
+//     span.innerHTML = `${emoji} <span class="reaction-count">${user_ids.length}</span>`;
+//     span.addEventListener("click", handleReactionClick);
+//     console.log('createNewReaction data: ', span)
+//     target.appendChild(span);
+//     if (!user_ids.includes(user_id)) {
+//         user_ids.push(user_id);
+//     }
+//     return { user_ids, action: "add" };
+// }
+
+// helper – decide if this is a custom image emoji
+function isCustomEmoji(val) {
+  return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
+}
+
+function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
+    // bail if already present
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
-    if (existing) {
-        console.warn('Existing emoji reaction found:', existing);
-        return;
-    }
+    if (existing) return { user_ids, action: "noop" };
 
     const span = document.createElement("span");
-    const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-    const tooltip = `${usernames.join(", ")}`;
-    console.log("Tooltip:", tooltip);
-
     span.className = "emoji-reaction reaction reacted-by-me";
-    span.title = tooltip;
-    span.dataset.emoji = emoji;
+    span.dataset.emoji = emoji;            // use filename or the unicode itself
     span.dataset.targetId = target_id;
     span.dataset.targetType = targetType;
-    span.dataset.user_ids = JSON.stringify(user_ids);
-    span.innerHTML = `${emoji} <span class="reaction-count">${user_ids.length}</span>`;
-    span.addEventListener("click", handleReactionClick);
-    console.log('createNewReaction data: ', span)
-    target.appendChild(span);
-    if (!user_ids.includes(user_id)) {
-        user_ids.push(user_id);
+    span.dataset.userIds = JSON.stringify(user_ids);
+
+    // --- build the emoji node (no innerHTML, no string coercion) ---
+    let emojiEl;
+
+    if (isCustomEmoji(emoji)) {
+        // `emoji` is a filename like "derp.png"
+        emojiEl = document.createElement("img");
+        emojiEl.className = "custom-emoji-reaction";
+        emojiEl.src = `/media/emojis/${emoji}`;       // adjust to your path
+        emojiEl.alt = emoji.replace(/\.[^.]+$/, "");  // filename without ext
+        emojiEl.style.width = "28px";
+        emojiEl.style.height = "28px";
+        emojiEl.style.verticalAlign = "middle";
+    } else {
+        // unicode emoji
+        emojiEl = document.createElement("span");
+        emojiEl.className = "unicode-emoji-reaction";
+        emojiEl.textContent = emoji; // safe: text node
     }
+
+    const countEl = document.createElement("span");
+    countEl.className = "reaction-count";
+    countEl.textContent = String(user_ids.length);
+
+    span.appendChild(emojiEl);
+    span.appendChild(countEl);
+
+    span.addEventListener("click", handleReactionClick);
+
+    target.appendChild(span);
+    window.updateReactionTooltip(span, user_ids);
+    if (!user_ids.includes(user_id)) user_ids.push(user_id);
     return { user_ids, action: "add" };
 }
 
