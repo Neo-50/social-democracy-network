@@ -939,9 +939,9 @@ def delete_comment(comment_id):
         return jsonify({"ok": False, "error": "forbidden"}), 403
 
     article_id = comment.article_id
-
+    ids = get_comment_subtree_ids(comment.id)   # parent + descendants
+    descendant_ids = [i for i in ids if i != comment.id]
     try:
-        ids = get_comment_subtree_ids(comment.id)   # parent + descendants
         purge_reactions_for_comments(ids, "news")   # bulk delete reactions
         db.session.delete(comment)                  # replies removed via cascade
         db.session.commit()                         # <-- no with .begin()
@@ -952,7 +952,7 @@ def delete_comment(comment_id):
 
     socketio.emit(
         'delete_comment',
-        {'comment_id': comment_id, 'article_id': article_id},
+        {'comment_id': comment_id, 'article_id': article_id, "descendant_ids": descendant_ids,},
         namespace='/news_comments'
     )
     return jsonify({"ok": True, "comment_id": comment_id})
