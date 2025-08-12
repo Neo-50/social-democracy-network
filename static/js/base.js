@@ -102,7 +102,8 @@ function handleReactionUpdate(action, target, emoji, target_id, targetType, user
     }
 };
 
-function updateReactionTooltip(span, user_ids) {
+window.updateReactionTooltip = function (span, user_ids) {
+    console.log('updateReactionTooltip: span: ', span, ' | user_ids: ', user_ids)
     const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
     span.title = `Reacted by: ${usernames.join(", ")}`;
 }

@@ -417,7 +417,7 @@ function wireUpload(scope) {
 
 function maybeHandleBase64Images(editor) {
   // only run handler if there’s at least one non-emoji data URI
-  const imgs = editor.querySelectorAll('img:not(.inline-emoji)');
+  const imgs = editor.querySelectorAll('img:not(.emoji-reaction):not(.unicode-reaction)');
   if ([...imgs].some(img => (img.src || '').startsWith('data:image/'))) {
     console.log('handleBase64Images triggered');
     return handleBase64Images(editor);

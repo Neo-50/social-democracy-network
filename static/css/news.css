@@ -380,10 +380,6 @@ p {
     height: 28px;
 }
 
-.custom-emoji {
-    cursor: pointer;
-}
-
 .uploaded-image {
     max-width: 450px;
     max-height: 450px;
@@ -433,24 +429,36 @@ p {
     transition: background-color 0.2s;
 }
 
-
-
 .inline-emoji {
-    vertical-align: baseline;
+    margin-right: 10px;
     image-rendering: auto;
 }
 
 .emoji-reaction {
-    border: 1px solid #00e3ea;
-    font-size: 1.4em;
     border-radius: 6px;
     padding: 4px;
     margin-right: 2px;
+    font-size: 1.4em;
+    border: 2px solid #00e3ea;
 }
 
 .emoji-reaction:hover {
     cursor: pointer;
     background-color: #333;
+}
+
+.custom-emoji {
+    cursor: pointer;
+}
+
+.custom-emoji-reaction {
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.unicode-emoji-reaction {
+    margin-right: 4px;
+    cursor: pointer;
 }
 
 .custom-emoji-drawer {

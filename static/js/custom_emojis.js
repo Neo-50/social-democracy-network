@@ -122,7 +122,7 @@ function injectCustomReactionDrawer(wrapper, toolbar) {
             if (target) {
                 const emojiNode = document.createElement("img");
                 emojiNode.src = img.src;
-                emojiNode.className = "inline-emoji";
+                emojiNode.className = "custom-emoji-reaction";
                 emojiNode.alt = filename.split(".")[0];
                 emojiNode.style.width = `${selectedEmojiSize}px`;
                 emojiNode.style.height = `${selectedEmojiSize}px`;
@@ -130,7 +130,7 @@ function injectCustomReactionDrawer(wrapper, toolbar) {
 
                 window.renderReaction({
                     target,
-                    emoji: emojiNode,
+                    emoji: filename,
                     target_id,
                     targetType: "news",
                     user_id: window.CURRENT_USER_ID,
@@ -223,7 +223,7 @@ function initializeEmojiDrawer(commentBox, wrapper) {
             if (editor) {
                 const emojiNode = document.createElement("img");
                 emojiNode.src = img.src;
-                emojiNode.className = "inline-emoji";
+                emojiNode.className = "custom-emoji-reaction";
                 emojiNode.alt = filename.split(".")[0];
                 emojiNode.style.width = `${selectedEmojiSize}px`;
                 emojiNode.style.height = `${selectedEmojiSize}px`;
