@@ -87,18 +87,18 @@ function handleExistingReaction(existing, user_ids, user_id) {
             console.log('Reaction removed, user_ids: ', user_ids)
             return { user_id, action: "remove", removed: true };
         } else {
-            existing.classList.remove("reacted-by-me");
             existing.dataset.user_ids = JSON.stringify(user_ids);
             existing.title = `${usernames.join(", ")}`;
             countSpan.textContent = user_ids.length;
             return { user_ids, action: "remove" };
         }
     } else {
-        existing.classList.add("reacted-by-me");;
         if (!user_ids.includes(user_id)) {
             user_ids.push(user_id);
         }
+        console.log('handleExistingReaction user_ids list updated: ', user_ids);
         existing.dataset.user_ids = JSON.stringify(user_ids);
+        console.log('updated existing dataset user_ids: ', existing.dataset.user_ids);
         const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
         existing.title = `${usernames.join(", ")}`;
         countSpan.textContent = user_ids.length;
@@ -106,53 +106,24 @@ function handleExistingReaction(existing, user_ids, user_id) {
     }
 }
 
-// function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
-//     console.log('createNewReaction: ', 'target ', target, '| emoji ', emoji, '| target_id ', target_id,
-//         '| targetType ', targetType, '| user_id ', user_id, '| user_ids ', user_ids)
-
-//     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
-//     if (existing) {
-//         console.warn('Existing emoji reaction found:', existing);
-//         return;
-//     }
-
-//     const span = document.createElement("span");
-//     const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-//     const tooltip = `${usernames.join(", ")}`;
-//     console.log("Tooltip:", tooltip);
-
-//     span.className = "emoji-reaction reaction reacted-by-me";
-//     span.title = tooltip;
-//     span.dataset.emoji = emoji;
-//     span.dataset.targetId = target_id;
-//     span.dataset.targetType = targetType;
-//     span.dataset.user_ids = JSON.stringify(user_ids);
-//     span.innerHTML = `${emoji} <span class="reaction-count">${user_ids.length}</span>`;
-//     span.addEventListener("click", handleReactionClick);
-//     console.log('createNewReaction data: ', span)
-//     target.appendChild(span);
-//     if (!user_ids.includes(user_id)) {
-//         user_ids.push(user_id);
-//     }
-//     return { user_ids, action: "add" };
-// }
-
-// helper – decide if this is a custom image emoji
 function isCustomEmoji(val) {
   return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
 }
 
 function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
+
+    console.log('createNewReaction: ', target, emoji, target_id, targetType, user_id, user_ids);
+
     // bail if already present
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
     if (existing) return { user_ids, action: "noop" };
 
     const span = document.createElement("span");
-    span.className = "emoji-reaction reaction reacted-by-me";
+    span.className = "emoji-reaction";
     span.dataset.emoji = emoji;            // use filename or the unicode itself
     span.dataset.targetId = target_id;
     span.dataset.targetType = targetType;
-    span.dataset.userIds = JSON.stringify(user_ids);
+    span.dataset.user_ids = JSON.stringify(user_ids);
 
     // --- build the emoji node (no innerHTML, no string coercion) ---
     let emojiEl;
@@ -194,7 +165,8 @@ function handleReactionClick(event) {
     const targetId = span.dataset.targetId;
     const user_ids = JSON.parse(span.dataset.user_ids || "[]");
 
-    console.log('handleReactionClick data: ', emoji, targetId, user_ids, window.CURRENT_USER_ID);
+    console.log('handleReactionClick data: ', 'span: ', span, '| emoji: ', emoji, ' | targetId: ', targetId, 
+        ' | user_ids: ', user_ids, ' | current user: ', window.CURRENT_USER_ID);
 
     window.renderReaction({
         target: span.parentElement,
