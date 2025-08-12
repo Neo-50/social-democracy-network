@@ -61,7 +61,7 @@ function customEmojiDrawer(button) {
         // If no drawer exists, inject it and show
         if (!drawer) {
             console.log('Drawer doesnt exist, injecting')
-            injectCustomReactionDrawer(wrapper);
+            injectCustomReactionDrawer(wrapper, toolbar);
             wrapper.style.display = "flex";
         }
     }
@@ -92,11 +92,12 @@ function customEmojiDrawer(button) {
     }
 }
 
-function injectCustomReactionDrawer(wrapper) {
+function injectCustomReactionDrawer(wrapper, toolbar) {
     console.log('injectCustomReactionDrawer reached!')
     
     const drawer = document.createElement('div');
     drawer.className = 'custom-reaction-drawer';
+    const selectedEmojiSize = 28;
     
     sizeButtonHelper(drawer);
 
@@ -113,6 +114,37 @@ function injectCustomReactionDrawer(wrapper) {
             'style',
             `width:${selectedEmojiSize}px;height:${selectedEmojiSize}px;vertical-align:middle;`
         );
+
+        img.addEventListener("click", () => {
+            const target = toolbar.closest(".comment-container")?.querySelector(".comment-content");
+            const target_id = toolbar.closest(".comment-container").dataset.commentId;
+            console.log ('**Custom reaction img click** toolbar: ', toolbar, ' | target: ', target, ' | target_id: ', target_id);
+            if (target) {
+                const emojiNode = document.createElement("img");
+                emojiNode.src = img.src;
+                emojiNode.className = "inline-emoji";
+                emojiNode.alt = filename.split(".")[0];
+                emojiNode.style.width = `${selectedEmojiSize}px`;
+                emojiNode.style.height = `${selectedEmojiSize}px`;
+                emojiNode.style.verticalAlign = "middle";
+
+                window.renderReaction({
+                    target,
+                    emoji: emojiNode,
+                    target_id,
+                    targetType: "news",
+                    user_id: window.CURRENT_USER_ID,
+                    user_ids: [window.CURRENT_USER_ID],
+                    mode: "insert",
+                    emit: true,
+                });
+
+                // update hidden field
+                const hidden = wrapper.closest(".comment-box")?.querySelector(".hidden-content");
+                if (hidden) hidden.value = editor.innerHTML;
+            }
+        });
+
         drawer.appendChild(img);
     });
 
@@ -164,14 +196,7 @@ function initializeEmojiDrawer(commentBox, wrapper) {
     drawer.style.flexWrap = 'wrap';
     drawer.style.gap = '6px';
 
-    // get editor inside this comment box
     const editorBox = commentBox.querySelector('.comment-editor');
-    // if (!editorBox || !editorBox.id) {
-    //     console.error("Editor missing or missing id in commentBox:", 'commentBox ', commentBox, 
-    //         '| wrapper', wrapper, '| editorBox: ', editorBox, '| editorBox.id ', editorBox.id);
-    //     return;
-    // }
-    // drawer.dataset.targetEditorId = editorBox.id;
     console.log("initializeEmojiDrawer: ", 'commentBox ', commentBox, '| drawer: ', drawer,
              '| wrapper', wrapper, '| editorBox: ', editorBox, '| editorBox.id ', editorBox.id);
     console.log('Appending drawer as child of wrapper')
