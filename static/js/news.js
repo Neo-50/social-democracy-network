@@ -1,5 +1,6 @@
 let activeCommentBox = null;
 let activeCommentContent = null;
+
 window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,33 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
         window.initCommentSocket();
     }
 
-    // UNICODE EMOJI DRAWER
+    // EMOJI DRAWERS
     document.addEventListener("click", e => {
         const emojiButton = e.target.closest(".emoji-button");
         if (!emojiButton) return; // No emoji button clicked
         const toolbar = emojiButton.closest(".comment-toolbar");
         const box = emojiButton.closest(".comment-box");
-
         console.log('click toolbar: ', toolbar, 'box: ', box);
-
-        if (toolbar) {
+        const type = emojiButton.dataset.emojiType;
+        console.log('Type of button', type)
+        
+        if (type === 'custom') {
+            customEmojiDrawer(emojiButton);
+        }
+        if (toolbar && type === 'unicode') {
             console.log('***unicodeReactionDrawer***')
             unicodeReactionDrawer(toolbar);
         }
-        if (box) {
+        if (box && type === 'unicode') {
             unicodeEmojiDrawer(box);
-        }
-    });
-
-    // CUSTOM EMOJI DRAWER
-    document.addEventListener('click', (e) => {
-        const customBtn = e.target.closest('button.emoji-button');
-        if (!customBtn) return;
-        console.log('Custom emoji drawer customBtn', customBtn)
-        const type = customBtn.dataset.emojiType;
-        console.log('Type of button', type)
-        if (type === 'custom') {
-            customEmojiDrawer(customBtn);
         }
     });
 
@@ -426,7 +419,8 @@ function maybeHandleBase64Images(editor) {
   // only run handler if there’s at least one non-emoji data URI
   const imgs = editor.querySelectorAll('img:not(.inline-emoji)');
   if ([...imgs].some(img => (img.src || '').startsWith('data:image/'))) {
-    return handleBase64Images(editor); // your existing function
+    console.log('handleBase64Images triggered');
+    return handleBase64Images(editor);
   }
   return Promise.resolve();
 }
@@ -459,7 +453,7 @@ function unicodeReactionDrawer(toolbar) {
     console.log('unicodeReactionDrawer picker: ', picker);
     let wrapper = document.querySelector("#unicode-wrapper-reaction");
     console.log('unicodeReactionDrawer wrapper: ', wrapper);
-    picker.dataset.commentId = toolbar.closest(".comments-thread").dataset.commentId;
+    picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
 
 
     if (!toolbar.contains(wrapper)) {
@@ -539,17 +533,20 @@ function copyLink(articleId) {
         });
 }
 
+
 function insertAtCursor(editable, text) {
     editable.focus();
+
+    // Create a text node for the emoji
+    const node = document.createTextNode(text);
+    editable.appendChild(node);
+
+    // Move caret after the inserted text
+    const range = document.createRange();
+    range.selectNodeContents(editable);
+    range.collapse(false); // false = move to end
+
     const sel = window.getSelection();
-    if (!sel || !sel.rangeCount) return;
-
-    const range = sel.getRangeAt(0);
-    range.deleteContents();
-    range.insertNode(document.createTextNode(text));
-
-    // move cursor after the inserted text
-    range.collapse(false);
     sel.removeAllRanges();
     sel.addRange(range);
 }

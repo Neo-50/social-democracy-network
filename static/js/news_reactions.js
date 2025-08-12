@@ -28,7 +28,7 @@ window.renderReaction = function({
     mode = "update", // "load" | "update" | "insert"
     emit = false
 }) {
-    console.log('renderReaction: ', 'target_id ', target_id, '| user_ids ', user_ids);
+    console.log('renderReaction: ', 'target: ', target, 'target_id: ', target_id, ' | user_ids: ', user_ids);
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
     let result;
 
