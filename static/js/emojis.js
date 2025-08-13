@@ -38,9 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const toolbar = e.target.closest(".chat-toolbar");
         console.log('toolbar: ', toolbar);
         if (toolbar) {
-            const customReactioniButton = toolbar.querySelector(".custom-emoji-button");
-            const unicodeReactioniButton = toolbar.querySelector(".unicode-emoji-button");
-            console.log('customReactionButton:', customReactioniButton, 'unicodeReactionButton: ', unicodeReactioniButton, 'toolbar: ', toolbar)
+            const customReactionButton = toolbar.querySelector(".custom-emoji-button");
+            const unicodeReactionButton = toolbar.querySelector(".unicode-emoji-button");
+            console.log('customReactionButton:', customReactionButton, 'unicodeReactionButton: ', unicodeReactionButton, 'toolbar: ', toolbar);
+            if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
+                console.log('unicodeReactionButton');
+                unicodeReactionDrawer(toolbar);
+            }
         }
         
     });

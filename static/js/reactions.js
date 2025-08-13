@@ -1,21 +1,23 @@
-document.addEventListener('DOMContentLoaded', () => {
-    for (const [key, reactions] of Object.entries(window.reactionMap)) {
-        const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
-        const commentEl = document.querySelector(`[data-comment-id="${target_id}"] .comment-content`);
-        if (!commentEl) continue;
-        reactions.forEach(({ emoji, user_ids, target_id }) => {
-            console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
-            window.renderReaction({
-                target: commentEl,
-                emoji,
-                target_id,
-                targetType: 'news',
-                user_ids,
-                mode: 'load'
+if (!namespace === "chat") {
+    document.addEventListener('DOMContentLoaded', () => {
+        for (const [key, reactions] of Object.entries(window.reactionMap)) {
+            const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
+            const commentEl = document.querySelector(`[data-comment-id="${target_id}"] .comment-content`);
+            if (!commentEl) continue;
+            reactions.forEach(({ emoji, user_ids, target_id }) => {
+                console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
+                window.renderReaction({
+                    target: commentEl,
+                    emoji,
+                    target_id,
+                    targetType: 'news',
+                    user_ids,
+                    mode: 'load'
+                });
             });
-        });
-    }
-});
+        }
+    });
+}
 
 
 window.renderReaction = function({
@@ -181,10 +183,9 @@ function handleReactionClick(event) {
 }
 
 function unicodeReactionDrawer(toolbar) {
-    const picker = document.querySelector("#unicode-emoji-picker");
-    console.log('unicodeReactionDrawer picker: ', picker);
-    let wrapper = document.querySelector("#unicode-wrapper-reaction");
-    console.log('unicodeReactionDrawer wrapper: ', wrapper);
+    let wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
+    const picker = wrapper.querySelector(".unicode-emoji-picker");
+    console.log('unicodeReactionDrawer | wrapper: ', wrapper, , ' | picker: ', picker);
     picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
 
 
