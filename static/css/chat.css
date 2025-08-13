@@ -211,13 +211,13 @@ html, body {
     pointer-events: none;
 }
 
-/* .custom-emoji-drawer {
+.custom-emoji-drawer {
     position: absolute;
     max-height: 440px;
     min-width: 400px;
     z-index: 1000;
-    top: 80px;
-    left: 340px;
+    bottom: 60px;
+    right: 0;
     overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
@@ -227,11 +227,12 @@ html, body {
     border: 1px solid #444;
     box-shadow: 0 2px 12px #1a1a1a;
     border-radius: 6px;
-} */
+}
 
 /* buttons */
 
 .chat-buttons {
+    position: relative;
     display: flex;
     align-items: center;
     width: fit-content;
@@ -352,15 +353,14 @@ html, body {
 }
 
 /* emoji picker drawer (unicode) */
-#unicode-emoji-wrapper {
+.unicode-emoji-wrapper {
     position: absolute;
     bottom: 60px;
     right: 120px;
     z-index: 1000;
 }
 
-/* custom emoji drawer */
-#custom-emoji-wrapper {
+/* .custom-emoji-wrapper {
     position: absolute;
     max-height: 410px;
     min-height: 300px;
@@ -376,7 +376,7 @@ html, body {
     border: 1px solid #444;
     border-radius: 6px;
     box-shadow: 0 2px 12px rgb(0 0 0.5);
-}
+} */
 
 @media (width < 600px) {
     #unicode-emoji-wrapper {
