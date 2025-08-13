@@ -90,24 +90,6 @@ html, body {
     background-color: #111;
 }
 
-.chat-toolbar {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-  align-items: center;
-  overflow: visible;
-  gap: 0;
-  margin-top: 0;
-  margin-right: 10px;
-  font-size: 1em;
-  color: #ccc;
-  background-color: black;
-  border: 2px solid #00e3ea;
-  padding: 2px 8px;
-  border-radius: 24px;
-}
-
 .chat-message:hover .chat-toolbar {
   display: flex;
 }
@@ -250,6 +232,44 @@ html, body {
     width: fit-content;
 }
 
+.chat-toolbar {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  align-items: center;
+  overflow: visible;
+  gap: 0;
+  margin-top: 0;
+  margin-right: 10px;
+  font-size: 1em;
+  color: #ccc;
+  background-color: black;
+  border: 2px solid #00e3ea;
+  padding: 2px 8px;
+  border-radius: 24px;
+}
+
+.unicode-wrapper-reaction {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 400px;
+  max-height: 440px;
+  overflow: auto;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .6);
+  z-index: 1000;
+}
+
+.unicode-wrapper-reaction.visible {
+  display: flex;
+}
+
 .custom-emoji-button {
     margin-bottom: 8px;
 }
@@ -379,12 +399,12 @@ html, body {
 } */
 
 @media (width < 600px) {
-    #unicode-emoji-wrapper {
+    .unicode-emoji-wrapper {
         right: 0;
         bottom: 60px;
     }
 
-    #custom-emoji-wrapper {
+    .custom-emoji-wrapper {
         max-height: 290px;
         width: 260px;
         bottom: 60px;
