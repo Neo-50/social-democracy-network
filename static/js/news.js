@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Type of button', type)
         
         if (type === 'custom') {
-            customEmojiDrawer(emojiButton);
+            customNewsEmojiDrawer(emojiButton);
         }
         if (toolbar && type === 'unicode') {
             console.log('***unicodeReactionDrawer***')
@@ -202,6 +202,113 @@ function onceConnected(socket, fn) {
     }
 }
 
+function customNewsEmojiDrawer(button) {
+    console.log('**customNewsEmojiDrawer triggered**');
+
+    const commentBox = button.closest(".comment-box");
+    console.log('Comment box:', commentBox);
+
+    const toolbar = button.closest(".comment-toolbar");
+    console.log('Toolbar value: ', toolbar);
+
+    let drawer = null;
+    let wrapper = null;
+
+    if (!commentBox) {
+        console.log('**No comment box detected**')
+
+        wrapper = toolbar.querySelector("#custom-emoji-wrapper");
+        console.log('Wrapper:', wrapper);
+
+        drawer = wrapper.querySelector(".custom-reaction-drawer")
+        console.log('Drawer:', drawer);
+
+        // If drawer exists and is visible, hide it and clean up
+        if (drawer && wrapper.style.display === "flex") {
+            console.log('Drawer exists and is not hidden')
+            wrapper.style.display = "none";
+            activeCommentBox = null;
+            return;
+        }
+
+        // If drawer already exists but was hidden, just show it
+        if (drawer && wrapper.style.display === "none") {
+            console.log('Drawer exists but is hidden so showing it')
+            wrapper.style.display = "flex";
+            activeCommentBox = commentBox;
+            return;
+        }
+
+        // If no drawer exists, inject it and show
+        if (!drawer) {
+            console.log('Drawer doesnt exist, injecting')
+            customNewsReactionDrawer(wrapper, toolbar);
+            wrapper.style.display = "flex";
+        }
+    }
+    if (commentBox) {
+        console.log('**Comment box dectected**', commentBox)
+        let wrapper = commentBox.querySelector(".custom-wrapper");
+        if (!wrapper) {
+            console.warn("No custom-wrapper found inside this commentBox:", commentBox);
+            return;
+        }
+        let drawer = wrapper.querySelector(".custom-emoji-drawer");
+        if (wrapper.style.display === "flex") {
+            console.log('**Toggle wrapper display to none**');
+            wrapper.style.display = "none";
+            if (drawer) drawer.remove();
+            activeCommentBox = null;
+            console.log('--Emoji drawer closed--');
+            return;
+        }
+        if (wrapper.style.display === "none") {
+            console.log('Wapper detected with hidden display');
+            wrapper.style.display = "flex";
+            if (!drawer || !wrapper.querySelector(".custom-emoji-drawer")) {
+                customNewsCommentDrawer(commentBox, wrapper);
+            }
+            activeCommentBox = commentBox;
+        }
+    }
+}
+
+function customNewsCommentDrawer(commentBox, wrapper) {
+    if (wrapper.querySelector('.custom-emoji-drawer')) return;
+
+    const drawer = document.createElement('div');
+    drawer.className = 'custom-emoji-drawer';
+    drawer.style.marginTop = '10px';
+    drawer.style.display = 'flex';
+    drawer.style.flexWrap = 'wrap';
+    drawer.style.gap = '6px';
+    wrapper.appendChild(drawer);
+
+    const target = commentBox.querySelector('.comment-editor'); // editor element
+
+    sizeButtonHelper(drawer);
+    // pass as options or legacy second arg; both work:
+    renderCustomEmojisToDrawer(drawer, { target });  // inserts into editor
+}
+
+
+function customNewsReactionDrawer(wrapper, toolbar) {
+    const drawer = document.createElement('div');
+    drawer.className = 'custom-reaction-drawer';
+    wrapper.appendChild(drawer);
+
+    const target = toolbar.closest('.comment-container')?.querySelector('.comment-content');
+    const target_id = toolbar.closest('.comment-container')?.dataset?.commentId;
+
+    sizeButtonHelper(drawer);
+    renderCustomEmojisToDrawer(drawer, {
+        target,        // NOT a .comment-editor → reaction path will run
+        target_id,
+        targetType: 'news',
+    });
+}
+
+
 function renderNewsComment(data) {
     const article = document.querySelector(`.news-article[id="${data.article_id}"]`)
                 || document.querySelector(`.news-article[data-article-id="${data.article_id}"]`);
@@ -260,12 +367,12 @@ function renderNewsComment(data) {
 
         <div class="comment-toolbar" data-comment-id="${String(data.comment_id)}">
             <!-- Unicode reactions button -->
-            <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode"">
+            <button type="button" class="unicode-emoji-button" data-emoji-type="unicode"">
                 <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
             </button>
 
             <!-- Custom reactions button -->
-            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🐱</button>
+            <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
             <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
                 <!-- JS will inject emoji drawer below -->
             </div>
@@ -335,13 +442,13 @@ function buildReplyDrawer(parentId, articleId) {
             <div class="comment-editor" contenteditable="true" placeholder="Write a reply…"></div>
             <input type="hidden" name="comment-content" class="hidden-content">
       
-            <button type="button" class="emoji-button" id="unicode-emoji-button" data-emoji-type="unicode">
+            <button type="button" class="unicode-emoji-button" data-emoji-type="unicode">
                 <img class="icon" src="/media/icons/emoji.png" alt="emoji">
             </button>
             <div class="emoji-wrapper" id="unicode-wrapper-input" style="display: none;">
                 <emoji-picker></emoji-picker>
             </div>
-            <button type="button" class="emoji-button" id="custom-emoji-button" data-emoji-type="custom">🐱</button>
+            <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
                 <div class="custom-wrapper" id="custom-emoji-wrapper" style="display:none;"></div>
             </button>
             <button type="button" class="upload-button">📎 </button>
@@ -442,34 +549,6 @@ function wireUpload(scope) {
   });
 }
 
-// Remove a comment and all of its descendants (by walking data-parent-id)
-// function removeCommentBranch(rootId) {
-//     const toRemove = new Set([String(rootId)]);
-//     let grew = true;
-
-//     // Expand the set until no new descendants are found
-//     while (grew) {
-//         grew = false;
-//         document.querySelectorAll('.comment-container[data-parent-id]').forEach(el => {
-//         const pid = el.dataset.parentId;
-//         const id  = el.dataset.commentId;
-//         if (toRemove.has(pid) && !toRemove.has(id)) {
-//             toRemove.add(id);
-//             grew = true;
-//         }
-//         });
-//     }
-
-//     // Remove all nodes in the branch
-//     toRemove.forEach(id => {
-//         document.querySelector(`.comment-container[data-comment-id="${id}"]`)?.remove();
-//         // optional: clean up any client caches/maps
-//         if (window.reactionMap) delete window.reactionMap[`comment:${id}`];
-//     });
-
-//     // if you draw connector lines, refresh them
-//     window.renderThreadConnectors?.();
-// }
 
 function maybeHandleBase64Images(editor) {
   // only run handler if there’s at least one non-emoji data URI
@@ -502,50 +581,6 @@ function unicodeEmojiDrawer(box) {
         picker.dataset.bound = "true";
     }
     return;
-}
-
-function unicodeReactionDrawer(toolbar) {
-    const picker = document.querySelector("#unicode-emoji-picker");
-    console.log('unicodeReactionDrawer picker: ', picker);
-    let wrapper = document.querySelector("#unicode-wrapper-reaction");
-    console.log('unicodeReactionDrawer wrapper: ', wrapper);
-    picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
-
-
-    if (!toolbar.contains(wrapper)) {
-        toolbar.appendChild(wrapper);
-    }
-
-    // Set current target for emoji insert
-    activeCommentContent = toolbar.parentElement.querySelector(".comment-content");
-
-    wrapper.classList.toggle("visible");
-
-    if (!picker.dataset.bound) {
-        picker.addEventListener("emoji-click", (e) => {
-            const commentId = picker.closest('.comment-container')?.dataset.commentId;
-
-            if (activeCommentContent) {
-                const emoji = e.detail.unicode;
-
-                console.log("unicodeReactionDrawer: ", 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, "user_id | ", window.CURRENT_USER_ID);
-
-                window.renderReaction({
-                    target: activeCommentContent,
-                    emoji: emoji,
-                    target_id: commentId,
-                    targetType: window.NEWS_ROOM_ID,
-                    user_id: window.CURRENT_USER_ID,
-                    user_ids: [window.CURRENT_USER_ID],
-                    mode: "insert",
-                    emit: true
-                });
-
-                console.log("Reaction inserted:", emoji);
-            }
-        });
-        picker.dataset.bound = "true";
-    }
 }
 
 document.querySelectorAll('.reply-toggle').forEach(button => {

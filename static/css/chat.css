@@ -35,6 +35,7 @@ html, body {
 
 /* each chat message */
 .chat-message {
+    position: relative;
     color: #ddd;
     margin-bottom: 6px;
     align-items: center;
@@ -90,10 +91,31 @@ html, body {
 }
 
 .chat-toolbar {
-  font-size: 0.75em;
-  margin-left: 58px;
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  align-items: center;
+  overflow: visible;
+  gap: 0;
   margin-top: 0;
-  color:#888;
+  margin-right: 10px;
+  font-size: 1em;
+  color: #ccc;
+  background-color: black;
+  border: 2px solid #00e3ea;
+  padding: 2px 8px;
+  border-radius: 24px;
+}
+
+.chat-message:hover .chat-toolbar {
+  display: flex;
+}
+
+.timestamp {
+  margin-left: 10px;
+  margin-bottom: 4px;
+  color: #bbb;
 }
 
 .preview-container {
@@ -189,6 +211,24 @@ html, body {
     pointer-events: none;
 }
 
+/* .custom-emoji-drawer {
+    position: absolute;
+    max-height: 440px;
+    min-width: 400px;
+    z-index: 1000;
+    top: 80px;
+    left: 340px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    box-shadow: 0 2px 12px #1a1a1a;
+    border-radius: 6px;
+} */
+
 /* buttons */
 
 .chat-buttons {
@@ -199,11 +239,8 @@ html, body {
     margin-right: 4px;
 }
 
-#unicode-emoji-button {
-    margin-left: 6px;
-}
-
-.emoji-button {
+.custom-emoji-button,
+.unicode-emoji-button {
     background: transparent;
     padding: 0;
     font-size: 1.8em;
@@ -212,8 +249,12 @@ html, body {
     width: fit-content;
 }
 
-#custom-emoji-button {
+.custom-emoji-button {
     margin-bottom: 8px;
+}
+
+.unicode-emoji-button {
+  margin-left: 6px;
 }
 
 /* upload button */

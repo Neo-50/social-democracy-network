@@ -45,6 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    if (typeof window.initReactionSocket === "function") {
+        window.initReactionSocket();
+    }
+
     // file upload
     uploadButton.addEventListener("click", () => {
         fileInput.click();
@@ -242,13 +246,13 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
         <div class="chat-header">
             ${avatarImg}
             <strong>${displayName || username}</strong>
-        </div>
-        <div class="message-body">${text}</div>
-        <div class="chat-toolbar">
             <span class="timestamp" data-timestamp="${timestamp}Z"></span>
+        </div>
+        <div class="chat-toolbar">
             <button class="reply-button">Reply</button> 
             ${showDelete ? `<button class="delete-btn">🗑️ Delete</button>` : ''}
         </div>
+        <div class="message-body">${text}</div>
         <div class="reply-drawer" style="display: none;">
             <input class="reply-input" type="text" placeholder="Type a reply..." />
             <button class="reply-submit">Send</button>
