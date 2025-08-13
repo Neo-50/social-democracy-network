@@ -1,25 +1,35 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const unicodeEmojiButton = document.getElementById("unicode-emoji-button");
     const unicodeEmojiWrapper = document.getElementById("unicode-emoji-wrapper");
-    const customEmojiButton = document.getElementById("custom-emoji-button");
-    const picker = document.querySelector("#unicode-emoji-wrapper emoji-picker");
     
-    // toggle unicode emoji drawer
+    const chatButtons = document.getElementById("chat-buttons");
+    console.log('chatButtons: ', chatButtons);
+
+    const unicodeEmojiButton = chatButtons.querySelector('.unicode-emoji-button');
+    console.log('unicodeEmojiButton: ', unicodeEmojiButton);
+
+    const customEmojiButton = chatButtons.querySelector('.custom-emoji-button');
+    console.log('customEmojiButton: ', customEmojiButton);
+
+    console.log('unicodeEmojiButton: ', unicodeEmojiButton, 
+        'unicodeEmojiWrapper: ', unicodeEmojiWrapper, 'customEmojiButton: ', customEmojiButton);
+
     unicodeEmojiButton.addEventListener("click", () => {
+        console.log('unicode button clicked');
         unicodeEmojiWrapper.style.display =
             unicodeEmojiWrapper.style.display === "none" ? "block" : "none";
     });
-
     // handle unicode emoji selection
     document.addEventListener("emoji-click", (e) => {
         const emoji = e.detail.unicode;
+
         console.log("Inserting emoji:", emoji, "into", chatEditor);
         insertAtCursor(chatEditor, emoji);
     });
 
-    // toggle custom emoji drawer
     customEmojiButton.addEventListener("click", () => {
+        console.log('***customEmojiButton click***');
         const wrapper = document.getElementById("custom-emoji-wrapper");
+        console.log('wrapper: ', wrapper);
         if (!wrapper) return;
 
         if (wrapper.style.display === "none" || wrapper.style.display === "") {
@@ -31,13 +41,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 })
 
+// toggle custom emoji drawer
+// customEmojiButton.addEventListener("click", () => {
+//     console.log('***customEmojiButton click***');
+//     const wrapper = document.getElementById("custom-emoji-wrapper");
+//     console.log('wrapper: ', wrapper);
+//     if (!wrapper) return;
+
+//     if (wrapper.style.display === "none" || wrapper.style.display === "") {
+//         wrapper.style.display = "flex";  // show
+//         initializeEmojiDrawer(wrapper);
+//     } else {
+//         wrapper.style.display = "none";  // hide
+//     }
+// });
+
+// EMOJI DRAWERS
+// document.addEventListener("click", e => {
+//     const emojiButton = e.target.closest(".emoji-button");
+//     if (!emojiButton) return; // No emoji button clicked
+//     const toolbar = emojiButton.closest(".chat-toolbar");
+//     console.log('click toolbar: ', toolbar);
+//     const type = emojiButton.dataset.emojiType;
+//     console.log('Type of button', type);
+
+//     if ( toolbar && type === 'custom') {
+//         customEmojiDrawer(emojiButton);
+//     }
+//     if (toolbar && type === 'unicode') {
+//         console.log('***unicodeReactionDrawer***')
+//         unicodeReactionDrawer(toolbar);
+//     }
+// });
+
 document.addEventListener("click", (e) => {
     const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");
     const customWrapper = document.getElementById("custom-emoji-wrapper");
 
     const isEmojiButton =
-        e.target.closest("#unicode-emoji-button") ||
-        e.target.closest("#custom-emoji-button");
+        e.target.closest(".unicode-emoji-button") ||
+        e.target.closest(".custom-emoji-button");
 
     const isInUnicodeWrapper = e.target.closest("#unicode-emoji-wrapper");
     const isInCustomWrapper = e.target.closest("#custom-emoji-wrapper");
@@ -46,10 +89,10 @@ document.addEventListener("click", (e) => {
         if (unicodeWrapper) unicodeWrapper.style.display = "none";
         if (customWrapper) customWrapper.style.display = "none";
     }
-    });
+});
 
 function initializeEmojiDrawer(wrapper) {
-    // clear existing drawer
+    console.log('initializeEmojiDrawer wrapper: ', wrapper);
     const existingDrawer = wrapper.querySelector('.custom-emoji-drawer');
     if (existingDrawer) {
         existingDrawer.remove();

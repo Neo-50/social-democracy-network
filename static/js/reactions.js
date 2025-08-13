@@ -180,3 +180,46 @@ function handleReactionClick(event) {
     });
 }
 
+function unicodeReactionDrawer(toolbar) {
+    const picker = document.querySelector("#unicode-emoji-picker");
+    console.log('unicodeReactionDrawer picker: ', picker);
+    let wrapper = document.querySelector("#unicode-wrapper-reaction");
+    console.log('unicodeReactionDrawer wrapper: ', wrapper);
+    picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
+
+
+    if (!toolbar.contains(wrapper)) {
+        toolbar.appendChild(wrapper);
+    }
+
+    // Set current target for emoji insert
+    activeCommentContent = toolbar.parentElement.querySelector(".comment-content");
+
+    wrapper.classList.toggle("visible");
+
+    if (!picker.dataset.bound) {
+        picker.addEventListener("emoji-click", (e) => {
+            const commentId = picker.closest('.comment-container')?.dataset.commentId;
+
+            if (activeCommentContent) {
+                const emoji = e.detail.unicode;
+
+                console.log("unicodeReactionDrawer: ", 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, "user_id | ", window.CURRENT_USER_ID);
+
+                window.renderReaction({
+                    target: activeCommentContent,
+                    emoji: emoji,
+                    target_id: commentId,
+                    targetType: window.NEWS_ROOM_ID,
+                    user_id: window.CURRENT_USER_ID,
+                    user_ids: [window.CURRENT_USER_ID],
+                    mode: "insert",
+                    emit: true
+                });
+
+                console.log("Reaction inserted:", emoji);
+            }
+        });
+        picker.dataset.bound = "true";
+    }
+}

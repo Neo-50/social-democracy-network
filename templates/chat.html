@@ -11,9 +11,9 @@
             <div class="chat-editor" id="chat-editor" contenteditable="true" placeholder="Type a message..." required></div>
             <input type="hidden" name="chat-content" class="hidden-content">
         
-            <div class="chat-buttons">
+            <div class="chat-buttons" id="chat-buttons">
                 <!-- Unicode emoji picker button -->
-                <button type="button" class="emoji-button" id="unicode-emoji-button">
+                <button type="button" class="unicode-emoji-button">
                     <img class="icon" src="{{ url_for('media', filename='icons/emoji.png') }}" alt="emoji.png">
                 </button>
                 <div class="emoji-wrapper" id="unicode-emoji-wrapper" style="display: none;">
@@ -21,7 +21,7 @@
                 </div>
         
                 <!-- Custom emoji picker button -->
-                <button type="button" class="emoji-button" id="custom-emoji-button">
+                <button type="button" class="custom-emoji-button">
                     🐱
                 </button>
                 <div class="custom-emoji-wrapper" id="custom-emoji-wrapper" style="display: none;">
@@ -72,5 +72,6 @@
 <script src="{{ url_for('static', filename='js/custom_emoji_list.js') }}"></script>
 <script src="{{ url_for('static', filename='js/emojis.js') }}"></script>
 <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
+<script src="{{ url_for('static', filename='js/reactions.js') }}"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 {% endblock %}
