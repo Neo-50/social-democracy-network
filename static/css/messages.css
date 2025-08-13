@@ -177,7 +177,7 @@
 }
 
 /* emoji picker drawer (unicode) */
-#unicode-emoji-wrapper {
+.unicode-emoji-wrapper {
     position: absolute;
     bottom: 70px;
     right: 0;

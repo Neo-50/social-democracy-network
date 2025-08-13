@@ -1,4 +1,4 @@
-if (!namespace === "chat") {
+if (!window.NAMESPACE === "chat") {
     document.addEventListener('DOMContentLoaded', () => {
         for (const [key, reactions] of Object.entries(window.reactionMap)) {
             const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
@@ -183,14 +183,24 @@ function handleReactionClick(event) {
 }
 
 function unicodeReactionDrawer(toolbar) {
+    console.log('unicodeReactionDrawer toolbar: ', toolbar);
     let wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
-    const picker = wrapper.querySelector(".unicode-emoji-picker");
-    console.log('unicodeReactionDrawer | wrapper: ', wrapper, , ' | picker: ', picker);
-    picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
-
+    const picker = wrapper.querySelector("emoji-picker");
+    console.log('unicodeReactionDrawer | wrapper: ', wrapper, ' | picker: ', picker);
+    if (window.NAMESPACE === "news") {
+        picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
+    }
+    if (window.NAMESPACE === "chat") {
+        const el = toolbar.closest('.chat-message');
+        if (el) {
+            const messageId = el.dataset.messageId;
+            picker.dataset.commentId = messageId;
+        }
+    }
 
     if (!toolbar.contains(wrapper)) {
         toolbar.appendChild(wrapper);
+        wrapper.style.display = 'flex';
     }
 
     // Set current target for emoji insert

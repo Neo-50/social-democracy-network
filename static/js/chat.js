@@ -253,7 +253,7 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
             <button type="button" class="unicode-emoji-button" data-emoji-type="unicode"">
                 <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
             </button>
-            <div class="unicode-wrapper-reaction" style="display: none;">
+            <div class="unicode-wrapper-reaction">
                 <emoji-picker></emoji-picker>
             </div>
             <!-- Custom reactions button -->

@@ -13,24 +13,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // EMOJI DRAWERS
+    // const toolbar = e.target.closest(".comment-toolbar");
+    // console.log('toolbar: ', toolbar);
+    // if (toolbar) {
+    //     const customReactionButton = toolbar.querySelector(".custom-emoji-button");
+    //     const unicodeReactionButton = toolbar.querySelector(".unicode-emoji-button");
+    //     console.log('customReactionButton:', customReactionButton, 'unicodeReactionButton: ', unicodeReactionButton, 'toolbar: ', toolbar);
+        // if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
+        //     console.log('unicodeReactionButton');
+        //     unicodeReactionDrawer(toolbar);
+        // }
+    // }
+
     document.addEventListener("click", e => {
-        const emojiButton = e.target.closest(".emoji-button");
-        if (!emojiButton) return; // No emoji button clicked
-        const toolbar = emojiButton.closest(".comment-toolbar");
-        const box = emojiButton.closest(".comment-box");
-        console.log('click toolbar: ', toolbar, 'box: ', box);
-        const type = emojiButton.dataset.emojiType;
-        console.log('Type of button', type)
-        
-        if (type === 'custom') {
-            customNewsEmojiDrawer(emojiButton);
+        console.log('Click listener target: ', e.target);
+        const toolbar = e.target.closest(".comment-toolbar");
+        const box = e.target.closest(".comment-box");
+        if (toolbar) {
+            if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
+                unicodeReactionDrawer(toolbar);
+            }
+            if (e.target.classList.contains('custom-emoji-button')) {
+                customNewsEmojiDrawer(e.target);
+            }
         }
-        if (toolbar && type === 'unicode') {
-            console.log('***unicodeReactionDrawer***')
-            unicodeReactionDrawer(toolbar);
-        }
-        if (box && type === 'unicode') {
-            unicodeEmojiDrawer(box);
+        if (!toolbar) {
+            console.log('No toolbar, running customNewsEmojiDrawer target: ', e.target);
+            if (e.target.classList.contains('custom-emoji-button')) {
+                customNewsEmojiDrawer(e.target);
+            }
+            if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
+                unicodeEmojiDrawer(box);
+            }
         }
     });
 
@@ -75,28 +89,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    document.addEventListener("click", (e) => {
-        const isCustomButton = e.target.closest(".emoji-button[data-emoji-type='custom']");
-        const isInCustomDrawer = e.target.closest(".custom-wrapper");
+    // document.addEventListener("click", (e) => {
+    //     const isCustomButton = e.target.closest(".custom-emoji-button");
+    //     const isInCustomDrawer = e.target.closest(".custom-emoji-wrapper");
 
-        if (!isCustomButton && !isInCustomDrawer && activeCommentBox) {
-            // clicked outside, close drawer
-            const wrapper = activeCommentBox.querySelector(".custom-wrapper");
-            if (wrapper) wrapper.style.display = "none";
-            activeCommentBox = null;
-        }
-    });
+    //     if (!isCustomButton && !isInCustomDrawer && activeCommentBox) {
+    //         // clicked outside, close drawer
+    //         const wrapper = activeCommentBox.querySelector(".custom-wrapper");
+    //         if (wrapper) wrapper.style.display = "none";
+    //         activeCommentBox = null;
+    //     }
+    // });
 
-    document.addEventListener("click", (e) => {
-        const isEmojiButton = e.target.closest(".emoji-button[data-emoji-type='unicode']");
-        const isInUnicodeDrawer = e.target.closest(".emoji-wrapper");
+    // document.addEventListener("click", (e) => {
+    //     const isEmojiButton = e.target.closest(".unicode-emoji-button");
+    //     const isInUnicodeDrawer = e.target.closest(".unicode-emoji-wrapper");
 
-        if (!isEmojiButton && !isInUnicodeDrawer) {
-            document.querySelectorAll(".emoji-wrapper").forEach(wrapper => {
-                wrapper.style.display = "none";
-            });
-        }
-    });
+    //     if (!isEmojiButton && !isInUnicodeDrawer) {
+    //         document.querySelectorAll(".emoji-wrapper").forEach(wrapper => {
+    //             wrapper.style.display = "none";
+    //         });
+    //     }
+    // });
 
     // Intercept only delete forms to prevent page navigation
     document.addEventListener('submit', async (e) => {
@@ -217,7 +231,7 @@ function customNewsEmojiDrawer(button) {
     if (!commentBox) {
         console.log('**No comment box detected**')
 
-        wrapper = toolbar.querySelector("#custom-emoji-wrapper");
+        wrapper = toolbar.querySelector(".custom-wrapper-reaction");
         console.log('Wrapper:', wrapper);
 
         drawer = wrapper.querySelector(".custom-reaction-drawer")
@@ -248,7 +262,7 @@ function customNewsEmojiDrawer(button) {
     }
     if (commentBox) {
         console.log('**Comment box dectected**', commentBox)
-        let wrapper = commentBox.querySelector(".custom-wrapper");
+        let wrapper = commentBox.querySelector(".custom-emoji-wrapper");
         if (!wrapper) {
             console.warn("No custom-wrapper found inside this commentBox:", commentBox);
             return;
@@ -370,7 +384,9 @@ function renderNewsComment(data) {
             <button type="button" class="unicode-emoji-button" data-emoji-type="unicode"">
                 <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
             </button>
-
+            <div class="unicode-wrapper-reaction">
+                <emoji-picker></emoji-picker>
+            </div>
             <!-- Custom reactions button -->
             <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
             <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
@@ -445,7 +461,7 @@ function buildReplyDrawer(parentId, articleId) {
             <button type="button" class="unicode-emoji-button" data-emoji-type="unicode">
                 <img class="icon" src="/media/icons/emoji.png" alt="emoji">
             </button>
-            <div class="emoji-wrapper" id="unicode-wrapper-input" style="display: none;">
+            <div class="unicode-emoji-wrapper" style="display: none;">
                 <emoji-picker></emoji-picker>
             </div>
             <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
@@ -562,7 +578,7 @@ function maybeHandleBase64Images(editor) {
 
 function unicodeEmojiDrawer(box) {
     console.log('unicodeEmojiDrawer: box: ', box)
-    const pickerWrapper = box.querySelector(".emoji-wrapper");
+    const pickerWrapper = box.querySelector(".unicode-emoji-wrapper");
     const picker = pickerWrapper.querySelector("emoji-picker");
 
     pickerWrapper.style.display =
