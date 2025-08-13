@@ -1,16 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const unicodeEmojiWrapper = document.getElementById("unicode-emoji-wrapper");
-    
     const chatButtons = document.getElementById("chat-buttons");
-    console.log('chatButtons: ', chatButtons);
-
     const unicodeEmojiButton = chatButtons.querySelector('.unicode-emoji-button');
-    console.log('unicodeEmojiButton: ', unicodeEmojiButton);
-
     const customEmojiButton = chatButtons.querySelector('.custom-emoji-button');
-    console.log('customEmojiButton: ', customEmojiButton);
+    const unicodeEmojiWrapper = chatButtons.querySelector(".unicode-emoji-wrapper");
+    
 
-    console.log('unicodeEmojiButton: ', unicodeEmojiButton, 
+    console.log('chatButtons: ', chatButtons, 'unicodeEmojiButton: ', unicodeEmojiButton, 
         'unicodeEmojiWrapper: ', unicodeEmojiWrapper, 'customEmojiButton: ', customEmojiButton);
 
     unicodeEmojiButton.addEventListener("click", () => {
@@ -28,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     customEmojiButton.addEventListener("click", () => {
         console.log('***customEmojiButton click***');
-        const wrapper = document.getElementById("custom-emoji-wrapper");
+        const wrapper = chatButtons.querySelector(".custom-emoji-wrapper");
         console.log('wrapper: ', wrapper);
         if (!wrapper) return;
 
@@ -39,40 +34,17 @@ document.addEventListener("DOMContentLoaded", () => {
             wrapper.style.display = "none";  // hide
         }
     });
-})
-
-// toggle custom emoji drawer
-// customEmojiButton.addEventListener("click", () => {
-//     console.log('***customEmojiButton click***');
-//     const wrapper = document.getElementById("custom-emoji-wrapper");
-//     console.log('wrapper: ', wrapper);
-//     if (!wrapper) return;
-
-//     if (wrapper.style.display === "none" || wrapper.style.display === "") {
-//         wrapper.style.display = "flex";  // show
-//         initializeEmojiDrawer(wrapper);
-//     } else {
-//         wrapper.style.display = "none";  // hide
-//     }
-// });
-
-// EMOJI DRAWERS
-// document.addEventListener("click", e => {
-//     const emojiButton = e.target.closest(".emoji-button");
-//     if (!emojiButton) return; // No emoji button clicked
-//     const toolbar = emojiButton.closest(".chat-toolbar");
-//     console.log('click toolbar: ', toolbar);
-//     const type = emojiButton.dataset.emojiType;
-//     console.log('Type of button', type);
-
-//     if ( toolbar && type === 'custom') {
-//         customEmojiDrawer(emojiButton);
-//     }
-//     if (toolbar && type === 'unicode') {
-//         console.log('***unicodeReactionDrawer***')
-//         unicodeReactionDrawer(toolbar);
-//     }
-// });
+    document.addEventListener("click", e => {
+        const toolbar = e.target.closest(".chat-toolbar");
+        console.log('toolbar: ', toolbar);
+        if (toolbar) {
+            const customReactioniButton = toolbar.querySelector(".custom-emoji-button");
+            const unicodeReactioniButton = toolbar.querySelector(".unicode-emoji-button");
+            console.log('customReactionButton:', customReactioniButton, 'unicodeReactionButton: ', unicodeReactioniButton, 'toolbar: ', toolbar)
+        }
+        
+    });
+});
 
 document.addEventListener("click", (e) => {
     const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");

@@ -249,6 +249,16 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
             <span class="timestamp" data-timestamp="${timestamp}Z"></span>
         </div>
         <div class="chat-toolbar">
+            <!-- Unicode reactions button -->
+            <button type="button" class="unicode-emoji-button" data-emoji-type="unicode"">
+                <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
+            </button>
+
+            <!-- Custom reactions button -->
+            <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
+            <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
+                <!-- JS will inject emoji drawer below -->
+            </div>
             <button class="reply-button">Reply</button> 
             ${showDelete ? `<button class="delete-btn">🗑️ Delete</button>` : ''}
         </div>
