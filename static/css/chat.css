@@ -122,6 +122,35 @@ html, body {
     width: 380px;
 }
 
+/* Reactions */
+
+.emoji-reaction {
+    border-radius: 6px;
+    padding: 4px;
+    margin-right: 2px;
+    font-size: 1.4em;
+    border: 2px solid #00e3ea;
+}
+
+.emoji-reaction:hover {
+    cursor: pointer;
+    background-color: #444;
+}
+
+.custom-emoji {
+    cursor: pointer;
+}
+
+.custom-emoji-reaction {
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.unicode-emoji-reaction {
+    margin-right: 4px;
+    cursor: pointer;
+}
+
 @media (width < 600px) {
     .preview-container{
         margin-left: 0;

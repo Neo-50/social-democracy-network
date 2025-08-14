@@ -5,6 +5,7 @@ window.csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribut
 
 document.addEventListener('DOMContentLoaded', () => {
     
+    // Comment & reaction sockets
     if (typeof window.initReactionSocket === "function") {
         window.initReactionSocket();
     }
@@ -12,19 +13,25 @@ document.addEventListener('DOMContentLoaded', () => {
         window.initCommentSocket();
     }
 
-    // EMOJI DRAWERS
-    // const toolbar = e.target.closest(".comment-toolbar");
-    // console.log('toolbar: ', toolbar);
-    // if (toolbar) {
-    //     const customReactionButton = toolbar.querySelector(".custom-emoji-button");
-    //     const unicodeReactionButton = toolbar.querySelector(".unicode-emoji-button");
-    //     console.log('customReactionButton:', customReactionButton, 'unicodeReactionButton: ', unicodeReactionButton, 'toolbar: ', toolbar);
-        // if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
-        //     console.log('unicodeReactionButton');
-        //     unicodeReactionDrawer(toolbar);
-        // }
-    // }
+    // Pull data and render reactions
+    for (const [key, reactions] of Object.entries(window.reactionMap)) {
+        const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
+        const commentEl = document.querySelector(`[data-comment-id="${target_id}"] .comment-content`);
+        if (!commentEl) continue;
+        reactions.forEach(({ emoji, user_ids, target_id }) => {
+            console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
+            window.renderReaction({
+                target: commentEl,
+                emoji,
+                target_id,
+                targetType: 'news',
+                user_ids,
+                mode: 'load'
+            });
+        });
+    }
 
+    // Emoji drawer click listeners
     document.addEventListener("click", e => {
         console.log('Click listener target: ', e.target);
         const toolbar = e.target.closest(".comment-toolbar");
@@ -48,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // FILE UPLOAD
+    // File upload
     document.querySelectorAll(".reply-drawer, .new-comment, .post-comment-container",).forEach(wireUpload);
 
     // COMMENT SYNC ON SUBMIT (AJAX + sockets, no reload)

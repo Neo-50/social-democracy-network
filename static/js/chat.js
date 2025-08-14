@@ -1,7 +1,6 @@
 // chat.js
 
 window.chatEditor = document.getElementById("chat-editor");
-let isInitialLoad = true;
 window.csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -9,25 +8,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const uploadButton = document.getElementById("upload-button");
     const fileInput = document.getElementById("file-input");
     const chatContainer = document.querySelector("#chat-container");
-    if (!chatContainer) {
-        console.error("❌ #chat-container not found in DOM");
-        return;
-    }
-    
-    if (!chatEditor) {
-        console.error("❌ chatEditor not found in DOM");
-        return;
-    }
+
+    console.log('**Chat Loaded** sendButton: ', sendButton, '| uploadButton: ', uploadButton,
+          ' | fileInput', fileInput, 'chatContainer: ', chatContainer, 'chatEditor: ', chatEditor);
 
     if (typeof window.initChatSocket === "function") {
         window.initChatSocket();
     }
 
-    console.log({
-          scrollTop: chatContainer.scrollTop,
-          clientHeight: chatContainer.clientHeight,
-          scrollHeight: chatContainer.scrollHeight
-    });
+    if (typeof window.initReactionSocket === "function") {
+        window.initReactionSocket();
+    }
 
     chatContainer.addEventListener("scroll", () => {
         const currentScrollTop = chatContainer.scrollTop;
@@ -37,17 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
             loadMessages(earliestMessageId, true);
         }
     });
-
-    loadMessages();
-
-    if (!fileInput || !uploadButton) {
-        console.error("Missing fileInput or uploadButton");
-        return;
-    }
-
-    if (typeof window.initReactionSocket === "function") {
-        window.initReactionSocket();
-    }
 
     // file upload
     uploadButton.addEventListener("click", () => {
@@ -153,6 +133,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadMessages();
+    renderAllReactions();
+});
+
+function renderAllReactions () {
+    console.log('Pull data and render reactions');
+    for (const [key, reactions] of Object.entries(window.reactionMap)) {
+        const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
+        const chatEl = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
+        console.log('***chatEl***', chatEl);
+        if (!chatEl) continue;
+        reactions.forEach(({ emoji, target_type, user_ids, target_id }) => {
+            console.log('Chat DOMContentLoaded: ', 'emoji: ', emoji, '| targetType: ', window.targetType, ' | user_ids: ', user_ids, ' | target_id: ', target_id);
+            window.renderReaction({
+                target: chatEl,
+                emoji,
+                target_id,
+                targetType: window.targetType,
+                user_ids,
+                mode: 'load'
+            });
+        });
+    }
+}
 
 function renderUrlPreview(msgElement, data) {
     const preview = document.createElement("div");
@@ -280,12 +286,6 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
         scrollChatToBottom();
     }
 
-    // Scroll to bottom only on initial load
-    if (isInitialLoad) {
-        scrollChatToBottom();
-        isInitialLoad = false;
-    } 
-
     console.log("🧱 Prepending?", prepend, "| chatMessages.childElementCount =", chatMessages.childElementCount);
     console.log("🔼 First child ID before insert:", chatMessages.firstChild?.dataset?.messageId);
     
@@ -366,7 +366,7 @@ function loadMessages(beforeId = null, prepend=false) {
     }
     console.log("Fetching messages with beforeId =", beforeId);
 
-    fetch(url)
+    return fetch(url)
         .then(res => res.json())
         .then(messages => {
             const newMessages = [];
