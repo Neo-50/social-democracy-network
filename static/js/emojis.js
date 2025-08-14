@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
             wrapper.style.display = "none";  // hide
         }
     });
+
     document.addEventListener("click", e => {
         const toolbar = e.target.closest(".chat-toolbar");
         console.log('toolbar: ', toolbar);
@@ -50,22 +51,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-document.addEventListener("click", (e) => {
-    const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");
-    const customWrapper = document.getElementById("custom-emoji-wrapper");
+// document.addEventListener("click", (e) => {
+//      if e.target.classList.contains(chatButtons || chatToolbar)
+//     const unicodeWrappers = document.querySelectorAll(".unicode-emoji-wrapper");
+//     const customWrappers = document.querySelectorAll(".custom-emoji-wrapper");
+//     const unicodeWrappersReaction = document.querySelectorAll(".unicode-wrapper-reaction");
+//     const customWrappersReaction = document.querySelectorAll(".custom-wrapper-reaction");
 
-    const isEmojiButton =
-        e.target.closest(".unicode-emoji-button") ||
-        e.target.closest(".custom-emoji-button");
 
-    const isInUnicodeWrapper = e.target.closest("#unicode-emoji-wrapper");
-    const isInCustomWrapper = e.target.closest("#custom-emoji-wrapper");
+//     const wrappers = [unicodeWrappers, customWrappers, unicodeWrappersReaction, customWrappersReaction];
+//     console.log('wrappers: ', wrappers);
 
-    if (!isEmojiButton && !isInUnicodeWrapper && !isInCustomWrapper) {
-        if (unicodeWrapper) unicodeWrapper.style.display = "none";
-        if (customWrapper) customWrapper.style.display = "none";
-    }
-});
+//     for (const list of wrappers) {
+//         list.forEach(el => { el.style.display = "flex"; });
+//     }
+// });
 
 function initializeEmojiDrawer(wrapper) {
     console.log('initializeEmojiDrawer wrapper: ', wrapper);
