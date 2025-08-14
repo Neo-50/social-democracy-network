@@ -2,13 +2,14 @@ window.renderReaction = function({
     target,
     emoji,
     target_id,
-    targetType,
+    target_type,
     user_id = null,
     user_ids = [],
     mode = "update", // "load" | "update" | "insert"
     emit = false
 }) {
-    console.log('renderReaction: ', 'target: ', target, 'target_id: ', target_id, ' | user_ids: ', user_ids);
+    console.log('renderReaction: ', 'target: ', target, 'target_id: ', target_id, 
+        ' | target_type: ', target_type, ' | user_ids: ', user_ids);
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
     let result;
 
@@ -16,7 +17,7 @@ window.renderReaction = function({
         case "load":
             // On page load, skip if it already exists
             if (existing) return;
-            result = createNewReaction(target, emoji, target_id, targetType, user_id, user_ids);
+            result = createNewReaction(target, emoji, target_id, target_type, user_id, user_ids);
             break;
 
         case "update":
@@ -24,13 +25,13 @@ window.renderReaction = function({
             if (existing) {
                 result = handleExistingReaction(existing, [...user_ids], user_id);
             } else {
-                result = createNewReaction(target, emoji, target_id, targetType, user_id, user_ids);
+                result = createNewReaction(target, emoji, target_id, target_type, user_id, user_ids);
             }
             break;
 
         case "insert":
             // Always create new reaction for insertion
-            result = createNewReaction(target, emoji, target_id, targetType, user_id, user_ids);
+            result = createNewReaction(target, emoji, target_id, target_type, user_id, user_ids);
             break;
 
         default:
@@ -40,12 +41,12 @@ window.renderReaction = function({
 
     // Emit socket event only when explicitly told (e.g. user insertion)
     if (emit && result) {
-        console.log('emit toggle_reaction: ', 'emoji: ', emoji, '| target_id: ', target_id, '| target_type: ', targetType, 
+        console.log('emit toggle_reaction: ', 'emoji: ', emoji, '| target_id: ', target_id, '| target_type: ', target_type, 
             '| action: ', result.action, '| user_id', user_id, '| user_ids', result.user_ids);
         window.reactionSocket.emit("toggle_reaction", {
             emoji,
             target_id: target_id,
-            target_type: targetType,
+            target_type: target_type,
             action: result.action,
             user_id: user_id,
             user_ids: result.user_ids
@@ -57,10 +58,10 @@ function unicodeReactionDrawer(toolbar) {
     const wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
     const picker = wrapper.querySelector("emoji-picker");
     const newsCommentContent = toolbar.parentElement.querySelector(".comment-content");
-    console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | window.targetType: ', window.targetType);
+    console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | window.target_type: ', window.target_type);
     wrapper.classList.toggle("visible");
     
-    if (!picker.dataset.bound && window.targetType == "news") {
+    if (!picker.dataset.bound && window.target_type == "news") {
         picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
         if (!toolbar.contains(wrapper)) {
             toolbar.appendChild(wrapper);
@@ -77,20 +78,20 @@ function unicodeReactionDrawer(toolbar) {
                     target: newsCommentContent,
                     emoji: emoji,
                     target_id: commentId,
-                    targetType: "news",
+                    target_type: window.target_type,
                     user_id: window.CURRENT_USER_ID,
                     user_ids: [window.CURRENT_USER_ID],
                     mode: "insert",
                     emit: true
                 });
 
-                console.log("Reaction inserted:", emoji);
+                console.log("Reaction inserted: ", emoji);
             }
         });
         picker.dataset.bound = "true";
     }
 
-    if (!picker.dataset.bound && window.targetType == "chat") {
+    if (!picker.dataset.bound && window.target_type == "chat") {
         console.log('unicodeReactionDrawer chat branch');
         const chatMessage = toolbar.closest('.chat-message');
         if (chatMessage) {
@@ -167,7 +168,7 @@ function isCustomEmoji(val) {
 
 function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
 
-    console.log('createNewReaction: ', target, emoji, target_id, targetType, user_id, user_ids);
+    console.log('createNewReaction: ', target, emoji, target_id, target_type, user_id, user_ids);
 
     // bail if already present
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
@@ -227,7 +228,7 @@ function handleReactionClick(event) {
         target: span.parentElement,
         emoji,
         target_id: targetId,
-        targetType: window.NEWS_ROOM_ID,
+        target_type: window.target_type,
         user_id: window.CURRENT_USER_ID,
         user_ids: user_ids,
         mode: "update",
