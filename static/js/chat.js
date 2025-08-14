@@ -146,7 +146,7 @@ function renderAllReactions () {
         const chatEl = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
         console.log('***chatEl***', chatEl);
         if (!chatEl) continue;
-        reactions.forEach(({ emoji, target_type, user_ids, target_id }) => {
+        reactions.forEach(({ emoji, user_ids, target_id }) => {
             console.log('Chat DOMContentLoaded: ', 'emoji: ', emoji, '| targetType: ', window.targetType, ' | user_ids: ', user_ids, ' | target_id: ', target_id);
             window.renderReaction({
                 target: chatEl,

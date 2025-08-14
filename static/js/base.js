@@ -48,8 +48,15 @@ window.initReactionSocket = function () {
     reactionSocket.off("reaction_update");
     reactionSocket.on("reaction_update", (data) => {
         const { emoji, target_id, target_type, action, user_id, user_ids } = data;
-        const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
-        const target = comment?.querySelector(".comment-content");
+        let target;
+        if (window.targetType === "news") {
+            const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
+            target = comment?.querySelector(".comment-content");
+        }
+        if (window.targetType === "chat") {
+            target = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
+        }
+        console.log('reaction_update received: ', emoji, target, target_id, target_type, action, user_id, user_ids);
         if (!target) return;
 
         handleReactionUpdate(action, target, emoji, target_id, target_type, user_id, user_ids);
