@@ -1,4 +1,4 @@
-if (!window.NAMESPACE === "chat") {
+if (window.NAMESPACE === "news") {
     document.addEventListener('DOMContentLoaded', () => {
         for (const [key, reactions] of Object.entries(window.reactionMap)) {
             const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
@@ -183,13 +183,15 @@ function handleReactionClick(event) {
 }
 
 function unicodeReactionDrawer(toolbar) {
-    console.log('unicodeReactionDrawer toolbar: ', toolbar);
-    let wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
+    const wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
     const picker = wrapper.querySelector("emoji-picker");
-    console.log('unicodeReactionDrawer | wrapper: ', wrapper, ' | picker: ', picker);
+    const newsCommentContent = toolbar.parentElement.querySelector(".comment-content");
+    console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker);
+    wrapper.classList.toggle("visible");
     if (window.NAMESPACE === "news") {
         picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
     }
+
     if (window.NAMESPACE === "chat") {
         const el = toolbar.closest('.chat-message');
         if (el) {
@@ -200,25 +202,19 @@ function unicodeReactionDrawer(toolbar) {
 
     if (!toolbar.contains(wrapper)) {
         toolbar.appendChild(wrapper);
-        wrapper.style.display = 'flex';
     }
-
-    // Set current target for emoji insert
-    activeCommentContent = toolbar.parentElement.querySelector(".comment-content");
-
-    wrapper.classList.toggle("visible");
-
-    if (!picker.dataset.bound) {
+    
+    if (!picker.dataset.bound && window.NAMESPACE == "news") {
         picker.addEventListener("emoji-click", (e) => {
             const commentId = picker.closest('.comment-container')?.dataset.commentId;
 
-            if (activeCommentContent) {
+            if (newsCommentContent) {
                 const emoji = e.detail.unicode;
 
                 console.log("unicodeReactionDrawer: ", 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, "user_id | ", window.CURRENT_USER_ID);
 
                 window.renderReaction({
-                    target: activeCommentContent,
+                    target: newsCommentContent,
                     emoji: emoji,
                     target_id: commentId,
                     targetType: window.NEWS_ROOM_ID,
