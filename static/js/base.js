@@ -38,25 +38,25 @@ window.initReactionSocket = function () {
 
     if (reactionSocket.connected) {
         console.log("🟢 Reaction socket already connected");
-        window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
+        window.reactionSocket.emit("join", window.targetType);
     } else {
         reactionSocket.on("connect", () => {
             console.log("🟢 Reaction socket connected");
-            window.reactionSocket.emit("join", window.NEWS_ROOM_ID);
+            window.reactionSocket.emit("join", window.targetType);
         });
     }
     reactionSocket.off("reaction_update");
     reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_id, action, user_id, user_ids } = data;
+        const { emoji, target_id, target_type, action, user_id, user_ids } = data;
         const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
         const target = comment?.querySelector(".comment-content");
         if (!target) return;
 
-        handleReactionUpdate(action, target, emoji, target_id, "news", user_id, user_ids);
+        handleReactionUpdate(action, target, emoji, target_id, target_type, user_id, user_ids);
     });
 };
 
-function handleReactionUpdate(action, target, emoji, target_id, targetType, user_id, user_ids) {
+function handleReactionUpdate(action, target, emoji, target_id, target_type, user_id, user_ids) {
     
     console.log('handleReactionUpdate data: ', 'action: ', action, '| target: ', target, '| emoji: ', emoji, 
         '| target_id: ', target_id, '| target_type: ', targetType, '| user_id: ', 'user_id | ', user_id, 'user_ids | ', user_ids);

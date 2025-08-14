@@ -8,17 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('chatButtons: ', chatButtons, 'unicodeEmojiButton: ', unicodeEmojiButton, 
         'unicodeEmojiWrapper: ', unicodeEmojiWrapper, 'customEmojiButton: ', customEmojiButton);
 
+    // Click Listeners for chatEditor
     unicodeEmojiButton.addEventListener("click", () => {
-        console.log('unicode button clicked');
+        console.log('***unicodeEmojiButton click***');
         unicodeEmojiWrapper.style.display =
             unicodeEmojiWrapper.style.display === "none" ? "block" : "none";
-    });
-    // handle unicode emoji selection
-    document.addEventListener("emoji-click", (e) => {
-        const emoji = e.detail.unicode;
-
-        console.log("Inserting emoji:", emoji, "into", chatEditor);
-        insertAtCursor(chatEditor, emoji);
     });
 
     customEmojiButton.addEventListener("click", () => {
@@ -34,7 +28,19 @@ document.addEventListener("DOMContentLoaded", () => {
             wrapper.style.display = "none";  // hide
         }
     });
+    
+    // Click listener individual emojis insert into chatEditor
+    document.addEventListener("emoji-click", (e) => {
+        console.log('parentElement: ', e.target.parentElement);
+        if (e.target.parentElement.classList.contains('unicode-emoji-wrapper')) {
+            const emoji = e.detail.unicode;
 
+            console.log("Inserting emoji:", emoji, "into", chatEditor);
+            insertAtCursor(chatEditor, emoji);
+        }
+    });
+
+    // Click listener reaction drawers
     document.addEventListener("click", e => {
         const toolbar = e.target.closest(".chat-toolbar");
         console.log('toolbar: ', toolbar);
@@ -47,25 +53,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 unicodeReactionDrawer(toolbar);
             }
         }
-        
     });
 });
-
-// document.addEventListener("click", (e) => {
-//      if e.target.classList.contains(chatButtons || chatToolbar)
-//     const unicodeWrappers = document.querySelectorAll(".unicode-emoji-wrapper");
-//     const customWrappers = document.querySelectorAll(".custom-emoji-wrapper");
-//     const unicodeWrappersReaction = document.querySelectorAll(".unicode-wrapper-reaction");
-//     const customWrappersReaction = document.querySelectorAll(".custom-wrapper-reaction");
-
-
-//     const wrappers = [unicodeWrappers, customWrappers, unicodeWrappersReaction, customWrappersReaction];
-//     console.log('wrappers: ', wrappers);
-
-//     for (const list of wrappers) {
-//         list.forEach(el => { el.style.display = "flex"; });
-//     }
-// });
 
 function initializeEmojiDrawer(wrapper) {
     console.log('initializeEmojiDrawer wrapper: ', wrapper);

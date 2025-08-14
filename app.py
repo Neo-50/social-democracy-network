@@ -451,7 +451,7 @@ def toggle_reaction(data):
 
     emoji = data.get("emoji")
     target_id = data.get("target_id")
-    target_type = "news"
+    target_type = data.get('target_type')
     action = data.get("action")
     user_id = data.get("user_id")
     user_ids = data.get("user_ids")
@@ -493,6 +493,7 @@ def toggle_reaction(data):
     socketio.emit("reaction_update", {
         "emoji": emoji,
         "target_id": target_id,
+        "target_type": target_type,
         "action": action,
         "user_id": user_id,
         "user_ids": user_ids,
@@ -515,7 +516,73 @@ def check_metadata_status(article_id):
 @login_required
 def chat():
     messages = ChatMessage.query.order_by(ChatMessage.timestamp.asc()).all()
-    return render_template("chat.html", messages=messages)
+
+    # Use `group_concat` on SQLite and `array_agg` on Postgres
+    if app.config['SQLALCHEMY_DATABASE_URI'].startswith("sqlite"):
+        reactions = (
+            db.session.query(
+                Reaction.target_id,
+                Reaction.emoji,
+                sa.func.count(Reaction.id).label("reactionCount"),
+                sa.func.group_concat(reaction_user.c.user_id).label("user_ids"),
+            )
+            .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
+            .filter(Reaction.target_type == "chat")
+            .group_by(Reaction.target_id, Reaction.emoji)
+            .all()
+        )
+
+        # Convert the user_ids string into list of ints (safe for empty strings)
+        reaction_map = {}
+        for r in reactions:
+            key = f"chat:{r.target_id}"  # Use string key from the beginning
+
+            if key not in reaction_map:
+                reaction_map[key] = []
+
+            user_ids = [int(uid) for uid in r.user_ids.split(",")] if r.user_ids else []
+
+            reaction_map[key].append({
+                "emoji": r.emoji,
+                "user_ids": user_ids,
+                "target_id": r.target_id,
+            })
+    else:
+        # Assume Postgres
+        reactions = (
+            db.session.query(
+                Reaction.target_id,
+                Reaction.emoji,
+                sa.func.count(Reaction.id).label("reactionCount"),
+                sa.func.array_agg(reaction_user.c.user_id).label("user_ids"),
+            )
+            .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
+            .filter(Reaction.target_type == "chat")
+            .group_by(Reaction.target_id, Reaction.emoji)
+            .all()
+        )
+
+        reaction_map = {}
+        for r in reactions:
+            key_str = f"chat:{r.target_id}"
+            if key_str not in reaction_map:
+                reaction_map[key_str] = []
+            
+            user_ids = [int(uid) for uid in r.user_ids] if r.user_ids else []
+
+            reaction_map[key_str].append({
+                "emoji": r.emoji,
+                "user_ids": r.user_ids,
+                "target_id": r.target_id,
+            })
+    user_map = {
+        user.id: user.display_name
+        for user in db.session.query(User.id, User.display_name).all()
+    }
+
+    print('***Chat Payload***', 'messages: ', messages, 'user_map: ', user_map, ' | reaction_map: ', reaction_map)
+
+    return render_template("chat.html", messages=messages, reaction_map=reaction_map, user_map=user_map)
 
 @app.route("/chat_intro")
 def chat_intro():

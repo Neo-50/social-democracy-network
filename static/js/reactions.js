@@ -1,25 +1,3 @@
-if (window.NAMESPACE === "news") {
-    document.addEventListener('DOMContentLoaded', () => {
-        for (const [key, reactions] of Object.entries(window.reactionMap)) {
-            const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
-            const commentEl = document.querySelector(`[data-comment-id="${target_id}"] .comment-content`);
-            if (!commentEl) continue;
-            reactions.forEach(({ emoji, user_ids, target_id }) => {
-                console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
-                window.renderReaction({
-                    target: commentEl,
-                    emoji,
-                    target_id,
-                    targetType: 'news',
-                    user_ids,
-                    mode: 'load'
-                });
-            });
-        }
-    });
-}
-
-
 window.renderReaction = function({
     target,
     emoji,
@@ -75,6 +53,81 @@ window.renderReaction = function({
     }
 };
 
+function unicodeReactionDrawer(toolbar) {
+    const wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
+    const picker = wrapper.querySelector("emoji-picker");
+    const newsCommentContent = toolbar.parentElement.querySelector(".comment-content");
+    console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | window.targetType: ', window.targetType);
+    wrapper.classList.toggle("visible");
+    
+    if (!picker.dataset.bound && window.targetType == "news") {
+        picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
+        if (!toolbar.contains(wrapper)) {
+            toolbar.appendChild(wrapper);
+        }
+        picker.addEventListener("emoji-click", (e) => {
+            const commentId = picker.closest('.comment-container')?.dataset.commentId;
+
+            if (newsCommentContent) {
+                const emoji = e.detail.unicode;
+
+                console.log("unicodeReactionDrawer: ", 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, "user_id | ", window.CURRENT_USER_ID);
+
+                window.renderReaction({
+                    target: newsCommentContent,
+                    emoji: emoji,
+                    target_id: commentId,
+                    targetType: "news",
+                    user_id: window.CURRENT_USER_ID,
+                    user_ids: [window.CURRENT_USER_ID],
+                    mode: "insert",
+                    emit: true
+                });
+
+                console.log("Reaction inserted:", emoji);
+            }
+        });
+        picker.dataset.bound = "true";
+    }
+
+    if (!picker.dataset.bound && window.targetType == "chat") {
+        console.log('unicodeReactionDrawer chat branch');
+        const chatMessage = toolbar.closest('.chat-message');
+        if (chatMessage) {
+            const chatId = chatMessage.dataset.messageId;
+            picker.dataset.chatId = chatId;
+        }
+        if (!toolbar.contains(wrapper)) {
+            toolbar.appendChild(wrapper);
+        }
+        console.log('unicodeReactionDrawer appended drawer inside toolbar');
+        picker.addEventListener("emoji-click", (e) => {
+            console.log('unicodeReactionDrawer emoji click');
+            const chatId = chatMessage.dataset.messageId;
+
+            if (chatMessage) {
+                const emoji = e.detail.unicode;
+
+                console.log("unicodeReactionDrawer renderReaction ", ' | target: ', chatMessage,
+                    ' | emoji: ', emoji, ' | target_id: ', chatId, ' | user_ids: ', [window.CURRENT_USER_ID], " | user_id: ", window.CURRENT_USER_ID);
+
+                window.renderReaction({
+                    target: chatMessage,
+                    emoji: emoji,
+                    target_id: chatId,
+                    targetType: "chat",
+                    user_id: window.CURRENT_USER_ID,
+                    user_ids: [window.CURRENT_USER_ID],
+                    mode: "insert",
+                    emit: true
+                });
+
+                console.log("Reaction inserted:", emoji);
+            }
+        });
+        picker.dataset.bound = "true";
+    }
+}
 
 function handleExistingReaction(existing, user_ids, user_id) {
     const countSpan = existing.querySelector(".reaction-count");
@@ -182,51 +235,3 @@ function handleReactionClick(event) {
     });
 }
 
-function unicodeReactionDrawer(toolbar) {
-    const wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
-    const picker = wrapper.querySelector("emoji-picker");
-    const newsCommentContent = toolbar.parentElement.querySelector(".comment-content");
-    console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker);
-    wrapper.classList.toggle("visible");
-    if (window.NAMESPACE === "news") {
-        picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
-    }
-
-    if (window.NAMESPACE === "chat") {
-        const el = toolbar.closest('.chat-message');
-        if (el) {
-            const messageId = el.dataset.messageId;
-            picker.dataset.commentId = messageId;
-        }
-    }
-
-    if (!toolbar.contains(wrapper)) {
-        toolbar.appendChild(wrapper);
-    }
-    
-    if (!picker.dataset.bound && window.NAMESPACE == "news") {
-        picker.addEventListener("emoji-click", (e) => {
-            const commentId = picker.closest('.comment-container')?.dataset.commentId;
-
-            if (newsCommentContent) {
-                const emoji = e.detail.unicode;
-
-                console.log("unicodeReactionDrawer: ", 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, "user_id | ", window.CURRENT_USER_ID);
-
-                window.renderReaction({
-                    target: newsCommentContent,
-                    emoji: emoji,
-                    target_id: commentId,
-                    targetType: window.NEWS_ROOM_ID,
-                    user_id: window.CURRENT_USER_ID,
-                    user_ids: [window.CURRENT_USER_ID],
-                    mode: "insert",
-                    emit: true
-                });
-
-                console.log("Reaction inserted:", emoji);
-            }
-        });
-        picker.dataset.bound = "true";
-    }
-}
