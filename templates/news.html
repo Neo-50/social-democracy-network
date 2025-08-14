@@ -384,7 +384,7 @@
         window.reactionUserMap = {};
         window.reactionMap = {{ reaction_map | tojson }};
         window.userMap = {{ user_map | tojson }};
-        window.targetType = "news";
+        window.target_type = "news";
     </script>
     <script src="{{ url_for('static', filename='js/reactions.js') }}"></script>
     <script src="{{ url_for('static', filename='js/custom_emoji_list.js') }}"></script>

@@ -38,22 +38,22 @@ window.initReactionSocket = function () {
 
     if (reactionSocket.connected) {
         console.log("🟢 Reaction socket already connected");
-        window.reactionSocket.emit("join", window.targetType);
+        window.reactionSocket.emit("join", window.target_type);
     } else {
         reactionSocket.on("connect", () => {
             console.log("🟢 Reaction socket connected");
-            window.reactionSocket.emit("join", window.targetType);
+            window.reactionSocket.emit("join", window.target_type);
         });
     }
     reactionSocket.off("reaction_update");
     reactionSocket.on("reaction_update", (data) => {
         const { emoji, target_id, target_type, action, user_id, user_ids } = data;
         let target;
-        if (window.targetType === "news") {
+        if (window.target_type === "news") {
             const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
             target = comment?.querySelector(".comment-content");
         }
-        if (window.targetType === "chat") {
+        if (window.target_type === "chat") {
             target = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
         }
         console.log('reaction_update received: ', emoji, target, target_id, target_type, action, user_id, user_ids);
@@ -66,7 +66,7 @@ window.initReactionSocket = function () {
 function handleReactionUpdate(action, target, emoji, target_id, target_type, user_id, user_ids) {
     
     console.log('handleReactionUpdate data: ', 'action: ', action, '| target: ', target, '| emoji: ', emoji, 
-        '| target_id: ', target_id, '| target_type: ', targetType, '| user_id: ', 'user_id | ', user_id, 'user_ids | ', user_ids);
+        '| target_id: ', target_id, '| target_type: ', target_type, '| user_id: ', 'user_id | ', user_id, 'user_ids | ', user_ids);
     const span = document.querySelector(
         `.emoji-reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
     );
@@ -86,7 +86,7 @@ function handleReactionUpdate(action, target, emoji, target_id, target_type, use
                 target,
                 emoji,
                 target_id,
-                targetType,
+                target_type,
                 user_id,
                 user_ids,
                 mode: "insert"

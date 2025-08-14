@@ -147,12 +147,12 @@ function renderAllReactions () {
         console.log('***chatEl***', chatEl);
         if (!chatEl) continue;
         reactions.forEach(({ emoji, user_ids, target_id }) => {
-            console.log('Chat DOMContentLoaded: ', 'emoji: ', emoji, '| targetType: ', window.targetType, ' | user_ids: ', user_ids, ' | target_id: ', target_id);
+            console.log('Chat DOMContentLoaded: ', 'emoji: ', emoji, '| target_type: ', window.target_type, ' | user_ids: ', user_ids, ' | target_id: ', target_id);
             window.renderReaction({
                 target: chatEl,
                 emoji,
                 target_id,
-                targetType: window.targetType,
+                target_type: window.target_type,
                 user_ids,
                 mode: 'load'
             });

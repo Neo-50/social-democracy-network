@@ -67,7 +67,7 @@
         bio: "{{ current_user.bio or 'No bio available' }}",
         is_admin: "{{ 'true' if current_user.is_admin else 'false' }}"
     };
-    window.targetType = "chat";
+    window.target_type = "chat";
     window.reactionUserMap = {};
     window.reactionMap = {{ reaction_map | tojson }};
     window.userMap = {{ user_map | tojson }};
