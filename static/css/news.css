@@ -518,7 +518,7 @@ p {
     top: calc(100% + 4px);
     right: 0;
     max-height: 400px;
-    min-width: 400px;
+    min-width: 390px;
     z-index: 1200;
     overflow-y: auto;
     display: flex;
