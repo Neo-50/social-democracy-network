@@ -485,12 +485,12 @@ p {
     cursor: pointer;
 }
 
-.custom-emoji-reaction {
+.emoji-reaction.custom{
     margin-right: 12px;
     cursor: pointer;
 }
 
-.unicode-emoji-reaction {
+.emoji-reaction.unicode{
     margin-right: 4px;
     cursor: pointer;
 }

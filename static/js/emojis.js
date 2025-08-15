@@ -130,7 +130,7 @@ function initializeEmojiDrawer(wrapper) {
                 const emoji = document.createElement('img');
                 emoji.src = `/media/emojis/${filename}`;
                 emoji.alt = filename.split('.')[0];
-                emoji.className = 'custom-emoji-reaction';
+                emoji.className = 'emoji-reaction custom';
                 emoji.style.width = `${selectedEmojiSize}px`;
                 emoji.style.height = `${selectedEmojiSize}px`;
                 emoji.style.verticalAlign = 'middle';

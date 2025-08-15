@@ -125,10 +125,10 @@ html, body {
 /* Reactions */
 
 .emoji-reaction {
-    border-radius: 6px;
-    padding: 4px;
-    margin-right: 2px;
-    font-size: 1.4em;
+    border-radius: 8px;
+    padding: 6px 4px;
+    margin-right: 4px;
+    font-size: 1.2em;
     border: 2px solid #00e3ea;
 }
 
@@ -141,14 +141,16 @@ html, body {
     cursor: pointer;
 }
 
-.custom-emoji-reaction {
+.emoji-reaction.custom{
     margin-right: 12px;
     cursor: pointer;
+    border: none;
 }
 
-.unicode-emoji-reaction {
+.emoji-reaction.unicode{
     margin-right: 4px;
     cursor: pointer;
+    border: none;
 }
 
 @media (width < 600px) {

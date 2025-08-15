@@ -116,7 +116,7 @@ function unicodeReactionDrawer(toolbar) {
                     target: chatMessage,
                     emoji: emoji,
                     target_id: chatId,
-                    targetType: "chat",
+                    target_type: window.target_type,
                     user_id: window.CURRENT_USER_ID,
                     user_ids: [window.CURRENT_USER_ID],
                     mode: "insert",
@@ -187,7 +187,7 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     if (isCustomEmoji(emoji)) {
         // `emoji` is a filename like "derp.png"
         emojiEl = document.createElement("img");
-        emojiEl.className = "custom-emoji-reaction";
+        emojiEl.className = "emoji-reaction custom";
         emojiEl.src = `/media/emojis/${emoji}`;       // adjust to your path
         emojiEl.alt = emoji.replace(/\.[^.]+$/, "");  // filename without ext
         emojiEl.style.width = "28px";
@@ -196,7 +196,7 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     } else {
         // unicode emoji
         emojiEl = document.createElement("span");
-        emojiEl.className = "unicode-emoji-reaction";
+        emojiEl.className = "emoji-reaction unicode";
         emojiEl.textContent = emoji; // safe: text node
     }
 
