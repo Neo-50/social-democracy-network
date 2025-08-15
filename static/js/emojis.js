@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const unicodeEmojiWrapper = chatButtons.querySelector(".unicode-emoji-wrapper");
     const customEmojiWrapper = chatButtons.querySelector(".custom-emoji-wrapper");
     
+    
     console.log('chatButtons: ', chatButtons, 'unicodeEmojiButton: ', unicodeEmojiButton, 
         'unicodeEmojiWrapper: ', unicodeEmojiWrapper, 'customEmojiButton: ', customEmojiButton);
 
@@ -40,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", e => {
         const toolbar = e.target.closest(".chat-toolbar");
         console.log('toolbar: ', toolbar);
+        const customWrapperReaction = toolbar?.querySelector('.custom-wrapper-reaction') ?? null;
 
         const isEmojiBtn =
             unicodeEmojiButton?.contains(e.target) ||
@@ -48,29 +50,55 @@ document.addEventListener("DOMContentLoaded", () => {
             customEmojiWrapper?.contains(e.target);
 
         if (!isEmojiBtn) {
-            console.log('Not an emoji button');
+            console.log('Not an emoji button or wrapper');
             document.querySelectorAll('.unicode-wrapper-reaction')
                 .forEach(el => el.classList.remove('visible'));
-                // .forEach(el => console.log(el))
+            document.querySelectorAll('.custom-wrapper-reaction.visible')
+                .forEach(el => el.classList.remove('visible'));
             unicodeEmojiWrapper.classList.remove('visible');
             customEmojiWrapper.classList.remove('visible');
         }
 
         if (toolbar) {
-            const customReactionButton = toolbar.querySelector(".custom-emoji-button");
-            const unicodeReactionButton = toolbar.querySelector(".unicode-emoji-button");
-            console.log('customReactionButton:', customReactionButton, 'unicodeReactionButton: ', unicodeReactionButton, 'toolbar: ', toolbar);
-            if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
-                console.log('unicodeReactionButton');
+            const customWrapperReaction = toolbar.querySelector('.custom-wrapper-reaction');
+
+            // open Unicode drawer
+            if (e.target.closest('.unicode-emoji-button')) {
                 unicodeReactionDrawer(toolbar);
             }
-            if (e.target.classList.contains('custom-emoji-button')) {
-                console.log('customReactionButton');
-                // unicodeReactionDrawer(toolbar);
+
+            // open Custom drawer
+            if (e.target.closest('.custom-emoji-button')) {
+                // ensure the drawer exists exactly once
+                if (customWrapperReaction && !customWrapperReaction.querySelector('.custom-reaction-drawer')) {
+                customChatReactionDrawer(customWrapperReaction, toolbar);
+                }
+                // single toggle only
+                customWrapperReaction?.classList.toggle('visible');
             }
         }
+
     });
 });
+
+
+function customChatReactionDrawer(wrapper, toolbar) {
+    console.log('**customChatReactionDrawer** wrapper: ', wrapper, ' | toolbar: ', toolbar)
+    const drawer = document.createElement('div');
+    drawer.className = 'custom-reaction-drawer';
+    wrapper.appendChild(drawer);
+
+    const target = toolbar.closest('.chat-message');
+    const target_id = toolbar.closest('.chat-message')?.dataset?.messageId;
+
+    sizeButtonHelper(drawer);
+    renderCustomEmojisToDrawer(drawer, {
+        target,
+        target_id,
+        target_type: 'chat',
+    });
+}
+
 
 function initializeEmojiDrawer(wrapper) {
     console.log('initializeEmojiDrawer wrapper: ', wrapper);
@@ -85,40 +113,7 @@ function initializeEmojiDrawer(wrapper) {
     drawer.style.flexWrap = 'wrap';
     drawer.style.gap = '6px';
 
-    const toggleWrapper = document.createElement('div');
-    toggleWrapper.className = 'emoji-size-toggle';
-
-    const smallBtn = document.createElement('button');
-    smallBtn.textContent = 'Small';
-    smallBtn.className = 'size-option active';
-    smallBtn.type = 'button'; // prevent accidental submit
-
-    const largeBtn = document.createElement('button');
-    largeBtn.textContent = 'Large';
-    largeBtn.className = 'size-option';
-    largeBtn.type = 'button'; // prevent accidental submit
-
-    toggleWrapper.appendChild(smallBtn);
-    toggleWrapper.appendChild(largeBtn);
-    drawer.appendChild(toggleWrapper);
-
-    // Default size
-    selectedEmojiSize = 28;
-
-    // Click handlers
-    smallBtn.addEventListener('click', () => {
-        selectedEmojiSize = 28;
-        smallBtn.classList.add('active');
-        largeBtn.classList.remove('active');
-        updateDrawerEmojiSizes(drawer);
-    });
-
-    largeBtn.addEventListener('click', () => {
-        selectedEmojiSize = 50;
-        largeBtn.classList.add('active');
-        smallBtn.classList.remove('active');
-        updateDrawerEmojiSizes(drawer);
-    });
+    sizeButtonHelper(drawer);
 
     customEmojis.forEach(filename => {
         const img = document.createElement('img');
