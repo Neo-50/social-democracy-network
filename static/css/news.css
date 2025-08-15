@@ -469,10 +469,10 @@ p {
 }
 
 .emoji-reaction {
-    border-radius: 6px;
-    padding: 4px;
-    margin-right: 2px;
-    font-size: 1.4em;
+    border-radius: 8px;
+    padding: 6px 4px;
+    margin-right: 4px;
+    font-size: 1.2em;
     border: 2px solid #00e3ea;
 }
 
@@ -481,18 +481,23 @@ p {
     background-color: #444;
 }
 
-.custom-emoji {
-    cursor: pointer;
-}
-
 .emoji-reaction.custom{
-    margin-right: 12px;
+    margin-right: 4px;
+    width: 36px;
+    height: 36px;
     cursor: pointer;
+    border: none;
 }
 
 .emoji-reaction.unicode{
-    margin-right: 4px;
+    padding: 0;
     cursor: pointer;
+    border: none;
+}
+
+.emoji-reaction.custom:hover,
+.emoji-reaction.unicode:hover {
+    background-color: transparent;
 }
 
 .custom-emoji-drawer {

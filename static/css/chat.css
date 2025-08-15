@@ -146,10 +146,6 @@ html, body {
   box-shadow: 0 2px 12px rgb(0 0 0.5);
 }
 
-.custom-emoji {
-    cursor: pointer;
-}
-
 .emoji-reaction {
     border-radius: 8px;
     padding: 6px 4px;
@@ -163,24 +159,24 @@ html, body {
     background-color: #444;
 }
 
+.emoji-reaction:first-of-type {
+    margin-left: 60px;
+}
+
 .emoji-reaction.custom{
-    margin-right: 12px;
+    margin-right: 4px;
     width: 36px;
     height: 36px;
     cursor: pointer;
     border: none;
-    margin-left: 0 !important;
+    margin-left: 0;
 }
 
 .emoji-reaction.unicode{
-    margin-right: 4px;
+    padding: 0;
     cursor: pointer;
     border: none;
-    margin-left: 0 !important;
-}
-
-.emoji-reaction:first-of-type {
-    margin-left: 60px;
+    margin-left: 0;
 }
 
 .emoji-reaction.custom:hover,
