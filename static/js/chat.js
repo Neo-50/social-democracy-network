@@ -264,7 +264,7 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
             </div>
             <!-- Custom reactions button -->
             <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
-            <div class="custom-wrapper-reaction" style="display: none;">
+            <div class="custom-wrapper-reaction">
                 <!-- JS will inject emoji drawer below -->
             </div>
             <button class="reply-button">Reply</button> 

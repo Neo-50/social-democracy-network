@@ -435,23 +435,27 @@ html, body {
     display: flex;
 }
 
-/* .custom-emoji-wrapper {
-    position: absolute;
-    max-height: 410px;
-    min-height: 300px;
-    width: 360px;
-    bottom: 60px;
-    right: 0;
-    overflow-y: auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px;
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    border-radius: 6px;
-    box-shadow: 0 2px 12px rgb(0 0 0.5);
-} */
+.custom-wrapper-reaction {
+  display: none;
+  position: absolute;
+  max-height: 410px;
+  min-height: 300px;
+  width: 360px;
+  top: 60px;
+  right: 0;
+  overflow-y: auto;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgb(0 0 0.5);
+}
+
+.custom-wrapper-reaction.visible {
+  display: flex;
+}
 
 @media (width < 600px) {
     .unicode-emoji-wrapper {
