@@ -51,15 +51,10 @@ html, body {
 }
 
 .chat-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-  width: auto;
-}
-
-.chat-header strong {
-  margin-left: 6px;
-  font-size: 14px;
+  color: #8a8a8a;
+  margin-left: 4px;
+  font-weight: 600;
+  font-size: 1.1em;
 }
 
 .chat-message .message-body {
@@ -96,12 +91,6 @@ html, body {
 
 .chat-message:hover .chat-toolbar {
   display: flex;
-}
-
-.timestamp {
-  margin-left: 10px;
-  margin-bottom: 4px;
-  color: #bbb;
 }
 
 .preview-container {
@@ -146,6 +135,16 @@ html, body {
   box-shadow: 0 2px 12px rgb(0 0 0.5);
 }
 
+.reactions-container {
+  margin-left: 60px;
+}
+
+@media (width < 600px) {
+  .reactions-container {
+    margin-left: 0;
+  }
+}
+
 .emoji-reaction {
     border-radius: 8px;
     padding: 6px 4px;
@@ -159,24 +158,18 @@ html, body {
     background-color: #444;
 }
 
-.emoji-reaction:first-of-type {
-    margin-left: 60px;
-}
-
 .emoji-reaction.custom{
     margin-right: 4px;
     width: 36px;
     height: 36px;
     cursor: pointer;
     border: none;
-    margin-left: 0;
 }
 
 .emoji-reaction.unicode{
     padding: 0;
     cursor: pointer;
     border: none;
-    margin-left: 0;
 }
 
 .emoji-reaction.custom:hover,
@@ -292,6 +285,10 @@ html, body {
     margin-left: 6px;
     cursor: pointer;
     width: fit-content;
+}
+
+.url-preview {
+  margin-bottom: 10px;
 }
 
 .chat-toolbar {

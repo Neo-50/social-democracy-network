@@ -2,6 +2,9 @@
 
 window.chatEditor = document.getElementById("chat-editor");
 window.csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+let isLoading = false;
+let earliestMessageId = null;
+const renderedMessageIds = new Set();
 
 document.addEventListener("DOMContentLoaded", () => {
     const sendButton = document.getElementById("send-button");
@@ -10,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatContainer = document.querySelector("#chat-container");
 
     console.log('**Chat Loaded** sendButton: ', sendButton, '| uploadButton: ', uploadButton,
-          ' | fileInput', fileInput, 'chatContainer: ', chatContainer, 'chatEditor: ', chatEditor);
+        ' | fileInput', fileInput, 'chatContainer: ', chatContainer, 'chatEditor: ', chatEditor);
 
     if (typeof window.initChatSocket === "function") {
         window.initChatSocket();
@@ -34,55 +37,55 @@ document.addEventListener("DOMContentLoaded", () => {
         fileInput.click();
     });
     fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (!file) return;
+        const file = fileInput.files[0];
+        if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-        alert("Only image files are allowed.");
-        return;
-    }
+        if (!file.type.startsWith("image/")) {
+            alert("Only image files are allowed.");
+            return;
+        }
 
-    const formData = new FormData();
-    formData.append("file", file);
-    
-    formData.append("csrf_token", window.csrfToken);
+        const formData = new FormData();
+        formData.append("file", file);
 
-    fetch("/chat/upload_chat_image", {
-        method: "POST",
-        body: formData,
-    })
+        formData.append("csrf_token", window.csrfToken);
 
-        .then(async res => {
-            let data;
-            try {
-                data = await res.json();
-            } catch {
-                const text = await res.text();
-                throw new Error(text || "Upload failed.");
-            }
-
-            if (!res.ok || !data.success) {
-                throw new Error(data.error || "Upload failed.");
-            }
-
-            return data;
+        fetch("/chat/upload_chat_image", {
+            method: "POST",
+            body: formData,
         })
 
-        .then(data => {
-            const img = document.createElement("img");
-            img.src = data.url;
-            img.alt = file.name;
-            img.style.maxWidth = "450px";
-            img.style.maxHeight = "450px";
-            img.style.height = "auto";
-            img.style.width = "auto";
-            img.style.borderRadius = "24px";
-            insertNodeAtCursor(chatEditor, img);
-        })
-        .catch(err => {
-            console.error("Upload error:", err);
-            showToast(err.message || "A network error occurred while uploading.");
-        });
+            .then(async res => {
+                let data;
+                try {
+                    data = await res.json();
+                } catch {
+                    const text = await res.text();
+                    throw new Error(text || "Upload failed.");
+                }
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || "Upload failed.");
+                }
+
+                return data;
+            })
+
+            .then(data => {
+                const img = document.createElement("img");
+                img.src = data.url;
+                img.alt = file.name;
+                img.style.maxWidth = "450px";
+                img.style.maxHeight = "450px";
+                img.style.height = "auto";
+                img.style.width = "auto";
+                img.style.borderRadius = "24px";
+                insertNodeAtCursor(chatEditor, img);
+            })
+            .catch(err => {
+                console.error("Upload error:", err);
+                showToast(err.message || "A network error occurred while uploading.");
+            });
     });
 
     // Button to scroll to the bottom of the feed
@@ -94,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
         const showBtn = distanceFromBottom > container.scrollHeight * 0.2;
 
-    scrollBtn.style.display = showBtn ? 'block' : 'none';
+        scrollBtn.style.display = showBtn ? 'block' : 'none';
     });
 
     // Click button to scroll using your existing function
@@ -106,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (message !== "") {
             fetch("/chat/send", {
                 method: "POST",
-                    headers: {
+                headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": window.csrfToken
                 },
@@ -115,14 +118,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     message_type: "text"
                 })
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) { 
-                    chatEditor.innerHTML = "";
-                } else {
-                    console.error("Error sending message:", data.error);
-                }
-            });
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        chatEditor.innerHTML = "";
+                    } else {
+                        console.error("Error sending message:", data.error);
+                    }
+                });
         }
     });
 
@@ -139,17 +142,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderAllReactions();
 });
 
-function renderAllReactions () {
+function renderAllReactions() {
     console.log('Pull data and render reactions');
     for (const [key, reactions] of Object.entries(window.reactionMap)) {
         const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
-        const chatEl = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
-        console.log('***chatEl***', chatEl);
-        if (!chatEl) continue;
+        const reactionsContainer = document.querySelector(`.chat-message[data-message-id="${target_id}"] .reactions-container`);
+        console.log('***reactionsContainer***', reactionsContainer);
+        if (!reactionsContainer) continue;
         reactions.forEach(({ emoji, user_ids, target_id }) => {
-            console.log('Chat DOMContentLoaded: ', 'emoji: ', emoji, '| target_type: ', window.target_type, ' | user_ids: ', user_ids, ' | target_id: ', target_id);
+            console.log('Chat DOMContentLoaded: ', 'emoji: ', emoji, '| target_type: ', 
+                window.target_type, ' | user_ids: ', user_ids, ' | target_id: ', target_id);
             window.renderReaction({
-                target: chatEl,
+                target: reactionsContainer,
                 emoji,
                 target_id,
                 target_type: window.target_type,
@@ -160,77 +164,35 @@ function renderAllReactions () {
     }
 }
 
-function renderUrlPreview(msgElement, data) {
-    const preview = document.createElement("div");
-    preview.className = "url-preview";
-
-    if (data.embed_html) {
-        preview.innerHTML = data.embed_html;
-        msgElement.appendChild(preview);
-        return;
-    }
-
-    let formattedDate = "";
-    if (data.published) {
-        const date = new Date(data.published);
-        if (!isNaN(date)) {
-            // Example: "July 9, 2025"
-            formattedDate = date.toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-    }
-
-    preview.innerHTML = `
-        <div class="preview-container">
-            <div class="preview-container-inner">
-                <a href="${data.url}" target="_blank" class="preview-link">
-                    <div class="preview-title">${data.title || data.url}</div>
-                    ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
-                </a>
-                ${data.description ? `<div><span class="article-info description"></span> ${data.description}</div>` : ""}
-                ${data.source ? `<div><span class="article-info source"></span> ${data.source}</div>` : ""}
-                ${formattedDate ? `<div><span class="article-info published"></span> ${formattedDate}</div>` : ""}
-                ${data.authors ? `<div><span class="article-info authors"></span> ${data.authors}</div>` : ""}
-                ${data.category ? `<div><span class="article-info category"></span> ${data.category}</div>` : ""}
-            </div>
-        </div>
-    `;
-
-    msgElement.appendChild(preview);
-}  
-
 function deleteMessage(messageId) {
     if (!confirm("Are you sure you want to delete this message?")) return;
 
     fetch(`/chat/delete_message/${messageId}`, {
         method: "DELETE",
-          headers: {
+        headers: {
             "X-CSRFToken": window.csrfToken,
         },
     })
-    .then(res => {
-        if (res.ok) {
-            const msgEl = document.querySelector(`.chat-message[data-message-id="${messageId}"]`);
-            if (msgEl) msgEl.remove();
-        } else {
-            alert("Failed to delete message");
-        }
-    })
-    .catch(err => {
-        console.error("Delete failed:", err);
-        alert("Error occurred while deleting message");
-    });
+        .then(res => {
+            if (res.ok) {
+                const msgEl = document.querySelector(`.chat-message[data-message-id="${messageId}"]`);
+                if (msgEl) msgEl.remove();
+            } else {
+                alert("Failed to delete message");
+            }
+        })
+        .catch(err => {
+            console.error("Delete failed:", err);
+            alert("Error occurred while deleting message");
+        });
 }
 
-window.appendMessage = function(user_id, username, displayName, text, messageId, avatar, bio, timestamp, prepend=false) {
+window.appendMessage = function (user_id, username, displayName, text, messageId, avatar, bio, timestamp, prepend = false) {
     console.log("appendMessage called:", { user_id, username, displayName, text });
     const chatMessages = document.getElementById("chat-messages");
     const msg = document.createElement("div");
     msg.className = "chat-message";
-    msg.dataset.messageId = messageId 
+    msg.dataset.messageId = messageId
 
     const avatarImg = avatar ? `
         <button class="avatar-wrapper"
@@ -288,7 +250,7 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
 
     console.log("🧱 Prepending?", prepend, "| chatMessages.childElementCount =", chatMessages.childElementCount);
     console.log("🔼 First child ID before insert:", chatMessages.firstChild?.dataset?.messageId);
-    
+
     const replyBtn = msg.querySelector('.reply-button');
     const replyDrawer = msg.querySelector('.reply-drawer');
 
@@ -303,16 +265,20 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
         const replyText = replyInput.value.trim();
         if (replyText) {
             console.log(`Reply to message ID ${messageId}:`, replyText);
-            // Clear and optionally collapse drawer
             replyInput.value = '';
             replyDrawer.style.display = 'none';
-
-            // TODO: Send replyText to backend here
         }
     });
 
     formatTimestamp();
-    
+
+    let reactionContainer = msg.querySelector('.url-preview');
+    if (!reactionContainer) {
+        preview = document.createElement('div');
+        preview.className = 'reactions-container';
+        msg.appendChild(preview);
+    }
+
     const urls = extractUrls(text).filter(url => {
         const isMedia = url.includes("/media/");
         const isImage = /\.(jpg|jpeg|png|gif|webp|avif|svg)$/i.test(url);
@@ -346,11 +312,51 @@ window.appendMessage = function(user_id, username, displayName, text, messageId,
     return (msg);
 }
 
-let isLoading = false;
-let earliestMessageId = null;
-const renderedMessageIds = new Set();
+function renderUrlPreview(msgElement, data) {
+    const preview = document.createElement("div");
+    preview.className = "url-preview";
+    const replyDrawer = msgElement.querySelector('.reply-drawer');
+    console.log('*****replyDrawer*******', replyDrawer);
+    
+    if (data.embed_html) {
+        preview.innerHTML = data.embed_html;
+        replyDrawer.after(preview);
+        return;
+    }
 
-function loadMessages(beforeId = null, prepend=false) {
+    let formattedDate = "";
+    if (data.published) {
+        const date = new Date(data.published);
+        if (!isNaN(date)) {
+            // Example: "July 9, 2025"
+            formattedDate = date.toLocaleDateString(undefined, {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    }
+
+    preview.innerHTML = `
+        <div class="preview-container">
+            <div class="preview-container-inner">
+                <a href="${data.url}" target="_blank" class="preview-link">
+                    <div class="preview-title">${data.title || data.url}</div>
+                    ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
+                </a>
+                ${data.description ? `<div><span class="article-info description"></span> ${data.description}</div>` : ""}
+                ${data.source ? `<div><span class="article-info source"></span> ${data.source}</div>` : ""}
+                ${formattedDate ? `<div><span class="article-info published"></span> ${formattedDate}</div>` : ""}
+                ${data.authors ? `<div><span class="article-info authors"></span> ${data.authors}</div>` : ""}
+                ${data.category ? `<div><span class="article-info category"></span> ${data.category}</div>` : ""}
+            </div>
+        </div>
+    `;
+
+    replyDrawer.after(preview);
+}
+
+function loadMessages(beforeId = null, prepend = false) {
     if (isLoading) return;
     isLoading = true;
 
@@ -383,9 +389,6 @@ function loadMessages(beforeId = null, prepend=false) {
             if (prepend) {
                 const chatMessages = document.getElementById("chat-messages");
                 const firstRealMessage = chatMessages.querySelector(".chat-message");
-
-                let topMessageId = null;
-                let topOffset = 0;
 
                 if (firstRealMessage) {
                     topMessageId = firstRealMessage.dataset.id;
@@ -487,15 +490,16 @@ function scrollChatToBottom() {
     const container = document.querySelector('.chat-container');
     if (!container) return;
 
-  requestAnimationFrame(() => {
-    container.scrollTop = container.scrollHeight;
-    console.log("⬇️ Scrolled to bottom:", container.scrollTop);
-  });
+    requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+        console.log("⬇️ Scrolled to bottom:", container.scrollTop);
+    });
 
-  // Double fallback in case layout isn't stable yet
-  setTimeout(() => {
-    container.scrollTop = container.scrollHeight;
-    console.log("⏱️ Fallback scroll to bottom:", container.scrollTop); }, 1500);
+    // Double fallback in case layout isn't stable yet
+    setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+        console.log("⏱️ Fallback scroll to bottom:", container.scrollTop);
+    }, 1500);
 }
 
 function isAtBottom() {

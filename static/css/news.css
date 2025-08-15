@@ -311,13 +311,6 @@ p {
     font-size: 1em;
 }
 
-.timestamp {
-  font-size: 0.75em;
-  margin-left: 0;
-  margin-top: 0;
-  color:#888
-}
-
 .post-comment-container {
     display: flex;
     color: white;
