@@ -45,7 +45,7 @@ function renderCustomEmojisToDrawer(drawer, opts) {
             if (target?.matches?.('.comment-editor')) {
                 const emojiNode = document.createElement('img');
                 emojiNode.src = img.src;
-                emojiNode.className = 'custom-emoji-reaction';
+                emojiNode.className = 'emoji-reaction custom';
                 emojiNode.alt = filename.split('.')[0];
                 emojiNode.style.width = `${size}px`;
                 emojiNode.style.height = `${size}px`;
