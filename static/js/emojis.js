@@ -43,7 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const isEmojiBtn =
             unicodeEmojiButton?.contains(e.target) ||
-            customEmojiButton?.contains(e.target);
+            customEmojiButton?.contains(e.target) ||
+            unicodeEmojiWrapper?.contains(e.target) ||
+            customEmojiWrapper?.contains(e.target);
 
         if (!isEmojiBtn) {
             console.log('Not an emoji button');
