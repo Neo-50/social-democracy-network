@@ -190,8 +190,6 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
         emojiEl.className = "emoji-reaction custom";
         emojiEl.src = `/media/emojis/${emoji}`;       // adjust to your path
         emojiEl.alt = emoji.replace(/\.[^.]+$/, "");  // filename without ext
-        emojiEl.style.width = "28px";
-        emojiEl.style.height = "28px";
         emojiEl.style.verticalAlign = "middle";
     } else {
         // unicode emoji

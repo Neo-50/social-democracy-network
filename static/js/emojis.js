@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
             unicodeEmojiButton?.contains(e.target) ||
             customEmojiButton?.contains(e.target) ||
             unicodeEmojiWrapper?.contains(e.target) ||
-            customEmojiWrapper?.contains(e.target);
+            customEmojiWrapper?.contains(e.target) ||
+            customWrapperReaction?.contains(e.target);
 
         if (!isEmojiBtn) {
             console.log('Not an emoji button or wrapper');
