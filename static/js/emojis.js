@@ -3,29 +3,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const unicodeEmojiButton = chatButtons.querySelector('.unicode-emoji-button');
     const customEmojiButton = chatButtons.querySelector('.custom-emoji-button');
     const unicodeEmojiWrapper = chatButtons.querySelector(".unicode-emoji-wrapper");
+    const customEmojiWrapper = chatButtons.querySelector(".custom-emoji-wrapper");
     
-
     console.log('chatButtons: ', chatButtons, 'unicodeEmojiButton: ', unicodeEmojiButton, 
         'unicodeEmojiWrapper: ', unicodeEmojiWrapper, 'customEmojiButton: ', customEmojiButton);
 
     // Click Listeners for chatEditor
     unicodeEmojiButton.addEventListener("click", () => {
-        console.log('***unicodeEmojiButton click***');
-        unicodeEmojiWrapper.style.display =
-            unicodeEmojiWrapper.style.display === "none" ? "block" : "none";
+        console.log('***unicodeEmojiButton click***  unicodeEmojiWrapper: ', unicodeEmojiWrapper);
+        unicodeEmojiWrapper.classList.toggle('visible');
     });
 
     customEmojiButton.addEventListener("click", () => {
-        console.log('***customEmojiButton click***');
-        const wrapper = chatButtons.querySelector(".custom-emoji-wrapper");
-        console.log('wrapper: ', wrapper);
-        if (!wrapper) return;
+        console.log('***customEmojiButton click***', 'wrapper: ', customEmojiWrapper);
+        if (!customEmojiWrapper) return;
 
-        if (wrapper.style.display === "none" || wrapper.style.display === "") {
-            wrapper.style.display = "flex";  // show
-            initializeEmojiDrawer(wrapper);
-        } else {
-            wrapper.style.display = "none";  // hide
+        customEmojiWrapper.classList.toggle('visible');
+        if (customEmojiWrapper.classList.contains('visible')) {
+            initializeEmojiDrawer(customEmojiWrapper);
         }
     });
     
@@ -33,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("emoji-click", (e) => {
         console.log('parentElement: ', e.target.parentElement);
         if (e.target.parentElement.classList.contains('unicode-emoji-wrapper')) {
+
             const emoji = e.detail.unicode;
 
             console.log("Inserting emoji:", emoji, "into", chatEditor);
@@ -40,10 +36,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Click listener reaction drawers
+    // Click listener to hide drawers & toggle reaction drawers
     document.addEventListener("click", e => {
         const toolbar = e.target.closest(".chat-toolbar");
         console.log('toolbar: ', toolbar);
+
+        const isEmojiBtn =
+            unicodeEmojiButton?.contains(e.target) ||
+            customEmojiButton?.contains(e.target);
+
+        if (!isEmojiBtn) {
+            console.log('Not an emoji button');
+            document.querySelectorAll('.unicode-wrapper-reaction')
+                .forEach(el => el.classList.remove('visible'));
+                // .forEach(el => console.log(el))
+            unicodeEmojiWrapper.classList.remove('visible');
+            customEmojiWrapper.classList.remove('visible');
+        }
+
         if (toolbar) {
             const customReactionButton = toolbar.querySelector(".custom-emoji-button");
             const unicodeReactionButton = toolbar.querySelector(".unicode-emoji-button");
@@ -51,6 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
                 console.log('unicodeReactionButton');
                 unicodeReactionDrawer(toolbar);
+            }
+            if (e.target.classList.contains('custom-emoji-button')) {
+                console.log('customReactionButton');
+                // unicodeReactionDrawer(toolbar);
             }
         }
     });

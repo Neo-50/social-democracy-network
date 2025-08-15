@@ -96,29 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // document.addEventListener("click", (e) => {
-    //     const isCustomButton = e.target.closest(".custom-emoji-button");
-    //     const isInCustomDrawer = e.target.closest(".custom-emoji-wrapper");
-
-    //     if (!isCustomButton && !isInCustomDrawer && activeCommentBox) {
-    //         // clicked outside, close drawer
-    //         const wrapper = activeCommentBox.querySelector(".custom-wrapper");
-    //         if (wrapper) wrapper.style.display = "none";
-    //         activeCommentBox = null;
-    //     }
-    // });
-
-    // document.addEventListener("click", (e) => {
-    //     const isEmojiButton = e.target.closest(".unicode-emoji-button");
-    //     const isInUnicodeDrawer = e.target.closest(".unicode-emoji-wrapper");
-
-    //     if (!isEmojiButton && !isInUnicodeDrawer) {
-    //         document.querySelectorAll(".emoji-wrapper").forEach(wrapper => {
-    //             wrapper.style.display = "none";
-    //         });
-    //     }
-    // });
-
     // Intercept only delete forms to prevent page navigation
     document.addEventListener('submit', async (e) => {
         console.log('Submit form')
@@ -468,7 +445,7 @@ function buildReplyDrawer(parentId, articleId) {
             <button type="button" class="unicode-emoji-button" data-emoji-type="unicode">
                 <img class="icon" src="/media/icons/emoji.png" alt="emoji">
             </button>
-            <div class="unicode-emoji-wrapper" style="display: none;">
+            <div class="unicode-emoji-wrapper">
                 <emoji-picker></emoji-picker>
             </div>
             <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
