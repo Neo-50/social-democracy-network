@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // file upload
     uploadButton.addEventListener("click", () => {
         fileInput.click();
-        });
+    });
     fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
     if (!file) return;
@@ -91,8 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Show button only if not in the most recent 20%
     container.addEventListener('scroll', () => {
-    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
-    const showBtn = distanceFromBottom > container.scrollHeight * 0.2;
+        const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+        const showBtn = distanceFromBottom > container.scrollHeight * 0.2;
 
     scrollBtn.style.display = showBtn ? 'block' : 'none';
     });
