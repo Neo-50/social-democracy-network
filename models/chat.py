@@ -11,4 +11,4 @@ class ChatMessage(db.Model):
     message_type = db.Column(db.String(50), nullable=False, default="text")
     edited = db.Column(db.Boolean, default=False)
     
-    user = db.relationship('User', backref=db.backref('chat_messages', lazy=True))
+    user = db.relationship('User', backref=db.backref('chat_messages', passive_deletes=True, lazy=True))

@@ -19,16 +19,18 @@ class User(db.Model, UserMixin):
 
     sent_messages = db.relationship(
         'Message',
-        cascade='all, delete-orphan',
+        cascade='all',
         foreign_keys='Message.sender_id',
-        back_populates='sender'
+        back_populates='sender',
+        passive_deletes=True
     )
 
     received_messages = db.relationship(
         'Message',
-        cascade='all, delete-orphan',
+        cascade='all',
         foreign_keys='Message.recipient_id',
-        back_populates='recipient'
+        back_populates='recipient',
+        passive_deletes=True
     )
 
     last_active = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
