@@ -315,12 +315,12 @@ window.appendMessage = function (user_id, username, displayName, text, messageId
 function renderUrlPreview(msgElement, data) {
     const preview = document.createElement("div");
     preview.className = "url-preview";
-    const replyDrawer = msgElement.querySelector('.reply-drawer');
-    console.log('*****replyDrawer*******', replyDrawer);
+    const messageBody = msgElement.querySelector('.message-body');
+    console.log('*****messageBody*******', messageBody);
     
     if (data.embed_html) {
         preview.innerHTML = data.embed_html;
-        replyDrawer.after(preview);
+        messageBody.after(preview);
         return;
     }
 

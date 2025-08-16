@@ -94,6 +94,7 @@ function unicodeReactionDrawer(toolbar) {
     if (!picker.dataset.bound && window.target_type == "chat") {
         console.log('unicodeReactionDrawer chat branch');
         const chatMessage = toolbar.closest('.chat-message');
+        target = chatMessage.querySelector('.reactions-container');
         if (chatMessage) {
             const chatId = chatMessage.dataset.messageId;
             picker.dataset.chatId = chatId;
@@ -113,7 +114,7 @@ function unicodeReactionDrawer(toolbar) {
                     ' | emoji: ', emoji, ' | target_id: ', chatId, ' | user_ids: ', [window.CURRENT_USER_ID], " | user_id: ", window.CURRENT_USER_ID);
 
                 window.renderReaction({
-                    target: chatMessage,
+                    target: target,
                     emoji: emoji,
                     target_id: chatId,
                     target_type: window.target_type,
@@ -128,6 +129,24 @@ function unicodeReactionDrawer(toolbar) {
         });
         picker.dataset.bound = "true";
     }
+}
+
+function customChatReactionDrawer(wrapper, toolbar) {
+    console.log('**customChatReactionDrawer** wrapper: ', wrapper, ' | toolbar: ', toolbar)
+    const drawer = document.createElement('div');
+    drawer.className = 'custom-reaction-drawer';
+    wrapper.appendChild(drawer);
+
+    const chatMessage = toolbar.closest('.chat-message');
+    target = chatMessage.querySelector('.reactions-container');
+    const target_id = toolbar.closest('.chat-message')?.dataset?.messageId;
+
+    sizeButtonHelper(drawer);
+    renderCustomEmojisToDrawer(drawer, {
+        target,
+        target_id,
+        target_type: 'chat',
+    });
 }
 
 function handleExistingReaction(existing, user_ids, user_id) {
