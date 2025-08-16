@@ -176,12 +176,73 @@
     cursor: pointer;
 }
 
+.custom-emoji-button,
+.unicode-emoji-button {
+    background: transparent;
+    padding: 0;
+    font-size: 1.8em;
+    margin-left: 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    width: fit-content;
+}
+
 /* emoji picker drawer (unicode) */
+.unicode-emoji-wrapper {
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    right: 120px;
+    z-index: 1000;
+}
+
+.unicode-emoji-wrapper.visible {
+    display: flex;
+}
+
+.custom-emoji-wrapper {
+    display: none;
+}
+
+.custom-emoji-wrapper.visible {
+    display: flex;
+}
+
+.custom-wrapper-reaction {
+    display: none;
+}
+
+.custom-wrapper-reaction.visible {
+    display: flex;
+}
+
 .unicode-emoji-wrapper {
     position: absolute;
     bottom: 70px;
     right: 0;
     z-index: 1000;
+}
+
+.timestamp {
+    color: #bbb !important;
+}
+
+.custom-emoji-drawer {
+    position: absolute;
+    max-height: 440px;
+    max-width: 400px;
+    z-index: 1000;
+    bottom: 60px;
+    right: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    box-shadow: 0 2px 12px #1a1a1a;
+    border-radius: 6px;
 }
 
 .size-option {
