@@ -83,24 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function customChatReactionDrawer(wrapper, toolbar) {
-    console.log('**customChatReactionDrawer** wrapper: ', wrapper, ' | toolbar: ', toolbar)
-    const drawer = document.createElement('div');
-    drawer.className = 'custom-reaction-drawer';
-    wrapper.appendChild(drawer);
-
-    const target = toolbar.closest('.chat-message');
-    const target_id = toolbar.closest('.chat-message')?.dataset?.messageId;
-
-    sizeButtonHelper(drawer);
-    renderCustomEmojisToDrawer(drawer, {
-        target,
-        target_id,
-        target_type: 'chat',
-    });
-}
-
-
 function initializeEmojiDrawer(wrapper) {
     console.log('initializeEmojiDrawer wrapper: ', wrapper);
     const existingDrawer = wrapper.querySelector('.custom-emoji-drawer');
