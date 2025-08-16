@@ -272,13 +272,6 @@ window.appendMessage = function (user_id, username, displayName, text, messageId
 
     formatTimestamp();
 
-    let reactionContainer = msg.querySelector('.url-preview');
-    if (!reactionContainer) {
-        preview = document.createElement('div');
-        preview.className = 'reactions-container';
-        msg.appendChild(preview);
-    }
-
     const urls = extractUrls(text).filter(url => {
         const isMedia = url.includes("/media/");
         const isImage = /\.(jpg|jpeg|png|gif|webp|avif|svg)$/i.test(url);
@@ -305,6 +298,13 @@ window.appendMessage = function (user_id, username, displayName, text, messageId
         deleteBtn.addEventListener("click", () => {
             deleteMessage(messageId);
         });
+    }
+
+    let reactionContainer = msg.querySelector('.url-preview');
+    if (!reactionContainer) {
+        preview = document.createElement('div');
+        preview.className = 'reactions-container';
+        replyDrawer.before(preview);
     }
 
     formatTimestamp();
