@@ -91,10 +91,6 @@ function initializeEmojiDrawer(wrapper) {
     }
     const drawer = document.createElement('div');
     drawer.className = 'custom-emoji-drawer';
-    drawer.style.marginTop = '10px';
-    drawer.style.display = 'flex';
-    drawer.style.flexWrap = 'wrap';
-    drawer.style.gap = '6px';
 
     sizeButtonHelper(drawer);
 
