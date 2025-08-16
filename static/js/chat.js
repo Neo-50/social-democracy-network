@@ -353,7 +353,7 @@ function renderUrlPreview(msgElement, data) {
         </div>
     `;
 
-    replyDrawer.after(preview);
+    messageBody.after(preview);
 }
 
 function loadMessages(beforeId = null, prepend = false) {
