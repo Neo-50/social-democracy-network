@@ -2,8 +2,8 @@ from db_init import db
 
 reaction_user = db.Table(
     "reaction_user",
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
-    db.Column("reaction_id", db.Integer, db.ForeignKey("reaction.id",  ondelete="CASCADE")),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), primary_key=True),
+    db.Column("reaction_id", db.Integer, db.ForeignKey("reaction.id",  ondelete="CASCADE"), primary_key=True),
 )
 
 class Reaction(db.Model):
