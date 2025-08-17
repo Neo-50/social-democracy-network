@@ -374,10 +374,15 @@ p {
 }
 
 .unicode-emoji-wrapper {
+    display: none;
     position: absolute;
     top: calc(100% - 10px);
     right: 20px;
     z-index: 1000;
+}
+
+.unicode-emoji-wrapper.visible{
+    display: block;
 }
 
 .unicode-emoji-button {
@@ -491,6 +496,14 @@ p {
 .emoji-reaction.custom:hover,
 .emoji-reaction.unicode:hover {
     background-color: transparent;
+}
+
+.custom-wrapper-reaction {
+  display: none;
+}
+
+.custom-wrapper-reaction.visible {
+  display: flex;
 }
 
 .custom-emoji-drawer {

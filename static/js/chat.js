@@ -23,6 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
         window.initReactionSocket();
     }
 
+    emojiChatDrawerListeners();
+
     chatContainer.addEventListener("scroll", () => {
         const currentScrollTop = chatContainer.scrollTop;
 
