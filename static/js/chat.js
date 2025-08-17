@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const currentScrollTop = chatContainer.scrollTop;
 
         if (currentScrollTop <= 500 && !isLoading) {
-            console.log("⬆️ Triggered load from top scroll.");
+            // console.log("⬆️ Triggered load from top scroll.");
             loadMessages(earliestMessageId, true);
         }
     });
@@ -316,7 +316,6 @@ function renderUrlPreview(msgElement, data) {
     const preview = document.createElement("div");
     preview.className = "url-preview";
     const messageBody = msgElement.querySelector('.message-body');
-    console.log('*****messageBody*******', messageBody);
     
     if (data.embed_html) {
         preview.innerHTML = data.embed_html;
@@ -370,7 +369,7 @@ function loadMessages(beforeId = null, prepend = false) {
     if (prepend) {
         url += `&prepend=true`;
     }
-    console.log("Fetching messages with beforeId =", beforeId);
+    // console.log("Fetching messages with beforeId =", beforeId);
 
     return fetch(url)
         .then(res => res.json())
@@ -470,8 +469,8 @@ function loadMessages(beforeId = null, prepend = false) {
                 }
             }
 
-            console.log("IDs of received messages:", messages.map(m => m.id));
-            console.log("New (unrendered) messages count:", newMessages.length);
+            // console.log("IDs of received messages:", messages.map(m => m.id));
+            // console.log("New (unrendered) messages count:", newMessages.length);
 
             if (!beforeId && isAtBottom()) scrollChatToBottom();
         })

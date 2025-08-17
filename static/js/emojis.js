@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const unicodeEmojiWrapper = chatButtons.querySelector(".unicode-emoji-wrapper");
     const customEmojiWrapper = chatButtons.querySelector(".custom-emoji-wrapper");
     
-    
     console.log('chatButtons: ', chatButtons, 'unicodeEmojiButton: ', unicodeEmojiButton, 
         'unicodeEmojiWrapper: ', unicodeEmojiWrapper, 'customEmojiButton: ', customEmojiButton);
 
@@ -40,18 +39,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Click listener to hide drawers & toggle reaction drawers
     document.addEventListener("click", e => {
         const toolbar = e.target.closest(".chat-toolbar");
-        console.log('toolbar: ', toolbar);
+        const unicodeReactionButton = e.target.closest('.unicode-emoji-button');
+        const customReactionButton = e.target.closest('.custom-emoji-button');
         const customWrapperReaction = toolbar?.querySelector('.custom-wrapper-reaction') ?? null;
+        const unicodeWrapperReaction = toolbar?.querySelector('.unicode-wrapper-reaction') ?? null;
 
-        const isEmojiBtn =
+        const drawersAndButtons =
             unicodeEmojiButton?.contains(e.target) ||
             customEmojiButton?.contains(e.target) ||
+            unicodeReactionButton?.contains(e.target) ||
+            customReactionButton?.contains(e.target) ||
             unicodeEmojiWrapper?.contains(e.target) ||
             customEmojiWrapper?.contains(e.target) ||
-            customWrapperReaction?.contains(e.target);
+            customWrapperReaction?.contains(e.target) ||
+            unicodeWrapperReaction?.contains(e.target);
 
-        if (!isEmojiBtn) {
-            console.log('Not an emoji button or wrapper');
+        if (!drawersAndButtons) {
             document.querySelectorAll('.unicode-wrapper-reaction')
                 .forEach(el => el.classList.remove('visible'));
             document.querySelectorAll('.custom-wrapper-reaction.visible')
@@ -65,6 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // open Unicode drawer
             if (e.target.closest('.unicode-emoji-button')) {
+                unicodeWrapperReaction.classList.toggle("visible");
                 unicodeReactionDrawer(toolbar);
             }
 
@@ -72,7 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (e.target.closest('.custom-emoji-button')) {
                 // ensure the drawer exists exactly once
                 if (customWrapperReaction && !customWrapperReaction.querySelector('.custom-reaction-drawer')) {
-                customChatReactionDrawer(customWrapperReaction, toolbar);
+                    customWrapperReaction.classList.toggle('visible');
+                    customChatReactionDrawer(customWrapperReaction, toolbar);
                 }
                 // single toggle only
                 customWrapperReaction?.classList.toggle('visible');
