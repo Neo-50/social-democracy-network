@@ -38,9 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const box = e.target.closest(".comment-box");
         if (toolbar) {
             if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
+                const unicodeWrapperReaction = toolbar.querySelector(".unicode-wrapper-reaction");
+                unicodeWrapperReaction.classList.toggle('visible');
                 unicodeReactionDrawer(toolbar);
             }
             if (e.target.classList.contains('custom-emoji-button')) {
+                const customWrapperReaction = toolbar.querySelector(".custom-wrapper-reaction");
+                customWrapperReaction.classList.toggle ('visible');
                 customNewsEmojiDrawer(e.target);
             }
         }
