@@ -1,22 +1,5 @@
 let selectedEmojiSize = 28;
 
-// document.addEventListener("click", (e) => {
-//     const unicodeWrapper = document.getElementById("unicode-emoji-wrapper");
-//     const customWrapper = document.getElementById("custom-emoji-wrapper");
-
-//     const isEmojiButton =
-//         e.target.closest(".unicode-emoji-button") ||
-//         e.target.closest(".custom-emoji-button");
-
-//     const isInUnicodeWrapper = e.target.closest("#unicode-emoji-wrapper");
-//     const isInCustomWrapper = e.target.closest("#custom-emoji-wrapper");
-
-//     if (!isEmojiButton && !isInUnicodeWrapper && !isInCustomWrapper) {
-//         if (unicodeWrapper) unicodeWrapper.style.display = "none";
-//         if (customWrapper) customWrapper.style.display = "none";
-//     }
-// });
-
 function renderCustomEmojisToDrawer(drawer, opts) {
     console.log('**renderCustomEmojisToDrawer** drawer: ', drawer, ' | opts: ', opts);
     // Support old calls: renderCustomEmojisToDrawer(drawer, target)
