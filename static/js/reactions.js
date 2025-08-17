@@ -59,7 +59,6 @@ function unicodeReactionDrawer(toolbar) {
     const picker = wrapper.querySelector("emoji-picker");
     const newsCommentContent = toolbar.parentElement.querySelector(".comment-content");
     console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | window.target_type: ', window.target_type);
-    wrapper.classList.toggle("visible");
     
     if (!picker.dataset.bound && window.target_type == "news") {
         picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
