@@ -61,7 +61,7 @@ function emojiChatDrawerListeners () {
         console.log('***customEmojiButton click***', 'wrapper: ', customEmojiWrapper);
         customEmojiWrapper.classList.toggle('visible');
         if (customEmojiWrapper.classList.contains('visible')) {
-            chatEmojiDrawer(customEmojiWrapper);
+            customChatMessageDrawer(customEmojiWrapper);
         }
     });
     
@@ -78,7 +78,7 @@ function emojiChatDrawerListeners () {
     });
 }
 
-function chatEmojiDrawer(wrapper) {
+function customChatMessageDrawer(wrapper) {
     console.log('initializeEmojiDrawer wrapper: ', wrapper);
     const existingDrawer = wrapper.querySelector('.custom-emoji-drawer');
     if (existingDrawer) {
