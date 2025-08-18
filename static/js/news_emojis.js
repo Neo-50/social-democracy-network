@@ -1,7 +1,7 @@
 function emojiNewsDrawerListeners () {
     document.addEventListener("click", e => {
 
-        closeAll(e);
+        closeAllNewsDrawers(e);
 
         const toolbar = e.target.closest(".comment-toolbar");
 
@@ -51,24 +51,21 @@ function emojiNewsDrawerListeners () {
     });
 }
 
-function closeAll(e) {
+function closeAllNewsDrawers(e) {
 	const el = e?.target instanceof Element ? e.target : null;
 	if (!el) return;
 
-	// If click is on a button or inside any drawer, do nothing.
 	const inControl = el.closest(
 		'.unicode-emoji-button, .custom-emoji-button, .unicode-wrapper-reaction, ' +
         '.custom-wrapper-reaction, .unicode-emoji-wrapper, .custom-emoji-wrapper'
 	);
 	if (inControl) return;
 
-	// Hide all open drawers
 	document
-		.querySelectorAll('.unicode-wrapper-reaction.visible, .custom-wrapper-reaction.visible, .unicode-emoji-wrapper.visible, .custom-emoji-wrapper.visible')
+		.querySelectorAll('.unicode-wrapper-reaction.visible, .custom-wrapper-reaction.visible, ' +
+            '.unicode-emoji-wrapper.visible, .custom-emoji-wrapper.visible')
 		.forEach((n) => n.classList.remove('visible'));
 
-	// If you want to purge dynamic custom drawers, remove their inner content
-	// (don’t rely on .visible here)
 	document
 		.querySelectorAll('.custom-wrapper-reaction .custom-emoji-drawer')
 		.forEach((d) => d?.remove());
