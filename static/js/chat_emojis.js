@@ -5,32 +5,6 @@ function emojiChatDrawerListeners () {
     const unicodeEmojiWrapper = chatButtons.querySelector(".unicode-emoji-wrapper");
     const customEmojiWrapper = chatButtons.querySelector(".custom-emoji-wrapper");
 
-    // Click Listeners for chatEditor
-    unicodeEmojiButton.addEventListener("click", () => {
-        console.log('***unicodeEmojiButton click***  unicodeEmojiWrapper: ', unicodeEmojiWrapper);
-        unicodeEmojiWrapper.classList.toggle('visible');
-    });
-
-    customEmojiButton.addEventListener("click", () => {
-        console.log('***customEmojiButton click***', 'wrapper: ', customEmojiWrapper);
-        customEmojiWrapper.classList.toggle('visible');
-        if (customEmojiWrapper.classList.contains('visible')) {
-            chatEmojiDrawer(customEmojiWrapper);
-        }
-    });
-    
-    // Click listener individual emojis insert into chatEditor
-    document.addEventListener("emoji-click", (e) => {
-        console.log('parentElement: ', e.target.parentElement);
-        if (e.target.parentElement.classList.contains('unicode-emoji-wrapper')) {
-
-            const emoji = e.detail.unicode;
-
-            console.log("Inserting emoji:", emoji, "into", chatEditor);
-            insertAtCursor(chatEditor, emoji);
-        }
-    });
-
     // Click listener to hide drawers & toggle reaction drawers
     document.addEventListener("click", e => {
         const toolbar = e.target.closest(".chat-toolbar");
@@ -75,6 +49,32 @@ function emojiChatDrawerListeners () {
             }
         }
 
+    });
+
+    // Click Listeners for chatEditor
+    unicodeEmojiButton.addEventListener("click", () => {
+        console.log('***unicodeEmojiButton click***  unicodeEmojiWrapper: ', unicodeEmojiWrapper);
+        unicodeEmojiWrapper.classList.toggle('visible');
+    });
+
+    customEmojiButton.addEventListener("click", () => {
+        console.log('***customEmojiButton click***', 'wrapper: ', customEmojiWrapper);
+        customEmojiWrapper.classList.toggle('visible');
+        if (customEmojiWrapper.classList.contains('visible')) {
+            chatEmojiDrawer(customEmojiWrapper);
+        }
+    });
+    
+    // Click listener individual emojis insert into chatEditor
+    document.addEventListener("emoji-click", (e) => {
+        console.log('parentElement: ', e.target.parentElement);
+        if (e.target.parentElement.classList.contains('unicode-emoji-wrapper')) {
+
+            const emoji = e.detail.unicode;
+
+            console.log("Inserting emoji:", emoji, "into", chatEditor);
+            insertAtCursor(chatEditor, emoji);
+        }
     });
 }
 
@@ -128,4 +128,17 @@ function chatEmojiDrawer(wrapper) {
     });
 
     wrapper.appendChild(drawer);
+}
+
+function insertAtCaret(node) {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+    range.setStartAfter(node);
+    range.setEndAfter(node);
+    sel.removeAllRanges();
+    sel.addRange(range);
 }

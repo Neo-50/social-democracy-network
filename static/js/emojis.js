@@ -7,45 +7,18 @@ function updateDrawerEmojiSizes(drawer) {
 }
 
 function insertAtCursor(editable, text) {
-  editable.focus();
-  const sel = window.getSelection();
-  if (!sel || !sel.rangeCount) return;
-
-  const range = sel.getRangeAt(0);
-  range.deleteContents();
-  range.insertNode(document.createTextNode(text));
-
-  // Move cursor after inserted emoji
-  range.collapse(false);
-  sel.removeAllRanges();
-  sel.addRange(range);
-}
-
-function insertNodeAtCursor(editable, node) {
     editable.focus();
+
+    // Create a text node for the emoji
+    const node = document.createTextNode(text);
+    editable.appendChild(node);
+
+    // Move caret after the inserted text
+    const range = document.createRange();
+    range.selectNodeContents(editable);
+    range.collapse(false); // false = move to end
+
     const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return;
-
-    const range = sel.getRangeAt(0);
-    range.deleteContents();
-    range.insertNode(node);
-
-    // Optional: move cursor after inserted node
-    range.setStartAfter(node);
-    range.setEndAfter(node);
-    sel.removeAllRanges();
-    sel.addRange(range);
-}
-
-function insertAtCaret(node) {
-    const sel = window.getSelection();
-    if (!sel || !sel.rangeCount) return;
-
-    const range = sel.getRangeAt(0);
-    range.deleteContents();
-    range.insertNode(node);
-    range.setStartAfter(node);
-    range.setEndAfter(node);
     sel.removeAllRanges();
     sel.addRange(range);
 }
