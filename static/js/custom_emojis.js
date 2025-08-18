@@ -17,10 +17,10 @@ function renderCustomEmojisToDrawer(drawer, opts) {
         img.src = `media/emojis/${filename}`;
         img.alt = filename;
         img.className = 'custom-emoji';
-        img.style.width = `${size}px`;
-        img.style.height = `${size}px`;
+        img.style.width = `${window.selectedEmojiSize}px`;
+        img.style.height = `${window.selectedEmojiSize}px`;
         img.style.cursor = 'pointer';
-        img.setAttribute('style', `width:${size}px;height:${size}px;vertical-align:middle;`);
+        img.setAttribute('style', `width:${window.selectedEmojiSize}px;height:${window.selectedEmojiSize}px;vertical-align:middle;`);
 
         img.addEventListener('click', () => {
             // --- comment editor path ---
@@ -29,8 +29,8 @@ function renderCustomEmojisToDrawer(drawer, opts) {
                 emojiNode.src = img.src;
                 emojiNode.className = 'emoji-reaction custom';
                 emojiNode.alt = filename.split('.')[0];
-                emojiNode.style.width = `${size}px`;
-                emojiNode.style.height = `${size}px`;
+                emojiNode.style.width = `${window.selectedEmojiSize}px`;
+                emojiNode.style.height = `${window.selectedEmojiSize}px`;
                 emojiNode.style.verticalAlign = 'middle';
                 insertCustomEmoji(target, emojiNode);
                 return;
@@ -93,6 +93,21 @@ function updateDrawerEmojiSizes(drawer) {
         img.style.width = `${window.selectedEmojiSize}px`;
         img.style.height = `${window.selectedEmojiSize}px`;
     });
+}
+
+function placeCaretAtEnd(el) {
+    el.focus();
+    if (
+        typeof window.getSelection != "undefined"
+        && typeof document.createRange != "undefined"
+    ) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
 }
 
 function insertCustomEmoji(editor, node) {

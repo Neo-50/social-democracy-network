@@ -450,6 +450,23 @@ function unicodeEmojiDrawer(box) {
     return;
 }
 
+function insertAtCursor(editable, text) {
+    editable.focus();
+
+    // Create a text node for the emoji
+    const node = document.createTextNode(text);
+    editable.appendChild(node);
+
+    // Move caret after the inserted text
+    const range = document.createRange();
+    range.selectNodeContents(editable);
+    range.collapse(false); // false = move to end
+
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
 document.querySelectorAll('.reply-toggle').forEach(button => {
     console.log('reply-toggle triggered')
     button.addEventListener('click', () => {
