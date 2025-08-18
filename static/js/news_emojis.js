@@ -79,9 +79,9 @@ function customNewsCommentDrawer(commentBox, wrapper) {
     drawer.className = 'custom-emoji-drawer';
     wrapper.appendChild(drawer);
 
-    const target = commentBox.querySelector('.comment-editor'); // editor element
+    const target = commentBox.querySelector('.comment-editor');
 
     sizeButtonHelper(drawer);
-    // pass as options or legacy second arg; both work:
-    renderCustomEmojisToDrawer(drawer, { target });  // inserts into editor
+    
+    renderCustomEmojisToDrawer(drawer, { target });
 }
