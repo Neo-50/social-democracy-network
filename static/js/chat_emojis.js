@@ -94,13 +94,13 @@ function customChatMessageDrawer(wrapper) {
         img.src = `/media/emojis/${filename}`;
         img.alt = filename;
         img.className = 'custom-emoji';
-        img.style.width = `${selectedEmojiSize}px`;
-        img.style.height = `${selectedEmojiSize}px`;
+        img.style.width = `${window.selectedEmojiSize}px`;
+        img.style.height = `${window.selectedEmojiSize}px`;
         img.style.cursor = 'pointer';
 
         img.setAttribute(
             'style',
-            `width:${selectedEmojiSize}px;height:${selectedEmojiSize}px;vertical-align:middle;`
+            `width:${window.selectedEmojiSize}px;height:${window.selectedEmojiSize}px;vertical-align:middle;`
         );
 
         img.addEventListener('click', () => {
@@ -116,8 +116,8 @@ function customChatMessageDrawer(wrapper) {
                 emoji.src = `/media/emojis/${filename}`;
                 emoji.alt = filename.split('.')[0];
                 emoji.className = 'emoji-reaction custom';
-                emoji.style.width = `${selectedEmojiSize}px`;
-                emoji.style.height = `${selectedEmojiSize}px`;
+                emoji.style.width = `${window.selectedEmojiSize}px`;
+                emoji.style.height = `${window.selectedEmojiSize}px`;
                 emoji.style.verticalAlign = 'middle';
 
                 insertAtCaret(emoji);
