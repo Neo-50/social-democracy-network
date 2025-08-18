@@ -245,7 +245,7 @@ function renderNewsComment(data) {
             </div>
             <!-- Custom reactions button -->
             <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
-            <div class="custom-wrapper" id="custom-emoji-wrapper" style="display: none;">
+            <div class="custom-emoji-wrapper">
                 <!-- JS will inject emoji drawer below -->
             </div>
             ${canReply ? `<button class="newsfeed-button reply-toggle">Reply</button>` : ''}
