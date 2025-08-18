@@ -1,5 +1,3 @@
-let window.selectedEmojiSize = 28;
-
 function renderCustomEmojisToDrawer(drawer, opts) {
     console.log('**renderCustomEmojisToDrawer** drawer: ', drawer, ' | opts: ', opts);
     // Support old calls: renderCustomEmojisToDrawer(drawer, target)
@@ -11,7 +9,7 @@ function renderCustomEmojisToDrawer(drawer, opts) {
         target,                      // Element or null
         target_id = null,            // For reactions
         target_type = 'news',         // For reactions
-        size = selectedEmojiSize,    // Thumb & inserted emoji size
+        size = window.selectedEmojiSize,    // Thumb & inserted emoji size
     } = options;
 
     customEmojis.forEach((filename) => {
@@ -76,14 +74,14 @@ function sizeButtonHelper(drawer) {
 
     // Click handlers
     smallBtn.addEventListener('click', () => {
-        selectedEmojiSize = 28;
+        window.selectedEmojiSize = 28;
         smallBtn.classList.add('active');
         largeBtn.classList.remove('active');
         updateDrawerEmojiSizes(drawer);
     });
 
     largeBtn.addEventListener('click', () => {
-        selectedEmojiSize = 50;
+        window.selectedEmojiSize = 50;
         largeBtn.classList.add('active');
         smallBtn.classList.remove('active');
         updateDrawerEmojiSizes(drawer);
@@ -92,8 +90,8 @@ function sizeButtonHelper(drawer) {
 
 function updateDrawerEmojiSizes(drawer) {
     drawer.querySelectorAll('.custom-emoji').forEach(img => {
-        img.style.width = `${selectedEmojiSize}px`;
-        img.style.height = `${selectedEmojiSize}px`;
+        img.style.width = `${window.selectedEmojiSize}px`;
+        img.style.height = `${window.selectedEmojiSize}px`;
     });
 }
 
