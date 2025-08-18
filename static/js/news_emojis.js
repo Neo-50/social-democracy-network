@@ -85,20 +85,3 @@ function customNewsCommentDrawer(commentBox, wrapper) {
     // pass as options or legacy second arg; both work:
     renderCustomEmojisToDrawer(drawer, { target });  // inserts into editor
 }
-
-
-function customNewsReactionDrawer(wrapper, toolbar) {
-    const drawer = document.createElement('div');
-    drawer.className = 'custom-reaction-drawer';
-    wrapper.appendChild(drawer);
-
-    const target = toolbar.closest('.comment-container')?.querySelector('.comment-content');
-    const target_id = toolbar.closest('.comment-container')?.dataset?.commentId;
-
-    sizeButtonHelper(drawer);
-    renderCustomEmojisToDrawer(drawer, {
-        target,        // NOT a .comment-editor → reaction path will run
-        target_id,
-        targetType: 'news',
-    });
-}

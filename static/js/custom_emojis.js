@@ -1,4 +1,5 @@
-let selectedEmojiSize = 28;
+let window.selectedEmojiSize = 28;
+
 function renderCustomEmojisToDrawer(drawer, opts) {
     console.log('**renderCustomEmojisToDrawer** drawer: ', drawer, ' | opts: ', opts);
     // Support old calls: renderCustomEmojisToDrawer(drawer, target)
