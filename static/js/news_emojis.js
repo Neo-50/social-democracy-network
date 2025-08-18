@@ -1,39 +1,19 @@
 function emojiNewsDrawerListeners () {
     document.addEventListener("click", e => {
-        const unicodeEmojiButton = e.target.closest('.unicode-emoji-button');
-        const customEmojiButton = e.target.closest('.custom-emoji-button');
-
+        
         const toolbar = e.target.closest(".comment-toolbar");
-        const unicodeWrapperReaction = toolbar?.querySelector(".unicode-wrapper-reaction") ?? null;
-        const customWrapperReaction = toolbar?.querySelector(".custom-wrapper-reaction") ?? null;
+
+        closeAll(e);
+
+        if (toolbar) {
+            const unicodeWrapperReaction = toolbar.querySelector(".unicode-wrapper-reaction");
+            const customWrapperReaction = toolbar.querySelector(".custom-wrapper-reaction");
 
         const box = e.target.closest(".comment-box");
         const unicodeEmojiWrapper = box?.querySelector('.unicode-emoji-wrapper') ?? null;
         const customEmojiWrapper = box?.querySelector('.custom-emoji-wrapper') ?? null;
         const customEmojiDrawer = customEmojiWrapper?.querySelector(".custom-emoji-drawer") ?? null;
 
-        const drawersAndButtons =
-            unicodeEmojiButton?.contains(e.target) ||
-            customEmojiButton?.contains(e.target) ||
-            unicodeEmojiWrapper?.contains(e.target) ||
-            customEmojiWrapper?.contains(e.target) ||
-            unicodeWrapperReaction?.contains(e.target) ||
-            customWrapperReaction?.contains(e.target);
-            
-        console.log ('Are we clicking on customWrapperReaction? ', customWrapperReaction?.contains(e.target));
-        if (!drawersAndButtons) {
-            document.querySelectorAll('.unicode-wrapper-reaction')
-                .forEach(el => el.classList.remove('visible'));
-            document.querySelectorAll('.custom-wrapper-reaction.visible')
-                .forEach(el => {
-                    el.classList.remove('visible');
-                    el.remove();
-                });
-            unicodeEmojiWrapper?.classList.remove('visible');
-            customEmojiWrapper?.classList.remove('visible');
-        }
-
-        if (toolbar) {
             const customReactionDrawer = customWrapperReaction.querySelector(".custom-reaction-drawer")
             
             if (!customReactionDrawer && e.target.classList.contains('custom-emoji-button')) {
@@ -71,6 +51,43 @@ function emojiNewsDrawerListeners () {
 
         }
     });
+}
+
+function closeAll (e) {
+    const unicodeEmojiButton = e.target.closest('.unicode-emoji-button');
+    const customEmojiButton = e.target.closest('.custom-emoji-button');
+
+    const unicodeEmojiWrapper = e.target.closest('.unicode-emoji-wrapper.visible');
+    const customEmojiWrapper = e.target.closest('.custom-emoji-wrapper.visible');
+
+    if (unicodeEmojiButton || customEmojiButton || unicodeEmojiWrapper || customEmojiWrapper) {
+        console.log('Button or wrapper detected, exiting: ', unicodeEmojiButton, customEmojiButton, unicodeEmojiWrapper, customEmojiWrapper);
+        return;
+    }
+
+    document.querySelectorAll('.unicode-wrapper-reaction.visible, .custom-wrapper-reaction.visible')
+        .forEach((n) => n.classList.remove('visible'));
+    
+
+    const drawersAndButtons =
+        unicodeEmojiButton?.contains(e.target) ||
+        customEmojiButton?.contains(e.target) ||
+        unicodeEmojiWrapper?.contains(e.target) ||
+        customEmojiWrapper?.contains(e.target) ||
+        unicodeWrapperReaction?.contains(e.target) ||
+        customWrapperReaction?.contains(e.target);
+    
+    if (!drawersAndButtons) {
+        document.querySelectorAll('.unicode-wrapper-reaction')
+            .forEach(el => el.classList.remove('visible'));
+        document.querySelectorAll('.custom-wrapper-reaction.visible')
+            .forEach(el => {
+                el.classList.remove('visible');
+                el.remove();
+            });
+        unicodeEmojiWrapper?.classList.remove('visible');
+        customEmojiWrapper?.classList.remove('visible');
+    }
 }
 
 function customNewsCommentDrawer(commentBox, wrapper) {
