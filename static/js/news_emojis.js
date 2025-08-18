@@ -1,19 +1,13 @@
 function emojiNewsDrawerListeners () {
     document.addEventListener("click", e => {
-        
-        const toolbar = e.target.closest(".comment-toolbar");
 
         closeAll(e);
+
+        const toolbar = e.target.closest(".comment-toolbar");
 
         if (toolbar) {
             const unicodeWrapperReaction = toolbar.querySelector(".unicode-wrapper-reaction");
             const customWrapperReaction = toolbar.querySelector(".custom-wrapper-reaction");
-
-        const box = e.target.closest(".comment-box");
-        const unicodeEmojiWrapper = box?.querySelector('.unicode-emoji-wrapper') ?? null;
-        const customEmojiWrapper = box?.querySelector('.custom-emoji-wrapper') ?? null;
-        const customEmojiDrawer = customEmojiWrapper?.querySelector(".custom-emoji-drawer") ?? null;
-
             const customReactionDrawer = customWrapperReaction.querySelector(".custom-reaction-drawer")
             
             if (!customReactionDrawer && e.target.classList.contains('custom-emoji-button')) {
@@ -33,6 +27,10 @@ function emojiNewsDrawerListeners () {
         }
         
         if (!toolbar) {
+            const box = e.target.closest(".comment-box");
+            const unicodeEmojiWrapper = box?.querySelector('.unicode-emoji-wrapper') ?? null;
+            const customEmojiWrapper = box?.querySelector('.custom-emoji-wrapper') ?? null;
+            const customEmojiDrawer = customEmojiWrapper?.querySelector(".custom-emoji-drawer") ?? null;
             console.log('wrapper: ', customEmojiWrapper, "drawer: ", customEmojiDrawer);
             if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
                 
@@ -53,42 +51,29 @@ function emojiNewsDrawerListeners () {
     });
 }
 
-function closeAll (e) {
-    const unicodeEmojiButton = e.target.closest('.unicode-emoji-button');
-    const customEmojiButton = e.target.closest('.custom-emoji-button');
+function closeAll(e) {
+	const el = e?.target instanceof Element ? e.target : null;
+	if (!el) return;
 
-    const unicodeEmojiWrapper = e.target.closest('.unicode-emoji-wrapper.visible');
-    const customEmojiWrapper = e.target.closest('.custom-emoji-wrapper.visible');
+	// If click is on a button or inside any drawer, do nothing.
+	const inControl = el.closest(
+		'.unicode-emoji-button, .custom-emoji-button, .unicode-wrapper-reaction, ' +
+        '.custom-wrapper-reaction, .unicode-emoji-wrapper, .custom-emoji-wrapper'
+	);
+	if (inControl) return;
 
-    if (unicodeEmojiButton || customEmojiButton || unicodeEmojiWrapper || customEmojiWrapper) {
-        console.log('Button or wrapper detected, exiting: ', unicodeEmojiButton, customEmojiButton, unicodeEmojiWrapper, customEmojiWrapper);
-        return;
-    }
+	// Hide all open drawers
+	document
+		.querySelectorAll('.unicode-wrapper-reaction.visible, .custom-wrapper-reaction.visible, .unicode-emoji-wrapper.visible, .custom-emoji-wrapper.visible')
+		.forEach((n) => n.classList.remove('visible'));
 
-    document.querySelectorAll('.unicode-wrapper-reaction.visible, .custom-wrapper-reaction.visible')
-        .forEach((n) => n.classList.remove('visible'));
-    
-
-    const drawersAndButtons =
-        unicodeEmojiButton?.contains(e.target) ||
-        customEmojiButton?.contains(e.target) ||
-        unicodeEmojiWrapper?.contains(e.target) ||
-        customEmojiWrapper?.contains(e.target) ||
-        unicodeWrapperReaction?.contains(e.target) ||
-        customWrapperReaction?.contains(e.target);
-    
-    if (!drawersAndButtons) {
-        document.querySelectorAll('.unicode-wrapper-reaction')
-            .forEach(el => el.classList.remove('visible'));
-        document.querySelectorAll('.custom-wrapper-reaction.visible')
-            .forEach(el => {
-                el.classList.remove('visible');
-                el.remove();
-            });
-        unicodeEmojiWrapper?.classList.remove('visible');
-        customEmojiWrapper?.classList.remove('visible');
-    }
+	// If you want to purge dynamic custom drawers, remove their inner content
+	// (don’t rely on .visible here)
+	document
+		.querySelectorAll('.custom-wrapper-reaction .custom-emoji-drawer')
+		.forEach((d) => d?.remove());
 }
+
 
 function customNewsCommentDrawer(commentBox, wrapper) {
     if (wrapper.querySelector('.custom-emoji-drawer')) return;

@@ -385,6 +385,14 @@ p {
     display: block;
 }
 
+.custom-emoji-wrapper {
+    display: none;
+}
+
+.custom-emoji-wrapper.visible {
+    display: flex;
+}
+
 .unicode-emoji-button {
     background-color: transparent;
     padding: 0;
