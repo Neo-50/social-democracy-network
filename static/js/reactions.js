@@ -54,13 +54,13 @@ window.renderReaction = function({
     }
 };
 
-function unicodeReactionDrawer(toolbar) {
+function unicodeReactionDrawer(toolbar, target_type) {
     const wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
     const picker = wrapper.querySelector("emoji-picker");
     const newsCommentContent = toolbar.parentElement.querySelector(".comment-content");
-    console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | window.target_type: ', window.target_type);
+    console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | target_type: ', target_type);
     
-    if (!picker.dataset.bound && window.target_type == "news") {
+    if (!picker.dataset.bound && target_type == "news") {
         picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
         if (!toolbar.contains(wrapper)) {
             toolbar.appendChild(wrapper);
@@ -71,13 +71,14 @@ function unicodeReactionDrawer(toolbar) {
             if (newsCommentContent) {
                 const emoji = e.detail.unicode;
 
-                console.log("unicodeReactionDrawer: ", 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, "user_id | ", window.CURRENT_USER_ID);
+                console.log('unicodeReactionDrawer: ', 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, 
+                    'target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
 
                 window.renderReaction({
                     target: newsCommentContent,
                     emoji: emoji,
                     target_id: commentId,
-                    target_type: window.target_type,
+                    target_type: target_type,
                     user_id: window.CURRENT_USER_ID,
                     user_ids: [window.CURRENT_USER_ID],
                     mode: "insert",
@@ -90,7 +91,7 @@ function unicodeReactionDrawer(toolbar) {
         picker.dataset.bound = "true";
     }
 
-    if (!picker.dataset.bound && window.target_type == "chat") {
+    if (!picker.dataset.bound && target_type == "chat") {
         console.log('unicodeReactionDrawer chat branch');
         const chatMessage = toolbar.closest('.chat-message');
         target = chatMessage.querySelector('.reactions-container');
@@ -110,13 +111,14 @@ function unicodeReactionDrawer(toolbar) {
                 const emoji = e.detail.unicode;
 
                 console.log("unicodeReactionDrawer renderReaction ", ' | target: ', chatMessage,
-                    ' | emoji: ', emoji, ' | target_id: ', chatId, ' | user_ids: ', [window.CURRENT_USER_ID], " | user_id: ", window.CURRENT_USER_ID);
+                    ' | emoji: ', emoji, ' | target_id: ', chatId, ' | target_type: ', target_type,
+                    ' | user_ids: ', [window.CURRENT_USER_ID], " | user_id: ", window.CURRENT_USER_ID);
 
                 window.renderReaction({
                     target: target,
                     emoji: emoji,
                     target_id: chatId,
-                    target_type: window.target_type,
+                    target_type: target_type,
                     user_id: window.CURRENT_USER_ID,
                     user_ids: [window.CURRENT_USER_ID],
                     mode: "insert",
@@ -142,7 +144,7 @@ function customNewsReactionDrawer(wrapper, toolbar) {
     renderCustomEmojisToDrawer(drawer, {
         target,        // NOT a .comment-editor → reaction path will run
         target_id,
-        targetType: 'news',
+        target_type: 'news',
     });
 }
 
@@ -200,7 +202,7 @@ function isCustomEmoji(val) {
   return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
 }
 
-function createNewReaction(target, emoji, target_id, targetType, user_id, user_ids) {
+function createNewReaction(target, emoji, target_id, target_type, user_id, user_ids) {
 
     console.log('createNewReaction: ', target, emoji, target_id, target_type, user_id, user_ids);
 
@@ -212,7 +214,7 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     span.className = "emoji-reaction";
     span.dataset.emoji = emoji;            // use filename or the unicode itself
     span.dataset.targetId = target_id;
-    span.dataset.targetType = targetType;
+    span.dataset.target_type = target_type;
     span.dataset.user_ids = JSON.stringify(user_ids);
 
     // --- build the emoji node (no innerHTML, no string coercion) ---
@@ -239,7 +241,7 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     span.appendChild(emojiEl);
     span.appendChild(countEl);
 
-    span.addEventListener("click", handleReactionClick);
+    span.addEventListener("click", (event) => handleReactionClick(event, target_type));
 
     target.appendChild(span);
     window.updateReactionTooltip(span, user_ids);
@@ -247,7 +249,7 @@ function createNewReaction(target, emoji, target_id, targetType, user_id, user_i
     return { user_ids, action: "add" };
 }
 
-function handleReactionClick(event) {
+function handleReactionClick(event, target_type) {
     const span = event.currentTarget;
     const emoji = span.dataset.emoji;
     const targetId = span.dataset.targetId;
@@ -260,7 +262,7 @@ function handleReactionClick(event) {
         target: span.parentElement,
         emoji,
         target_id: targetId,
-        target_type: window.target_type,
+        target_type: target_type,
         user_id: window.CURRENT_USER_ID,
         user_ids: user_ids,
         mode: "update",

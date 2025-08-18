@@ -32,28 +32,28 @@ messageSocket.on('notification', data => {
 	});
 });
 
-window.initReactionSocket = function () {
+window.initReactionSocket = function (target_type) {
     console.log("🔄 initReactionSocket called");
     reactionSocket.off('connect');
 
     if (reactionSocket.connected) {
         console.log("🟢 Reaction socket already connected");
-        window.reactionSocket.emit("join", window.target_type);
+        window.reactionSocket.emit("join", target_type);
     } else {
         reactionSocket.on("connect", () => {
             console.log("🟢 Reaction socket connected");
-            window.reactionSocket.emit("join", window.target_type);
+            window.reactionSocket.emit("join", target_type);
         });
     }
     reactionSocket.off("reaction_update");
     reactionSocket.on("reaction_update", (data) => {
         const { emoji, target_id, target_type, action, user_id, user_ids } = data;
         let target;
-        if (window.target_type === "news") {
+        if (target_type === "news") {
             const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
             target = comment?.querySelector(".comment-content");
         }
-        if (window.target_type === "chat") {
+        if (target_type === "chat") {
             target = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
         }
         console.log('reaction_update received: ', emoji, target, target_id, target_type, action, user_id, user_ids);

@@ -1,12 +1,18 @@
-let chatEditor;
-let messageForm;
+const messageForm = document.getElementById("message-form");
+const chatEditor = document.getElementById('chat-editor');
+const chatButtons = document.getElementById('chat-buttons');
+const messagesInputContainer = document.getElementById('messages-input-container');
+const newMessageForm = document.getElementById('new-message-form');
 
 document.addEventListener('DOMContentLoaded', function () {
-    messageForm = document.getElementById("message-form");
-    chatEditor = document.getElementById('chat-editor');
-    const newMessageForm = document.getElementById('new-message-form');
+
+    if (typeof window.initMessageThreadSocket === 'function') {
+        window.initMessageThreadSocket();
+    }
 
     scrollChatToBottom()
+
+    emojiMessagesDrawerListeners();
 
     if (newMessageForm) {
         newMessageForm.addEventListener('submit', async function (e) {
@@ -41,6 +47,54 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+function emojiMessagesDrawerListeners() {
+    document.addEventListener("click", e => {
+        unicodeEmojiButton = chatButtons.querySelector('.unicode-emoji-button');
+        customEmojiButton = chatButtons.querySelector('.custom-emoji-button');
+
+        const unicodeEmojiWrapper = chatButtons.querySelector('.unicode-emoji-wrapper');
+        const customEmojiWrapper = chatButtons.querySelector('.custom-emoji-wrapper');
+
+        const customEmojiDrawer = chatButtons.querySelector(".custom-emoji-drawer") ?? null;
+        console.log('wrapper: ', customEmojiWrapper, "drawer: ", customEmojiDrawer);
+
+        closeAllMessagesDrawers(e);
+
+        if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
+            unicodeEmojiWrapper.classList.toggle('visible');
+            unicodeEmojiDrawer(messagesInputContainer, "messages");
+        }
+        
+        if (e.target.classList.contains('custom-emoji-button')) {
+            customEmojiWrapper.classList.toggle('visible');
+            if (customEmojiWrapper.classList.contains('visible')) {
+                customNewsCommentDrawer(chatEditor, customEmojiWrapper);
+            } else {
+                customEmojiDrawer.remove();
+            }
+        }
+    });
+};
+
+function closeAllMessagesDrawers(e) {
+    const el = e?.target instanceof Element ? e.target : null;
+    if (!el) return;
+
+    const inControl = el.closest(
+        '.unicode-emoji-button, .custom-emoji-button' +
+        '.unicode-emoji-wrapper, .custom-emoji-wrapper'
+    );
+    if (inControl) return;
+
+    document
+        .querySelectorAll('.unicode-emoji-wrapper.visible, .custom-emoji-wrapper.visible')
+        .forEach((n) => n.classList.remove('visible'));
+
+    document
+        .querySelectorAll('.custom-wrapper-reaction .custom-emoji-drawer')
+        .forEach((d) => d?.remove());
+}
 
 window.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch("/api/unread_count");
@@ -239,4 +293,3 @@ document.addEventListener("click", (e) => {
             });
         }
 });
-

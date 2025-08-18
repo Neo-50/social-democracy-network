@@ -35,7 +35,7 @@ function emojiNewsDrawerListeners () {
             if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
                 
                 unicodeEmojiWrapper.classList.toggle('visible');
-                unicodeEmojiDrawer(box);
+                unicodeEmojiDrawer(box, "news");
             }
             if (e.target.classList.contains('custom-emoji-button')) {
 
