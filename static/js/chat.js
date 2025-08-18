@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (typeof window.initReactionSocket === "function") {
-        window.initReactionSocket();
+        window.initReactionSocket("chat");
     }
 
     emojiChatDrawerListeners();
@@ -153,12 +153,12 @@ function renderAllReactions() {
         if (!reactionsContainer) continue;
         reactions.forEach(({ emoji, user_ids, target_id }) => {
             console.log('Chat DOMContentLoaded: ', 'emoji: ', emoji, '| target_type: ', 
-                window.target_type, ' | user_ids: ', user_ids, ' | target_id: ', target_id);
+                "chat", ' | user_ids: ', user_ids, ' | target_id: ', target_id);
             window.renderReaction({
                 target: reactionsContainer,
                 emoji,
                 target_id,
-                target_type: window.target_type,
+                target_type: "chat",
                 user_ids,
                 mode: 'load'
             });

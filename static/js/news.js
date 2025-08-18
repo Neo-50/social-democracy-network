@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Comment & reaction sockets
     if (typeof window.initReactionSocket === "function") {
-        window.initReactionSocket();
+        window.initReactionSocket("news");
     }
     if (typeof window.initCommentSocket === "function") {
         window.initCommentSocket();
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 target: commentEl,
                 emoji,
                 target_id,
-                targetType: 'news',
+                target_type: 'news',
                 user_ids,
                 mode: 'load'
             });
@@ -430,41 +430,6 @@ function maybeHandleBase64Images(editor) {
     return handleBase64Images(editor);
   }
   return Promise.resolve();
-}
-
-function unicodeEmojiDrawer(box) {
-    console.log('unicodeEmojiDrawer: box: ', box)
-    const pickerWrapper = box.querySelector(".unicode-emoji-wrapper");
-    const picker = pickerWrapper.querySelector("emoji-picker");
-
-    if (!picker.dataset.bound) {
-        picker.addEventListener("emoji-click", (e) => {
-            const editor = box.querySelector(".comment-editor");
-            const hidden = box.querySelector(".hidden-content");
-            editor.focus();
-            insertAtCursor(editor, e.detail.unicode);
-            if (hidden) hidden.value = editor.innerHTML;
-        });
-        picker.dataset.bound = "true";
-    }
-    return;
-}
-
-function insertAtCursor(editable, text) {
-    editable.focus();
-
-    // Create a text node for the emoji
-    const node = document.createTextNode(text);
-    editable.appendChild(node);
-
-    // Move caret after the inserted text
-    const range = document.createRange();
-    range.selectNodeContents(editable);
-    range.collapse(false); // false = move to end
-
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
 }
 
 document.querySelectorAll('.reply-toggle').forEach(button => {
