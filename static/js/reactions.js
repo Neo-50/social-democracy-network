@@ -69,7 +69,7 @@ function unicodeReactionDrawer(toolbar, target_type) {
         picker.addEventListener("emoji-click", (e) => {
             const commentId = picker.closest('.comment-container')?.dataset.commentId;
 
-            if (newsCommentContent) {
+            if (reactionsContainer) {
                 const emoji = e.detail.unicode;
 
                 console.log('unicodeReactionDrawer: ', 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, 
