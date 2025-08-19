@@ -152,6 +152,10 @@ a:focus {
     cursor: pointer;
 }
 
+.reaction-count {
+	margin-right: 5px;
+}
+
 .unicode-emoji-button {
     background-color: transparent;
     padding: 0;

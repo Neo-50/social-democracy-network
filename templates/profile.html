@@ -26,7 +26,7 @@
                 <button type="submit">Save</button>
             </form>
             <h2>About Me</h2>
-            <form method="POST" action="{{ url_for('update_bio') }}" id="update-bio"> 
+            <form method="POST" action="{{ url_for('update_bio') }}" id="update-bio">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <textarea name="bio" class="bio-text"></textarea>
                 <button type="submit">Save</button>
@@ -38,24 +38,24 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <label for="new_password">New Password:</label>
                 <input type="password" class="password" name="new_password" required minlength="8" />
-                
+
                 <label for="confirm_password">Confirm Password:</label>
                 <input type="password" class="password" name="confirm_password" required minlength="8" />
 
                 <button type="submit" class="btn">Change Password</button>
             </form>
+        </div>
+        <div class="profile-container-left">
             <form action="{{ url_for('delete_account') }}" method="POST" id="delete-account"
                 onsubmit="return confirm('Are you sure you want to delete your account? All comments and messages will be deleted');">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="user_id" value="{{ current_user.id }}">
-            </form>
-        </div>
-        <div class="profile-container-left">
-            <p style="color: red">⚠️ Warning- all data will be permanently deleted ⚠️</p>
-            <button type="delete-account" class="btn btn-danger">Delete Account</button>
+                <p style="color: red">⚠️ Warning- all data will be permanently deleted ⚠️</p>
+                <button type="delete-account" class="btn btn-danger">Delete Account</button>
+             </form>
         </div>
         <div id="cropperModal" class="modal"
-            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.75); z-index: 9999; align-items: center; justify-content: center;">
             <div style="background: #222; padding: 20px; border-radius: 8px; max-width: 90vw; max-height: 90vh;">
                 <h2 style="color: white; text-align: center;">Adjust your profile picture</h2>
