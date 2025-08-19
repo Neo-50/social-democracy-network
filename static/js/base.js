@@ -50,7 +50,7 @@ window.initReactionSocket = function (target_type) {
         const { emoji, target_id, target_type, action, user_id, user_ids } = data;
         let target;
         if (target_type === "news") {
-            const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
+            const comment = document.querySelector(`.comment-container[data-comment-id="${target_id}"]`);
             target = comment?.querySelector(".reactions-container");
         }
         if (target_type === "chat") {

@@ -187,6 +187,10 @@ function renderNewsComment(data) {
                 || document.querySelector(`.news-article[data-article-id="${data.article_id}"]`);
     if (!article) return;
 
+    console.log('renderNewsComment | article_id: ', data.article_id,
+        document.querySelector(`.news-article[id="${data.article_id}"]`)
+    );
+
     const thread = article.querySelector('.comments-thread');
     if (!thread) return;
 
@@ -248,7 +252,7 @@ function renderNewsComment(data) {
             </div>
             <!-- Custom reactions button -->
             <button type="button" class="custom-emoji-button" data-emoji-type="custom">🐱</button>
-            <div class="custom-emoji-wrapper">
+            <div class="custom-wrapper-reaction">
                 <!-- JS will inject emoji drawer below -->
             </div>
             <div class="reactions-container"></div>
