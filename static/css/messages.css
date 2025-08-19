@@ -110,6 +110,10 @@
     padding: 20px;
 }
 
+.timestamp {
+    color: #bbb !important;
+}
+
 @media (width <=800px) {
     .send-new-message {
         width: 100%;
@@ -136,8 +140,6 @@
     min-height: 40px;
 }
 
-/* buttons */
-
 .chat-buttons {
     display: flex;
     align-items: center;
@@ -150,30 +152,26 @@
     border: 2px solid #00e3ea;
 }
 
-.unicode-emoji-button {
-    margin-left: 6px;
+/* Emoji drawers */
+
+.unicode-emoji-wrapper {
+    display: none;
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    z-index: 1000;
 }
 
-.emoji-button {
-    background: transparent;
-    padding: 0;
-    font-size: 1.8em;
-    margin-left: 6px;
-    cursor: pointer;
-    width: fit-content;
+.unicode-emoji-wrapper.visible {
+    display: flex;
 }
 
-.custom-emoji-button {
-    margin-bottom: 8px;
-}
-
-.icon {
-    width: 32px;
-    height: 32px;
-}
-
-.custom-emoji {
-    cursor: pointer;
+.custom-emoji-drawer {
+    max-height: 440px;
+    max-width: 420px;
+    z-index: 1000;
+    bottom: 80px;
+    right: 0;
 }
 
 .custom-emoji-button,
@@ -187,128 +185,17 @@
     width: fit-content;
 }
 
-.size-option {
-    padding: 2px 8px;
-    border: 2px solid #00e3ea;
-    border-radius: 999px;
-    background-color: transparent;
-    color: white;
-    font-size: 0.9rem;
-    max-height: 26px;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+.unicode-emoji-button {
+    margin-left: 6px;
 }
 
-.size-option.active {
-    padding: 2px 8px;
-    border: 2px solid limegreen;
-    border-radius: 999px;
-    background-color: transparent;
-    color: white;
-    font-size: 0.9rem;
-    max-height: 26px;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.custom-emoji-button {
+    margin-bottom: 8px;
 }
 
-.size-option:hover {
-    background-color: #333;
-    color: white;
-}
-
-/* emoji picker drawer (unicode) */
-.unicode-emoji-wrapper {
-    display: none;
-    position: absolute;
-    bottom: 60px;
-    right: 120px;
-    z-index: 1000;
-}
-
-.unicode-emoji-wrapper.visible {
-    display: flex;
-}
-
-.custom-emoji-wrapper {
-    display: none;
-}
-
-.custom-emoji-wrapper.visible {
-    display: flex;
-}
-
-.custom-wrapper-reaction {
-    display: none;
-}
-
-.custom-wrapper-reaction.visible {
-    display: flex;
-}
-
-.unicode-emoji-wrapper {
-    position: absolute;
-    bottom: 70px;
-    right: 0;
-    z-index: 1000;
-}
-
-.timestamp {
-    color: #bbb !important;
-}
-
-.custom-emoji-drawer {
-    position: absolute;
-    max-height: 440px;
-    max-width: 420px;
-    z-index: 1000;
-    bottom: 60px;
-    right: 0;
-    overflow-y: auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px;
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    box-shadow: 0 2px 12px #1a1a1a;
-    border-radius: 6px;
-}
-
-.size-option {
-    padding: 4px 10px;
-    background-color: #1a1a1a;
-    border: 2px solid #00e3ea;
-    border-radius: 999px;
-    color: white;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.size-option:hover {
-    background-color: #333;
-    color: white;
-}
-
-/* custom emoji drawer */
-#custom-emoji-wrapper {
-    position: absolute;
-    max-height: 410px;
-    min-height: 300px;
-    width: 360px;
-    bottom: 60px;
-    right: 0;
-    overflow-y: auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 10px;
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    border-radius: 6px;
-    box-shadow: 0 2px 12px rgb(0 0 0.5);
+.icon {
+    width: 32px;
+    height: 32px;
 }
 
 .message .meta {
