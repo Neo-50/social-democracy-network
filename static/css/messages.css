@@ -187,6 +187,37 @@
     width: fit-content;
 }
 
+.size-option {
+    padding: 2px 8px;
+    border: 2px solid #00e3ea;
+    border-radius: 999px;
+    background-color: transparent;
+    color: white;
+    font-size: 0.9rem;
+    max-height: 26px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.size-option.active {
+    padding: 2px 8px;
+    border: 2px solid limegreen;
+    border-radius: 999px;
+    background-color: transparent;
+    color: white;
+    font-size: 0.9rem;
+    max-height: 26px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.size-option:hover {
+    background-color: #333;
+    color: white;
+}
+
 /* emoji picker drawer (unicode) */
 .unicode-emoji-wrapper {
     display: none;
@@ -230,7 +261,7 @@
 .custom-emoji-drawer {
     position: absolute;
     max-height: 440px;
-    max-width: 400px;
+    max-width: 420px;
     z-index: 1000;
     bottom: 60px;
     right: 0;
