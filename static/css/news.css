@@ -435,8 +435,6 @@ p {
     flex-direction: row;
 }
 
-
-
 .comment-toolbar {
     display: none;
     position: absolute;
@@ -451,6 +449,14 @@ p {
     background-color: black;
     border: 1px solid teal;
     border-radius: 24px;
+}
+
+@media (width <=800px) {
+    .comment-container:hover .comment-toolbar {
+        width: fit-content;
+        align-items: center;
+        white-space: nowrap;
+    }
 }
 
 .comment-container:hover .comment-toolbar {
@@ -476,6 +482,12 @@ p {
 
 .comment-container:hover {
     background-color: black;
+}
+
+@media (width <=800px) {
+    .comment-container {
+        width: 100% !important;
+    }
 }
 
 .newsfeed-button {
@@ -662,11 +674,6 @@ p {
         box-sizing: border-box;
     }
 
-    .comment-toolbar {
-        min-width: 320px;
-        white-space: nowrap;
-    }
-
     .news-left,
     .news-right {
         width: 100%;
@@ -703,23 +710,5 @@ p {
         padding: 8px;
         box-shadow: 0 2px 12px #1a1a1a;
         overflow-y: auto;
-    }
-
-    .custom-emoji-drawer {
-        position: absolute;
-        max-height: 360px;
-        min-width: 300px;
-        z-index: 1000;
-        top: 55px;
-        left: 60px;
-        overflow-y: auto;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        padding: 10px;
-        background-color: #1a1a1a;
-        border: 1px solid #444;
-        box-shadow: 0 2px 12px #1a1a1a;
-        border-radius: 6px;
     }
 }
