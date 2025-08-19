@@ -49,40 +49,40 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function emojiMessagesDrawerListeners() {
-    document.addEventListener("click", e => {
-        unicodeEmojiButton = chatButtons.querySelector('.unicode-emoji-button');
-        customEmojiButton = chatButtons.querySelector('.custom-emoji-button');
+    document.addEventListener("click", (e) => {
+        const unicodeBtn = e.target.closest('.unicode-emoji-button');
+        const customBtn = e.target.closest('.custom-emoji-button');
 
         const unicodeEmojiWrapper = chatButtons.querySelector('.unicode-emoji-wrapper');
         const customEmojiWrapper = chatButtons.querySelector('.custom-emoji-wrapper');
 
-        const customEmojiDrawer = chatButtons.querySelector(".custom-emoji-drawer") ?? null;
-        console.log('wrapper: ', customEmojiWrapper, "drawer: ", customEmojiDrawer);
-
         closeAllMessagesDrawers(e);
 
-        if (e.target.parentElement.classList.contains('unicode-emoji-button')) {
+        if (unicodeBtn) {
             unicodeEmojiWrapper.classList.toggle('visible');
-            unicodeEmojiDrawer(messagesInputContainer, "messages");
+            unicodeEmojiDrawer(messagesInputContainer, 'messages');
+            return;
         }
-        
-        if (e.target.classList.contains('custom-emoji-button')) {
+
+        if (customBtn) {
             customEmojiWrapper.classList.toggle('visible');
             if (customEmojiWrapper.classList.contains('visible')) {
-                customNewsCommentDrawer(chatEditor, customEmojiWrapper);
+                customMessagesChatDrawer(customEmojiWrapper);
             } else {
-                customEmojiDrawer.remove();
+                const customEmojiDrawer = customEmojiWrapper.querySelector('custom-emoji-drawer');
+                customEmojiDrawer?.remove();
             }
+            
         }
     });
-};
+}
 
 function closeAllMessagesDrawers(e) {
     const el = e?.target instanceof Element ? e.target : null;
     if (!el) return;
 
     const inControl = el.closest(
-        '.unicode-emoji-button, .custom-emoji-button' +
+        '.unicode-emoji-button, .custom-emoji-button, ' +
         '.unicode-emoji-wrapper, .custom-emoji-wrapper'
     );
     if (inControl) return;

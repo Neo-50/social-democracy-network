@@ -53,6 +53,70 @@ function renderCustomEmojisToDrawer(drawer, opts) {
     });
 }
 
+function customMessagesChatDrawer(wrapper) {
+    console.log('initializeEmojiDrawer wrapper: ', wrapper);
+    const existingDrawer = wrapper.querySelector('.custom-emoji-drawer');
+    if (existingDrawer) {
+        existingDrawer.remove();
+    }
+    const drawer = document.createElement('div');
+    drawer.className = 'custom-emoji-drawer';
+
+    sizeButtonHelper(drawer);
+
+    customEmojis.forEach(filename => {
+        const img = document.createElement('img');
+        img.src = `/media/emojis/${filename}`;
+        img.alt = filename;
+        img.className = 'custom-emoji';
+        img.style.width = `${window.selectedEmojiSize}px`;
+        img.style.height = `${window.selectedEmojiSize}px`;
+        img.style.cursor = 'pointer';
+
+        img.setAttribute(
+            'style',
+            `width:${window.selectedEmojiSize}px;height:${window.selectedEmojiSize}px;vertical-align:middle;`
+        );
+
+        img.addEventListener('click', () => {
+            const editor = document.getElementById("chat-editor");
+            if (editor) {
+                // **ALWAYS** focus the editor first
+                editor.focus();
+
+                // place caret at the end if nothing selected
+                placeCaretAtEnd(editor);
+
+                const emoji = document.createElement('img');
+                emoji.src = `/media/emojis/${filename}`;
+                emoji.alt = filename.split('.')[0];
+                emoji.className = 'inline-emoji custom';
+                emoji.style.width = `${window.selectedEmojiSize}px`;
+                emoji.style.height = `${window.selectedEmojiSize}px`;
+                emoji.style.verticalAlign = 'middle';
+
+                insertAtCaret(emoji);
+            }
+        });
+
+        drawer.appendChild(img);
+    });
+
+    wrapper.appendChild(drawer);
+}
+
+function insertAtCaret(node) {
+    const sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+    range.setStartAfter(node);
+    range.setEndAfter(node);
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
 
 function sizeButtonHelper(drawer) {
     const toggleWrapper = document.createElement('div');
