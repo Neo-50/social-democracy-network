@@ -38,7 +38,7 @@ function emojiChatDrawerListeners () {
 
             if (e.target.closest('.unicode-emoji-button')) {
                 unicodeWrapperReaction.classList.toggle("visible");
-                unicodeReactionDrawer(toolbar);
+                unicodeReactionDrawer(toolbar, "chat");
             }
 
             if (e.target.closest('.custom-emoji-button')) {

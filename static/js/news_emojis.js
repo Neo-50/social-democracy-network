@@ -22,7 +22,7 @@ function emojiNewsDrawerListeners () {
 
             if (e.target.matches("img.icon")) {
                 unicodeWrapperReaction.classList.toggle('visible');
-                unicodeReactionDrawer(toolbar);
+                unicodeReactionDrawer(toolbar, "news");
             }
         }
         
@@ -30,7 +30,6 @@ function emojiNewsDrawerListeners () {
             const box = e.target.closest(".comment-box");
             const unicodeEmojiWrapper = box?.querySelector('.unicode-emoji-wrapper') ?? null;
             const customEmojiWrapper = box?.querySelector('.custom-emoji-wrapper') ?? null;
-            const
             const customEmojiDrawer = customEmojiWrapper?.querySelector(".custom-emoji-drawer") ?? null;
             console.log('wrapper: ', customEmojiWrapper, "drawer: ", customEmojiDrawer);
             if (e.target.parentElement.classList.contains('unicode-emoji-button')) {

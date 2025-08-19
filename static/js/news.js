@@ -16,12 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pull data and render reactions
     for (const [key, reactions] of Object.entries(window.reactionMap)) {
         const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
-        const commentEl = document.querySelector(`[data-comment-id="${target_id}"] .comment-content`);
+        const commentEl = document.querySelector(`[data-comment-id="${target_id}"]`);
+        console.log("News commentEl :", commentEl);
+        const reactionsContainer = commentEl.querySelector('.reactions-container');
+        console.log('reactionsContainer: ', reactionsContainer);
         if (!commentEl) continue;
         reactions.forEach(({ emoji, user_ids, target_id }) => {
             console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
             window.renderReaction({
-                target: commentEl,
+                target: reactionsContainer,
                 emoji,
                 target_id,
                 target_type: 'news',
@@ -248,6 +251,7 @@ function renderNewsComment(data) {
             <div class="custom-emoji-wrapper">
                 <!-- JS will inject emoji drawer below -->
             </div>
+            <div class="reactions-container"></div>
             ${canReply ? `<button class="newsfeed-button reply-toggle">Reply</button>` : ''}
             ${canDelete ? `
             <form method="POST" action="/delete_comment/${data.comment_id}" class="delete-form">

@@ -51,7 +51,7 @@ window.initReactionSocket = function (target_type) {
         let target;
         if (target_type === "news") {
             const comment = document.querySelector(`[data-comment-id="${target_id}"]`);
-            target = comment?.querySelector(".comment-content");
+            target = comment?.querySelector(".reactions-container");
         }
         if (target_type === "chat") {
             target = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
