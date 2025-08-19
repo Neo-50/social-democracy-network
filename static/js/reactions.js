@@ -57,7 +57,8 @@ window.renderReaction = function({
 function unicodeReactionDrawer(toolbar, target_type) {
     const wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
     const picker = wrapper.querySelector("emoji-picker");
-    const newsCommentContent = toolbar.parentElement.querySelector(".comment-content");
+    const reactionsContainer = toolbar.parentElement.querySelector(".reactions-container");
+    
     console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | target_type: ', target_type);
     
     if (!picker.dataset.bound && target_type == "news") {
@@ -75,7 +76,7 @@ function unicodeReactionDrawer(toolbar, target_type) {
                     'target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
 
                 window.renderReaction({
-                    target: newsCommentContent,
+                    target: reactionsContainer,
                     emoji: emoji,
                     target_id: commentId,
                     target_type: target_type,
@@ -137,7 +138,7 @@ function customNewsReactionDrawer(wrapper, toolbar) {
     drawer.className = 'custom-reaction-drawer';
     wrapper.appendChild(drawer);
 
-    const target = toolbar.closest('.comment-container')?.querySelector('.comment-content');
+    const target = toolbar.closest('.comment-container')?.querySelector('.reactions-container');
     const target_id = toolbar.closest('.comment-container')?.dataset?.commentId;
 
     sizeButtonHelper(drawer);
