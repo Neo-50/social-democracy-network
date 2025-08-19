@@ -20,7 +20,7 @@ function renderCustomEmojisToDrawer(drawer, opts) {
         img.style.width = `${window.selectedEmojiSize}px`;
         img.style.height = `${window.selectedEmojiSize}px`;
         img.style.cursor = 'pointer';
-        img.setAttribute('style', `width:${window.selectedEmojiSize}px;height:${window.selectedEmojiSize}px;vertical-align:middle;`);
+        img.setAttribute('style', `width:${window.selectedEmojiSize}px;height:${window.selectedEmojiSize}px;`);
 
         img.addEventListener('click', () => {
             // --- comment editor path ---
