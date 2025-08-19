@@ -451,18 +451,6 @@ p {
     border-radius: 24px;
 }
 
-@media (width <=800px) {
-    .comment-container:hover .comment-toolbar {
-        width: fit-content;
-        align-items: center;
-        white-space: nowrap;
-    }
-}
-
-.comment-container:hover .comment-toolbar {
-    display: flex;
-}
-
 .post-comment:hover {
     background-color: #333;
     color: white;
@@ -486,8 +474,17 @@ p {
 
 @media (width <=800px) {
     .comment-container {
-        width: 100% !important;
+        border: 2px solid limegreen;
     }
+    .comment-container:hover .comment-toolbar {
+        width: fit-content;
+        align-items: center;
+        white-space: nowrap;
+    }
+}
+
+.comment-container:hover .comment-toolbar {
+    display: flex;
 }
 
 .newsfeed-button {
