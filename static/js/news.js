@@ -255,7 +255,6 @@ function renderNewsComment(data) {
             <div class="custom-wrapper-reaction">
                 <!-- JS will inject emoji drawer below -->
             </div>
-            <div class="reactions-container"></div>
             ${canReply ? `<button class="newsfeed-button reply-toggle">Reply</button>` : ''}
             ${canDelete ? `
             <form method="POST" action="/delete_comment/${data.comment_id}" class="delete-form">
@@ -263,6 +262,7 @@ function renderNewsComment(data) {
             <button type="submit" class="delete-button" onclick="return confirm('Delete this comment?')">Delete</button>
             </form>` : ''}
         </div>
+        <div class="reactions-container"></div>
     `;
     attachReplyToggle(node, data.article_id, data.comment_id);
 
