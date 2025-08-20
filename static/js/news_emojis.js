@@ -3,17 +3,14 @@ function emojiNewsDrawerListeners () {
 
         closeAllNewsDrawers(e);
 
-        const toolbar = e.target.closest(".comment-toolbar");
-        const articleToolbarReactions = e.target.closest(".article-toolbar-reactions");
-
-        if (articleToolbarReactions) {
-            const unicodeWrapperReaction = articleToolbarReactions.querySelector(".unicode-wrapper-reaction");
-            const customWrapperReaction = articleToolbarReactions.querySelector(".custom-wrapper-reaction");
-            const customReactionDrawer = customWrapperReaction?.querySelector(".custom-reaction-drawer")
-
-            launchDrawers(e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, articleToolbarReactions);
+        const commentToolbar = e.target.closest(".comment-toolbar");
+        if (commentToolbar) {
+            toolbar = commentToolbar;
         }
-
+        // } else if (const articleToolbarReactions = e.target.closest(".article-toolbar-reactions");) {
+        //     toolbar = articleToolbarReactions;
+        // }
+        
         if (toolbar) {
             const unicodeWrapperReaction = toolbar.querySelector(".unicode-wrapper-reaction");
             const customWrapperReaction = toolbar.querySelector(".custom-wrapper-reaction");

@@ -49,6 +49,10 @@
     {% if request.endpoint == 'activism' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/activism.css') }}">
     {% endif %}
+    
+    {% if request.endpoint == 'history_culture' %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/history_culture.css') }}">
+    {% endif %}
 
     {% if request.endpoint == 'environment' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/environment.css') }}">
@@ -113,14 +117,15 @@
             <button id="directory-button" class="directory-button" onclick="toggleDirectory()">Links</button>
         </div>
         <nav id="main-nav">
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('news') }}">News</a>
-            <a href="{{ url_for('chat_intro') }}">Chat</a>
-            <a href="{{ url_for('activism') }}">Activism</a>
-            <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">
+            <a href="{{ url_for('home') }}">Home</a>|
+            <a href="{{ url_for('news') }}">News</a>|
+            <a href="{{ url_for('chat_intro') }}">Chat</a>|
+            <a href="{{ url_for('activism') }}">Activism</a>|
+            <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">|
             <div class="title-mobile">s d n</div>
-            <a href="{{ url_for('environment') }}">Environment</a>
-            <a href="{{ url_for('veganism') }}">Veganism</a>
+            <!-- <a href="{{ url_for('environment') }}">History & Culture</a>| -->
+            <a href="{{ url_for('environment') }}">Environment</a>|
+            <a href="{{ url_for('veganism') }}">Veganism</a>|
             <a href="{{ url_for('about') }}">About</a>
         </nav>
         <div class="mobile-nav-container">
