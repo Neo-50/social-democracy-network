@@ -4,26 +4,22 @@ function emojiNewsDrawerListeners () {
         closeAllNewsDrawers(e);
 
         const toolbar = e.target.closest(".comment-toolbar");
+        const articleToolbarReactions = e.target.closest(".article-toolbar-reactions");
+
+        if (articleToolbarReactions) {
+            const unicodeWrapperReaction = articleToolbarReactions.querySelector(".unicode-wrapper-reaction");
+            const customWrapperReaction = articleToolbarReactions.querySelector(".custom-wrapper-reaction");
+            const customReactionDrawer = customWrapperReaction?.querySelector(".custom-reaction-drawer")
+
+            launchDrawers(e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, articleToolbarReactions);
+        }
 
         if (toolbar) {
             const unicodeWrapperReaction = toolbar.querySelector(".unicode-wrapper-reaction");
             const customWrapperReaction = toolbar.querySelector(".custom-wrapper-reaction");
             const customReactionDrawer = customWrapperReaction?.querySelector(".custom-reaction-drawer")
             
-            if (!customReactionDrawer && e.target.classList.contains('custom-emoji-button')) {
-                console.log('Drawer doesnt exist, injecting', )
-                customWrapperReaction.classList.toggle('visible');
-                customNewsReactionDrawer(customWrapperReaction, toolbar);
-            }
-
-            if (customReactionDrawer && e.target.classList.contains('custom-emoji-button')) {
-                customWrapperReaction.classList.toggle('visible');
-            }
-
-            if (e.target.matches("img.icon")) {
-                unicodeWrapperReaction.classList.toggle('visible');
-                unicodeReactionDrawer(toolbar, "news");
-            }
+            launchDrawers(e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, toolbar);
         }
         
         if (!toolbar) {
@@ -49,6 +45,23 @@ function emojiNewsDrawerListeners () {
 
         }
     });
+}
+
+function launchDrawers (e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, toolbar) {
+    if (!customReactionDrawer && e.target.classList.contains('custom-emoji-button')) {
+        console.log('Drawer doesnt exist, injecting',)
+        customWrapperReaction.classList.toggle('visible');
+        customNewsReactionDrawer(customWrapperReaction, toolbar);
+    }
+
+    if (customReactionDrawer && e.target.classList.contains('custom-emoji-button')) {
+        customWrapperReaction.classList.toggle('visible');
+    }
+
+    if (e.target.matches("img.icon")) {
+        unicodeWrapperReaction.classList.toggle('visible');
+        unicodeReactionDrawer(toolbar, "news");
+    }
 }
 
 function closeAllNewsDrawers(e) {

@@ -435,6 +435,22 @@ p {
     flex-direction: row;
 }
 
+.article-wrapper-reactions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.article-toolbar-reactions {
+    display: flex;
+    flex-direction: row;
+    padding: 2px;
+    width: min-content;
+    border-radius: 24px;
+    border: 2px solid #00e3ea;
+    background-color: black;
+}
+
 .comment-toolbar {
     display: none;
     position: absolute;
