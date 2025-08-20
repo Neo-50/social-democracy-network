@@ -271,7 +271,23 @@
                             <img src="{{ article.image_url }}" class="news-image">
                         {% endif %}
                     {% endif %}
-
+                    <div class="article-wrapper-reactions">
+                        <div class="reactions-container"></div>
+                        <div class="article-toolbar-reactions">
+                            <!-- Unicode reactions button -->
+                            <button type="button" class="unicode-emoji-button" data-emoji-type="unicode"">
+                                <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
+                            </button>
+                            <div class="unicode-wrapper-reaction">
+                                <emoji-picker></emoji-picker>
+                            </div>
+                            <!-- Custom reactions button -->
+                            <button type="button" class="custom-emoji-button" data-emoji-type="custom">😺</button>
+                            <div class="custom-wrapper-reaction">
+                                <!-- JS will inject emoji drawer below -->
+                            </div>
+                        </div>
+                    </div>
                     <div class="comments-wrapper">
                         <h2>Discussion</h2>
                         {% if session.get('user_id') %}
@@ -361,10 +377,6 @@
             {% endif %}
         {% endfor %}
     </section>
-
-    <!-- <div id="unicode-wrapper-reaction">
-        <emoji-picker id="unicode-emoji-picker"></emoji-picker>
-    </div> -->
 
     <div id="user-popup" class="popup" style="display: none;">
         <div class="popup-inner" id="popup-header">

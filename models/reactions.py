@@ -12,6 +12,7 @@ class Reaction(db.Model):
     id = db.Column(db.Integer, primary_key=True) # Reaction ID
     target_type = db.Column(db.String(50), nullable=False)  # News, Messages, Chat
     target_id = db.Column(db.Integer, nullable=False) # Comment or Message ID
+    article_id = db.Column(db.Integer, nullable=True) # News article reactions
     emoji = db.Column(db.String(32), nullable=False) # Emoji
 
     __table_args__ = (
