@@ -338,6 +338,10 @@ def environment():
 def veganism():
     return render_template('veganism.html')
 
+@app.route('/history_culture')
+def history_culture():
+    return render_template('history_culture.html')
+
 @app.route('/about')
 def about():
     return render_template('about.html')

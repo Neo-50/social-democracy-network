@@ -102,18 +102,20 @@
 }
 
 #main-nav a {
-    background-color: #1a1a1a;
-    color: white;
+    background-color: transparent;
+    color: #bbb;
     text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
     text-align: center;
     max-height: 32px;
-    padding: 2px 20px;
-    border-radius: 999px;
+    padding: 2px;
     font-weight: 600;
+    transition: color 0.2s ease;
 }
 
 #main-nav a:hover {
-    background-color: #444;
+    color: #00e3ea;
 }
 
 /* Notification drawer */
