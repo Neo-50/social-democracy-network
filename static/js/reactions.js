@@ -9,8 +9,8 @@ window.renderReaction = function({
     mode = "update", // "load" | "update" | "insert"
     emit = false
 }) {
-    console.log('renderReaction: ', 'target: ', target, '| target_id: ', target_id, '| article_id: ', article_id,
-        ' | target_type: ', target_type, ' | user_ids: ', user_ids);
+    console.log('renderReaction received: ', 'target: ', target, ' | emoji: ', emoji, ' | target_type: ', target_type,
+        ' | user_id: ', user_id, ' | user_ids: ', user_ids, ' | target_id, ', target_id,' | article_id: ', article_id, ' | mode: ', mode);
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
     let result;
 
@@ -18,7 +18,7 @@ window.renderReaction = function({
         case "load":
             // On page load, skip if it already exists
             if (existing) return;
-            result = createNewReaction(target, emoji, target_type, user_id, user_ids, target_id, article_id,);
+            result = createNewReaction({target, emoji, target_type, user_id, user_ids, target_id, article_id});
             break;
 
         case "update":
@@ -26,13 +26,13 @@ window.renderReaction = function({
             if (existing) {
                 result = handleExistingReaction(existing, [...user_ids], user_id);
             } else {
-                result = createNewReaction(target, emoji, target_type, user_id, user_ids, target_id, article_id,);
+                result = createNewReaction({target, emoji, target_type, user_id, user_ids, target_id, article_id});
             }
             break;
 
         case "insert":
             // Always create new reaction for insertion
-            result = createNewReaction(target, emoji, target_type, user_id, user_ids, target_id, article_id);
+            result = createNewReaction({target, emoji, target_type, user_id, user_ids, target_id, article_id});
             break;
 
         default:
@@ -42,8 +42,8 @@ window.renderReaction = function({
 
     // Emit socket event only when explicitly told (e.g. user insertion)
     if (emit && result) {
-        console.log('emit toggle_reaction: ', 'emoji: ', emoji, '| target_id: ', target_id, '| target_type: ', target_type,
-            '| action: ', result.action, '| user_id', user_id, '| user_ids', result.user_ids);
+        console.log('emit toggle_reaction: ', 'emoji: ', emoji, '| target_type: ', target_type, '| action: ', result.action,
+            '| user_id', user_id, '| user_ids', result.user_ids, '| target_id: ', target_id, ' | article_id: ', article_id);
         const payload = {
             emoji,
             target_type,
@@ -89,7 +89,7 @@ function unicodeReactionDrawer(toolbar, target_type) {
             const reactionsContainer = toolbar.classList.contains("article-toolbar-reactions")
                 ? toolbar.previousElementSibling
                 : toolbar.nextElementSibling;
-            
+
             console.log('unicodeReactionDrawer: ', 'reactionsContainer: ', reactionsContainer, ' | user_ids: ', [window.CURRENT_USER_ID], ' | emoji: ', emoji,
                 ' | target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
 
@@ -227,13 +227,15 @@ function isCustomEmoji(val) {
 function createNewReaction({
     target,
     emoji,
-    target_id = null,
-    article_id = null,
     target_type,
     user_id,
     user_ids = [],
+    target_id = null,
+    article_id = null
 }) {
 
+    console.log('createNewReaction received: ', 'target: ', target, ' | emoji: ', emoji, ' | target_type: ', target_type,
+        ' | user_id: ', user_id, ' | user_ids: ', user_ids, ' | target_id: ', target_id, ' | article_id: ', article_id);
     // ---- normalize inputs ----
     const uid = Number(user_id);
 
@@ -252,8 +254,7 @@ function createNewReaction({
 
     user_ids = toIds(user_ids);
 
-    console.log('createNewReaction: ', 'target: ', target, 'emoji: ', emoji, 
-        ' | target_id: ', target_id, ' | target_type: ', target_type, ' | user_id: ', user_id, ' | user_ids: ', user_ids);
+    console.log('createNewReaction updated user_ids: user_ids');
 
     // bail if already present
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
@@ -292,7 +293,7 @@ function createNewReaction({
     const countEl = document.createElement("span");
     countEl.className = "reaction-count";
 
-    if (!user_ids.includes(user_id)) user_ids.push(user_id);
+    if (!user_ids.includes(user_id) && user_id !== null) user_ids.push(user_id);
     window.updateReactionTooltip(span, user_ids);
     countEl.textContent = String(user_ids.length);
 
