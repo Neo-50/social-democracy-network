@@ -94,6 +94,10 @@ function unicodeReactionDrawer(toolbar, target_type) {
                 ' | target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
 
             if (!reactionsContainer) return;
+            if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
+                showToast('Please login or create an account');
+                return;
+            }
 
             window.renderReaction({
                 target: reactionsContainer,
