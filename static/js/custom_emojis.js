@@ -8,8 +8,8 @@ function renderCustomEmojisToDrawer(drawer, opts) {
     const {
         target,                      // Element or null
         target_id = null,            // For reactions
+        article_id = null,
         target_type = 'news',         // For reactions
-        size = window.selectedEmojiSize,    // Thumb & inserted emoji size
     } = options;
 
     customEmojis.forEach((filename) => {
@@ -38,14 +38,14 @@ function renderCustomEmojisToDrawer(drawer, opts) {
 
             // --- reaction drawer path ---
             window.renderReaction({
-                target,
-                target_id,
-                target_type,
+                target: target,
                 emoji: filename,
+                target_type: target_type,
                 user_id: window.CURRENT_USER_ID,
                 user_ids: [window.CURRENT_USER_ID],
-                mode: 'insert',
-                emit: true,
+                ...(target_id != null ? { target_id } : { article_id }),
+                mode: "insert",
+                emit: true
             });
         });
 

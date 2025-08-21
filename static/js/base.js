@@ -47,14 +47,14 @@ window.initReactionSocket = function (target_type) {
     }
     reactionSocket.off("reaction_update");
     reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_type, action, user_id, user_ids, article_id, target_id  } = data;
+        const { emoji, target_type, action, user_id, user_ids, target_id, article_id   } = data;
         let target;
         if (target_type === "news") {
             let selector;
             selector = (target_id != null)
                 ? `.comment-container[data-target-id="${target_id}"]`
-                : `#article-${article_id}`;
-            root = document.querySelector(sel);
+                : `.news-article[data-article-id="${article_id}"]`;
+            root = document.querySelector(selector);
             target = root.querySelector(".reactions-container");
         }
         if (target_type === "chat") {
@@ -63,15 +63,19 @@ window.initReactionSocket = function (target_type) {
         console.log('reaction_update received: ', emoji, target_type, target, action, user_id, user_ids, target_id, article_id);
         if (!target) return;
 
-        handleReactionUpdate(
-            action, 
-            target, 
-            emoji, 
-            user_id, 
-            user_ids, 
-            ...(target_id != null ? { target_id } : { article_id }));
-        });
-};
+        const payload = {
+            emoji,
+            target_type,
+            action,
+            user_id,
+            user_ids,
+            target,
+            ...(target_id != null ? { target_id } : { article_id })
+        };
+
+        handleReactionUpdate(payload);
+    });
+}
 
 function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, target, target_id = null, article_id = null}) {
     
@@ -79,14 +83,14 @@ function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, t
         'action: ', action, '| user_id: ', user_id, 'user_ids | ', user_ids, '| target: ', target,  
         '| target_id: ', target_id,  'article_id: ', article_id);
     
-    let selector = `.emoji-reaction[data-emoji="${emoji}"]`;
-    selector += (target_id != null)
-        ? `[data-target-id="${target_id}"]`
-        : `[data-article-id="${article_id}"]`;
+    const selector =
+        `.emoji-reaction[data-emoji="${emoji}"]` +
+        (target_id != null ? `[data-target-id="${target_id}"]`
+            : `[data-article_id="${article_id}"]`);
+    
+    const reactionSpan = target.querySelector(selector);
 
-    let span = target.querySelector(selector);
-
-    if (!span) {
+    if (!reactionSpan) {
         if (action === "add") {
             // not present yet — create it
             createNewReaction({ target, emoji, target_type, user_id, user_ids, target_id, article_id});
@@ -99,12 +103,12 @@ function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, t
 
     if (action === "add") {
         console.log("handleReactionUpdate add branch");
-        if (span) {
+        if (reactionSpan) {
             // Update existing reaction count
-            const countEl = span.querySelector(".reaction-count");
+            const countEl = reactionSpan.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
-            span.dataset.user_ids = JSON.stringify(user_ids);
-            updateReactionTooltip(span, user_ids);
+            reactionSpan.dataset.user_ids = JSON.stringify(user_ids);
+            updateReactionTooltip(reactionSpan, user_ids);
         } else {
             // Create new reaction
             console.log('renderReaction called from handleReactionUpdate')
@@ -121,17 +125,17 @@ function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, t
         }
     }
     else if (action === "remove") {
-        if (!span) return;
+        if (!reactionSpan) return;
 
-        if (user_ids.length === 0) {
+        if (!user_ids || user_ids.length === 0) {
             // Remove entire reaction if no users left
-            span.remove();
+            reactionSpan.remove();
         } else {
             // Update count if users remain
-            const countEl = span.querySelector(".reaction-count");
+            const countEl = reactionSpan.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
-            span.dataset.user_ids = JSON.stringify(user_ids);
-            updateReactionTooltip(span, user_ids);
+            reactionSpan.dataset.user_ids = JSON.stringify(user_ids);
+            updateReactionTooltip(reactionSpan, user_ids);
         }
     }
 };
