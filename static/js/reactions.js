@@ -158,15 +158,26 @@ function customNewsReactionDrawer(wrapper, toolbar) {
     const drawer = document.createElement('div');
     drawer.className = 'custom-reaction-drawer';
     wrapper.appendChild(drawer);
+    let target, target_id, article_id, newsArticle;
 
-    const target = toolbar.closest('.comment-container')?.querySelector('.reactions-container');
-    const target_id = toolbar.closest('.comment-container')?.dataset?.commentId;
+    if (toolbar.classList.contains('article-toolbar-reactions')) {
+        newsArticle = toolbar.closest('.news-article');
+        target = newsArticle.querySelector('.reactions-container');
+        article_id = newsArticle && newsArticle.dataset.articleId
+            ? Number(newsArticle.dataset.articleId)
+            : null;
+    } else {
+        target = toolbar.closest('.comment-container')?.querySelector('.reactions-container');
+        target_id = toolbar.closest('.comment-container')?.dataset?.commentId;
+        target_id = target_id != null ? Number(target_id) : null;
+    }
 
     sizeButtonHelper(drawer);
+
     renderCustomEmojisToDrawer(drawer, {
         target,        // NOT a .comment-editor → reaction path will run
-        target_id,
-        target_type: 'news',
+        ...(target_id != null ? { target_id } : { article_id }),
+        target_type: 'news'
     });
 }
 
