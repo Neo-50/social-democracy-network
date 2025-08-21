@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isArticle = parts[1] === "a";
             id = Number(parts[2]);
             root = isArticle
-                ? document.querySelector(`.article-card[data-article-id="${id}"]`)
+                ? document.querySelector(`.news-article[data-article-id="${id}"]`)
                 : document.querySelector(`.comment-container[data-comment-id="${id}"]`);
         } else if (parts.length === 2 && parts[0] === "news") {
             // legacy "news:{comment_id}"
@@ -49,43 +49,34 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("[reactions] reactionsContainer missing for", { key, id });
             continue;
         }
+        reactions.forEach((item) => {
+            const { emoji, user_ids = [] } = item;
 
-        reactions.forEach(({ emoji, user_ids = [], article_id, target_id }) => {
-            // the server also includes article_id/target_id per item; we trust the key as source of truth
+            const itemArticle = item.article_id ?? null;
+            const itemTarget = item.target_id ?? null;
+
+            // prefer item value; fall back to key-derived id
+            const articleId = isArticle ? (itemArticle ?? id) : null;
+            const targetId = !isArticle ? (itemTarget ?? id) : null;
+
+            // sanity: mismatch between key and item
+            if ((articleId != null) === (targetId != null)) {
+                console.warn("[reactions] key/item id mismatch", { key, item, id, isArticle });
+            }
+
             const payload = {
                 target: reactionsContainer,
                 emoji,
                 target_type: "news",
-                user_ids: Array.isArray(user_ids) ? user_ids : [], // safety
+                user_ids: Array.isArray(user_ids) ? user_ids : [],
                 mode: "load",
-                ...(isArticle ? { article_id: id } : { target_id: id }),
+                ...(articleId != null ? { article_id: articleId } : { target_id: targetId }),
             };
 
             console.log("[reactions] hydrate ->", payload);
             window.renderReaction(payload);
         });
     }
-
-    // Pull data and render reactions
-    // for (const [key, reactions] of Object.entries(window.reactionMap)) {
-    //     const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
-    //     const commentEl = document.querySelector(`[data-comment-id="${target_id}"]`);
-    //     console.log("News commentEl :", commentEl);
-    //     const reactionsContainer = commentEl.querySelector('.reactions-container');
-    //     console.log('reactionsContainer: ', reactionsContainer);
-    //     if (!commentEl) continue;
-    //     reactions.forEach(({ emoji, user_ids, target_id }) => {
-    //         console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
-    //         window.renderReaction({
-    //             target: reactionsContainer,
-    //             emoji,
-    //             target_id,
-    //             target_type: 'news',
-    //             user_ids,
-    //             mode: 'load'
-    //         });
-    //     });
-    // }
 
     //Listen for clicks on emoji drawers & toggle
     emojiNewsDrawerListeners();

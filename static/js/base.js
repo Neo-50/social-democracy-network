@@ -73,10 +73,11 @@ window.initReactionSocket = function (target_type) {
         });
 };
 
-function handleReactionUpdate(action, target, emoji, target_type, user_id, user_ids, target_id = null, article_id = null) {
+function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, target, target_id = null, article_id = null}) {
     
-    console.log('handleReactionUpdate data: ', 'action: ', action, '| target: ', target, '| emoji: ', emoji, 
-        '| target_id: ', target_id, '| target_type: ', target_type, '| user_id: ', 'user_id | ', user_id, 'user_ids | ', user_ids);
+    console.log('handleReactionUpdate data: ', '| emoji: ', emoji, '| target_type: ', target_type, 
+        'action: ', action, '| user_id: ', user_id, 'user_ids | ', user_ids, '| target: ', target,  
+        '| target_id: ', target_id,  'article_id: ', article_id);
     
     let selector = `.emoji-reaction[data-emoji="${emoji}"]`;
     selector += (target_id != null)
@@ -88,7 +89,7 @@ function handleReactionUpdate(action, target, emoji, target_type, user_id, user_
     if (!span) {
         if (action === "add") {
             // not present yet — create it
-            createNewReaction(target, emoji, target_id, article_id, target_type, user_id, user_ids);
+            createNewReaction({ target, emoji, target_type, user_id, user_ids, target_id, article_id});
         } else {
             // remove or unknown — nothing to do
             console.warn("Reaction span not found:", { selector, target });
@@ -110,10 +111,11 @@ function handleReactionUpdate(action, target, emoji, target_type, user_id, user_
             window.renderReaction({
                 target,
                 emoji,
-                target_id,
                 target_type,
                 user_id,
                 user_ids,
+                target_id,
+                article_id,
                 mode: "insert"
             });
         }
