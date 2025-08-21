@@ -36,6 +36,10 @@ function renderCustomEmojisToDrawer(drawer, opts) {
                 return;
             }
 
+            if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
+                showToast('Please login or create an account');
+                return;
+            }
             // --- reaction drawer path ---
             window.renderReaction({
                 target: target,
