@@ -13,26 +13,79 @@ document.addEventListener('DOMContentLoaded', () => {
         window.initCommentSocket();
     }
 
-    // Pull data and render reactions
-    for (const [key, reactions] of Object.entries(window.reactionMap)) {
-        const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
-        const commentEl = document.querySelector(`[data-comment-id="${target_id}"]`);
-        console.log("News commentEl :", commentEl);
-        const reactionsContainer = commentEl.querySelector('.reactions-container');
-        console.log('reactionsContainer: ', reactionsContainer);
-        if (!commentEl) continue;
-        reactions.forEach(({ emoji, user_ids, target_id }) => {
-            console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
-            window.renderReaction({
+    // Hydrate comments/articles with reactions
+    for (const [key, reactions] of Object.entries(window.reactionMap || {})) {
+        // expected new formats:  "news:a:451" (article)  |  "news:c:7" (comment)
+        // legacy format:         "news:7"                (comment only)
+        const parts = String(key).split(":"); // ["news","a","451"] | ["news","7"]
+
+        let isArticle = false;
+        let id = null;
+        let root = null;
+
+        if (parts.length === 3 && parts[0] === "news") {
+            // new keyed format
+            isArticle = parts[1] === "a";
+            id = Number(parts[2]);
+            root = isArticle
+                ? document.querySelector(`.article-card[data-article-id="${id}"]`)
+                : document.querySelector(`.comment-container[data-comment-id="${id}"]`);
+        } else if (parts.length === 2 && parts[0] === "news") {
+            // legacy "news:{comment_id}"
+            id = Number(parts[1]);
+            root = document.querySelector(`.comment-container[data-comment-id="${id}"]`);
+        } else {
+            console.warn("[reactions] unknown reactionMap key:", key);
+            continue;
+        }
+
+        if (!root) {
+            console.warn("[reactions] root not found for", { key, id, isArticle });
+            continue;
+        }
+
+        const reactionsContainer = root.querySelector(".reactions-container");
+        if (!reactionsContainer) {
+            console.warn("[reactions] reactionsContainer missing for", { key, id });
+            continue;
+        }
+
+        reactions.forEach(({ emoji, user_ids = [], article_id, target_id }) => {
+            // the server also includes article_id/target_id per item; we trust the key as source of truth
+            const payload = {
                 target: reactionsContainer,
                 emoji,
-                target_id,
-                target_type: 'news',
-                user_ids,
-                mode: 'load'
-            });
+                target_type: "news",
+                user_ids: Array.isArray(user_ids) ? user_ids : [], // safety
+                mode: "load",
+                ...(isArticle ? { article_id: id } : { target_id: id }),
+            };
+
+            console.log("[reactions] hydrate ->", payload);
+            window.renderReaction(payload);
         });
     }
+
+    // Pull data and render reactions
+    // for (const [key, reactions] of Object.entries(window.reactionMap)) {
+    //     const target_id = key.split(':')[1]; // Extract numeric ID from "news:{id}"
+    //     const commentEl = document.querySelector(`[data-comment-id="${target_id}"]`);
+    //     console.log("News commentEl :", commentEl);
+    //     const reactionsContainer = commentEl.querySelector('.reactions-container');
+    //     console.log('reactionsContainer: ', reactionsContainer);
+    //     if (!commentEl) continue;
+    //     reactions.forEach(({ emoji, user_ids, target_id }) => {
+    //         console.log('DOMContentLoaded: ', 'emoji: ', emoji, '| user_ids: ', user_ids)
+    //         window.renderReaction({
+    //             target: reactionsContainer,
+    //             emoji,
+    //             target_id,
+    //             target_type: 'news',
+    //             user_ids,
+    //             mode: 'load'
+    //         });
+    //     });
+    // }
 
     //Listen for clicks on emoji drawers & toggle
     emojiNewsDrawerListeners();

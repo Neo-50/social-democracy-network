@@ -47,29 +47,54 @@ window.initReactionSocket = function (target_type) {
     }
     reactionSocket.off("reaction_update");
     reactionSocket.on("reaction_update", (data) => {
-        const { emoji, target_id, target_type, action, user_id, user_ids } = data;
+        const { emoji, target_type, action, user_id, user_ids, article_id, target_id  } = data;
         let target;
         if (target_type === "news") {
-            const comment = document.querySelector(`.comment-container[data-comment-id="${target_id}"]`);
-            target = comment?.querySelector(".reactions-container");
+            let selector;
+            selector = (target_id != null)
+                ? `.comment-container[data-target-id="${target_id}"]`
+                : `#article-${article_id}`;
+            root = document.querySelector(sel);
+            target = root.querySelector(".reactions-container");
         }
         if (target_type === "chat") {
             target = document.querySelector(`.chat-message[data-message-id="${target_id}"]`);
         }
-        console.log('reaction_update received: ', emoji, target, target_id, target_type, action, user_id, user_ids);
+        console.log('reaction_update received: ', emoji, target_type, target, action, user_id, user_ids, target_id, article_id);
         if (!target) return;
 
-        handleReactionUpdate(action, target, emoji, target_id, target_type, user_id, user_ids);
-    });
+        handleReactionUpdate(
+            action, 
+            target, 
+            emoji, 
+            user_id, 
+            user_ids, 
+            ...(target_id != null ? { target_id } : { article_id }));
+        });
 };
 
-function handleReactionUpdate(action, target, emoji, target_id, target_type, user_id, user_ids) {
+function handleReactionUpdate(action, target, emoji, target_type, user_id, user_ids, target_id = null, article_id = null) {
     
     console.log('handleReactionUpdate data: ', 'action: ', action, '| target: ', target, '| emoji: ', emoji, 
         '| target_id: ', target_id, '| target_type: ', target_type, '| user_id: ', 'user_id | ', user_id, 'user_ids | ', user_ids);
-    const span = document.querySelector(
-        `.emoji-reaction[data-emoji="${emoji}"][data-target-id="${target_id}"]`
-    );
+    
+    let selector = `.emoji-reaction[data-emoji="${emoji}"]`;
+    selector += (target_id != null)
+        ? `[data-target-id="${target_id}"]`
+        : `[data-article-id="${article_id}"]`;
+
+    let span = target.querySelector(selector);
+
+    if (!span) {
+        if (action === "add") {
+            // not present yet — create it
+            createNewReaction(target, emoji, target_id, article_id, target_type, user_id, user_ids);
+        } else {
+            // remove or unknown — nothing to do
+            console.warn("Reaction span not found:", { selector, target });
+        }
+        return;
+    }
 
     if (action === "add") {
         console.log("handleReactionUpdate add branch");

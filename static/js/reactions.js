@@ -1,14 +1,15 @@
 window.renderReaction = function({
     target,
     emoji,
-    target_id,
     target_type,
     user_id = null,
     user_ids = [],
+    target_id = null,
+    article_id = null,
     mode = "update", // "load" | "update" | "insert"
     emit = false
 }) {
-    console.log('renderReaction: ', 'target: ', target, 'target_id: ', target_id, 
+    console.log('renderReaction: ', 'target: ', target, '| target_id: ', target_id, '| article_id: ', article_id,
         ' | target_type: ', target_type, ' | user_ids: ', user_ids);
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
     let result;
@@ -17,7 +18,7 @@ window.renderReaction = function({
         case "load":
             // On page load, skip if it already exists
             if (existing) return;
-            result = createNewReaction(target, emoji, target_id, target_type, user_id, user_ids);
+            result = createNewReaction(target, emoji, target_type, user_id, user_ids, target_id, article_id,);
             break;
 
         case "update":
@@ -25,13 +26,13 @@ window.renderReaction = function({
             if (existing) {
                 result = handleExistingReaction(existing, [...user_ids], user_id);
             } else {
-                result = createNewReaction(target, emoji, target_id, target_type, user_id, user_ids);
+                result = createNewReaction(target, emoji, target_type, user_id, user_ids, target_id, article_id,);
             }
             break;
 
         case "insert":
             // Always create new reaction for insertion
-            result = createNewReaction(target, emoji, target_id, target_type, user_id, user_ids);
+            result = createNewReaction(target, emoji, target_type, user_id, user_ids, target_id, article_id);
             break;
 
         default:
@@ -41,54 +42,74 @@ window.renderReaction = function({
 
     // Emit socket event only when explicitly told (e.g. user insertion)
     if (emit && result) {
-        console.log('emit toggle_reaction: ', 'emoji: ', emoji, '| target_id: ', target_id, '| target_type: ', target_type, 
+        console.log('emit toggle_reaction: ', 'emoji: ', emoji, '| target_id: ', target_id, '| target_type: ', target_type,
             '| action: ', result.action, '| user_id', user_id, '| user_ids', result.user_ids);
-        window.reactionSocket.emit("toggle_reaction", {
+        const payload = {
             emoji,
-            target_id: target_id,
-            target_type: target_type,
+            target_type,
             action: result.action,
-            user_id: user_id,
-            user_ids: result.user_ids
-        }), namespace='/reactions';
+            user_id,
+            user_ids: result.user_ids,
+            ...(target_id != null ? { target_id } : { article_id }),
+        };
+
+        window.reactionSocket.emit("toggle_reaction", payload);
     }
 };
 
 function unicodeReactionDrawer(toolbar, target_type) {
     const wrapper = toolbar.querySelector(".unicode-wrapper-reaction");
     const picker = wrapper.querySelector("emoji-picker");
-    const reactionsContainer = toolbar.parentElement.querySelector(".reactions-container");
-    
+    let target_id;
+    let article_id;
+
     console.log('unicodeReactionDrawer | toolbar: ', toolbar, ' | wrapper, ', wrapper,  ' | picker: ', picker, ' | target_type: ', target_type);
-    
+
     if (!picker.dataset.bound && target_type == "news") {
-        picker.dataset.commentId = toolbar.closest(".comment-container").dataset.commentId;
-        if (!toolbar.contains(wrapper)) {
-            toolbar.appendChild(wrapper);
+        if (toolbar.classList.contains('article-toolbar-reactions')) {
+            newsArticle = toolbar.closest('.news-article');
+            article_id = newsArticle && newsArticle.dataset.articleId
+                ? Number(newsArticle.dataset.articleId)
+                : null;
+            picker.dataset.articleId = article_id;
+        } else {
+            target_id = picker.closest('.comment-container')?.dataset.commentId;
+            target_id = target_id != null ? Number(target_id) : null;
+            picker.dataset.commentId = target_id;
         }
+
         picker.addEventListener("emoji-click", (e) => {
-            const commentId = picker.closest('.comment-container')?.dataset.commentId;
+            const emoji = e.detail.unicode;
 
-            if (reactionsContainer) {
-                const emoji = e.detail.unicode;
+            // read cached IDs
+            const article_id = picker.dataset.articleId ? Number(picker.dataset.articleId) : null;
+            const target_id = picker.dataset.commentId ? Number(picker.dataset.commentId) : null;
 
-                console.log('unicodeReactionDrawer: ', 'user_ids | ', [window.CURRENT_USER_ID], 'emoji | ', emoji, 
-                    'target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
+            // compute container, then guard
+            const reactionsContainer = toolbar.classList.contains("article-toolbar-reactions")
+                ? toolbar.previousElementSibling
+                : toolbar.nextElementSibling;
+            
+            console.log('unicodeReactionDrawer: ', 'reactionsContainer: ', reactionsContainer, ' | user_ids: ', [window.CURRENT_USER_ID], ' | emoji: ', emoji,
+                ' | target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
 
-                window.renderReaction({
-                    target: reactionsContainer,
-                    emoji: emoji,
-                    target_id: commentId,
-                    target_type: target_type,
-                    user_id: window.CURRENT_USER_ID,
-                    user_ids: [window.CURRENT_USER_ID],
-                    mode: "insert",
-                    emit: true
-                });
+            if (!reactionsContainer) return;
 
-                console.log("Reaction inserted: ", emoji);
-            }
+            window.renderReaction({
+                target: reactionsContainer,
+                emoji,
+                target_type,
+                user_id: window.CURRENT_USER_ID,
+                user_ids: [window.CURRENT_USER_ID],
+                ...(target_id != null ? { target_id } : { article_id }),
+                mode: "insert",
+                emit: true,
+            });
+
+            console.log("Reaction inserted: ", emoji);
         });
+
+
         picker.dataset.bound = "true";
     }
 
@@ -203,9 +224,36 @@ function isCustomEmoji(val) {
   return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
 }
 
-function createNewReaction(target, emoji, target_id, target_type, user_id, user_ids) {
+function createNewReaction({
+    target,
+    emoji,
+    target_id = null,
+    article_id = null,
+    target_type,
+    user_id,
+    user_ids = [],
+}) {
 
-    console.log('createNewReaction: ', target, emoji, target_id, target_type, user_id, user_ids);
+    // ---- normalize inputs ----
+    const uid = Number(user_id);
+
+    // turn undefined / stringified JSON / single value into a clean number[]
+    const toIds = (v) => {
+        if (Array.isArray(v)) return v.map(Number);
+        if (typeof v === "string") {
+            try {
+                const arr = JSON.parse(v);
+                return Array.isArray(arr) ? arr.map(Number) : [];
+            } catch { return []; }
+        }
+        if (v == null) return [];
+        return [Number(v)];
+    };
+
+    user_ids = toIds(user_ids);
+
+    console.log('createNewReaction: ', 'target: ', target, 'emoji: ', emoji, 
+        ' | target_id: ', target_id, ' | target_type: ', target_type, ' | user_id: ', user_id, ' | user_ids: ', user_ids);
 
     // bail if already present
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
@@ -213,8 +261,14 @@ function createNewReaction(target, emoji, target_id, target_type, user_id, user_
 
     const span = document.createElement("span");
     span.className = "emoji-reaction";
-    span.dataset.emoji = emoji;            // use filename or the unicode itself
-    span.dataset.targetId = target_id;
+    span.dataset.emoji = emoji;
+
+    if (target_id != null) {
+        span.dataset.target_id = String(target_id);
+    } else if (article_id != null) {
+        span.dataset.article_id = String(article_id);
+    }
+
     span.dataset.target_type = target_type;
     span.dataset.user_ids = JSON.stringify(user_ids);
 
@@ -237,6 +291,9 @@ function createNewReaction(target, emoji, target_id, target_type, user_id, user_
 
     const countEl = document.createElement("span");
     countEl.className = "reaction-count";
+
+    if (!user_ids.includes(user_id)) user_ids.push(user_id);
+    window.updateReactionTooltip(span, user_ids);
     countEl.textContent = String(user_ids.length);
 
     span.appendChild(emojiEl);
@@ -245,29 +302,42 @@ function createNewReaction(target, emoji, target_id, target_type, user_id, user_
     span.addEventListener("click", (event) => handleReactionClick(event, target_type));
 
     target.appendChild(span);
-    window.updateReactionTooltip(span, user_ids);
-    if (!user_ids.includes(user_id)) user_ids.push(user_id);
+
     return { user_ids, action: "add" };
 }
 
-function handleReactionClick(event, target_type) {
+function handleReactionClick(event) {
     const span = event.currentTarget;
+
     const emoji = span.dataset.emoji;
-    const targetId = span.dataset.targetId;
+    const target_type = span.dataset.target_type; // already stamped in createNewReaction
+
+    const article_id = span.dataset.article_id != null && span.dataset.article_id !== ""
+        ? Number(span.dataset.article_id)
+        : null;
+
+    const target_id = span.dataset.target_id != null && span.dataset.target_id !== ""
+        ? Number(span.dataset.target_id)
+        : null;
+
+    // keep user_ids in sync
     const user_ids = JSON.parse(span.dataset.user_ids || "[]");
 
-    console.log('handleReactionClick data: ', 'span: ', span, '| emoji: ', emoji, ' | targetId: ', targetId, 
-        ' | user_ids: ', user_ids, ' | current user: ', window.CURRENT_USER_ID);
+    // sanity: exactly one of the two must be set
+    if ((article_id == null) === (target_id == null)) {
+        console.warn("Reaction span missing/duplicated IDs:", { article_id, target_id, span });
+        return;
+    }
 
     window.renderReaction({
-        target: span.parentElement,
+        target: span.parentElement, // the reactions container
         emoji,
-        target_id: targetId,
-        target_type: target_type,
+        target_type,
+        ...(target_id != null ? { target_id } : { article_id }),
         user_id: window.CURRENT_USER_ID,
-        user_ids: user_ids,
+        user_ids,
         mode: "update",
-        emit: true
+        emit: true,
     });
 }
 

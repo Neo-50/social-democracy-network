@@ -3,20 +3,21 @@ function emojiNewsDrawerListeners () {
 
         closeAllNewsDrawers(e);
 
+        let toolbar;
         const commentToolbar = e.target.closest(".comment-toolbar");
+        const articleToolbarReactions = e.target.closest(".article-toolbar-reactions");
         if (commentToolbar) {
             toolbar = commentToolbar;
+        } else if (articleToolbarReactions) {
+            toolbar = articleToolbarReactions;
         }
-        // } else if (const articleToolbarReactions = e.target.closest(".article-toolbar-reactions");) {
-        //     toolbar = articleToolbarReactions;
-        // }
         
         if (toolbar) {
             const unicodeWrapperReaction = toolbar.querySelector(".unicode-wrapper-reaction");
             const customWrapperReaction = toolbar.querySelector(".custom-wrapper-reaction");
             const customReactionDrawer = customWrapperReaction?.querySelector(".custom-reaction-drawer")
             
-            launchDrawers(e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, toolbar);
+            launchReactionDrawers(e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, toolbar);
         }
         
         if (!toolbar) {
@@ -44,7 +45,7 @@ function emojiNewsDrawerListeners () {
     });
 }
 
-function launchDrawers (e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, toolbar) {
+function launchReactionDrawers (e, unicodeWrapperReaction, customWrapperReaction, customReactionDrawer, toolbar) {
     if (!customReactionDrawer && e.target.classList.contains('custom-emoji-button')) {
         console.log('Drawer doesnt exist, injecting',)
         customWrapperReaction.classList.toggle('visible');

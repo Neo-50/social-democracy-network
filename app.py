@@ -15,6 +15,7 @@ import subprocess
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
+from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, Response, jsonify, g
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_socketio import SocketIO, emit, join_room
@@ -155,176 +156,171 @@ def home():
 
 @app.route('/news', methods=['GET', 'POST'])
 def news():
-    if request.method == 'POST':
-        if not session.get('user_id'):
-            flash("You must be logged in to post an article.", "danger")
-            return redirect(url_for('news'))
+	if request.method == 'POST':
+		if not session.get('user_id'):
+			flash("You must be logged in to post an article.", "danger")
+			return redirect(url_for('news'))
 
-        url = request.form['url']
-        
-        existing_article = NewsArticle.query.filter_by(url=url).first()
-        if existing_article:
-            flash("This article has already been submitted.", "danger")
-            return redirect(url_for('news'))
+		url = request.form['url']
+		
+		existing_article = NewsArticle.query.filter_by(url=url).first()
+		if existing_article:
+			flash("This article has already been submitted.", "danger")
+			return redirect(url_for('news'))
 
-        category = request.form.get('category', '').strip()
-        metadata = extract_metadata(url)
-        published_str=metadata.get("published", "")
-        needs_scrape = metadata.get("needs_scrape", False)
-        
-        # scrape_id = request.args.get("scrape", type=int)
+		category = request.form.get('category', '').strip()
+		metadata = extract_metadata(url)
+		published_str=metadata.get("published", "")
+		needs_scrape = metadata.get("needs_scrape", False)
+		
+		# scrape_id = request.args.get("scrape", type=int)
 
-        article = NewsArticle(
-            url=url,
-            category=category,
-            title=metadata["title"],
-            description=metadata["description"],
-            image_url=metadata["image_url"],
-            authors=metadata["authors"],
-            published = parser.parse(published_str).date() if published_str else None,
-            source=metadata["source"],
-            needs_scrape=needs_scrape,
-            user_id=session.get("user_id")
-        )
-        db.session.add(article)
-        db.session.commit()
-        flash("Article submitted successfully!", "success")
+		article = NewsArticle(
+			url=url,
+			category=category,
+			title=metadata["title"],
+			description=metadata["description"],
+			image_url=metadata["image_url"],
+			authors=metadata["authors"],
+			published = parser.parse(published_str).date() if published_str else None,
+			source=metadata["source"],
+			needs_scrape=needs_scrape,
+			user_id=session.get("user_id")
+		)
+		db.session.add(article)
+		db.session.commit()
+		flash("Article submitted successfully!", "success")
 
-        # Background metadata scrape
-        if needs_scrape:
-            subprocess.Popen([
-            "systemd-run", "--user", "--scope",
-            "-p", "MemoryMax=500M",
-            "--working-directory=/home/doug/social-democracy-network",
-            "/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
-            str(article.id), url
-        ])
-        if needs_scrape:
-            return redirect(url_for("news", category=article.category, article=article.id, scrape=article.id))
-        else:
-            return redirect(url_for("news", category=article.category, article=article.id))
+		# Background metadata scrape
+		if needs_scrape:
+			subprocess.Popen([
+			"systemd-run", "--user", "--scope",
+			"-p", "MemoryMax=500M",
+			"--working-directory=/home/doug/social-democracy-network",
+			"/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
+			str(article.id), url
+		])
+		if needs_scrape:
+			return redirect(url_for("news", category=article.category, article=article.id, scrape=article.id))
+		else:
+			return redirect(url_for("news", category=article.category, article=article.id))
 
-    # GET logic
-    selected_category = request.args.get('category')
-    highlight_id = request.args.get("article", type=int)
-    scrape_id = request.args.get("scrape", type=int)
-    sort_order = request.args.get('sort', 'desc')
-    limit = request.args.get('limit', '20')
-    order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
-    
+	# GET logic
+	selected_category = request.args.get('category')
+	highlight_id = request.args.get("article", type=int)
+	scrape_id = request.args.get("scrape", type=int)
+	sort_order = request.args.get('sort', 'desc')
+	limit = request.args.get('limit', '20')
+	order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
 
-    if selected_category:
-        articles_query = NewsArticle.query \
-            .filter_by(category=selected_category) \
-            .filter(NewsArticle.id != highlight_id) \
-            .order_by(order_func)
-    else:
-        articles_query = NewsArticle.query \
-            .filter(NewsArticle.id != highlight_id) \
-            .order_by(order_func)
-    
-    if limit != 'all':
-        try:
-            limit_int = int(limit)
-            articles = articles_query.limit(limit_int).all()
-        except ValueError:
-            articles = articles_query.limit(20).all()
-    else:
-        articles = articles_query.all()
 
-    highlighted = None
-    try:
-        highlight_id_int = int(highlight_id) if highlight_id is not None else None
-        if highlight_id_int is not None:
-            highlighted = NewsArticle.query.get(highlight_id_int)
-            if highlighted:
-                articles.insert(0, highlighted)
-    except (ValueError, TypeError):
-        highlighted = None
+	if selected_category:
+		articles_query = NewsArticle.query \
+			.filter_by(category=selected_category) \
+			.filter(NewsArticle.id != highlight_id) \
+			.order_by(order_func)
+	else:
+		articles_query = NewsArticle.query \
+			.filter(NewsArticle.id != highlight_id) \
+			.order_by(order_func)
 
-    count = len(articles)
+	if limit != 'all':
+		try:
+			limit_int = int(limit)
+			articles = articles_query.limit(limit_int).all()
+		except ValueError:
+			articles = articles_query.limit(20).all()
+	else:
+		articles = articles_query.all()
 
-    for article in articles:
-        if "youtube.com" in article.url or "youtu.be" in article.url:
-            scraped = extract_metadata(article.url)
-            if scraped and scraped.get("embed_html"):
-                article.embed_html = scraped["embed_html"]
+	highlighted = None
+	try:
+		highlight_id_int = int(highlight_id) if highlight_id is not None else None
+		if highlight_id_int is not None:
+			highlighted = NewsArticle.query.get(highlight_id_int)
+			if highlighted:
+				articles.insert(0, highlighted)
+	except (ValueError, TypeError):
+		highlighted = None
 
-    # Use `group_concat` on SQLite and `array_agg` on Postgres
-    if app.config['SQLALCHEMY_DATABASE_URI'].startswith("sqlite"):
-        reactions = (
-            db.session.query(
-                Reaction.target_id,
-                Reaction.emoji,
-                sa.func.count(Reaction.id).label("reactionCount"),
-                sa.func.group_concat(reaction_user.c.user_id).label("user_ids"),
-            )
-            .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
-            .filter(Reaction.target_type == "news")
-            .group_by(Reaction.target_id, Reaction.emoji)
-            .all()
-        )
+	count = len(articles)
 
-        # Convert the user_ids string into list of ints (safe for empty strings)
-        reaction_map = {}
-        for r in reactions:
-            key = f"news:{r.target_id}"  # Use string key from the beginning
+	for article in articles:
+		if "youtube.com" in article.url or "youtu.be" in article.url:
+			scraped = extract_metadata(article.url)
+			if scraped and scraped.get("embed_html"):
+				article.embed_html = scraped["embed_html"]
 
-            if key not in reaction_map:
-                reaction_map[key] = []
+	# Use `group_concat` on SQLite and `array_agg` on Postgres
+	# --- fetch aggregated rows for news (either sqlite or postgres) ---
+	use_sqlite = app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite')
 
-            user_ids = [int(uid) for uid in r.user_ids.split(",")] if r.user_ids else []
+	if use_sqlite:
+		reactions = (
+			db.session.query(
+				Reaction.article_id,
+				Reaction.target_id,
+				Reaction.emoji,
+				sa.func.group_concat(reaction_user.c.user_id).label("user_ids"),
+			)
+			.join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
+			.filter(Reaction.target_type == "news")
+			.group_by(Reaction.article_id, Reaction.target_id, Reaction.emoji)
+			.all()
+		)
+		def norm_ids(v):
+			if not v:
+				return []
+			return [int(uid) for uid in str(v).split(",") if uid]
+	else:
+		reactions = (
+			db.session.query(
+				Reaction.article_id,
+				Reaction.target_id,
+				Reaction.emoji,
+				sa.func.array_agg(reaction_user.c.user_id).label("user_ids"),
+			)
+			.join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
+			.filter(Reaction.target_type == "news")
+			.group_by(Reaction.article_id, Reaction.target_id, Reaction.emoji)
+			.all()
+		)
+		def norm_ids(v):
+			return [int(uid) for uid in (v or [])]
 
-            reaction_map[key].append({
-                "emoji": r.emoji,
-                "user_ids": user_ids,
-                "target_id": r.target_id,
-            })
-    else:
-        # Assume Postgres
-        reactions = (
-            db.session.query(
-                Reaction.target_id,
-                Reaction.emoji,
-                sa.func.count(Reaction.id).label("reactionCount"),
-                sa.func.array_agg(reaction_user.c.user_id).label("user_ids"),
-            )
-            .join(reaction_user, Reaction.id == reaction_user.c.reaction_id)
-            .filter(Reaction.target_type == "news")
-            .group_by(Reaction.target_id, Reaction.emoji)
-            .all()
-        )
+	# --- build reaction_map (always runs, even if reactions == []) ---
+	from collections import defaultdict
 
-        reaction_map = {}
-        for r in reactions:
-            key_str = f"news:{r.target_id}"
-            if key_str not in reaction_map:
-                reaction_map[key_str] = []
-            
-            user_ids = [int(uid) for uid in r.user_ids] if r.user_ids else []
+	reaction_map_dd = defaultdict(list)
 
-            reaction_map[key_str].append({
-                "emoji": r.emoji,
-                "user_ids": r.user_ids,
-                "target_id": r.target_id,
-            })
-    user_map = {
-        user.id: user.display_name
-        for user in db.session.query(User.id, User.display_name).all()
-    }
-    print('user_map ', user_map)
-    return render_template(
-        'news.html',
-        articles=articles,
-        is_admin=is_admin,
-        highlight_id=highlight_id,
-        scrape_id=scrape_id,
-        article_to_highlight=highlighted,
-        selected_category=selected_category,
-        count=count,
-        reaction_map=reaction_map,
-        user_map=user_map
-    )
+	for r in reactions:
+		# XOR: exactly one of these should be set
+		key = f"news:a:{r.article_id}" if r.article_id is not None else f"news:c:{r.target_id}"
+		reaction_map_dd[key].append({
+			"emoji": r.emoji,
+			"user_ids": norm_ids(r.user_ids),
+			"article_id": r.article_id,
+			"target_id": r.target_id,
+		})
+
+	reaction_map = dict(reaction_map_dd)  # plain dict for Jinja
+	user_map = {
+		user.id: user.display_name
+		for user in db.session.query(User.id, User.display_name).all()
+	}
+	print('user_map ', user_map)
+	return render_template(
+		'news.html',
+		articles=articles,
+		is_admin=is_admin,
+		highlight_id=highlight_id,
+		scrape_id=scrape_id,
+		article_to_highlight=highlighted,
+		selected_category=selected_category,
+		count=count,
+		reaction_map=reaction_map,
+		user_map=user_map
+	)
 
 @app.route('/activism')
 def activism():
@@ -451,59 +447,94 @@ def delete_account():
 @socketio.on("toggle_reaction", namespace="/reactions")
 @login_required
 def toggle_reaction(data):
-    print("Toggle reaction called")
+	print("Toggle reaction called")
 
-    emoji = data.get("emoji")
-    target_id = data.get("target_id")
-    target_type = data.get('target_type')
-    action = data.get("action")
-    user_id = data.get("user_id")
-    user_ids = data.get("user_ids")
+	emoji = data.get("emoji")
+	target_type = data.get('target_type')
+	action = data.get("action")
+	user_id = data.get("user_id")
+	user_ids = data.get("user_ids")
 
-    print('Data received in toggle_reaction:', data)
+	print('Data received in toggle_reaction:', data)
 
-    reaction = Reaction.query.filter_by(
-        target_id=target_id,
-        target_type=target_type,
-        emoji=emoji
-    ).first()
+	def _norm(v):
+		if v in (None, "", "null"):
+			return None
+		try:
+			return int(v)
+		except (TypeError, ValueError):
+			return None
 
-    if action == "add":
-        if not reaction:
-            reaction = Reaction(
-                target_id=target_id,
-                target_type=target_type,
-                emoji=emoji
-            )
-            db.session.add(reaction)
+	article_id = _norm(data.get("article_id"))
+	target_id  = _norm(data.get("target_id"))
 
-        if current_user not in reaction.users:
-            reaction.users.append(current_user)
+	# XOR: exactly one must be set
+	if bool(article_id) == bool(target_id):
+		return {"error": "One of article_id or target_id is required"}, 400
+	if not emoji or not target_type or action not in {"add", "remove"}:
+		return {"error": "Bad payload"}, 400
 
-    elif action == "remove" and reaction:
-        print('toggle_reaction remove')
-        print(user_id, ' in ', reaction.users)
-        user_to_remove = next((user for user in reaction.users if user.id == user_id), None)
-        if user_to_remove:
-            reaction.users.remove(user_to_remove)
-            if len(reaction.users) == 0:
-                db.session.delete(reaction)
-    
-    db.session.commit()
+	# single filter for both cases
+	filters = {"emoji": emoji, "target_type": target_type}
+	if article_id is not None:
+		filters["article_id"] = article_id
+	else:
+		filters["target_id"] = target_id
 
-    user_ids = [user.id for user in reaction.users] if reaction else []
+	reaction = Reaction.query.filter_by(**filters).first()
 
-    print('Emit reaction_update: ', 'emoji: ', emoji, ' | target id: ', target_id, ' | target_type: ',  target_type, 
-          ' | action: ', action, ' | user id: ', user_id, ' | user_ids: ', user_ids)
-    socketio.emit("reaction_update", {
-        "emoji": emoji,
-        "target_id": target_id,
-        "target_type": target_type,
-        "action": action,
-        "user_id": user_id,
-        "user_ids": user_ids,
+	if action == "add":
+		if reaction is None:
+			reaction = Reaction(**filters)
+			db.session.add(reaction)
+		if current_user not in reaction.users:
+			reaction.users.append(current_user)
+
+	elif action == "remove":
+		if reaction:
+			if current_user in reaction.users:
+				reaction.users.remove(current_user)
+			if not reaction.users:
+				db.session.delete(reaction)
+
+	try:
+		db.session.commit()
+	except IntegrityError:
+		# in case two clients add the same reaction at once; fetch the winner
+		db.session.rollback()
+		reaction = Reaction.query.filter_by(**filters).first()
+		user_ids = [] if not reaction else [u.id for u in reaction.users]
         
-    }, namespace="/reactions", include_self=False)
+	print('Emit reaction_update: ', 'emoji: ', emoji, ' | target id: ', target_id, ' | target_type: ',  target_type, 
+			' | action: ', action, ' | user id: ', user_id, ' | user_ids: ', user_ids)
+    
+	socketio.emit(
+		"reaction_update",
+		{
+			"emoji": emoji,
+			"target_type": target_type,
+			"action": action,
+			"user_id": current_user.id,
+			"user_ids": user_ids,
+			"article_id": article_id,
+			"target_id": target_id,
+		},
+		namespace="/reactions",
+		include_self=False,
+	)
+
+	return {"ok": True}, 200
+
+	# socketio.emit("reaction_update", {
+	# 	"emoji": emoji,
+	# 	"target_id": target_id,
+	# 	"article_id": article_id,
+	# 	"target_type": target_type,
+	# 	"action": action,
+	# 	"user_id": user_id,
+	# 	"user_ids": user_ids,
+		
+	# }, namespace="/reactions", include_self=False)
 
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):
