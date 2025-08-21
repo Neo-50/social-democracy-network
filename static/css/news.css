@@ -24,19 +24,41 @@
     border: 1px solid #8feff2;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
     gap: 10px;
     width: 100%;
     max-width: 100%;
-    overflow-x: auto;
+    overflow-x: visible;
+    overflow-y: auto;
     overflow-wrap: break-word;
     box-sizing: border-box;
 }
 
-.news-article * {
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow-wrap: break-word;
+.comment-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    min-height: 80px;
+    padding-left: 10px;
+    border-left: 6px solid #333;
+}
+
+.comment-container:hover {
+    background-color: black;
+}
+
+@media (width <=800px) {
+    .comment-container:hover .comment-toolbar {
+        width: fit-content;
+        align-items: center;
+        white-space: nowrap;
+    }
+}
+
+.comment-container:hover .comment-toolbar {
+    display: flex;
 }
 
 h2 {
@@ -473,37 +495,6 @@ p {
     color: white;
 }
 
-.comment-container {
-    display: flex;
-    position: relative;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 6px;
-    margin-bottom: 6px;
-    min-height: 80px;
-    padding-left: 10px;
-    border-left: 6px solid #333;
-}
-
-.comment-container:hover {
-    background-color: black;
-}
-
-@media (width <=800px) {
-    .comment-container {
-        border: 2px solid limegreen;
-    }
-    .comment-container:hover .comment-toolbar {
-        width: fit-content;
-        align-items: center;
-        white-space: nowrap;
-    }
-}
-
-.comment-container:hover .comment-toolbar {
-    display: flex;
-}
-
 .newsfeed-button {
     background-color: #1a1a1a;
     border: 3px solid #00e3ea;
@@ -672,6 +663,10 @@ p {
         gap: 10px;
     }
 
+    .comment-container {
+        width: 100%;
+    }
+
     .comment-editor {
         width: 100%;
         max-width: 450px;
@@ -724,5 +719,11 @@ p {
         padding: 8px;
         box-shadow: 0 2px 12px #1a1a1a;
         overflow-y: auto;
+    }
+
+    .custom-reaction-drawer {
+        min-width: 360px;
+        max-height: 340px;
+        right: -100px;
     }
 }
