@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (currentScrollTop <= 500 && !isLoading) {
             // console.log("⬆️ Triggered load from top scroll.");
             loadMessages(earliestMessageId, true);
+            renderAllReactions();
         }
     });
 
