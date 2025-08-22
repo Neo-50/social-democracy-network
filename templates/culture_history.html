@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main>
+    <h1>Culture & History</h1>
+    <div class ="top-row">
+        <p>Selected books and cultural artifacts</p>
+    </div>
+    <div class ="middle-row">
+        <div class="book">
+            <img class="book-img" src="{{ url_for('media', filename='history_culture/ta-nehisi-coates-message.png') }}" alt="ta-nehisi-coates-message">
+        </div>
+        <div class="book">
+            <img class="book-img" src="{{ url_for('media', filename='history_culture/chomsky-myth-american-idealism.jpg') }}" alt="chomsky-myth-american-idealism">
+        </div>
+        <div class="book">
+            <img class="book-img" src="{{ url_for('media', filename='history_culture/nick-estes-our-history-future.png') }}" alt="nick-estes-our-history-future">
+        </div>
+    </div>
+
+</main>
+
+{% endblock %}
