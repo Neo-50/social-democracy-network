@@ -1,0 +1,40 @@
+
+h1 {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.top-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: fit-content;
+    margin: 10px auto;
+    gap: 20px;
+    padding: 12px;
+    border-radius: 24px;
+}
+
+.middle-row {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.book {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #1a1a1a;
+    width: fit-content;
+    padding: 10px;
+    font-size: 1.1em;
+    border-radius: 24px;
+    border: 2px solid #00e3ea;
+}
+
+p {
+    line-height: 0;
+}
