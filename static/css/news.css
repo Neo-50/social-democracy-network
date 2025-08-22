@@ -57,6 +57,7 @@
     flex-direction: column;
     box-sizing: border-box;
     align-items: flex-start;
+    padding-left: 10px;
     margin-top: 6px;
     margin-bottom: 6px;
     min-height: 80px;
