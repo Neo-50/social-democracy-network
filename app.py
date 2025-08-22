@@ -1026,12 +1026,6 @@ def purge_reactions_for_comments(comment_ids: list[int], target_type: str = "new
                 Reaction.target_id.in_(comment_ids))
         .delete(synchronize_session=False))
 
-def purge_reactions_for_article(article_id: int):
-    ids = db.session.execute(sa.text(
-        "SELECT id FROM news_comment WHERE article_id = :aid"
-    ), {"aid": article_id}).scalars().all()
-    purge_reactions_for_comments(ids, "news")
-
 @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
 @login_required
 def delete_comment(comment_id):
@@ -1060,25 +1054,36 @@ def delete_comment(comment_id):
     )
     return jsonify({"ok": True, "comment_id": comment_id})
 
+def purge_reactions_for_article(article_id: int):
+    ids = db.session.execute(sa.text(
+        "SELECT id FROM news_comment WHERE article_id = :aid"
+    ), {"aid": article_id}).scalars().all()
+    purge_reactions_for_comments(ids, "news")
 
 @app.route('/delete_article/<int:article_id>', methods=['POST'])
 def delete_article(article_id):
-    if 'user_id' not in session:
-        flash("Access denied.")
-        return redirect(url_for('news'))
+     
+	if 'user_id' not in session:
+		flash('Access denied.')
+		return redirect(url_for('news'))
 
-    article = NewsArticle.query.get_or_404(article_id)
-    user = User.query.get(session['user_id'])
+	article = NewsArticle.query.get_or_404(article_id)
+	user = User.query.get(session['user_id'])
+	if not (user.is_admin or article.user_id == user.id):
+		flash('Access denied.')
+		return redirect(url_for('news'))
 
-    if not (user.is_admin or article.user_id == user.id):
-        flash("Access denied.")
-        return redirect(url_for('news'))
+	try:
+		purge_reactions_for_article(article.id)  # must NOT commit/begin inside
+		db.session.delete(article)
+		db.session.commit()
+		flash('Article deleted.')
+	except Exception:
+		db.session.rollback()
+		app.logger.exception('Delete failed for article %s', article_id)
+		flash('Delete failed.', 'error')
 
-    with db.session.begin():
-        purge_reactions_for_article(article.id)  # purge all comment reactions for this article
-        db.session.delete(article)
-    flash("Article deleted.")
-    return redirect(url_for('news'))
+	return redirect(url_for('news'))
 
 @app.route('/logout')
 def logout():
