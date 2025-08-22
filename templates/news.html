@@ -3,7 +3,7 @@
 {% block content %}
 <div class="comments-thread">
 {% macro render_comment(comment, article, depth=0) %}
-        <div class="comment-container" style="margin-left: {{ depth * 60 }}px;"  data-comment-id="{{ comment.id }}">
+        <div class="comment-container" style="margin-left: {{ depth * 60 }}px;"  data-comment-id="{{ comment.id }}" style="--indent: 60px">
             <div class="comment-header">
                 {% if comment.user %}
                     <button class="avatar-wrapper"
