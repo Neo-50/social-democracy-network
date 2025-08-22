@@ -19,7 +19,7 @@
 .news-article {
     background-color: #1a1a1a;
     padding: 20px;
-    margin: 10px 0;
+    margin: 5px 0;
     border-radius: 24px;
     border: 1px solid #8feff2;
     display: flex;
@@ -33,16 +33,47 @@
     box-sizing: border-box;
 }
 
+@media (width <=800px) {
+    .news-article {
+        padding: 10px;
+    }
+}
+
+.comments-thread {
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    align-items: stretch;
+}
+
+/* .comments-thread form {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+} */
+
 .comment-container {
     display: flex;
     position: relative;
     flex-direction: column;
+    box-sizing: border-box;
     align-items: flex-start;
     margin-top: 6px;
     margin-bottom: 6px;
     min-height: 80px;
-    padding-left: 10px;
     border-left: 6px solid #333;
+}
+
+@media (width <=800px) {
+    .comment-container {
+        min-width: 480px;
+        padding: 10px;
+        border-radius: 36px;
+    }
+    
+    .comments-thread {
+        border: 2px solid #bbb;
+    }
 }
 
 .comment-container:hover {
@@ -264,12 +295,6 @@ p {
   width: fit-content;
 }
 
-.comments-thread form {
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-}
-
 .news-right h2 a:hover {
     color: #666;
 }
@@ -380,6 +405,13 @@ p {
     max-height: 440px;
 }
 
+@media (width <=800px) {
+    .unicode-wrapper-reaction {
+        right: -100px;
+    }
+    
+}
+
 .custom-emoji-drawer {
     position: absolute;
     max-width: 440px;
@@ -388,7 +420,7 @@ p {
 }
 
 .unicode-emoji-wrapper {
-    right: -100px;
+    right: -150px;
 }
 
 .icon {
@@ -640,6 +672,10 @@ p {
         padding: 0 10px;
     }
 
+    .news-article {
+        overflow: visible;
+    }
+
     .category-links {
         display: none
     }
@@ -661,10 +697,6 @@ p {
         z-index: 1000;
         flex-direction: column;
         gap: 10px;
-    }
-
-    .comment-container {
-        width: 100%;
     }
 
     .comment-editor {
