@@ -12,15 +12,23 @@ function renderCustomEmojisToDrawer(drawer, opts) {
         target_type = 'news',         // For reactions
     } = options;
 
+    
+    const labelFor = (name) => {
+	    const i = name.lastIndexOf('.');
+	    if (i <= 0) return name;      // no dot found → return original
+	    return name.slice(0, i);      // return everything before the last dot
+    };
+
     customEmojis.forEach((filename) => {
         const img = document.createElement('img');
         img.src = `media/emojis/${filename}`;
         img.alt = filename;
+        img.title = labelFor(filename);
         img.className = 'custom-emoji';
         img.style.width = `${window.selectedEmojiSize}px`;
         img.style.height = `${window.selectedEmojiSize}px`;
         img.style.cursor = 'pointer';
-        img.setAttribute('style', `width:${window.selectedEmojiSize}px;height:${window.selectedEmojiSize}px;`);
+        img.setAttribute('style', `width:${window.selectedEmojiSize}px;height:${window.selectedEmojiSize}px`);
 
         img.addEventListener('click', () => {
             // --- comment editor path ---
@@ -68,10 +76,17 @@ function customMessagesChatDrawer(wrapper) {
 
     sizeButtonHelper(drawer);
 
+    const labelFor = (name) => {
+	    const i = name.lastIndexOf('.');
+	    if (i <= 0) return name;      // no dot found → return original
+	    return name.slice(0, i);      // return everything before the last dot
+    };
+
     customEmojis.forEach(filename => {
         const img = document.createElement('img');
         img.src = `/media/emojis/${filename}`;
         img.alt = filename;
+        img.title = labelFor(filename);
         img.className = 'custom-emoji';
         img.style.width = `${window.selectedEmojiSize}px`;
         img.style.height = `${window.selectedEmojiSize}px`;
