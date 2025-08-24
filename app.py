@@ -761,6 +761,8 @@ def api_send_message():
     db.session.commit()
 
     # emit WebSocket notification to recipient
+    print('Emit message notification', 'type: ', 'message', 'from: ', getattr(current_user, 'display_name', 'Unknown'),
+          'chad_id: ', msg.chat_id if hasattr(msg, 'chat_id') else None, 'message: ', msg.content, 'timestamp: ', msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
     socketio.emit(
         'notification',
         {

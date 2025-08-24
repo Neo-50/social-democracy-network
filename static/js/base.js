@@ -363,20 +363,28 @@ window.initMessageThreadSocket = function () {
 
     messageSocket.off('new_message');
 
-    const joinRoom = () => {
-        messageSocket.emit('join', window.ROOM_ID);
-        console.log("🟢 Joined room:", window.ROOM_ID);
-    };
+    messageSocket.on('connect', () => {
+        console.log("🟢 Socket connected");
 
-    if (messageSocket.connected) {
-        console.log("🟢 Socket already connected");
-        joinRoom();
-    } else {
-        messageSocket.on('connect', () => {
-            console.log("🟢 Socket just connected");
-            joinRoom();
+        messageSocket.on('delete_message', (data) => {
+            const messageId = data.message_id;
+            const messageWrapper = document.querySelector(`.message-wrapper[data-id='${messageId}']`);
+            if (messageWrapper) {
+                messageWrapper.remove();
+                console.log("❌ Message deleted via socket:", messageId);
+            } else {
+                console.log("ℹ️ Message already deleted on this client:", messageId);
+            }
         });
-    }
+
+        messageSocket.on('new_message', (msg) => {
+            console.log("📨 New socket message:", msg);
+            renderNewMessage(msg);
+        });
+
+        messageSocket.emit('join', window.ROOM_ID);
+        console.log("📥 Joined room:", window.ROOM_ID);
+    });
 };
 
 setTimeout(() => {

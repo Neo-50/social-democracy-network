@@ -158,7 +158,7 @@ async function submitMessageForm(e) {
 
             // Also emit it via socket to update other clients
             if (typeof messageSocket !== 'undefined') {
-                console.log("socket ready?", typeof messageSocket);
+                console.log("socket ready?", typeof messageSocket, msg, window.ROOM_ID);
                 window.messageSocket.emit('new_message', {
                     ...msg,
                     room_id: window.ROOM_ID
