@@ -323,6 +323,10 @@ function createNewReaction({
 }
 
 function handleReactionClick(event) {
+    if (window.CURRENT_USER_ID == null) {
+        showToast('Please login or create an account');
+        return;
+    }
     const span = event.currentTarget;
 
     const emoji = span.dataset.emoji;
