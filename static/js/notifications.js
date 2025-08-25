@@ -1,6 +1,7 @@
 window.notificationSocket = io('/notifications')
 
 document.addEventListener('DOMContentLoaded', () => {
+    initNotificationSocket()
     fetch('/api/unread_notifications')
         .then(res => res.json())
         .then(data => {
