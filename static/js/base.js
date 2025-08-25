@@ -6,6 +6,14 @@ window.commentSocket = io('/news_comments', {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.initNotificationSocket === "function") {
+        window.initNotificationSocket();
+    }
+
+    if (typeof fetchUnreadNotifications === "function") {
+        fetchUnreadNotifications();
+    }
+
     // Online users drawer
     const btn = document.getElementById("onlineBtn");
     if (!btn) {
@@ -106,11 +114,8 @@ window.initMessageThreadSocket = function () {
 
     window.ROOM_ID = `thread_${Math.min(window.CURRENT_USER_ID, window.RECIPIENT_ID)}_${Math.max(window.CURRENT_USER_ID, window.RECIPIENT_ID)}`;
 
-    messageSocket.off('new_message');
-
-    messageSocket.on('connect', () => {
-        console.log("🟢 Socket connected");
-
+    function bindHandlers() {
+        messageSocket.off('delete_message');
         messageSocket.on('delete_message', (data) => {
             const messageId = data.message_id;
             const messageWrapper = document.querySelector(`.message-wrapper[data-id='${messageId}']`);
@@ -121,43 +126,42 @@ window.initMessageThreadSocket = function () {
                 console.log("ℹ️ Message already deleted on this client:", messageId);
             }
         });
-
+        
+        messageSocket.off('new_message');
         messageSocket.on('new_message', (msg) => {
             console.log("📨 New socket message:", msg);
             renderNewMessage(msg);
         });
-
+    };
+    
+    function joinRoom() {
         messageSocket.emit('join', String(window.ROOM_ID));
         console.log("📥 Joined room:", String(window.ROOM_ID));
-    });
-};
-
-messageSocket.on('notification', data => {
-    console.log('🔔 Notification received:', data);
-    showToast(`New message from ${data.from}`);
-
-    // Insert notification preview
-    const container = document.querySelector('.notif-content');
-    if (!container) return;
-
-    // Remove placeholder if present
-    const placeholder = container.querySelector('.placeholder');
-    if (placeholder) {
-        placeholder.remove();
     }
 
-    container.prepend(createNotificationElement(data));
-    formatTimestamp(container);
+    bindHandlers();
 
-    // Update count
-    fetch('/api/unread_count')
-        .then(res => res.json())
-        .then(data => {
-            if (data.count) {
-                showNotificationBadge(data.count);
-            }
-    });
-});
+    messageSocket.off('connect');
+	messageSocket.on('connect', () => {
+		console.log("🟢 messageSocket connected");
+		bindHandlers();
+		joinRoom();
+	});
+
+    messageSocket.off('disconnect');
+	messageSocket.on('disconnect', (r) => console.log('⛔ /messages disconnected:', r));
+	messageSocket.off('connect_error');
+	messageSocket.on('connect_error', (err) => console.log('⚠️ connect_error (/messages):', err.message));
+
+	// if we're already connected (common on SPA/nav), do the work now
+	if (messageSocket.connected) {
+        console.log("🟢 messageSocket connected, joining room");
+		joinRoom();
+	} else {
+		messageSocket.connect();
+		console.log('📡 messageSocket connecting…');
+	}
+};
 
 window.initReactionSocket = function (target_type) {
     console.log("🔄 initReactionSocket called");
@@ -318,17 +322,6 @@ window.initChatSocket = function () {
         }
     });
 };
-
-function createNotificationElement({ from, timestamp, message }) {
-	const div = document.createElement('div');
-	div.classList.add('notif-item');
-	div.innerHTML = `
-	<strong>${from}</strong> 
-	<div class="notif-message-content">${message}</div>
-	<span class="timestamp" data-timestamp="${timestamp}" style="opacity: 0.5; float: right;"></span>
-	`;
-	return div;
-}
 
 function updateDate() {
     const currentDate = new Date();

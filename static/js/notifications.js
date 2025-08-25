@@ -1,7 +1,6 @@
-window.notificationSocket = io('/notifications')
+window.notificationSocket = io('/notifications');
 
-document.addEventListener('DOMContentLoaded', () => {
-    initNotificationSocket()
+function fetchUnreadNotifications () {
     fetch('/api/unread_notifications')
         .then(res => res.json())
         .then(data => {
@@ -13,9 +12,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
             data.forEach(item => {
                 container.appendChild(createNotificationElement(item));
-                formatTimestamp(container);
             });
+            formatTimestamp(container);
+            showNotificationBadge?.(data.length);
         });
+    
+    notificationListeners();
+}
+
+function createNotificationElement({ from, timestamp, message }) {
+    console.log('createNotificationElement', from, timestamp, message);
+	const div = document.createElement('div');
+	div.classList.add('notif-item');
+	div.innerHTML = `
+	<strong>${from}</strong> 
+	<div class="notif-message-content">${message}</div>
+	<span class="timestamp" data-timestamp="${timestamp}"></span>
+	`;
+	return div;
+}
+
+function notificationListeners () {
+    if (!window.CURRENT_USER_ID) return;
     document.querySelector('.clear-notifs').addEventListener('click', async (e) => {
         e.preventDefault();
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -50,51 +68,67 @@ document.addEventListener('DOMContentLoaded', () => {
             drawer.classList.remove("show");
         }
     });
-});
+}
 
 window.initNotificationSocket = function () {
-    if (!window.notificationSocket.connected) {
-        console.log('notificationSocket connect');
-        window.notificationSocket.connect();
-    }
-    // 3) join your user room on connect (and on hot reload reconnects)
-    window.notificationSocket.off('connect'); // avoid duplicates across navigations
-    window.notificationSocket.on('connect', () => {
-        const userRoom = `user_${window.CURRENT_USER_ID}`;
-        window.notificationSocket.emit('join_user', userRoom);
-        console.log('🔔 joined', userRoom);
-    });
+	console.log('initNotificationSocket');
+	if (!window.CURRENT_USER_ID) return;
 
-    // 4) (re)bind the notification receiver you already have
-    window.notificationSocket.off('notification');  // prevent double handlers
-    window.notificationSocket.on('notification', data => {
-        console.log('⚠️ Notification received:', data);
-        showToast(`New message from ${data.from}`);
+	const userRoom = `user_${window.CURRENT_USER_ID}`;
 
-        const container = document.querySelector('.notif-content');
-        if (!container) return;
+	// bind (or re-bind) all handlers
+	function bindHandlers() {
+		notificationSocket.off('new_notification');
+		notificationSocket.on('new_notification', (data) => {
+			console.log('⚠️ Notification received:', data);
+			showToast(`New message from ${data.from}`);
 
-        const placeholder = container.querySelector('.placeholder');
-        if (placeholder) placeholder.remove();
+			const container = document.querySelector('.notif-content');
+			if (!container) return;
 
-        container.prepend(createNotificationElement(data));
-        formatTimestamp(container);
+			const placeholder = container.querySelector('.placeholder');
+			if (placeholder) placeholder.remove();
 
-        fetch('/api/unread_count')
-            .then(res => res.json())
-            .then(data => {
-                if (data.count) showNotificationBadge(data.count);
-            });
-    });
+			container.prepend(createNotificationElement(data));
+			formatTimestamp(container);
 
-    // Check for unread messages on page load
-    fetch('/api/unread_count')
-        .then(res => res.json())
-        .then(data => {
-            if (data.count) {
-                showNotificationBadge(data.count);
-            } else {
-                hideNotificationBadge();
-            }
-        });
-}
+			fetch('/api/unread_count')
+				.then((res) => res.json())
+				.then((data) => {
+					if (data.count) showNotificationBadge(data.count);
+				});
+		});
+	}
+
+	// (re)join room; safe to call multiple times
+	function joinRoom() {
+		notificationSocket.emit('join', userRoom);
+		console.log('🔔 joined notifications room', userRoom);
+	}
+
+	// always (re)bind handlers first
+	bindHandlers();
+
+	// ensure we handle connect/reconnects
+	notificationSocket.off('connect');
+	notificationSocket.on('connect', () => {
+		console.log('🔌 /notifications connected');
+		bindHandlers(); // in case the lib dropped listeners on reconnect
+		joinRoom();
+	});
+
+	// helpful diagnostics
+	notificationSocket.off('disconnect');
+	notificationSocket.on('disconnect', (r) => console.log('⛔ /notifications disconnected:', r));
+	notificationSocket.off('connect_error');
+	notificationSocket.on('connect_error', (err) => console.log('⚠️ connect_error (/notifications):', err.message));
+
+	// if we're already connected (common on SPA/nav), do the work now
+	if (notificationSocket.connected) {
+        console.log("🟢 notificationSocket connected, joining room");
+		joinRoom();
+	} else {
+		notificationSocket.connect();
+		console.log('📡 notificationSocket connecting…');
+	}
+};
