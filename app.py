@@ -520,21 +520,11 @@ def toggle_reaction(data):
 			"target_id": target_id,
 		},
 		namespace="/reactions",
-		include_self=False,
+		include_self=False
 	)
 
 	return {"ok": True}, 200
 
-	# socketio.emit("reaction_update", {
-	# 	"emoji": emoji,
-	# 	"target_id": target_id,
-	# 	"article_id": article_id,
-	# 	"target_type": target_type,
-	# 	"action": action,
-	# 	"user_id": user_id,
-	# 	"user_ids": user_ids,
-		
-	# }, namespace="/reactions", include_self=False)
 
 @app.route('/check_metadata_status/<int:article_id>')
 def check_metadata_status(article_id):
@@ -760,22 +750,35 @@ def api_send_message():
     db.session.refresh(msg)
     db.session.commit()
 
+    from datetime import timezone
+
+    def ts_for_client(dt):
+        if dt is None:
+            return None
+        # make it UTC, drop fractions, add Z
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        else:
+            dt = dt.astimezone(timezone.utc)
+        return dt.isoformat(timespec='seconds').replace('+00:00', 'Z')
+
     # emit WebSocket notification to recipient
     print('Emit message notification', 'type: ', 'message', 'from: ', getattr(current_user, 'display_name', 'Unknown'),
-          'chad_id: ', msg.chat_id if hasattr(msg, 'chat_id') else None, 'message: ', msg.content, 'timestamp: ', msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
+          'chat_id: ', msg.chat_id if hasattr(msg, 'chat_id') else None, 'message: ', msg.content, 'timestamp: ', msg.timestamp.isoformat(),
+          'room: ', f'user_{recipient_id}')
 
     socketio.emit(
-        'notification',
+        'new_notification',
         {
             "type": "message",
             "from": getattr(current_user, 'display_name', 'Unknown'),
             "chat_id": msg.chat_id if hasattr(msg, 'chat_id') else None,
             "message": msg.content,
-            "timestamp": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            "timestamp": ts_for_client(msg.timestamp),
             "unread_count": 1  # optional, you could query the actual count
         },
         namespace='/notifications',
-        room=recipient_id  # user joins room with ID on connect
+        room=f'user_{recipient_id}'
     )
 
     debug_ids()
@@ -1553,13 +1556,17 @@ def handle_new_message_chat(data):
     emit('new_message', data, room=data['room_id'])
 
 # -------- Notifications  namespace --------
+@socketio.on('connect', namespace='/notifications')
+def notif_connect():
+    print('🔔 /notifications client connected')
+
 @socketio.on('join', namespace='/notifications')
-def handle_join_notifications(room_id):
+def join_notifications(room_id):
     join_room(room_id)
     print(f"💬 [notifications] Joined room: {room_id}")
 
 @socketio.on('new_notification', namespace='/notifications')
-def handle_new_notification(data):
+def new_notification(data):
     print("🔥 [notifications] Rebroadcasting:", data)
     emit('new_notification', data, room=data['room_id'])
 

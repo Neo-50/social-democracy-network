@@ -96,13 +96,13 @@ function closeAllMessagesDrawers(e) {
         .forEach((d) => d?.remove());
 }
 
-window.addEventListener("DOMContentLoaded", async () => {
-    const res = await fetch("/api/unread_count");
-    const data = await res.json();
-    if (data.count > 0) {
-              showNotificationBadge(data.count);
-    }
-});
+// window.addEventListener("DOMContentLoaded", async () => {
+//     const res = await fetch("/api/unread_count");
+//     const data = await res.json();
+//     if (data.count > 0) {
+//         showNotificationBadge(data.count);
+//     }
+// });
 
 async function submitMessageForm(e) {
     e.preventDefault();
