@@ -763,6 +763,7 @@ def api_send_message():
     # emit WebSocket notification to recipient
     print('Emit message notification', 'type: ', 'message', 'from: ', getattr(current_user, 'display_name', 'Unknown'),
           'chad_id: ', msg.chat_id if hasattr(msg, 'chat_id') else None, 'message: ', msg.content, 'timestamp: ', msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
+
     socketio.emit(
         'notification',
         {
@@ -773,7 +774,7 @@ def api_send_message():
             "timestamp": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             "unread_count": 1  # optional, you could query the actual count
         },
-        namespace='/messages',
+        namespace='/notifications',
         room=recipient_id  # user joins room with ID on connect
     )
 
@@ -1504,41 +1505,6 @@ def add_csrf_cookie(response):
     response.set_cookie('csrf_token', generate_csrf())
     return response
 
-@socketio.on('join', namespace='/chat')
-def handle_join_chat(room_id):
-    join_room(room_id)
-    print(f"💬 [chat] Joined room: {room_id}")
-
-@socketio.on('join', namespace='/messages')
-def handle_join_messages(room_id):
-    join_room(room_id)
-    print(f"📥 [messages] Joined room: {room_id}")
-
-@socketio.on('join', namespace='/reactions')
-def handle_join_reactions(room_id):
-    join_room(room_id)
-    print(f"😮 [reactions] Joined room: {room_id}")
-
-@socketio.on('join', namespace='/news_comments')
-def handle_join_news_comments(room_id):
-    join_room(room_id)
-    print(f"🗞️ [news_comments] Joined room: {room_id}")
-
-@socketio.on('new_message', namespace='/chat')
-def handle_new_message_chat(data):
-    print("🔥 [chat] Rebroadcasting:", data)
-    emit('new_message', data, room=data['room_id'])
-
-@socketio.on('new_message', namespace='/messages')
-def handle_new_message_messages(data):
-    print("🔥 [messages] Rebroadcasting:", data)
-    emit('new_message', data, room=data['room_id'], include_self=False)
-
-@socketio.on('reaction_update', namespace='/reactions')
-def handle_reaction_update(data):
-    print("🔥 [reactions] Rebroadcasting:", data)
-    emit('reaction_update', data, room=data['room_id'])
-
 # -------- News comments namespace --------
 @socketio.on('connect', namespace='/news_comments')
 def news_comments_connect():
@@ -1548,10 +1514,59 @@ def news_comments_connect():
 def news_comments_disconnect():
     print('Client disconnected from /news_comments')
 
+@socketio.on('join', namespace='/news_comments')
+def handle_join_news_comments(room_id):
+    join_room(room_id)
+    print(f"🗞️ [news_comments] Joined room: {room_id}")
+
+# -------- Messages namespace --------
+@socketio.on('join', namespace='/messages')
+def handle_join_messages(room_id):
+    join_room(room_id)
+    print(f"📥 [messages] Joined room: {room_id}")
+
+@socketio.on('new_message', namespace='/messages')
+def handle_new_message_messages(data):
+    print("🔥 [messages] Rebroadcasting:", data)
+    emit('new_message', data, room=data['room_id'], include_self=False)
+
+# -------- Reactions namespace --------
+@socketio.on('join', namespace='/reactions')
+def handle_join_reactions(room_id):
+    join_room(room_id)
+    print(f"😮 [reactions] Joined room: {room_id}")
+
+@socketio.on('reaction_update', namespace='/reactions')
+def handle_reaction_update(data):
+    print("🔥 [reactions] Rebroadcasting:", data)
+    emit('reaction_update', data, room=data['room_id'])
+
+# -------- Chat  namespace --------
+@socketio.on('join', namespace='/chat')
+def handle_join_chat(room_id):
+    join_room(room_id)
+    print(f"💬 [chat] Joined room: {room_id}")
+
+@socketio.on('new_message', namespace='/chat')
+def handle_new_message_chat(data):
+    print("🔥 [chat] Rebroadcasting:", data)
+    emit('new_message', data, room=data['room_id'])
+
+# -------- Notifications  namespace --------
+@socketio.on('join', namespace='/notifications')
+def handle_join_notifications(room_id):
+    join_room(room_id)
+    print(f"💬 [notifications] Joined room: {room_id}")
+
+@socketio.on('new_notification', namespace='/notifications')
+def handle_new_notification(data):
+    print("🔥 [notifications] Rebroadcasting:", data)
+    emit('new_notification', data, room=data['room_id'])
+
+
 if __name__ == '__main__':
     is_dev = os.environ.get("FLASK_ENV") == "development"
     socketio.run(app, debug=is_dev, use_reloader=is_dev)
-
 
 # if __name__ == "__main__":
 #     app.run(debug=False, use_reloader=False)

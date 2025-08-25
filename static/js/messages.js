@@ -175,6 +175,7 @@ async function submitMessageForm(e) {
         chatEditor.innerHTML = ""; // Clear input
     } else {
         alert(result.error || "Failed to send message.");
+        showToast('Failed to send message')
     }
 }
 
