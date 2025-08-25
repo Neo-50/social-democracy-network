@@ -505,8 +505,8 @@ def toggle_reaction(data):
 		reaction = Reaction.query.filter_by(**filters).first()
 		user_ids = [] if not reaction else [u.id for u in reaction.users]
         
-	print('Emit reaction_update: ', 'emoji: ', emoji, ' | target id: ', target_id, ' | target_type: ',  target_type, 
-			' | action: ', action, ' | user id: ', user_id, ' | user_ids: ', user_ids)
+	print('Emit reaction_update: ', 'emoji: ', emoji, ' | target_type: ',  target_type, ' | action: ', action,   
+			' | user id: ', user_id, ' | user_ids: ', user_ids, ' | target id: ', target_id, ' | article_id: ', article_id)
     
 	socketio.emit(
 		"reaction_update",
@@ -516,8 +516,8 @@ def toggle_reaction(data):
 			"action": action,
 			"user_id": current_user.id,
 			"user_ids": user_ids,
+            "target_id": target_id,
 			"article_id": article_id,
-			"target_id": target_id,
 		},
 		namespace="/reactions",
 		include_self=False
