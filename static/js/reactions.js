@@ -217,7 +217,7 @@ function handleExistingReaction(existing, user_ids, user_id) {
             return { user_id, action: "remove", removed: true };
         } else {
             existing.dataset.user_ids = JSON.stringify(user_ids);
-            existing.title = `${usernames.join(", ")}`;
+            existing.title = `Reacted by: ${usernames.join(", ")}`;
             countSpan.textContent = user_ids.length;
             return { user_ids, action: "remove" };
         }
@@ -229,7 +229,7 @@ function handleExistingReaction(existing, user_ids, user_id) {
         existing.dataset.user_ids = JSON.stringify(user_ids);
         console.log('updated existing dataset user_ids: ', existing.dataset.user_ids);
         const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-        existing.title = `${usernames.join(", ")}`;
+        existing.title = `Reacted by: ${usernames.join(", ")}`;
         countSpan.textContent = user_ids.length;
         return { user_ids, action: "add" };
     }
