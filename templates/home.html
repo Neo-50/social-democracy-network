@@ -171,11 +171,17 @@
         {% if current_user.is_authenticated %}
             <h2>Welcome, {{ current_user.display_name or current_user.username }}!</h2>
         {% endif %}
-        <a href="https://element.social-democracy.net" target="_blank">
-            <img src="{{ url_for('media', filename='home/matrix.png') }}" alt="matrix" class="matrix-logo">
-        </a>
-        <div class="matrix-message">
-            <a href="https://element.social-democracy.net" target="_blank">Enter Matrix Server</a>
+        <div class="image-container">
+            <a href="https://maydaystrong.org/" target="_blank">
+            <img src="{{ url_for('media', filename='home/labor_day.png') }}" alt="labor_day.png"
+                class="responsive-image">
+            </a>
+        </div>
+        <div class="image-container">
+            <a href="https://www.westword.com/news/upcoming-political-protests-in-denver-23765314" target="_blank">
+            <img src="{{ url_for('media', filename='home/chicano_moratorium.png') }}" alt="chicano_moratorium.png"
+                class="responsive-image">
+            </a>
         </div>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/NbDt2DY6x5s?si=bWjvzxmIdJE_3WE6" title="Denver No Kings June 14 2025"

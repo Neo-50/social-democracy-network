@@ -98,26 +98,9 @@ h2  {
     display: block;
 }
 
-.matrix-logo {
-  display: flex;
-  align-self: center;
-  width: 60%;
-  height: auto;
-  margin: 0 auto;
-}
-
 a {
   display: inline-block;
   text-decoration: none;
-}
-
-.matrix-message {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #bbb;
-    margin-top: 20px;
-    box-sizing: border-box;
 }
 
 /* Bulletless list */
