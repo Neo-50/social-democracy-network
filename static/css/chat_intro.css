@@ -7,13 +7,37 @@
     width: fit-content;
 }
 
+.matrix-logo {
+  display: flex;
+  align-self: center;
+  width: 60%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.matrix-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #bbb;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.chatrooms {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+}
+
 .enter-chat {
     font-size: 1.6em;
     text-align: center;
+    white-space: nowrap;
     padding: 12px 44px;
     border-radius: 36px;
     width: fit-content;
-    margin: 30px auto 10px;
     border: 2px solid #00e3ea;
 }
 
