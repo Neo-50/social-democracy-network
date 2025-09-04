@@ -208,8 +208,16 @@ window.appendMessage = function (user_id, username, displayName, text, messageId
             <img src="/media/avatars/${avatar}" class="avatar" alt="avatar"
                 style="width:50px; height:50px; border-radius:50%;">
         </button>
-        ` : `<img src="/media/avatars/default_avatar.png" class="avatar" alt="avatar"
-                style="width:50px; height:50px; border-radius:50%;">`;
+        ` : `<button class="avatar-wrapper"
+            data-id="${user_id}"
+            data-username="${username}"
+            data-display_name="${displayName || ''}"
+            data-bio="${bio || 'No bio available'}"
+            data-avatar="/media/avatars/default_avatar.png"
+            onclick="showUserPopup(this)">
+            <img src="/media/avatars/default_avatar.png" class="avatar" alt="avatar" style="width:50px; height:50px; border-radius:50%;">
+            </button>
+            `
 
     const showDelete = Number(currentUser.id) === Number(user_id) || currentUser.is_admin === 'true';
     console.log("showDelete =", showDelete, "user_id =", user_id, "currentUser.id =", currentUser.id, "is_admin =", currentUser.is_admin);
