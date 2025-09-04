@@ -176,6 +176,11 @@
         {% if current_user.is_authenticated %}
             <h2>Welcome, {{ current_user.display_name or current_user.username }}!</h2>
         {% endif %}
+        <div class="image-container">
+            <a href="https://www.nokings.org/" target="_blank">
+            <img src="{{ url_for('media', filename='home/nokings2.webp') }}" alt="nokings2.webp" class="responsive-image">
+            </a>
+        </div>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/A0nLJ8UxVg0?si=DUCc4fVDJNmCguaZ" title="Labor Day Protest 9-1-2025"
                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
