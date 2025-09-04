@@ -37,13 +37,12 @@ app.config['SESSION_COOKIE_SECURE'] = True  # Required for HTTPS-only cookies
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Good default for login forms
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevents JavaScript from accessing session cookie
 
-app.config['MAIL_SERVER'] = 'smtp.zoho.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'admin@social-democracy.net'
-app.config['MAIL_PASSWORD'] = 'QA50y5Xp320F'  # use Zoho app password here
-app.config['MAIL_DEFAULT_SENDER'] = 'admin@social-democracy.net'
-print("MAX_CONTENT_LENGTH:", app.config["MAX_CONTENT_LENGTH"])
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.zoho.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() in ['true', '1']
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
