@@ -208,7 +208,8 @@ window.appendMessage = function (user_id, username, displayName, text, messageId
             <img src="/media/avatars/${avatar}" class="avatar" alt="avatar"
                 style="width:50px; height:50px; border-radius:50%;">
         </button>
-        ` : `<div class="avatar-placeholder"></div>`;
+        ` : `<img src="/media/avatars/default_avatar.png" class="avatar" alt="avatar"
+                style="width:50px; height:50px; border-radius:50%;">`;
 
     const showDelete = Number(currentUser.id) === Number(user_id) || currentUser.is_admin === 'true';
     console.log("showDelete =", showDelete, "user_id =", user_id, "currentUser.id =", currentUser.id, "is_admin =", currentUser.is_admin);
