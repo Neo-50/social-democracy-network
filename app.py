@@ -303,11 +303,19 @@ def news():
 		})
 
 	reaction_map = dict(reaction_map_dd)  # plain dict for Jinja
+	# user_map = {
+	# 	user.id: user.display_name
+	# 	for user in db.session.query(User.id, User.display_name).all()
+	# }
 	user_map = {
-		user.id: user.display_name
-		for user in db.session.query(User.id, User.display_name).all()
+		user.id: {
+			"display_name": user.display_name,
+			"username": user.username,
+		}
+		for user in db.session.query(User.id, User.display_name, User.username).all()
 	}
 	print('user_map ', user_map)
+
 	return render_template(
 		'news.html',
 		articles=articles,
