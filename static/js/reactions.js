@@ -210,14 +210,20 @@ function handleExistingReaction(existing, user_ids, user_id) {
 
     if (alreadyReacted) {
         user_ids = user_ids.filter(id => id !== user_id);
-        const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
+        // const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
+        const names = user_ids.map(id => {
+            const u = window.userMap[id] || {};
+            return u.display_name || u.username || `User ${id}`;
+        });
+        
         if (user_ids.length === 0) {
             existing.remove();
             console.log('Reaction removed, user_ids: ', user_ids)
             return { user_id, action: "remove", removed: true };
         } else {
             existing.dataset.user_ids = JSON.stringify(user_ids);
-            existing.title = `Reacted by: ${usernames.join(", ")}`;
+            // existing.title = `Reacted by: ${usernames.join(", ")}`;
+            existing.title = `Reacted by: ${names.join(", ")}`;
             countSpan.textContent = user_ids.length;
             return { user_ids, action: "remove" };
         }
@@ -229,7 +235,8 @@ function handleExistingReaction(existing, user_ids, user_id) {
         existing.dataset.user_ids = JSON.stringify(user_ids);
         console.log('updated existing dataset user_ids: ', existing.dataset.user_ids);
         const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-        existing.title = `Reacted by: ${usernames.join(", ")}`;
+        // existing.title = `Reacted by: ${usernames.join(", ")}`;
+        existing.title = `Reacted by: ${names.join(", ")}`;
         countSpan.textContent = user_ids.length;
         return { user_ids, action: "add" };
     }
