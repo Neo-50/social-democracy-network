@@ -272,8 +272,13 @@ function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, t
 
 window.updateReactionTooltip = function (span, user_ids) {
     console.log('updateReactionTooltip: span: ', span, ' | user_ids: ', user_ids)
-    const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-    span.title = `Reacted by: ${usernames.join(", ")}`;
+    // const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
+
+    const names = user_ids.map(id => {
+        const u = window.userMap[id] || {};
+        return u.display_name || u.username || `User ${id}`;
+    });
+    span.title = `Reacted by: ${names.join(", ")}`;
 }
 
 window.initChatSocket = function () {

@@ -600,11 +600,18 @@ def chat():
                 "user_ids": r.user_ids,
                 "target_id": r.target_id,
             })
-    user_map = {
-        user.id: user.display_name
-        for user in db.session.query(User.id, User.display_name).all()
-    }
+    # user_map = {
+    #     user.id: user.display_name
+    #     for user in db.session.query(User.id, User.display_name).all()
+    # }
 
+    user_map = {
+        user.id: {
+            "display_name": user.display_name,
+            "username": user.username,
+        }
+        for user in db.session.query(User.id, User.display_name, User.username).all()
+    }
     print('***Chat Payload***', 'messages: ', messages, 'user_map: ', user_map, ' | reaction_map: ', reaction_map)
 
     return render_template("chat.html", messages=messages, reaction_map=reaction_map, user_map=user_map)
