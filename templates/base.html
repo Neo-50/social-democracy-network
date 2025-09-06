@@ -256,6 +256,7 @@
         .then(data => {
             window.emojiMap = data;
         });
+        document.dispatchEvent(new Event('emojiMap:ready'));
 </script>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
