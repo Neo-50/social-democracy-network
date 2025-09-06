@@ -276,11 +276,18 @@ function isCustomEmoji(val) {
     return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
 }
 
+function normalizeEmojiKey(val) {
+    if (!val) return '';
+    return Array.from(val).join('').replace(/\uFE0F/g, '');
+}
+
 window.updateReactionTooltip = function (span, user_ids, emote_title='') {
     const emoji = String(span.dataset.emoji);
     if (!emote_title) {
-		emote_title = window.emojiMap[emoji] || '';
-	}
+        const norm = normalizeEmojiKey(emoji);
+        emote_title = window.emojiMap[norm] || window.emojiMap[emoji] || '';
+    }
+
     if (!emote_title && isCustomEmoji(emoji)) {
         emote_title = emoji.replace(/\.[^.]+$/, "");
     }
