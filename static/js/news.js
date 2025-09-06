@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Hydrate comments/articles with reactions
-    onEmojiMapReady(() => {
+    window.onEmojiMapReady(() => {
         for (const [key, reactions] of Object.entries(window.reactionMap || {})) {
             // expected new formats:  "news:a:451" (article)  |  "news:c:7" (comment)
             // legacy format:         "news:7"                (comment only)
