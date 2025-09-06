@@ -273,9 +273,9 @@ function handleReactionUpdate({ emoji, emote_title, target_type, action, user_id
 };
 
 window.updateReactionTooltip = function (span, user_ids, emote_title='') {
-    const emoji = span.dataset.emoji;
+    const emoji = String(span.dataset.emoji);
     if (!emote_title) {
-		emote_title = window.emojiMap[String(emoji)] || '';
+		emote_title = window.emojiMap[emoji] || '';
 	}
     if (!emote_title) {
         emote_title = emoji.replace(/\.[^.]+$/, "");
