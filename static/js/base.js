@@ -276,7 +276,7 @@ function isCustomEmoji(val) {
     return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
 }
 
-window.onEmojiMapReady(fn) = function {
+window.onEmojiMapReady = function (fn) {
     if (window.emojiMap && Object.keys(window.emojiMap).length) return fn();
     const handler = () => { document.removeEventListener('emojiMap:ready', handler); fn(); };
     document.addEventListener('emojiMap:ready', handler, { once: true });
