@@ -249,6 +249,13 @@
         window.RECIPIENT_ID = {{ recipient.id }};
     {% endif %}
     window.selectedEmojiSize = 28;
+    window.emojiMap = {};
+
+    fetch('/static/emoji/annotations.json')
+        .then(res => res.json())
+        .then(data => {
+            window.emojiMap = data;
+        });
 </script>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>

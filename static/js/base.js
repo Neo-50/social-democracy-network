@@ -179,7 +179,7 @@ window.initReactionSocket = function (target_type) {
     reactionSocket.off("reaction_update");
     reactionSocket.on("reaction_update", (data) => {
         console.log('reactionSocket reaction_update')
-        const { emoji, target_type, action, user_id, user_ids, target_id, article_id } = data;
+        const { emoji, emote_title, target_type, action, user_id, user_ids, target_id, article_id } = data;
         console.log('reactionSocket data received: ', data)
         let target;
         if (target_type === "news") {
@@ -200,6 +200,7 @@ window.initReactionSocket = function (target_type) {
 
         const payload = {
             emoji,
+            emote_title,
             target_type,
             action,
             user_id,
@@ -212,9 +213,9 @@ window.initReactionSocket = function (target_type) {
     });
 }
 
-function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, target, target_id = null, article_id = null}) {
+function handleReactionUpdate({ emoji, emote_title, target_type, action, user_id, user_ids, target, target_id = null, article_id = null}) {
     
-    console.log('***handleReactionUpdate*** data: ', '| emoji: ', emoji, '| target_type: ', target_type, 
+    console.log('***handleReactionUpdate*** data: ', '| emoji: ', emoji, 'emote_title: ', emote_title, '| target_type: ', target_type, 
         'action: ', action, '| user_id: ', user_id, 'user_ids | ', user_ids, '| target: ', target,  
         '| target_id: ', target_id,  ' | article_id: ', article_id);
 
@@ -238,13 +239,14 @@ function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, t
             const countEl = reactionSpan.querySelector(".reaction-count");
             if (countEl) countEl.textContent = user_ids.length;
             reactionSpan.dataset.user_ids = JSON.stringify(user_ids);
-            updateReactionTooltip(reactionSpan, user_ids);
+            updateReactionTooltip(reactionSpan, user_ids, emote_title);
         } else {
             // Create new reaction
             console.log('renderReaction called from handleReactionUpdate')
             window.renderReaction({
                 target,
                 emoji,
+                emote_title,
                 target_type,
                 user_id,
                 user_ids,
@@ -270,15 +272,22 @@ function handleReactionUpdate({ emoji, target_type, action, user_id, user_ids, t
     }
 };
 
-window.updateReactionTooltip = function (span, user_ids) {
-    console.log('updateReactionTooltip: span: ', span, ' | user_ids: ', user_ids)
-    // const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-
+window.updateReactionTooltip = function (span, user_ids, emote_title='') {
+    const emoji = span.dataset.emoji;
+    if (!emote_title) {
+		emote_title = window.emojiMap[String(emoji)] || '';
+	}
+    if (!emote_title) {
+        emote_title = emoji.replace(/\.[^.]+$/, "");
+    }
+    
+    console.log('updateReactionTooltip: span: ', span, 
+        ' | user_ids: ', user_ids, ' | emote_title: ', emote_title, ' | emoji: ', emoji);
     const names = user_ids.map(id => {
         const u = window.userMap[id] || {};
         return u.display_name || u.username || `User ${id}`;
     });
-    span.title = `Reacted by: ${names.join(", ")}`;
+    span.title = `${emote_title} reacted by: ${names.join(", ")}`;
 }
 
 window.initChatSocket = function () {

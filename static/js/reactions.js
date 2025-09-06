@@ -1,6 +1,7 @@
 window.renderReaction = function({
     target,
     emoji,
+    emote_title='',
     target_type,
     user_id = null,
     user_ids = [],
@@ -9,7 +10,7 @@ window.renderReaction = function({
     mode = "update", // "load" | "update" | "insert"
     emit = false
 }) {
-    console.log('renderReaction received: ', 'target: ', target, ' | emoji: ', emoji, ' | target_type: ', target_type,
+    console.log('renderReaction received: ', 'target: ', target, ' | emoji: ', emoji, ' | emote_title: ', emote_title, ' | target_type: ', target_type,
         ' | user_id: ', user_id, ' | user_ids: ', user_ids, ' | target_id, ', target_id,' | article_id: ', article_id, ' | mode: ', mode);
     const existing = target.querySelector(`.emoji-reaction[data-emoji="${emoji}"]`);
     let result;
@@ -32,7 +33,7 @@ window.renderReaction = function({
 
         case "insert":
             // Always create new reaction for insertion
-            result = createNewReaction({target, emoji, target_type, user_id, user_ids, target_id, article_id});
+            result = createNewReaction({target, emoji, emote_title, target_type, user_id, user_ids, target_id, article_id});
             break;
 
         default:
@@ -46,6 +47,7 @@ window.renderReaction = function({
             '| user_id', user_id, '| user_ids', result.user_ids, '| target_id: ', target_id, ' | article_id: ', article_id);
         const payload = {
             emoji,
+            emote_title,
             target_type,
             action: result.action,
             user_id,
@@ -80,6 +82,7 @@ function unicodeReactionDrawer(toolbar, target_type) {
 
         picker.addEventListener("emoji-click", (e) => {
             const emoji = e.detail.unicode;
+            const emote_title = e.detail.emoji.annotation || e.detail.emoji.shortcodes?.[0] || '';
 
             // read cached IDs
             const article_id = picker.dataset.articleId ? Number(picker.dataset.articleId) : null;
@@ -91,7 +94,7 @@ function unicodeReactionDrawer(toolbar, target_type) {
                 : toolbar.nextElementSibling;
 
             console.log('unicodeReactionDrawer: ', 'reactionsContainer: ', reactionsContainer, ' | user_ids: ', [window.CURRENT_USER_ID], ' | emoji: ', emoji,
-                ' | target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
+                ' | emote_title: ', emote_title, ' | target_type: ', target_type, ' | user_id: ', window.CURRENT_USER_ID);
 
             if (!reactionsContainer) return;
             if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
@@ -102,6 +105,7 @@ function unicodeReactionDrawer(toolbar, target_type) {
             window.renderReaction({
                 target: reactionsContainer,
                 emoji,
+                emote_title: emote_title,
                 target_type,
                 user_id: window.CURRENT_USER_ID,
                 user_ids: [window.CURRENT_USER_ID],
@@ -135,14 +139,16 @@ function unicodeReactionDrawer(toolbar, target_type) {
 
             if (chatMessage) {
                 const emoji = e.detail.unicode;
+                const emote_title = e.target.title;
 
                 console.log("unicodeReactionDrawer renderReaction ", ' | target: ', chatMessage,
                     ' | emoji: ', emoji, ' | target_id: ', chatId, ' | target_type: ', target_type,
-                    ' | user_ids: ', [window.CURRENT_USER_ID], " | user_id: ", window.CURRENT_USER_ID);
+                    ' | user_ids: ', [window.CURRENT_USER_ID], " | user_id: ", window.CURRENT_USER_ID, ' | emote_title: ', emote_title);
 
                 window.renderReaction({
                     target: target,
                     emoji: emoji,
+                    emote_title: emote_title,
                     target_id: chatId,
                     target_type: target_type,
                     user_id: window.CURRENT_USER_ID,
@@ -206,11 +212,16 @@ function customChatReactionDrawer(wrapper, toolbar) {
 function handleExistingReaction(existing, user_ids, user_id) {
     const countSpan = existing.querySelector(".reaction-count");
     const alreadyReacted = user_ids.includes(user_id);
-    console.log('handleExistingReaction: ', 'alreadyReacted ', alreadyReacted, '| user ids: ', user_ids, '| user id: ', user_id);
+    const emoji = String(existing.dataset.emoji);
+	let emote_title = window.emojiMap[emoji] || '';
+    if (!emote_title) {
+        emote_title = emoji.replace(/\.[^.]+$/, "");
+    }
+    console.log('handleExistingReaction: ', 'alreadyReacted ', alreadyReacted, ' | emoji: ', emoji,
+        ' | existing: ', existing, ' | emote_title: ', emote_title, '| user ids: ', user_ids, '| user id: ', user_id);
 
     if (alreadyReacted) {
         user_ids = user_ids.filter(id => id !== user_id);
-        // const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
         const names = user_ids.map(id => {
             const u = window.userMap[id] || {};
             return u.display_name || u.username || `User ${id}`;
@@ -222,8 +233,7 @@ function handleExistingReaction(existing, user_ids, user_id) {
             return { user_id, action: "remove", removed: true };
         } else {
             existing.dataset.user_ids = JSON.stringify(user_ids);
-            // existing.title = `Reacted by: ${usernames.join(", ")}`;
-            existing.title = `Reacted by: ${names.join(", ")}`;
+            existing.title = `${emote_title} reacted by: ${names.join(", ")}`;
             countSpan.textContent = user_ids.length;
             return { user_ids, action: "remove" };
         }
@@ -231,12 +241,15 @@ function handleExistingReaction(existing, user_ids, user_id) {
         if (!user_ids.includes(user_id)) {
             user_ids.push(user_id);
         }
+        const names = user_ids.map(id => {
+            const u = window.userMap[id] || {};
+            return u.display_name || u.username || `User ${id}`;
+        });
         console.log('handleExistingReaction user_ids list updated: ', user_ids);
         existing.dataset.user_ids = JSON.stringify(user_ids);
         console.log('updated existing dataset user_ids: ', existing.dataset.user_ids);
         const usernames = user_ids.map(id => window.userMap[id] || `User ${id}`);
-        // existing.title = `Reacted by: ${usernames.join(", ")}`;
-        existing.title = `Reacted by: ${names.join(", ")}`;
+        existing.title = `${emote_title} reacted by: ${names.join(", ")}`;
         countSpan.textContent = user_ids.length;
         return { user_ids, action: "add" };
     }
@@ -249,6 +262,7 @@ function isCustomEmoji(val) {
 function createNewReaction({
     target,
     emoji,
+    emote_title='',
     target_type,
     user_id,
     user_ids = [],
@@ -256,8 +270,9 @@ function createNewReaction({
     article_id = null
 }) {
 
-    console.log('createNewReaction received: ', 'target: ', target, ' | emoji: ', emoji, ' | target_type: ', target_type,
-        ' | user_id: ', user_id, ' | user_ids: ', user_ids, ' | target_id: ', target_id, ' | article_id: ', article_id);
+    console.log('createNewReaction received: ', 'target: ', target, ' | emoji: ', emoji, 
+        ' | emote_title: ', emote_title, ' | target_type: ', target_type,' | user_id: ', user_id,
+        ' | user_ids: ', user_ids, ' | target_id: ', target_id, ' | article_id: ', article_id);
     // ---- normalize inputs ----
     const uid = Number(user_id);
 
@@ -302,7 +317,7 @@ function createNewReaction({
         // `emoji` is a filename like "derp.png"
         emojiEl = document.createElement("img");
         emojiEl.className = "emoji-reaction custom";
-        emojiEl.src = `/media/emojis/${emoji}`;       // adjust to your path
+        emojiEl.src = `/media/emojis/${emoji}`;
         emojiEl.alt = emoji.replace(/\.[^.]+$/, "");  // filename without ext
         emojiEl.style.verticalAlign = "middle";
     } else {
@@ -315,8 +330,12 @@ function createNewReaction({
     const countEl = document.createElement("span");
     countEl.className = "reaction-count";
 
+    if (!emote_title) {
+        emote_title = window.emojiMap[emoji]
+    }
+
     if (!user_ids.includes(user_id) && user_id !== null) user_ids.push(user_id);
-    window.updateReactionTooltip(span, user_ids);
+    window.updateReactionTooltip(span, user_ids, emote_title);
     countEl.textContent = String(user_ids.length);
 
     span.appendChild(emojiEl);
