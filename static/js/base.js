@@ -272,12 +272,16 @@ function handleReactionUpdate({ emoji, emote_title, target_type, action, user_id
     }
 };
 
+function isCustomEmoji(val) {
+    return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
+}
+
 window.updateReactionTooltip = function (span, user_ids, emote_title='') {
     const emoji = String(span.dataset.emoji);
     if (!emote_title) {
 		emote_title = window.emojiMap[emoji] || '';
 	}
-    if (!emote_title) {
+    if (!emote_title && isCustomEmoji(emoji)) {
         emote_title = emoji.replace(/\.[^.]+$/, "");
     }
     
