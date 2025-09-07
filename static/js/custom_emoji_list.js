@@ -1,17 +1,18 @@
 const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 'kekw.png', 'kekl.png', 'lizardkek.gif', 'leo-kek.png',
-    'trolldog.png', 'whyyy.webp', 'derp.png', 'gasp.png', 'hmm-2.png',
+    'trolldog.png', 'whyyy.webp', 'derp.png', 'gasp.png', 'hmm-2.png', 'huh-turtle.png',
      'trump.png', 'vance.png', 'bernie.png', 'aoc.png', 'biden-thumbsup.png', 'noem.png', 'noem-sp.png', 'feldman.png',
     'dogesmile.png', 'pikathink.png', 'pika-surprised.png', 'guillotine.png', 'nonazis.png',
 
     'gir.webp', 'gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-flat.webp', 'gir-suit.png', 'gir-happy.png', 'zimthonk.png',
     
     'anya-this.webp', 'pika-wave.webp',  'anime-tea.webp', 'cat-coding.webp', 'scared-hamster.gif',
+
     'pepe-nod.webp', 'pepe-nope.webp', 'frog-nod.webp', 'frog-wave.webp', 'pepe-wave.webp', 'pepe-omg.webp', 'frog-ping.webp',  'kermit-ak.webp', 
     'pepe-yes.png', 'pepe-no.png', 'hmm.png', 'peepo-ban.png', 'pepe-ban.webp', 'peepo-cute.png', 'peepo-happy.png', 'peepo-heart.png',
     'pepe-toilet.webp', 'pepe-rain.webp', 'pepe-brero.webp', 'pepe-cringe.png', 'pepe-cringe-sign.webp', 'pepe-goose-shoot.webp',
     'pepe-clown.png', 'pepe-copium.png', 'pepe-cry.png', 'pepe-dumb.png', 'pepe-evil.png', 'pepe-ez.png', 'pepe-kraken.webp', 'pepe-letsgo.webp',
     'pepe-money.webp', 'pepe-mods.webp', 'pepe-party.webp', 'pepe-peek.webp', 'pepe-toxic.webp', 'pepe-sweat.webp', 'pepe-rainbow.webp',
-    'pepe-rifle.webp', 'pepe-shoot.webp',
+    'pepe-rifle.webp', 'pepe-shoot.webp', 'pepe-wtf.png', 'peepo-sign-wtf.png',
     'pepe-fu.png', 'pepe-giggle.webp', 'pepe-gun.png', 'pepe-happy.png', 'pepe-holy.png', 'pepe-megacringe.png', 'pepe-nervous.png',
     'pepe-noted.webp', 'frog-noted.png', 'pepe-nuke.png', 'pepe-ok-boomer.png', 'pepe-omg.png', 'pepe-poggers.png', 'pepe-popcorn.png',
     'pepe-pray.png', 'pepe-rage.png', 'pepe-sadclown.png', 'pepe-sadge.png', 'pepe-sad-hands.png', 'pepe-salute.png', 'pepe-shades.png',
@@ -29,5 +30,5 @@ const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 
     'polite.webp', 'politecri.png', 'sadcat.png', 'sadcat.webp', 'smudge.png', 'typingcat.webp', 'yellcat.webp',
 
     'blob-yes.png', 'blob-no.png', 'blob-oof.png', 'blob-thx.png', 'blob-angry.png', 'blob-sad.png', 'blob-frown.gif', 'blob-kms.gif', 
-    'blob-glare-zoom.gif', 'blob-party.gif'
+    'blob-glare-zoom.gif', 'blob-party.gif', 'blob-blush.gif', 'blob-devil.png'
 ];
