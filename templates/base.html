@@ -250,12 +250,10 @@
     {% endif %}
     window.selectedEmojiSize = 28;
 
-    window.emojiMapReady = false;
     fetch('/static/emoji/annotations.json')
         .then(res => res.json())
         .then(data => {
             window.emojiMap = data;
-            window.emojiMapReady = true;
             document.dispatchEvent(new Event('emojiMap:ready'));
         })
         .catch(err => console.error('emojiMap load failed:', err));
