@@ -1008,6 +1008,7 @@ def add_comment(article_id):
             "parent_id": parent_id,
             "avatar_filename": current_user.avatar_filename,
             "user_id": int(current_user.get_id()),
+            "username": current_user.username,
             "display_name": current_user.display_name,
             "content_html": comment.content,   # already sanitized
             "created_at": comment.created_at.isoformat() if hasattr(comment, "created_at") else None,
