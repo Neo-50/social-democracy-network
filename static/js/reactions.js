@@ -331,7 +331,7 @@ function createNewReaction({
     countEl.className = "reaction-count";
 
     if (!user_ids.includes(user_id) && user_id !== null) user_ids.push(user_id);
-    window.onEmojiMapReady(() => window.updateReactionTooltip(span, user_ids, emote_title));
+    window.updateReactionTooltip(span, user_ids, emote_title);
     countEl.textContent = String(user_ids.length);
 
     span.appendChild(emojiEl);
