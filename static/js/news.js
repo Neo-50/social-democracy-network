@@ -13,71 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.initCommentSocket();
     }
 
-    // Hydrate comments/articles with reactions
-    for (const [key, reactions] of Object.entries(window.reactionMap || {})) {
-        // expected new formats:  "news:a:451" (article)  |  "news:c:7" (comment)
-        // legacy format:         "news:7"                (comment only)
-        const parts = String(key).split(":"); // ["news","a","451"] | ["news","7"]
-
-        let isArticle = false;
-        let id = null;
-        let root = null;
-
-        if (parts.length === 3 && parts[0] === "news") {
-            // new keyed format
-            isArticle = parts[1] === "a";
-            id = Number(parts[2]);
-            root = isArticle
-                ? document.querySelector(`.news-article[data-article-id="${id}"]`)
-                : document.querySelector(`.comment-container[data-comment-id="${id}"]`);
-        } else if (parts.length === 2 && parts[0] === "news") {
-            // legacy "news:{comment_id}"
-            id = Number(parts[1]);
-            root = document.querySelector(`.comment-container[data-comment-id="${id}"]`);
-        } else {
-            console.warn("[reactions] unknown reactionMap key:", key);
-            continue;
-        }
-
-        if (!root) {
-            console.warn("[reactions] root not found for", { key, id, isArticle });
-            continue;
-        }
-
-        const reactionsContainer = root.querySelector(".reactions-container");
-        if (!reactionsContainer) {
-            console.warn("[reactions] reactionsContainer missing for", { key, id });
-            continue;
-        }
-        reactions.forEach((item) => {
-            const { emoji, user_ids = [] } = item;
-
-            const itemArticle = item.article_id ?? null;
-            const itemTarget = item.target_id ?? null;
-
-            // prefer item value; fall back to key-derived id
-            const articleId = isArticle ? (itemArticle ?? id) : null;
-            const targetId = !isArticle ? (itemTarget ?? id) : null;
-
-            // sanity: mismatch between key and item
-            if ((articleId != null) === (targetId != null)) {
-                console.warn("[reactions] key/item id mismatch", { key, item, id, isArticle });
-            }
-
-            const payload = {
-                target: reactionsContainer,
-                emoji,
-                target_type: "news",
-                user_ids: Array.isArray(user_ids) ? user_ids : [],
-                mode: "load",
-                ...(articleId != null ? { article_id: articleId } : { target_id: targetId }),
-            };
-
-            console.log("[reactions] hydrate ->", payload);
-            window.renderReaction(payload);
-        });
-    }
-
     //Listen for clicks on emoji drawers & toggle
     emojiNewsDrawerListeners();
 
@@ -152,6 +87,73 @@ document.addEventListener('DOMContentLoaded', () => {
             img.classList.add("uploaded-image");
         }
     });
+});
+
+// Hydrate comments/articles with reactions
+document.addEventListener('emojiMap:ready', () => {
+    for (const [key, reactions] of Object.entries(window.reactionMap || {})) {
+        // expected new formats:  "news:a:451" (article)  |  "news:c:7" (comment)
+        // legacy format:         "news:7"                (comment only)
+        const parts = String(key).split(":"); // ["news","a","451"] | ["news","7"]
+
+        let isArticle = false;
+        let id = null;
+        let root = null;
+
+        if (parts.length === 3 && parts[0] === "news") {
+            // new keyed format
+            isArticle = parts[1] === "a";
+            id = Number(parts[2]);
+            root = isArticle
+                ? document.querySelector(`.news-article[data-article-id="${id}"]`)
+                : document.querySelector(`.comment-container[data-comment-id="${id}"]`);
+        } else if (parts.length === 2 && parts[0] === "news") {
+            // legacy "news:{comment_id}"
+            id = Number(parts[1]);
+            root = document.querySelector(`.comment-container[data-comment-id="${id}"]`);
+        } else {
+            console.warn("[reactions] unknown reactionMap key:", key);
+            continue;
+        }
+
+        if (!root) {
+            console.warn("[reactions] root not found for", { key, id, isArticle });
+            continue;
+        }
+
+        const reactionsContainer = root.querySelector(".reactions-container");
+        if (!reactionsContainer) {
+            console.warn("[reactions] reactionsContainer missing for", { key, id });
+            continue;
+        }
+        reactions.forEach((item) => {
+            const { emoji, user_ids = [] } = item;
+
+            const itemArticle = item.article_id ?? null;
+            const itemTarget = item.target_id ?? null;
+
+            // prefer item value; fall back to key-derived id
+            const articleId = isArticle ? (itemArticle ?? id) : null;
+            const targetId = !isArticle ? (itemTarget ?? id) : null;
+
+            // sanity: mismatch between key and item
+            if ((articleId != null) === (targetId != null)) {
+                console.warn("[reactions] key/item id mismatch", { key, item, id, isArticle });
+            }
+
+            const payload = {
+                target: reactionsContainer,
+                emoji,
+                target_type: "news",
+                user_ids: Array.isArray(user_ids) ? user_ids : [],
+                mode: "load",
+                ...(articleId != null ? { article_id: articleId } : { target_id: targetId }),
+            };
+
+            console.log("[reactions] hydrate ->", payload);
+            window.renderReaction(payload);
+        });
+    }
 });
 
 window.initCommentSocket = function () {
