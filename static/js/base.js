@@ -279,7 +279,6 @@ function isCustomEmoji(val) {
 window.updateReactionTooltip = function (span, user_ids, emote_title = '') {
     const emoji = String(span.dataset.emoji);
 
-    console.log('window.emojiMapReady: ', window.emojiMapReady);
     console.log('updateReactionTooltip [emojiMap] ready?:',
         window.emojiMap && Object.keys(window.emojiMap).length,
         'len=', window.emojiMap ? Object.keys(window.emojiMap).length : 0
