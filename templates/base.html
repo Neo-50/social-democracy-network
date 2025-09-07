@@ -249,14 +249,16 @@
         window.RECIPIENT_ID = {{ recipient.id }};
     {% endif %}
     window.selectedEmojiSize = 28;
-    window.emojiMap = {};
+    let map = {};
+    window.emojiMapReady = false;
 
     fetch('/static/emoji/annotations.json')
         .then(res => res.json())
         .then(data => {
-            window.emojiMap = data;
+            map = data;
         });
-        document.dispatchEvent(new Event('emojiMap:ready'));
+        window.emojiMap = map;
+        window.emojiMapReady = true;
 </script>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>

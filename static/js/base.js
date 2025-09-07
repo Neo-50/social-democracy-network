@@ -276,28 +276,23 @@ function isCustomEmoji(val) {
     return typeof val === "string" && /\.(png|webp|gif|jpe?g|svg)$/i.test(val);
 }
 
-window.onEmojiMapReady = function (fn) {
-    if (window.emojiMap && Object.keys(window.emojiMap).length) return fn();
-    const handler = () => { document.removeEventListener('emojiMap:ready', handler); fn(); };
-    document.addEventListener('emojiMap:ready', handler, { once: true });
-}
-
-window.updateReactionTooltip = function (span, user_ids, emote_title='') {
+window.updateReactionTooltip = function (span, user_ids, emote_title = '') {
     const emoji = String(span.dataset.emoji);
 
+    console.log('window.emojiMapReady: ', window.emojiMapReady);
     console.log('updateReactionTooltip [emojiMap] ready?:',
         window.emojiMap && Object.keys(window.emojiMap).length,
         'len=', window.emojiMap ? Object.keys(window.emojiMap).length : 0
     );
 
     if (!emote_title) {
-		emote_title = window.emojiMap[emoji] || '';
-	}
+        emote_title = window.emojiMap[emoji] || '';
+    }
     if (!emote_title && isCustomEmoji(emoji)) {
         emote_title = emoji.replace(/\.[^.]+$/, "");
     }
-    
-    console.log('updateReactionTooltip: span: ', span, 
+
+    console.log('updateReactionTooltip: span: ', span,
         ' | user_ids: ', user_ids, ' | emote_title: ', emote_title, ' | emoji: ', emoji);
     const names = user_ids.map(id => {
         const u = window.userMap[id] || {};
