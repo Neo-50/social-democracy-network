@@ -126,7 +126,7 @@
                 <button type="submit" class="submit-article">Submit</button>
             </div>
             <select name="category" id="category">
-                <option value="">Uncategorized</option>
+                <option value="Uncategorized">Uncategorized/Other</option>
                 <option value="Political Corruption">US Political Corruption</option>
                 <option value="ICE & Immigration">ICE Raids & Immigration</option>
                 <option value="Protests & Activism">Protests & Activism</option>
@@ -178,6 +178,9 @@
                 <li><a href="{{ url_for('news', category='US/International Conflict') }}"
                     class="{{ 'active' if selected_category == 'US/International Conflict' else '' }}">
                     US/International Conflict & Crises</a></li>
+                <li><a href="{{ url_for('news', category='Uncategorized') }}"
+                    class="{{ 'active' if selected_category == 'Uncategorized' else '' }}">
+                    Uncategorized/Other</a></li>
             </ul>
         </div>
         <form method="GET" action="{{ url_for('news') }}">
@@ -200,6 +203,7 @@
                 <option value="Ukraine War" {{ 'selected' if selected_category=='Ukraine War' else '' }}>Ukraine War</option>
                 <option value="US/International Conflict" {{ 'selected' if selected_category=='US/International Conflict'
                     else '' }}>US/International Conflict</option>
+                <option value="Uncategorized" {{ 'selected' if selected_category=='Uncategorized' else '' }}>Other/Uncategorized</option>
             </select>
         </form>
     </section>
@@ -350,7 +354,7 @@
                         <div class="new-category-container">
                             {% if is_admin() or current_user_obj.id == article.user_id %}
                                 <select name="new-category" id="new-category">
-                                    <option value="">Uncategorized</option>
+                                    <option value="Uncategorized">Uncategorized</option>
                                     <option value="Protests & Activism">Protests & Activism</option>
                                     <option value="Climate & Environment">Climate & Environment</option>
                                     <option value="Science & Technology">Science & Technology</option>
