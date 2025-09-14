@@ -302,11 +302,8 @@ def news():
 			"target_id": r.target_id,
 		})
 
-	reaction_map = dict(reaction_map_dd)  # plain dict for Jinja
-	# user_map = {
-	# 	user.id: user.display_name
-	# 	for user in db.session.query(User.id, User.display_name).all()
-	# }
+	reaction_map = dict(reaction_map_dd)
+    
 	user_map = {
 		user.id: {
 			"display_name": user.display_name,
@@ -353,6 +350,29 @@ def about():
 @login_required
 def profile():
     return render_template('profile.html', user = current_user)
+
+@app.route("/api/year-overview")
+def year_overview():
+    year = request.args.get("year", type=int)
+    if not year:
+        return jsonify({"error": "Missing year parameter"}), 400
+
+    start = date(year, 1, 1)
+    end   = date(year + 1, 1, 1)   # first day of next year
+
+    articles = (NewsArticle.query
+        .filter(NewsArticle.published >= start,
+                NewsArticle.published < end)
+        .order_by(NewsArticle.published.desc())
+        .all())
+
+    result = [{
+        "id": a.id,
+        "title": a.title,
+        "published": a.published.isoformat()
+    } for a in articles]
+
+    return jsonify(result)
 
 @app.route('/upload_avatar', methods=['POST'])
 @login_required
