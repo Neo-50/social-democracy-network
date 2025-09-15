@@ -241,7 +241,7 @@ def news():
 	except (ValueError, TypeError):
 		highlighted = None
 
-	if selected_category.isdigit():
+	if selected_category and selected_category.isdigit():
 			count = (db.session.query(sa.func.count(NewsArticle.id))
 			.filter(sa.extract('year', NewsArticle.published) == int(selected_category))
 			.scalar())
