@@ -526,3 +526,98 @@ function copyLink(articleId) {
             showToast("❌ Failed to copy link.");
         });
 }
+
+async function loadYearOverview(year) {
+	try {
+        const res = await fetch(`/api/year-overview?year=${year}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const { count, articles } = await res.json();
+
+		const container = document.getElementById('year-overview');
+		container.innerHTML = '';
+
+		// Group by YYYY-MM-DD
+		const byDay = {};
+		for (const a of articles) {
+			const day = a.published; // "YYYY-MM-DD"
+			(byDay[day] ||= []).push(a);
+		}
+
+		// Sort days descending (most recent first). ISO strings sort lexicographically.
+		const days = Object.keys(byDay).sort((a, b) => b.localeCompare(a));
+
+		// Helper: "MM-DD-YYYY"
+		const fmtDay = (iso) => {
+			const [y, m, d] = iso.split('-');
+			return `${m}-${d}-${y}`;
+		};
+
+		for (const day of days) {
+			// Day header
+			const h = document.createElement('h2');
+			h.textContent = fmtDay(day);
+			container.appendChild(h);
+
+			// List of articles for that day
+			const ul = document.createElement('ul');
+			for (const a of byDay[day]) {
+				const li = document.createElement('li');
+
+				// Safely build the link; fall back to /news/<id> if url absent
+				const url = a.url || `/news/${a.id}`;
+
+				const link = document.createElement('a');
+				link.href = url;
+				link.target = '_blank';
+				link.rel = 'noopener';
+				link.textContent = a.title;
+
+				li.appendChild(link);
+				ul.appendChild(li);
+			}
+			container.appendChild(ul);
+		}
+
+		// Optional: empty state
+		if (days.length === 0) {
+			container.textContent = `No articles found for ${year}.`;
+		}
+	} catch (err) {
+		console.error('Failed to load year overview:', err);
+	}
+}
+
+// On load, read year from query (?category=YYYY) or /news/YYYY
+document.addEventListener('DOMContentLoaded', () => {
+	const qsYear   = new URLSearchParams(location.search).get('category');
+	const pathYear = (location.pathname.match(/\/news\/(\d{4})/) || [])[1];
+	const year = qsYear || pathYear;
+	if (year) loadYearOverview(year);
+});
+
+// async function loadYearOverview(year) {
+// 	try {
+// 		const res = await fetch(`/api/year-overview?year=${year}`);
+// 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+// 		const articles = await res.json();
+
+// 		// Example: insert into a container
+// 		const container = document.getElementById('year-overview');
+// 		container.innerHTML = ''; // clear old content
+// 		articles.forEach(a => {
+// 			const item = document.createElement('div');
+// 			item.innerHTML = `${a.published}: <a href="${a.url}" target="_blank">${a.title}</a>`;
+// 			container.appendChild(item);
+// 		});
+// 	} catch (err) {
+// 		console.error('Failed to load year overview:', err);
+// 	}
+// }
+
+// document.addEventListener('DOMContentLoaded', () => {
+// 	const category = new URLSearchParams(location.search).get('category');
+// 	if (category && /^\d{4}$/.test(category)) {
+// 		loadYearOverview(category);
+// 	}
+// });
+

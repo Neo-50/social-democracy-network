@@ -216,23 +216,40 @@
                 All Categories ({{ count }} articles)
             {% endif %}
         </div>
-        <form method="get" class="sort-form" style="margin-bottom: 1em;">
-            {% if selected_category %}
-                <input type="hidden" name="category" value="{{ selected_category }}">
-            {% endif %}
-            <label for="sort">Sort by:</label>
-            <select name="sort" id="sort" onchange="this.form.submit()">
-                <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Newest First</option>
-                <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
-            </select>
-            <label for="limit">Show:</label>
-            <select name="limit" id="limit" onchange="this.form.submit()">
-                <option value="20" {% if request.args.get('limit', '20') == '20' %}selected{% endif %}>20</option>
-                <option value="50" {% if request.args.get('limit') == '50' %}selected{% endif %}>50</option>
-                <option value="100" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
-                <option value="all" {% if request.args.get('limit') == 'all' %}selected{% endif %}>All</option>
-            </select>
-        </form>
+        <div class="sort-container">
+            <form method="get" class="sort-form" style="margin-bottom: 1em;">
+                {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                {% endif %}
+                <label for="sort">Sort by:</label>
+                <select name="sort" id="sort" onchange="this.form.submit()">
+                    <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Newest First</option>
+                    <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
+                </select>
+                <label for="limit">Show:</label>
+                <select name="limit" id="limit" onchange="this.form.submit()">
+                    <option value="20" {% if request.args.get('limit', '20') == '20' %}selected{% endif %}>20</option>
+                    <option value="50" {% if request.args.get('limit') == '50' %}selected{% endif %}>50</option>
+                    <option value="100" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
+                    <option value="all" {% if request.args.get('limit') == 'all' %}selected{% endif %}>All</option>
+                </select>
+                <label for="year-overview">Year Overview:</label>
+                <select id="year-overview-select" onchange="if (this.value) window.location.href=this.value;">
+                    <option value="">Select year…</option>
+                    <option value="{{ url_for('news', category='2025') }}">2025</option>
+                    <option value="{{ url_for('news', category='2024') }}">2024</option>
+                    <option value="{{ url_for('news', category='2023') }}">2023</option>
+                    <option value="{{ url_for('news', category='2022') }}">2022</option>
+                    <option value="{{ url_for('news', category='2021') }}">2021</option>
+                    <option value="{{ url_for('news', category='2020') }}">2020</option>
+                    <option value="{{ url_for('news', category='2019') }}">2019</option>
+                    <option value="{{ url_for('news', category='2018') }}">2018</option>
+                    <option value="{{ url_for('news', category='2017') }}">2017</option>
+                    <option value="{{ url_for('news', category='2016') }}">2016</option>
+                </select>
+            </form>
+        </div>
+        <div id="year-overview"></div>
 
         {% for article in articles %}
             {% if scrape_id == article.id and article.needs_scrape %}
