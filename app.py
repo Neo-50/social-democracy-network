@@ -212,7 +212,6 @@ def news():
 	limit = request.args.get('limit', '20')
 	order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
 
-
 	if selected_category:
 		articles_query = NewsArticle.query \
 			.filter_by(category=selected_category) \
@@ -242,7 +241,12 @@ def news():
 	except (ValueError, TypeError):
 		highlighted = None
 
-	count = len(articles)
+	if selected_category.isdigit():
+			count = (db.session.query(sa.func.count(NewsArticle.id))
+			.filter(sa.extract('year', NewsArticle.published) == int(selected_category))
+			.scalar())
+	else:
+		count = len(articles)
 
 	for article in articles:
 		if "youtube.com" in article.url or "youtu.be" in article.url:
@@ -362,13 +366,16 @@ def year_overview():
 		.filter(sa.extract('year', NewsArticle.published) == year)
 		.order_by(NewsArticle.published.desc())
 		.all())
-
-	result = [{
-		"id": a.id,
-		"title": a.title,
-        "url": a.url,
-		"published": str(a.published)
-	} for a in articles]
+    
+	result = {
+		"count": len(articles),  # total articles for the year
+		"articles": [{
+			"id": a.id,
+			"title": a.title,
+			"url": a.url,
+			"published": a.published.isoformat(),  # "YYYY-MM-DD"
+		} for a in articles]
+	}
 
 	return jsonify(result)
 

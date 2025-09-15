@@ -278,6 +278,13 @@ p {
     color: #bbb;
 }
 
+.sort-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: baseline;
+}
+
 .sort-form {
     font-size: 0.9rem;
     color: #bbb;
