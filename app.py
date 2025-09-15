@@ -353,26 +353,24 @@ def profile():
 
 @app.route("/api/year-overview")
 def year_overview():
-    year = request.args.get("year", type=int)
-    if not year:
-        return jsonify({"error": "Missing year parameter"}), 400
+	year = request.args.get("year", type=int)
+	if not year:
+		return jsonify({"error": "Missing year parameter"}), 400
 
-    start = date(year, 1, 1)
-    end   = date(year + 1, 1, 1)   # first day of next year
+	# Efficient: filter directly in the database
+	articles = (NewsArticle.query
+		.filter(sa.extract('year', NewsArticle.published) == year)
+		.order_by(NewsArticle.published.desc())
+		.all())
 
-    articles = (NewsArticle.query
-        .filter(NewsArticle.published >= start,
-                NewsArticle.published < end)
-        .order_by(NewsArticle.published.desc())
-        .all())
+	result = [{
+		"id": a.id,
+		"title": a.title,
+        "url": a.url,
+		"published": str(a.published)
+	} for a in articles]
 
-    result = [{
-        "id": a.id,
-        "title": a.title,
-        "published": a.published.isoformat()
-    } for a in articles]
-
-    return jsonify(result)
+	return jsonify(result)
 
 @app.route('/upload_avatar', methods=['POST'])
 @login_required
