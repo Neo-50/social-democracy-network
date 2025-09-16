@@ -210,17 +210,17 @@ def news():
 	scrape_id = request.args.get("scrape", type=int)
 	sort_order = request.args.get('sort', 'desc')
 	raw_limit = request.args.get('limit', '20')
-	order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
+	# order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
 
 	if selected_category:
 		articles_query = NewsArticle.query \
 			.filter_by(category=selected_category) \
 			.filter(NewsArticle.id != highlight_id) \
-			.order_by(order_func)
+			.order_by(NewsArticle.published.desc())
 	else:
 		articles_query = NewsArticle.query \
 			.filter(NewsArticle.id != highlight_id) \
-			.order_by(order_func)
+			.order_by(NewsArticle.published.desc())
 
 	# if limit != 'all':
 	# 	try:
@@ -242,6 +242,9 @@ def news():
 		articles = articles_query.limit(limit_int).all()
 	else:
 		articles = articles_query.all()
+    
+	if sort_order == 'asc':
+		articles.reverse()
 
 	highlighted = None
 	try:
