@@ -209,7 +209,7 @@ def news():
 	highlight_id = request.args.get("article", type=int)
 	scrape_id = request.args.get("scrape", type=int)
 	sort_order = request.args.get('sort', 'desc')
-	limit = request.args.get('limit', '20')
+	raw_limit = request.args.get('limit', '20')
 	order_func = NewsArticle.published.asc() if sort_order == 'asc' else NewsArticle.published.desc()
 
 	if selected_category:
@@ -222,12 +222,24 @@ def news():
 			.filter(NewsArticle.id != highlight_id) \
 			.order_by(order_func)
 
-	if limit != 'all':
-		try:
-			limit_int = int(limit)
-			articles = articles_query.limit(limit_int).all()
-		except ValueError:
-			articles = articles_query.limit(20).all()
+	# if limit != 'all':
+	# 	try:
+	# 		limit_int = int(limit)
+	# 		articles = articles_query.limit(limit_int).all()
+	# 	except ValueError:
+	# 		articles = articles_query.limit(20).all()
+	# else:
+	# 	articles = articles_query.all()
+	
+	try:
+		limit_int = None if raw_limit == 'all' else max(1, int(raw_limit))
+	except ValueError:
+		limit_int = 20
+
+	articles_query = articles_query.order_by(order_func)
+    
+	if limit_int is not None:
+		articles = articles_query.limit(limit_int).all()
 	else:
 		articles = articles_query.all()
 
