@@ -1485,7 +1485,7 @@ def upload_news_image():
         i += 1
 
     file.save(path)
-    file_url = url_for("media", filename=f"news/{filename}", _external=True)
+    file_url = url_for("media", filename=f"news/{filename}")
 
     return jsonify({"success": True, "url": file_url, "filename": filename})
 
