@@ -25,6 +25,7 @@ from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
 from werkzeug.exceptions import RequestEntityTooLarge
+from werkzeug.utils import secure_filename
 from utils.metadata_scraper import try_youtube_scrape
 from utils.email_utils import confirm_verification_token, send_verification_email
 from dotenv import load_dotenv
@@ -1080,33 +1081,109 @@ def purge_reactions_for_comments(comment_ids: list[int], target_type: str = "new
                 Reaction.target_id.in_(comment_ids))
         .delete(synchronize_session=False))
 
-@app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+# @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
+# @login_required
+# def delete_comment(comment_id):
+#     comment = NewsComment.query.get_or_404(comment_id)
+
+#     # return JSON (don't abort HTML)
+#     if int(current_user.get_id()) != comment.user_id and not is_admin():
+#         return jsonify({"ok": False, "error": "forbidden"}), 403
+
+#     article_id = comment.article_id
+#     ids = get_comment_subtree_ids(comment.id)   # parent + descendants
+#     descendant_ids = [i for i in ids if i != comment.id]
+#     try:
+#         purge_reactions_for_comments(ids, "news")   # bulk delete reactions
+#         db.session.delete(comment)                  # replies removed via cascade
+#         db.session.commit()                         # <-- no with .begin()
+#     except Exception:
+#         db.session.rollback()
+#         app.logger.exception("delete_comment failed")
+#         return jsonify({"ok": False, "error": "server_error"}), 500
+
+#     socketio.emit(
+#         'delete_comment',
+#         {'comment_id': comment_id, 'article_id': article_id, "descendant_ids": descendant_ids,},
+#         namespace='/news_comments'
+#     )
+#     return jsonify({"ok": True, "comment_id": comment_id})
+
+# Only delete files that look like your generated names: "abc12_newsimg001.jpg"
+_IMG_NAME_RE = re.compile(r'^[a-z0-9]{5}_newsimg\d{3}\.[a-z0-9]+$', re.I)
+
+# Find /media/news/<filename> in HTML
+IMG_SRC_RE = re.compile(
+	r'src=["\'](?:https?://[^"\']+)?/media/news/([^"\'>]+)["\']',
+	re.I
+)
+
+def extract_news_filenames(html: str) -> list[str]:
+	if not html:
+		return []
+	return [m for m in IMG_SRC_RE.findall(html or '') if _IMG_NAME_RE.match(m)]
+
+def safe_unlink_news(filename: str) -> bool:
+	# Prevent traversal and enforce our naming contract
+	if not _IMG_NAME_RE.match(filename):
+		return False
+	path = get_media_path("news", secure_filename(filename))
+	try:
+		if os.path.isfile(path):
+			os.remove(path)
+			return True
+	except Exception:
+		print('Failed to remove ', path)
+		pass
+	return False
+
+def collect_comment_images(comment_ids: list[int]) -> set[str]:
+	# Pull raw HTML bodies for all ids
+	rows = db.session.execute(
+		sa.select(NewsComment.content).where(NewsComment.id.in_(comment_ids))
+	).scalars().all()
+	found: set[str] = set()
+	for html in rows:
+		for name in extract_news_filenames(html):
+			found.add(name)
+	return found
+
+@app.route("/delete_comment/<int:comment_id>", methods=["POST"])
 @login_required
 def delete_comment(comment_id):
-    comment = NewsComment.query.get_or_404(comment_id)
+	comment = NewsComment.query.get_or_404(comment_id)
 
-    # return JSON (don't abort HTML)
-    if int(current_user.get_id()) != comment.user_id and not is_admin():
-        return jsonify({"ok": False, "error": "forbidden"}), 403
+	# perms
+	if int(current_user.get_id()) != comment.user_id and not is_admin():
+		return jsonify({"ok": False, "error": "forbidden"}), 403
 
-    article_id = comment.article_id
-    ids = get_comment_subtree_ids(comment.id)   # parent + descendants
-    descendant_ids = [i for i in ids if i != comment.id]
-    try:
-        purge_reactions_for_comments(ids, "news")   # bulk delete reactions
-        db.session.delete(comment)                  # replies removed via cascade
-        db.session.commit()                         # <-- no with .begin()
-    except Exception:
-        db.session.rollback()
-        app.logger.exception("delete_comment failed")
-        return jsonify({"ok": False, "error": "server_error"}), 500
+	article_id = comment.article_id
+	ids = get_comment_subtree_ids(comment.id)   # parent + descendants
+	descendant_ids = [i for i in ids if i != comment.id]
 
-    socketio.emit(
-        'delete_comment',
-        {'comment_id': comment_id, 'article_id': article_id, "descendant_ids": descendant_ids,},
-        namespace='/news_comments'
-    )
-    return jsonify({"ok": True, "comment_id": comment_id})
+	# Collect file names *before* we delete the rows
+	to_unlink = collect_comment_images(ids)
+
+	try:
+		purge_reactions_for_comments(ids, "news")
+		db.session.delete(comment)  # replies removed via ON DELETE CASCADE
+		db.session.commit()
+	except Exception:
+		db.session.rollback()
+		app.logger.exception("delete_comment failed")
+		return jsonify({"ok": False, "error": "server_error"}), 500
+
+	# Unlink after successful commit (best effort)
+	for name in to_unlink:
+		safe_unlink_news(name)
+
+	socketio.emit(
+		'delete_comment',
+		{"comment_id": comment_id, "article_id": article_id, "descendant_ids": descendant_ids},
+        
+		namespace='/news_comments'
+	)
+	return jsonify({"ok": True, "comment_id": comment_id})
 
 def purge_reactions_for_article(article_id: int):
     ids = db.session.execute(sa.text(

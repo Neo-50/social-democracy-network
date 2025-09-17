@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const res = await fetch(form.action, {
-            method: 'POST',
-            headers: { 'X-CSRFToken': window.csrfToken || '' },
-            body: new FormData(form)
+                method: 'POST',
+                headers: { 'X-CSRFToken': window.csrfToken || '' },
+                body: new FormData(form)
             });
             const data = await res.json();
             if (!data.ok) return;
