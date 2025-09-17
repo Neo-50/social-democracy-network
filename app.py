@@ -221,16 +221,7 @@ def news():
 		articles_query = NewsArticle.query \
 			.filter(NewsArticle.id != highlight_id) \
 			.order_by(NewsArticle.published.desc())
-
-	# if limit != 'all':
-	# 	try:
-	# 		limit_int = int(limit)
-	# 		articles = articles_query.limit(limit_int).all()
-	# 	except ValueError:
-	# 		articles = articles_query.limit(20).all()
-	# else:
-	# 	articles = articles_query.all()
-	
+    
 	try:
 		limit_int = None if raw_limit == 'all' else max(1, int(raw_limit))
 	except ValueError:
