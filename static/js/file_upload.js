@@ -11,6 +11,7 @@ async function handleBase64Images(editor) {
             try {
                 const res = await fetch("/news/upload_news_image", {
                     method: "POST",
+                    headers: { 'X-CSRFToken': window.csrfToken },
                     body: formData
                 });
                 const data = await res.json();
