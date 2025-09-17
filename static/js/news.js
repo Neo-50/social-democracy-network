@@ -594,30 +594,3 @@ document.addEventListener('DOMContentLoaded', () => {
 	const year = qsYear || pathYear;
 	if (year) loadYearOverview(year);
 });
-
-// async function loadYearOverview(year) {
-// 	try {
-// 		const res = await fetch(`/api/year-overview?year=${year}`);
-// 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
-// 		const articles = await res.json();
-
-// 		// Example: insert into a container
-// 		const container = document.getElementById('year-overview');
-// 		container.innerHTML = ''; // clear old content
-// 		articles.forEach(a => {
-// 			const item = document.createElement('div');
-// 			item.innerHTML = `${a.published}: <a href="${a.url}" target="_blank">${a.title}</a>`;
-// 			container.appendChild(item);
-// 		});
-// 	} catch (err) {
-// 		console.error('Failed to load year overview:', err);
-// 	}
-// }
-
-// document.addEventListener('DOMContentLoaded', () => {
-// 	const category = new URLSearchParams(location.search).get('category');
-// 	if (category && /^\d{4}$/.test(category)) {
-// 		loadYearOverview(category);
-// 	}
-// });
-
