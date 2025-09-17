@@ -27,33 +27,41 @@ document.addEventListener('DOMContentLoaded', () => {
             const hiddenInput = form.querySelector('input[name="comment-content"]');
             const submitBtn = form.querySelector('[type="submit"]');
 
-            if (!editor || !hiddenInput) {
-                console.warn('Editor or hidden input not found', { editor, hiddenInput });
-                return;
-            }
-            await maybeHandleBase64Images(editor);
+            try {
+                if (!editor || !hiddenInput) {
+                    console.warn('Editor or hidden input not found', { editor, hiddenInput });
+                    return;
+                }
+                await maybeHandleBase64Images(editor);
 
-            // 2) Move sanitized HTML into hidden input for server
-            hiddenInput.value = editor.innerHTML;
+                // 2) Move sanitized HTML into hidden input for server
+                hiddenInput.value = editor.innerHTML;
 
-            // 3) POST via fetch (AJAX)
-            submitBtn?.setAttribute('disabled', 'disabled');
-            const fd = new FormData(form);
-            const res = await fetch(form.action, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': window.csrfToken }, // you already have this set
-                body: fd,
-            });
+                // 3) POST via fetch (AJAX)
+                submitBtn?.setAttribute('disabled', 'disabled');
+                const fd = new FormData(form);
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': window.csrfToken }, // you already have this set
+                    body: fd,
+                });
 
-            // Expect JSON {"ok": true, "comment_id": ...} from route
-            const data = await res.json();
-            if (!res.ok || !data.ok) {
-                console.error('Comment failed', data);
-                return;
-            }
+                // Expect JSON {"ok": true, "comment_id": ...} from route
+                const data = await res.json();
+                if (!res.ok || !data.ok) {
+                    console.error('Comment failed', data);
+                    return;
+                }
 
-            editor.innerHTML = '';
-            form.querySelector('[name="parent_id"]')?.setAttribute('value', '');
+                editor.innerHTML = '';
+                form.querySelector('[name="parent_id"]')?.setAttribute('value', '');
+            } catch (err) {
+                console.error('Post failed:', err);
+                showToast('Post failed.');
+            } finally {
+                // ← ALWAYS restore button
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.removeAttribute('disabled'); }
+            };
         });
     });
 
