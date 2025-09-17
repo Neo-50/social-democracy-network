@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fetch("/chat/upload_chat_image", {
             method: "POST",
+            headers: { 'X-CSRFToken': window.csrfToken },
             body: formData,
         })
 
