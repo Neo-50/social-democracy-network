@@ -440,6 +440,52 @@ function wireUpload(scope) {
 
     scope.dataset.uploadWired = "1";
 
+    // --- paste-to-upload ---
+	if (!scope.dataset.pasteWired && editor) {
+		scope.dataset.pasteWired = '1';
+		editor.addEventListener('paste', async (e) => {
+			const cd = e.clipboardData || window.clipboardData;
+			if (!cd) return;
+
+			// If an image file is on the clipboard, upload it directly
+			for (const it of cd.items || []) {
+				if (it.type && it.type.startsWith('image/')) {
+					e.preventDefault(); // stop base64 <img> from being inserted
+					const file = it.getAsFile();
+					if (!file) return;
+
+					const fd = new FormData();
+					fd.append('file', file, file.name || 'pasted-image.png');
+
+					try {
+						const res = await fetch('/news/upload_news_image', {
+							method: 'POST',
+							headers: { 'X-CSRFToken': window.csrfToken },
+							body: fd,
+							credentials: 'same-origin',
+						});
+						const data = await res.json();
+						if (!res.ok || !data.success || !data.url) {
+							throw new Error(data.error || `HTTP ${res.status}`);
+						}
+						const img = document.createElement('img');
+						img.src = data.url;
+						img.className = 'uploaded-image';
+						insertNodeAtCursor(editor, img);
+					} catch (err) {
+						console.error('Paste upload failed:', err);
+						showToast(`Failed to upload pasted image: ${String(err.message || err)}`);
+					}
+					return; // handled the image paste
+				}
+			}
+
+			// No image file on clipboard: let normal paste happen,
+			// then convert any data-URI images the browser inserted.
+			setTimeout(() => maybeHandleBase64Images(editor), 0);
+		});
+	}
+
     uploadButton.addEventListener("click", (e) => {
         e.preventDefault();
         fileInput.click();
@@ -474,7 +520,6 @@ function wireUpload(scope) {
     }
   });
 }
-
 
 function maybeHandleBase64Images(editor) {
   // only run handler if there’s at least one non-emoji data URI
