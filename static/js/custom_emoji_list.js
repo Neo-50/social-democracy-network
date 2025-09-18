@@ -22,7 +22,7 @@ const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 
     'pepe-fightme.png', 'pepe-flower.png', 'pepe-heart02.png', 'pepe-hug.png', 'pepe-nerd.gif', 'pepe-pirate.png', 'pepe-pitchfork.png',
     'pepe-police.png', 'pepe-sleep.png', 'pepe-ukraine.png', 'pepe-wizard.png', 'pepe-yep.png', 'pepe-yikes.png',
 
-    'cat-angry.png', 'cat-blankie.webp', 'cat-newspaper.webp', 'cat-kiss.webp', 'cat-peek.webp', 'cat-dead.webp', 
+    'cat-angry.png', 'cat-sadness.png', 'cat-blankie.webp', 'cat-newspaper.webp', 'cat-kiss.webp', 'cat-peek.webp', 'cat-dead.webp', 
     'cat-huh.webp', 'catto-huh.webp', 'cat-smug.webp', 'cat-crown.webp',
     'catblip.webp', 'catblush.webp', 'catclap.webp', 'catcool.webp', 'catcry.webp', 'catcry2.webp', 'catcry3.webp', 'catcry4.webp', 'catcry5.webp',
     'catdance.webp', 'catjam.webp', 'catno.webp', 'catpolice.webp', 'catrave.webp', 'catsadge.png', 'catshake.webp', 'nyas-popcorn.webp',
