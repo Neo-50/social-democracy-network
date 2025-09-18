@@ -1017,42 +1017,45 @@ def sanitize_comment_html(raw_html):
 @login_required
 def add_comment(article_id):
 
-    raw_html = request.form['comment-content']
-    cleaned_html = sanitize_comment_html(raw_html)
+	raw_html = request.form['comment-content']
+	cleaned_html = sanitize_comment_html(raw_html)
 
-    parent_id = request.form.get('parent_id')
-    if parent_id:
-        parent_id = int(parent_id)
+	parent_id = request.form.get('parent_id')
+	if parent_id:
+		parent_id = int(parent_id)
 
-    if cleaned_html:
-        comment = NewsComment(
-            content=cleaned_html,
-            article_id=article_id,
-            user_id=current_user.get_id(),
-            parent_id=parent_id if parent_id else None,
-        )
+	if cleaned_html:
+		comment = NewsComment(
+			content=cleaned_html,
+			article_id=article_id,
+			user_id=current_user.get_id(),
+			parent_id=parent_id if parent_id else None,
+		)
 
-        db.session.add(comment)
-        db.session.commit()
-        payload = {
-            "comment_id": comment.id,
-            "article_id": article_id,
-            "parent_id": parent_id,
-            "avatar_filename": current_user.avatar_filename,
-            "user_id": int(current_user.get_id()),
-            "username": current_user.username,
-            "display_name": current_user.display_name,
-            "content_html": comment.content,   # already sanitized
-            "created_at": comment.created_at.isoformat() if hasattr(comment, "created_at") else None,
-        }
-        socketio.emit(
-            "new_comment",
-            payload,
-            namespace="/news_comments",
-            include_self=True
-        )
+		content_html = comment.formatted_content()
 
-        return jsonify({"ok": True, "comment_id": comment.id})
+		db.session.add(comment)
+		db.session.commit()
+		payload = {
+			"comment_id": comment.id,
+			"article_id": article_id,
+			"parent_id": parent_id,
+			"avatar_filename": current_user.avatar_filename,
+			"user_id": int(current_user.get_id()),
+			"username": current_user.username,
+			"display_name": current_user.display_name,
+			"content_html": content_html,
+            "created_at": comment.timestamp.isoformat()
+			# "created_at": comment.created_at.isoformat() if hasattr(comment, "created_at") else None,
+		}
+		socketio.emit(
+			"new_comment",
+			payload,
+			namespace="/news_comments",
+			include_self=True
+		)
+
+		return jsonify({"ok": True, "comment_id": comment.id})
 
 def reactions_q_for_comment(comment_id: int):
     return (Reaction.query

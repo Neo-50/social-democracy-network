@@ -1,6 +1,9 @@
 from db_init import db
 from datetime import datetime, timezone
 import html
+import re
+
+_TAG_RE = re.compile(r'</?\w+[^>]*>')
 
 class NewsArticle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,8 +48,16 @@ class NewsComment(db.Model):
         db.ForeignKey('news_comment.id',  ondelete='CASCADE', name='fk_news_comment_parent_id'),
         nullable=True
     )
-    def formatted_content(self):
-        return self.content
+
+    def formatted_content(self) -> str:
+        if not self.content:
+            return ''
+        if _TAG_RE.search(self.content):
+            # Already HTML: keep tags, but make \n render as line breaks
+            return self.content.replace('\n', '<br />')
+        # Plain text: escape + <br />
+        safe = html.escape(self.content)
+        return safe.replace('\n', '<br />')
 
     replies = db.relationship(
         'NewsComment',
