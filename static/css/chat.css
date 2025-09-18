@@ -24,7 +24,8 @@ html, body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  min-height: 60px;
+  max-height: 200px;
   background-color: black;
   display: flex;
   align-items: center;
@@ -87,10 +88,6 @@ html, body {
 
 .chat-message:hover {
     background-color: #111;
-}
-
-.chat-message:hover .chat-toolbar {
-  display: flex;
 }
 
 .preview-container {
@@ -169,13 +166,13 @@ html, body {
 .chat-editor {
     width: 100%;
     min-height: 45px;
-    max-height: 100px;
+    max-height: 200px;
     color: #ddd;
     padding: 10px;
     border-radius: 24px;
     background-color: #1a1a1a;
     border: 1px solid #00e3ea;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     overflow-y: auto;
     overflow-wrap: break-word;
 }
@@ -231,6 +228,10 @@ html, body {
   border-radius: 24px;
 }
 
+.chat-message:hover .chat-toolbar {
+  display: flex;
+}
+
 /* upload button */
 .upload-button {
     background: transparent;
@@ -238,6 +239,14 @@ html, body {
     margin-bottom: 8px;
     cursor: pointer;
     padding: 0;
+}
+
+.uploaded-image {
+    max-width: 450px;
+    max-height: 450px;
+    border-radius: 24px;
+    margin: 6px 0;
+    display: block;
 }
 
 .icon {
