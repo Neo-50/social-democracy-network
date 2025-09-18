@@ -782,6 +782,16 @@ def clear_notifs():
 def debug_ids():
     return jsonify([m.id for m in Message.query.all()])
 
+def ts_for_client(dt):
+	if dt is None:
+		return None
+	# make it UTC, drop fractions, add Z
+	if dt.tzinfo is None:
+		dt = dt.replace(tzinfo=timezone.utc)
+	else:
+		dt = dt.astimezone(timezone.utc)
+	return dt.isoformat(timespec='seconds').replace('+00:00', 'Z')
+
 @app.route('/api/send_message', methods=['POST'])
 @login_required
 def api_send_message():
@@ -799,16 +809,6 @@ def api_send_message():
     db.session.commit()
 
     from datetime import timezone
-
-    def ts_for_client(dt):
-        if dt is None:
-            return None
-        # make it UTC, drop fractions, add Z
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        else:
-            dt = dt.astimezone(timezone.utc)
-        return dt.isoformat(timespec='seconds').replace('+00:00', 'Z')
 
     # emit WebSocket notification to recipient
     print('Emit message notification', 'type: ', 'message', 'from: ', getattr(current_user, 'display_name', 'Unknown'),
@@ -1036,6 +1036,7 @@ def add_comment(article_id):
 
 		db.session.add(comment)
 		db.session.commit()
+
 		payload = {
 			"comment_id": comment.id,
 			"article_id": article_id,
@@ -1045,8 +1046,8 @@ def add_comment(article_id):
 			"username": current_user.username,
 			"display_name": current_user.display_name,
 			"content_html": content_html,
-            "created_at": comment.timestamp.isoformat()
-			# "created_at": comment.created_at.isoformat() if hasattr(comment, "created_at") else None,
+			"timestamp": ts_for_client(comment.timestamp),
+    		"created_at": ts_for_client(comment.timestamp)
 		}
 		socketio.emit(
 			"new_comment",
