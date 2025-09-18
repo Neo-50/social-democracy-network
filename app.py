@@ -999,7 +999,7 @@ def admin_tools():
 
 
 def sanitize_comment_html(raw_html):
-    allowed_tags = ['img']
+    allowed_tags = ['img', 'br',]
     allowed_attributes = {
         'img': ['width', 'height', 'src', 'alt', 'class', 'style'],
     }
@@ -1084,34 +1084,6 @@ def purge_reactions_for_comments(comment_ids: list[int], target_type: str = "new
         .filter(Reaction.target_type == target_type,
                 Reaction.target_id.in_(comment_ids))
         .delete(synchronize_session=False))
-
-# @app.route('/delete_comment/<int:comment_id>', methods=['POST'])
-# @login_required
-# def delete_comment(comment_id):
-#     comment = NewsComment.query.get_or_404(comment_id)
-
-#     # return JSON (don't abort HTML)
-#     if int(current_user.get_id()) != comment.user_id and not is_admin():
-#         return jsonify({"ok": False, "error": "forbidden"}), 403
-
-#     article_id = comment.article_id
-#     ids = get_comment_subtree_ids(comment.id)   # parent + descendants
-#     descendant_ids = [i for i in ids if i != comment.id]
-#     try:
-#         purge_reactions_for_comments(ids, "news")   # bulk delete reactions
-#         db.session.delete(comment)                  # replies removed via cascade
-#         db.session.commit()                         # <-- no with .begin()
-#     except Exception:
-#         db.session.rollback()
-#         app.logger.exception("delete_comment failed")
-#         return jsonify({"ok": False, "error": "server_error"}), 500
-
-#     socketio.emit(
-#         'delete_comment',
-#         {'comment_id': comment_id, 'article_id': article_id, "descendant_ids": descendant_ids,},
-#         namespace='/news_comments'
-#     )
-#     return jsonify({"ok": True, "comment_id": comment_id})
 
 # Only delete files that look like your generated names: "abc12_newsimg001.jpg"
 _IMG_NAME_RE = re.compile(r'^[a-z0-9]{5}_newsimg\d{3}\.[a-z0-9]+$', re.I)
@@ -1414,63 +1386,66 @@ def get_messages():
 @app.route("/chat/send", methods=["POST"])
 @login_required
 def send_chat_message():
-    data = request.get_json()
-    content = data.get("content", "").strip()
-    file_url = data.get("file_url")
-    file_name = data.get("file_name")
-    message_type = data.get("message_type", "text")
+	data = request.get_json()
+	content = data.get("content", "").strip()
+	file_url = data.get("file_url")
+	file_name = data.get("file_name")
+	message_type = data.get("message_type", "text")
 
-    raw_content = data.get("content", "").strip()
-    content = sanitize_comment_html(raw_content)
+	raw_content = data.get("content", "").strip()
+	content = sanitize_comment_html(raw_content)
 
-    if not content and not file_url:
-        return jsonify({"error": "Empty message"}), 400
+	if not content and not file_url:
+		return jsonify({"error": "Empty message"}), 400
 
-    print("Sanitized content before saving:", content)
+	print("/chat/send Raw content:", raw_content)
+	print("/chat/send Sanitized content before saving:", content)
 
-    message = ChatMessage(
-        user_id=current_user.id,
-        content=content,
-        file_url=file_url,
-        file_name=file_name,
-        message_type=message_type,
-        timestamp=datetime.now(timezone.utc)
-    )
+	message = ChatMessage(
+		user_id=current_user.id,
+		content=content,
+		file_url=file_url,
+		file_name=file_name,
+		message_type=message_type,
+		timestamp=datetime.now(timezone.utc)
+	)
+	
+	print("/chat/send formatted content:", message.formatted_content())
 
-    db.session.add(message)
-    db.session.commit()
- 
-    socketio.emit("new_message", {
-        "user_id": current_user.id,
-        "username": current_user.username,
-        "display_name": current_user.display_name,
-        "avatar": current_user.avatar_filename or "",
-        "bio": current_user.bio or "No bio available",
-        "id": message.id,
-        "content": message.content,
-        "timestamp": message.timestamp.isoformat(),
-        "edited": message.edited,
-        "file_url": message.file_url,
-        "file_name": message.file_name,
-        "message_type": message.message_type,
-        "room_id": "chat_global",
-    }, room="chat_global", namespace="/chat")
- 
-    return jsonify({
-        "success": True,
-        "message": {
-            "user_id": current_user.id,
-            "username": current_user.username,
-            "display_name": current_user.display_name,
-            "avatar": current_user.avatar_filename or "",
-            "bio": current_user.bio or "No bio available",
-            "id": message.id,
-            "content": message.content,
-            "timestamp": message.timestamp.isoformat(),
-            "file_url": message.file_url,
-            "file_name": message.file_name,
-            "message_type": message.message_type,
-        }
+	db.session.add(message)
+	db.session.commit()
+
+	socketio.emit("new_message", {
+		"user_id": current_user.id,
+		"username": current_user.username,
+		"display_name": current_user.display_name,
+		"avatar": current_user.avatar_filename or "",
+		"bio": current_user.bio or "No bio available",
+		"id": message.id,
+		"content": message.formatted_content(),
+		"timestamp": message.timestamp.isoformat(),
+		"edited": message.edited,
+		"file_url": message.file_url,
+		"file_name": message.file_name,
+		"message_type": message.message_type,
+		"room_id": "chat_global",
+	}, room="chat_global", namespace="/chat")
+
+	return jsonify({
+		"success": True,
+		"message": {
+			"user_id": current_user.id,
+			"username": current_user.username,
+			"display_name": current_user.display_name,
+			"avatar": current_user.avatar_filename or "",
+			"bio": current_user.bio or "No bio available",
+			"id": message.id,
+			"content": message.formatted_content(),
+			"timestamp": message.timestamp.isoformat(),
+			"file_url": message.file_url,
+			"file_name": message.file_name,
+			"message_type": message.message_type,
+		}
 })
 
 @app.route("/api/url-preview")

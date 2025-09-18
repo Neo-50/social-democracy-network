@@ -1,5 +1,9 @@
 from db_init import db
 from datetime import datetime, timezone
+import html
+import re
+
+_TAG_RE = re.compile(r'</?\w+[^>]*>')
 
 class ChatMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -10,5 +14,15 @@ class ChatMessage(db.Model):
     file_name = db.Column(db.String(255), nullable=True) # original filename
     message_type = db.Column(db.String(50), nullable=False, default="text")
     edited = db.Column(db.Boolean, default=False)
+
+    def formatted_content(self) -> str:
+        if not self.content:
+            return ''
+        if _TAG_RE.search(self.content):
+            # Already HTML: keep tags, but make \n render as line breaks
+            return self.content.replace('\n', '<br />')
+        # Plain text: escape + <br />
+        safe = html.escape(self.content)
+        return safe.replace('\n', '<br />')
     
     user = db.relationship('User', backref=db.backref('chat_messages', passive_deletes=True, lazy=True))
