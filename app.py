@@ -389,21 +389,22 @@ def year_overview():
 @app.route('/upload_avatar', methods=['POST'])
 @login_required
 def upload_avatar():
-    MAX_FILE_SIZE = 8 * 1024 * 1024
-    if request.content_length is not None and request.content_length > MAX_FILE_SIZE:
-        return jsonify({"success": False, "error": "File too large (max 16 MB)"}), 400
-    
-    file = request.files.get('avatar')
-    if file and allowed_file(file.filename):
-        ext = file.filename.rsplit('.', 1)[1].lower()
-        filename = f"{current_user.username}.{ext}"
-        path = get_media_path('avatars', filename)
-        file.save(path)
+	MAX_FILE_SIZE = 8 * 1024 * 1024
+	if request.content_length is not None and request.content_length > MAX_FILE_SIZE:
+		flash("Upload failed, file is too large!", "danger")
+		return jsonify({"success": False, "error": "File too large (max 16 MB)"}), 400
 
-        current_user.avatar_filename = filename
-        db.session.commit()
-        flash("Avatar updated", "success")
-    return redirect(url_for('profile'))
+	file = request.files.get('avatar')
+	if file and allowed_file(file.filename):
+		ext = file.filename.rsplit('.', 1)[1].lower()
+		filename = f"{current_user.username}.{ext}"
+		path = get_media_path('avatars', filename)
+		file.save(path)
+
+		current_user.avatar_filename = filename
+		db.session.commit()
+		flash("Avatar updated", "success")
+	return redirect(url_for('profile'))
 
 @app.route('/admin/upload_avatar/<int:user_id>', methods=['POST'])
 @login_required
@@ -924,7 +925,7 @@ def update_article_category(article_id):
 def log_incoming_request():
     print("Request received:", request.method, request.path)
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
 def allowed_file(filename):
     return '.' in filename and \
