@@ -411,9 +411,18 @@ p {
     
 }
 
+.end-space {
+    display: flex;
+    flex-direction: column;
+}
+
+.guest-spacer {
+    height: 140px;
+}
+
 .custom-emoji-drawer {
     position: absolute;
-    max-width: 440px;
+    max-width: 400px;
     bottom: 80px;
     right: -250px;
 }
