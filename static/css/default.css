@@ -86,8 +86,8 @@ a:focus {
 
 .custom-reaction-drawer {
     position: absolute;
-    top: calc(100%);
-    right: 0;
+    top: -240px;
+    right: 40px;
     max-height: 400px;
     min-width: 420px;
     z-index: 1200;
@@ -105,8 +105,8 @@ a:focus {
 .unicode-wrapper-reaction {
 	display: none;
 	position: absolute;
-	top: calc(100%);
-	right: 0;
+	top: -240px;
+	right: 40px;
 	overflow: auto;
 	padding: 10px;
 	background: #1a1a1a;
