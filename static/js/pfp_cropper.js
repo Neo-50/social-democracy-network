@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     avatarInput.addEventListener("change", function () {
         const file = this.files[0];
-        if (file && /^image\/(png|jpeg|jpg|gif)$/.test(file.type)) {
+        if (file && /^image\/(png|jpeg|jpg|gif|webp)$/.test(file.type)) {
             const reader = new FileReader();
             reader.onload = function (e) {
                 cropperImage.src = e.target.result;
@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     })
                     .catch(error => {
+                        showToast('Upload failed', error);
                         console.error("Upload failed:", error);
                     })
                     .finally(() => {
