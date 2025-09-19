@@ -218,7 +218,7 @@
                         if current_user_obj.avatar_filename else 'default_avatar.png' %}
                     <img src="{{ url_for('media', filename='avatars/' ~ avatar_file) }}" class="avatar-inline" alt="User Avatar">
                     <div class="dropdown-menu">
-                        <span class="username">{{ current_user_obj.display_name or current_user_obj.username }}</span>
+                        <span class="username">{{ current_user_obj.username }}</span>
                         <a href="{{ url_for('profile', username=current_user_obj.username) }}">Profile</a>
                         <a href="{{ url_for('messages') }}" class="btn">Messages</a>
                         {% if current_user.is_authenticated and current_user.is_admin %}

@@ -14,7 +14,7 @@
             <p><strong>About Me:</strong> {{ user.bio or 'No bio yet.' }}</p>
         </div>
         <div class="profile-container-left">
-            <h2>Upload Avatar (max 2MB):</h2>
+            <h2>Upload Avatar (max 8MB):</h2>
             <form method="POST" action="{{ url_for('upload_avatar') }}" enctype="multipart/form-data" id="avatar-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="file" name="avatar" accept="image/*">
