@@ -389,6 +389,10 @@ def year_overview():
 @app.route('/upload_avatar', methods=['POST'])
 @login_required
 def upload_avatar():
+    MAX_FILE_SIZE = 8 * 1024 * 1024
+    if request.content_length is not None and request.content_length > MAX_FILE_SIZE:
+        return jsonify({"success": False, "error": "File too large (max 16 MB)"}), 400
+    
     file = request.files.get('avatar')
     if file and allowed_file(file.filename):
         ext = file.filename.rsplit('.', 1)[1].lower()
