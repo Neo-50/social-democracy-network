@@ -399,7 +399,7 @@ p {
 }
 
 .unicode-wrapper-reaction {
-    right: 0;
+    right: 80px;
     min-width: fit-content;
     max-height: 440px;
 }
@@ -409,15 +409,6 @@ p {
         right: -50px;
     }
     
-}
-
-.end-space {
-    display: flex;
-    flex-direction: column;
-}
-
-.guest-spacer {
-    height: 140px;
 }
 
 .custom-emoji-drawer {
