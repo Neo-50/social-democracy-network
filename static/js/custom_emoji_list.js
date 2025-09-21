@@ -1,6 +1,6 @@
 const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 'kekw.png', 'kekl.png', 'lizardkek.gif', 'leo-kek.png',
     'trolldog.png', 'whyyy.webp', 'derp.png', 'gasp.png', 'hmm-2.png', 'huh-turtle.png',
-     'trump.png', 'vance.png', 'bernie.png', 'aoc.png', 'biden-thumbsup.png', 'noem.png', 'noem-sp.png', 'feldman.png',
+     'trump.png', 'vance.png', 'bernie.png', 'aoc.png', 'biden-thumbsup.png', 'noem.png', 'noem-sp.png', 'feldman.png', 'luigi.png',
     'dogesmile.png', 'pikathink.png', 'pika-surprised.png', 'guillotine.png', 'nonazis.png',
 
     'gir.webp', 'gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-flat.webp', 'gir-suit.png', 'gir-happy.png', 'zimthonk.png',
