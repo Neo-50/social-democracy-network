@@ -44,7 +44,6 @@ def try_youtube_scrape(url):
     if not video_id:
         return None
 
-    embed_url = f"https://www.youtube.com/embed/{video_id}?enablejsapi=1"
     oembed_url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
 
     try:
@@ -112,4 +111,3 @@ def try_requests_scrape(url, domain):
     }
 
     return metadata
-

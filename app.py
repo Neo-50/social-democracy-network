@@ -10,7 +10,7 @@ from models import User, NewsArticle, NewsComment, Message, ChatMessage, Reactio
 from models.reactions import reaction_user
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
-import re
+import re, requests
 import subprocess
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
@@ -24,6 +24,7 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
+from urllib.parse import urlparse, urlunparse
 from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.utils import secure_filename
 from utils.metadata_scraper import try_youtube_scrape
@@ -1453,30 +1454,140 @@ def send_chat_message():
 		}
 })
 
+# _X_HOSTS = {'x.com','twitter.com','mobile.twitter.com','fxtwitter.com','vxtwitter.com','fixupx.com'}
+# _BSKY_HOSTS = {'bsky.app','staging.bsky.app','www.bsky.app', 'fxbsky.app', 
+#                'vxbsky.app', 'bskye.app', 'bskyx.app', 'bsyy.app'}
+
+_X_HOST_RE = re.compile(
+	r'^(?:(?:www\.|mobile\.)?(?:x|twitter)\.com|(?:www\.)?(?:fx|vx)?twitter\.com|(?:www\.)?fixupx\.com)$',
+	re.I
+)
+
+# /<user>/status/<id>  OR  /i/status/<id>  OR  /i/web/status/<id>
+_X_STATUS_USER_RE = re.compile(r'^/([A-Za-z0-9_\.]+)/status/(\d+)(?:/.*)?$')
+_X_STATUS_I_RE    = re.compile(r'^/i(?:/web)?/status/(\d+)(?:/.*)?$')
+
+# return (canonical_url, tweet_id)
+def _normalize_x_url(url: str) -> tuple[str | None, str | None]:
+	u = urlparse(url)
+	host = u.netloc.split(':')[0].lower()
+	if not _X_HOST_RE.match(host):
+		return None, None
+	path = u.path.rstrip('/')
+
+	m = _X_STATUS_USER_RE.match(path)
+	if m:
+		user, tid = m.group(1), m.group(2)
+		return f'https://x.com/{user}/status/{tid}', tid
+
+	m = _X_STATUS_I_RE.match(path)
+	if m:
+		tid = m.group(1)
+		return f'https://x.com/i/status/{tid}', tid
+
+	return None, None
+
+# optional www./staging., optional fx/vx prefix, then bsky + optional suffix, .app
+_BSKY_HOST_RE = re.compile(
+	r'^(?:(?:www\.|staging\.)?(?:fx|vx)?bsky[a-z0-9-]*\.app)$',
+	re.I
+)
+# be a touch more permissive with rkey chars just in case
+_BSKY_POST_RE = re.compile(r'^/profile/[^/]+/post/[A-Za-z0-9._-]+/?$')
+_SCRIPT_TAG_RE = re.compile(r'<script\b[^<]*(?:(?!</script>)<[^<]*)*</script>', re.I)
+
+def _normalize_bsky_url(url: str) -> str | None:
+	u = urlparse(url)
+	host = u.netloc.split(':')[0].lower()
+	if not _BSKY_HOST_RE.match(host):
+		return None
+
+	path = u.path.rstrip('/')
+	if not _BSKY_POST_RE.match(path):
+		return None
+
+	return f'https://bsky.app{path}'
+
+
+def _oembed_x(url: str) -> dict | None:
+	try:
+		r = requests.get(
+			'https://publish.twitter.com/oembed',
+			params={'url': url, 'omit_script': '1', 'dnt': 'true', 'theme': 'dark'},
+			timeout=8
+		)
+		r.raise_for_status()
+		return {'type': 'x', 'url': url, 'embed_html': r.json().get('html', '')}
+	except Exception:
+		return None
+
+def _oembed_bsky(url: str) -> dict | None:
+	try:
+		r = requests.get('https://embed.bsky.app/oembed',
+			params={'url': url, 'maxwidth': '600'}, timeout=8)
+		r.raise_for_status()
+		html = _SCRIPT_TAG_RE.sub('', r.json().get('html', ''))
+		return {
+			'type': 'bluesky',
+			'url': url,
+			'embed_html': html,                                   # fallback
+			'iframe_src': f'https://embed.bsky.app/iframe?href={requests.utils.quote(url, safe="")}'
+		}
+	except Exception:
+		return None
+
+
 @app.route("/api/url-preview")
 def url_preview():
-    url = request.args.get("url")
-    if not url:
-        return jsonify({"error": "No URL"}), 400
-    
-    if "youtube.com" in url or "youtu.be" in url:
-        data = try_youtube_scrape(url)
-        if data:
-            return jsonify(data)
+	url = request.args.get("url")
+	if not url:
+		return jsonify({"error": "No URL"}), 400
 
-    article = NewsArticle.query.filter_by(url=url).first()
-    if not article:
-        return jsonify({"error": "Not found"}), 404
+	# if "youtube.com" in url or "youtu.be" in url:
+	# 	data = try_youtube_scrape(url)
+	# 	if data:
+	# 		return jsonify(data)
+            
+	if "youtube.com" in url or "youtu.be" in url:
+		data = try_youtube_scrape(url)
+		if data:
+			data['type'] = 'youtube'   # <- add
+			data['url'] = url          # <- add (try_youtube_scrape didn’t include it)
+			return jsonify(data)
+	
+	# X / Twitter (incl. alt domains)
+	x_url, x_id = _normalize_x_url(url)
+	if x_url:
+		try:
+			data = _oembed_x(x_url)
+			if data:
+				data['tweet_id'] = x_id
+				return jsonify(data)
+		except Exception:
+			pass
 
-    return jsonify({
-        "url": article.url,
-        "title": article.title,
-        "description": article.description,
-        "image_url": article.image_url,
-        "authors": article.authors,
-        "published": article.published,
-        "source": article.source,
-        "category": article.category
+	# Bluesky
+	bsky_url = _normalize_bsky_url(url)
+	if bsky_url:
+		try:
+			return jsonify(_oembed_bsky(bsky_url))
+		except Exception:
+			pass
+		
+	article = NewsArticle.query.filter_by(url=url).first()
+	if not article:
+		return jsonify({"error": "Not found"}), 404
+
+	return jsonify({
+		"url": article.url,
+		"title": article.title,
+		"description": article.description,
+		"image_url": article.image_url,
+		"authors": article.authors,
+		"published": article.published,
+		"source": article.source,
+		"category": article.category,
+        "type": "card"
     })
 
 @app.route("/chat/upload_chat_image", methods=["POST"])

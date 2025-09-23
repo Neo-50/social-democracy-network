@@ -257,7 +257,21 @@
             document.dispatchEvent(new Event('emojiMap:ready'));
         })
         .catch(err => console.error('emojiMap load failed:', err));
+
+    // ensure X widgets.js exists
+    (function ensureTwitterWidgets(){
+        if (document.querySelector('script[src*="platform.twitter.com/widgets.js"]')) return;
+        const s = document.createElement('script');
+        s.src = 'https://platform.twitter.com/widgets.js';
+        s.async = true;
+        document.head.appendChild(s);
+    })();
 </script>
+
+<!-- X (Twitter) widgets -->
+<!-- <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> -->
+<!-- Bluesky embed runtime -->
+<script async src="https://embed.bsky.app/static/embed.js"></script>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
