@@ -97,6 +97,10 @@ html, body {
     width: 380px;
 }
 
+.twitter-tweet, .bluesky-embed {
+  margin-left: 60px;
+}
+
 @media (width < 600px) {
     .preview-container{
         margin-left: 0;
@@ -114,7 +118,7 @@ html, body {
         word-wrap: break-word;
     }
 
-    .chat-toolbar {
+    .chat-toolbar, .twitter-tweet, .bluesky-embed {
         margin-left: 0;
     }
 }

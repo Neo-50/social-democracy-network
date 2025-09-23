@@ -397,3 +397,21 @@ function hideNotificationBadge() {
     }
 }
 
+window.whenTwitterReady = (function(){
+	let p;
+	return function whenTwitterReady() {
+		if (p) return p;
+		p = new Promise(resolve => {
+			const done = () => resolve(window.twttr);
+			let tries = 0;
+			const iv = setInterval(() => {
+				if (window.twttr?.widgets?.load) { clearInterval(iv); done(); }
+				else if (++tries > 200) { clearInterval(iv); resolve(null); } // ~10s cap
+			}, 50);
+			// if the lib queue exists, also register a ready callback
+			if (window.twttr?.ready) window.twttr.ready(() => { clearInterval(iv); done(); });
+		});
+		return p;
+	};
+})();
+

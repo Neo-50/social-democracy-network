@@ -126,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(data => {
                     if (data.success) {
                         chatEditor.innerHTML = "";
+                        scrollChatToBottom();
                     } else {
                         console.error("Error sending message:", data.error);
                     }
@@ -182,9 +183,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+function maybeHandleBase64Images(editor) {
+  // only run handler if there’s at least one non-emoji data URI
+  const imgs = editor.querySelectorAll('img:not(.emoji-reaction):not(.unicode-reaction)');
+  if ([...imgs].some(img => (img.src || '').startsWith('data:image/'))) {
+    console.log('handleBase64Images triggered');
+    return handleBase64Images(editor);
+  }
+  return Promise.resolve();
+}
+
+function scrollWhenStable(maxMs = 6000, settleMs = 400, checkMs = 100) {
+    const el = document.querySelector('.chat-container');
+    if (!el) return;
+
+    let last = -1, stableFor = 0;
+    const i = setInterval(() => {
+    const h = el.scrollHeight;
+    stableFor = (h === last) ? stableFor + checkMs : 0;
+    last = h;
+
+    if (stableFor >= settleMs) { clearInterval(i); scrollChatToBottom(true); }
+    }, checkMs);
+
+    setTimeout(() => { clearInterval(i); scrollChatToBottom(true); }, maxMs);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     await loadMessages();
     renderAllReactions();
+    scrollWhenStable();
 });
 
 function renderAllReactions() {
@@ -366,48 +394,157 @@ window.appendMessage = function (user_id, username, displayName, text, messageId
     return (msg);
 }
 
+function extractTweetId(src) {
+	const s = String(src || '');
+	return (s.match(/(?:^|\/)(?:status|statuses)\/(\d+)(?:[/?#]|$)/)?.[1]
+		|| s.match(/\/i\/status\/(\d+)(?:[/?#]|$)/)?.[1]
+		|| null);
+}
+
 function renderUrlPreview(msgElement, data) {
     const preview = document.createElement("div");
     preview.className = "url-preview";
     const messageBody = msgElement.querySelector('.message-body');
-    
-    if (data.embed_html) {
-        preview.innerHTML = data.embed_html;
-        messageBody.after(preview);
-        return;
-    }
 
-    let formattedDate = "";
-    if (data.published) {
-        const date = new Date(data.published);
-        if (!isNaN(date)) {
-            // Example: "July 9, 2025"
-            formattedDate = date.toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+	let container = msgElement.querySelector('.url-previews');
+	if (!container) {
+		container = document.createElement('div');
+		container.className = 'url-previews';
+		messageBody.after(container);
+	}
+
+    console.log ('renderUrlPreview data.type: ', data.type);
+
+    switch (data.type) {
+        case 'youtube': {
+            const wrap = document.createElement('div');
+            wrap.className = 'url-embed';
+            wrap.dataset.url = data.url;
+            wrap.innerHTML = data.embed_html || '';
+            container.appendChild(wrap);
+            return;
+        }
+
+        case 'x': {
+            const wrap = document.createElement('div');
+            wrap.className = 'url-embed';
+            wrap.dataset.url = data.url;			// use data.url (no undefined 'url')
+            container.appendChild(wrap);
+
+            const tweetId = data.tweet_id || extractTweetId(data.url) || extractTweetId(data.embed_html);
+
+            window.whenTwitterReady().then(twt => {
+                if (twt?.widgets?.createTweet && tweetId) {
+                    twt.widgets.createTweet(tweetId, wrap, { theme: 'dark', dnt: true })
+                        .catch(() => {						// only fallback on failure
+                            wrap.innerHTML = data.embed_html || '';
+                            twt.widgets.load?.(wrap);
+                        });
+                    return;									// <-- important: don’t run the fallback below
+                }
+                // Fallback path when we don’t have an id or the API is missing
+                wrap.innerHTML = data.embed_html || '';
+                twt?.widgets?.load?.(wrap);
             });
+
+            setTimeout(() => {
+                if (!wrap.querySelector('iframe')) {
+                    wrap.innerHTML = `<a href="${data.url}" target="_blank" rel="noopener">View on X</a>`;
+                }
+            }, 1500);
+            
+            return;
+        }
+
+        case 'bluesky': {
+            const wrap = document.createElement('div');
+            wrap.className = 'url-embed';
+            wrap.dataset.url = data.url;
+            container.appendChild(wrap);
+
+            let loaded = false;
+
+            // Prefer the official iframe embed (plays video inline)
+            const iframe = document.createElement('iframe');
+            iframe.src = data.iframe_src || ('https://embed.bsky.app/iframe?href=' + encodeURIComponent(data.url));
+            iframe.loading = 'lazy';
+            iframe.allowFullscreen = true;
+            iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write; web-share');
+            iframe.style.border = '0';
+            iframe.style.width = '100%';
+            iframe.style.height = '520px'; // safe default; runtime normally auto-resizes
+
+            iframe.addEventListener('load', () => { loaded = true; });
+            wrap.appendChild(iframe);
+
+            // If the iframe is blocked, fall back to blockquote + embed.js
+            setTimeout(() => {
+                if (!loaded) {
+                    wrap.innerHTML = data.embed_html || `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
+
+                    // Nudge embed.js (some builds only scan on load)
+                    requestAnimationFrame(() => {
+                        const bq = wrap.querySelector('blockquote');
+                        if (bq && !wrap.querySelector('iframe')) {
+                            const clone = bq.cloneNode(true);
+                            bq.replaceWith(clone);
+                        }
+                        // Force a rescan by re-injecting the runtime
+                        const s = document.createElement('script');
+                        s.src = 'https://embed.bsky.app/static/embed.js?ts=' + Date.now();
+                        s.async = true;
+                        document.head.appendChild(s);
+                    });
+
+                    // Final link if everything gets blocked
+                    setTimeout(() => {
+                        if (!wrap.querySelector('iframe')) {
+                            wrap.innerHTML = `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
+                        }
+                    }, 1200);
+                }
+            }, 600);
+            return;
+        }
+
+        case 'card': {
+            let formattedDate = "";
+            if (data.published) {
+                const date = new Date(data.published);
+                if (!isNaN(date)) {
+                    // Example: "July 9, 2025"
+                    formattedDate = date.toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                }
+            }
+            preview.innerHTML = `
+                <div class="preview-container">
+                    <div class="preview-container-inner">
+                        <a href="${data.url}" target="_blank" class="preview-link">
+                            <div class="preview-title">${data.title || data.url}</div>
+                            ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
+                        </a>
+                        ${data.description ? `<div><span class="article-info description"></span> ${data.description}</div>` : ""}
+                        ${data.source ? `<div><span class="article-info source"></span> ${data.source}</div>` : ""}
+                        ${formattedDate ? `<div><span class="article-info published"></span> ${formattedDate}</div>` : ""}
+                        ${data.authors ? `<div><span class="article-info authors"></span> ${data.authors}</div>` : ""}
+                        ${data.category ? `<div><span class="article-info category"></span> ${data.category}</div>` : ""}
+                    </div>
+                </div>
+            `;
+            messageBody.after(preview);
         }
     }
-
-    preview.innerHTML = `
-        <div class="preview-container">
-            <div class="preview-container-inner">
-                <a href="${data.url}" target="_blank" class="preview-link">
-                    <div class="preview-title">${data.title || data.url}</div>
-                    ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
-                </a>
-                ${data.description ? `<div><span class="article-info description"></span> ${data.description}</div>` : ""}
-                ${data.source ? `<div><span class="article-info source"></span> ${data.source}</div>` : ""}
-                ${formattedDate ? `<div><span class="article-info published"></span> ${formattedDate}</div>` : ""}
-                ${data.authors ? `<div><span class="article-info authors"></span> ${data.authors}</div>` : ""}
-                ${data.category ? `<div><span class="article-info category"></span> ${data.category}</div>` : ""}
-            </div>
-        </div>
-    `;
-
-    messageBody.after(preview);
 }
+
+    // if (data.embed_html) {
+    //     preview.innerHTML = data.embed_html;
+    //     messageBody.after(preview);
+    //     return;
+    // }
 
 function loadMessages(beforeId = null, prepend = false) {
     if (isLoading) return;
@@ -526,7 +663,7 @@ function loadMessages(beforeId = null, prepend = false) {
             // console.log("IDs of received messages:", messages.map(m => m.id));
             // console.log("New (unrendered) messages count:", newMessages.length);
 
-            if (!beforeId && isAtBottom()) scrollChatToBottom();
+            // if (!beforeId && isAtBottom()) scrollChatToBottom();
         })
         .finally(() => {
             isLoading = false;
@@ -552,7 +689,7 @@ function scrollChatToBottom() {
     setTimeout(() => {
         container.scrollTop = container.scrollHeight;
         console.log("⏱️ Fallback scroll to bottom:", container.scrollTop);
-    }, 1500);
+    }, 3000);
 }
 
 function isAtBottom() {
