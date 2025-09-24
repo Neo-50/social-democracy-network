@@ -1521,21 +1521,24 @@ def _oembed_x(url: str) -> dict | None:
 	except Exception:
 		return None
 
-def _oembed_bsky(url: str) -> dict | None:
-	try:
-		r = requests.get('https://embed.bsky.app/oembed',
-			params={'url': url, 'maxwidth': '600'}, timeout=8)
-		r.raise_for_status()
-		html = _SCRIPT_TAG_RE.sub('', r.json().get('html', ''))
-		return {
-			'type': 'bluesky',
-			'url': url,
-			'embed_html': html,                                   # fallback
-			'iframe_src': f'https://embed.bsky.app/iframe?href={requests.utils.quote(url, safe="")}'
-		}
-	except Exception:
-		return None
+_BSKY_ATURI_RE = re.compile(r'data-bluesky-uri="([^"]+)"')
 
+def _oembed_bsky(url: str) -> dict | None:
+    try:
+        r = requests.get('https://embed.bsky.app/oembed',
+                         params={'url': url, 'maxwidth': '600'}, timeout=8)
+        r.raise_for_status()
+        html = _SCRIPT_TAG_RE.sub('', r.json().get('html', ''))
+        m = _BSKY_ATURI_RE.search(html)
+        aturi = m.group(1) if m else None
+        return {
+            'type': 'bluesky',
+            'url': url,
+            'embed_html': html,   # keep as fallback
+            'bsky_uri': aturi     # <-- add this
+        }
+    except Exception:
+        return None
 
 @app.route("/api/url-preview")
 def url_preview():

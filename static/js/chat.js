@@ -424,6 +424,17 @@ function extractTweetId(src) {
 		|| null);
 }
 
+function ensureBlueskyRuntime() {
+    if (window.bluesky?.scan) return Promise.resolve();
+    return new Promise(res => {
+        const s = document.createElement('script');
+        s.src = 'https://embed.bsky.app/static/embed.js';
+        s.async = true;
+        s.onload = res;
+        document.head.appendChild(s);
+    });
+}
+
 function renderUrlPreview(msgElement, data) {
     const preview = document.createElement("div");
     preview.className = "url-preview";
@@ -479,24 +490,18 @@ function renderUrlPreview(msgElement, data) {
             return;
         }
 
+        
         case 'bluesky': {
             const wrap = document.createElement('div');
             wrap.className = 'url-embed';
-            wrap.dataset.url = data.url;
-            wrap.innerHTML = data.embed_html || `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
             container.appendChild(wrap);
 
-            // ensure the runtime exists once (in base.html you already load it)
-            // then tell it to scan just this node:
-            (window.bluesky?.scan ? Promise.resolve() : new Promise(res => {
-                const s = document.createElement('script');
-                s.src = 'https://embed.bsky.app/static/embed.js';
-                s.async = true;
-                s.onload = res;
-                document.head.appendChild(s);
-            })).then(() => {
+            // 1) Put the oEmbed blockquote in the DOM (do NOT remove/replace it)
+            wrap.innerHTML = data.embed_html || `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
+
+            // 2) Ask Bluesky to scan just this node; it will create the iframe for you
+            ensureBlueskyRuntime().then(() => {
                 window.bluesky?.scan?.(wrap);
-                // small nudge for scrolling if you use it
                 window.notifyEmbedRendered?.();
             });
 
