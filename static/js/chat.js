@@ -489,7 +489,6 @@ function renderUrlPreview(msgElement, data) {
             
             return;
         }
-
         
         case 'bluesky': {
             const wrap = document.createElement('div');
