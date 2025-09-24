@@ -193,6 +193,29 @@ function maybeHandleBase64Images(editor) {
   return Promise.resolve();
 }
 
+// --- embed scroll helper (define once) ---
+if (!window.notifyEmbedRendered) {
+  window.notifyEmbedRendered = (() => {
+    let scheduled = false;
+    return function notifyEmbedRendered() {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(() => {
+        scheduled = false;
+        if (typeof window.scrollWhenStable === 'function') {
+          // quick settle to catch late iframe size changes
+          scrollWhenStable({ maxMs: 1200, settleMs: 200, checkMs: 80, force: true });
+        } else if (typeof window.scrollChatToBottom === 'function') {
+          // fall back to your existing scroll helper
+          scrollChatToBottom();
+          setTimeout(scrollChatToBottom, 300);
+        }
+      });
+    };
+  })();
+}
+
+
 function scrollWhenStable(maxMs = 6000, settleMs = 400, checkMs = 100) {
     const el = document.querySelector('.chat-container');
     if (!el) return;
@@ -460,50 +483,23 @@ function renderUrlPreview(msgElement, data) {
             const wrap = document.createElement('div');
             wrap.className = 'url-embed';
             wrap.dataset.url = data.url;
+            wrap.innerHTML = data.embed_html || `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
             container.appendChild(wrap);
 
-            let loaded = false;
+            // ensure the runtime exists once (in base.html you already load it)
+            // then tell it to scan just this node:
+            (window.bluesky?.scan ? Promise.resolve() : new Promise(res => {
+                const s = document.createElement('script');
+                s.src = 'https://embed.bsky.app/static/embed.js';
+                s.async = true;
+                s.onload = res;
+                document.head.appendChild(s);
+            })).then(() => {
+                window.bluesky?.scan?.(wrap);
+                // small nudge for scrolling if you use it
+                window.notifyEmbedRendered?.();
+            });
 
-            // Prefer the official iframe embed (plays video inline)
-            const iframe = document.createElement('iframe');
-            iframe.src = data.iframe_src || ('https://embed.bsky.app/iframe?href=' + encodeURIComponent(data.url));
-            iframe.loading = 'lazy';
-            iframe.allowFullscreen = true;
-            iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen; clipboard-write; web-share');
-            iframe.style.border = '0';
-            iframe.style.width = '100%';
-            iframe.style.height = '520px'; // safe default; runtime normally auto-resizes
-
-            iframe.addEventListener('load', () => { loaded = true; });
-            wrap.appendChild(iframe);
-
-            // If the iframe is blocked, fall back to blockquote + embed.js
-            setTimeout(() => {
-                if (!loaded) {
-                    wrap.innerHTML = data.embed_html || `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
-
-                    // Nudge embed.js (some builds only scan on load)
-                    requestAnimationFrame(() => {
-                        const bq = wrap.querySelector('blockquote');
-                        if (bq && !wrap.querySelector('iframe')) {
-                            const clone = bq.cloneNode(true);
-                            bq.replaceWith(clone);
-                        }
-                        // Force a rescan by re-injecting the runtime
-                        const s = document.createElement('script');
-                        s.src = 'https://embed.bsky.app/static/embed.js?ts=' + Date.now();
-                        s.async = true;
-                        document.head.appendChild(s);
-                    });
-
-                    // Final link if everything gets blocked
-                    setTimeout(() => {
-                        if (!wrap.querySelector('iframe')) {
-                            wrap.innerHTML = `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
-                        }
-                    }, 1200);
-                }
-            }, 600);
             return;
         }
 
