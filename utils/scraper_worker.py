@@ -45,7 +45,7 @@ def try_playwright_scrape(url, domain, debug=False):
             stealth_sync(page)
 
             try:
-                page.goto(url, timeout=50000, wait_until="domcontentloaded")
+                page.goto(url, timeout=8000, wait_until="domcontentloaded")
             except Exception as e:
                 log.error(f"[PLAYWRIGHT] page.goto() failed: {e}")
                 return blank
