@@ -90,7 +90,7 @@ async def update_article(article_id, url):
         try:
             data = await asyncio.wait_for(
                 loop.run_in_executor(None, try_playwright_scrape, url, domain),
-                timeout=120
+                timeout=30
             )
         except asyncio.TimeoutError:
             print(f"[SCRAPER WORKER] Timeout exceeded for article {article_id}")
