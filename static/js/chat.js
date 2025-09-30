@@ -216,7 +216,7 @@ if (!window.notifyEmbedRendered) {
 }
 
 
-function scrollWhenStable(maxMs = 6000, settleMs = 400, checkMs = 100) {
+function scrollWhenStable(maxMs = 8000, settleMs = 800, checkMs = 200) {
     const el = document.querySelector('.chat-container');
     if (!el) return;
 
