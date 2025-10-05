@@ -185,23 +185,13 @@
         {% if current_user.is_authenticated %}
             <h2>Welcome, {{ current_user.display_name or current_user.username }}!</h2>
         {% endif %}
-        <div class="image-container">
-            <a href="https://www.nokings.org/" target="_blank">
-            <img src="{{ url_for('media', filename='home/nokings2.webp') }}" alt="nokings2.webp" class="responsive-image">
-            </a>
-        </div>
-        <div class="video-container">
+
+        <!-- <div class="video-container">
             <iframe src="https://www.youtube.com/embed/A0nLJ8UxVg0?si=DUCc4fVDJNmCguaZ" title="Labor Day Protest 9-1-2025"
                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
             gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen></iframe>
-        </div>
-        <div class="image-container">
-            <a href="https://www.aljazeera.com/news/2025/3/18/gaza-tracker" target="_blank">
-            <img src="{{ url_for('media', filename='home/gaza_info.webp') }}" alt="gaza_info.webp"
-                class="responsive-image">
-            </a>
-        </div>
+        </div> -->
         <div class="image-row">
             <div class="image-container">
                 <a href="https://masjidalaqsa.com/boycott-israeli-products-brands-list" target="_blank">
@@ -212,13 +202,24 @@
                 </a>
             </div>
             <div class="image-container">
-                <a href="https://masjidalaqsa.com/boycott-israeli-products-brands-list" target="_blank">
+                <div class="image-container">
+                    <a href="https://www.nokings.org/" target="_blank">
+                    <img src="{{ url_for('media', filename='home/nokings2.webp') }}" alt="nokings2.webp" class="responsive-image">
+                    </a>
+                </div>
+                <a href="https://www.un.org/en/about-us/how-to-donate-to-the-un-system" target="_blank">
                     <img src="{{ url_for('media', filename='home/un-logo.png') }}" alt="un-logo.png" alt="un-logo.png" class="responsive-image">
                 </a>
                 <a href="https://www.un.org/en/about-us/how-to-donate-to-the-un-system" target="_blank">
                     <strong>Donate to the United Nations</strong>
                 </a>
             </div>
+        </div>
+        <div class="image-container">
+            <a href="https://www.aljazeera.com/news/2025/3/18/gaza-tracker" target="_blank">
+            <img src="{{ url_for('media', filename='home/gaza_info.webp') }}" alt="gaza_info.webp"
+                class="responsive-image">
+            </a>
         </div>
         <div class="home-trackers">
             <h2>Trackers</h2>
