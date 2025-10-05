@@ -395,6 +395,7 @@ a:focus {
 /* Image block */
 .image-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     text-align: center;
     align-items: center;

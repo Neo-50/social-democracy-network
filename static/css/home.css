@@ -143,6 +143,11 @@ a {
     font-weight: bold;
 }
 
+.image-row {
+    display: flex;
+    flex-direction: row;
+}
+
 .icon {
     flex-shrink: 0;
 }
