@@ -553,7 +553,7 @@ function loadMessages(beforeId = null, prepend = false) {
     let topMessageId = null;
     let topOffset = 0;
 
-    let url = "/chat/get_messages?limit=10";
+    let url = "/chat/get_messages?limit=25";
     if (beforeId) {
         url += `&before_id=${beforeId}`;
     }
