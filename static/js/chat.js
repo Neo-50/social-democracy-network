@@ -194,26 +194,26 @@ function maybeHandleBase64Images(editor) {
 }
 
 // --- embed scroll helper (define once) ---
-if (!window.notifyEmbedRendered) {
-  window.notifyEmbedRendered = (() => {
-    let scheduled = false;
-    return function notifyEmbedRendered() {
-      if (scheduled) return;
-      scheduled = true;
-      requestAnimationFrame(() => {
-        scheduled = false;
-        if (typeof window.scrollWhenStable === 'function') {
-          // quick settle to catch late iframe size changes
-          scrollWhenStable({ maxMs: 1200, settleMs: 200, checkMs: 80, force: true });
-        } else if (typeof window.scrollChatToBottom === 'function') {
-          // fall back to your existing scroll helper
-          scrollChatToBottom();
-          setTimeout(scrollChatToBottom, 300);
-        }
-      });
-    };
-  })();
-}
+// if (!window.notifyEmbedRendered) {
+//   window.notifyEmbedRendered = (() => {
+//     let scheduled = false;
+//     return function notifyEmbedRendered() {
+//       if (scheduled) return;
+//       scheduled = true;
+//       requestAnimationFrame(() => {
+//         scheduled = false;
+//         if (typeof window.scrollWhenStable === 'function') {
+//           // quick settle to catch late iframe size changes
+//           scrollWhenStable({ maxMs: 1200, settleMs: 200, checkMs: 80, force: true });
+//         } else if (typeof window.scrollChatToBottom === 'function') {
+//           // fall back to your existing scroll helper
+//           scrollChatToBottom();
+//           setTimeout(scrollChatToBottom, 300);
+//         }
+//       });
+//     };
+//   })();
+// }
 
 
 function scrollWhenStable(maxMs = 8000, settleMs = 800, checkMs = 200) {
@@ -501,7 +501,7 @@ function renderUrlPreview(msgElement, data) {
             // 2) Ask Bluesky to scan just this node; it will create the iframe for you
             ensureBlueskyRuntime().then(() => {
                 window.bluesky?.scan?.(wrap);
-                window.notifyEmbedRendered?.();
+                // window.notifyEmbedRendered?.();
             });
 
             return;
