@@ -1255,6 +1255,34 @@ def login():
 
     return render_template('login.html')
 
+@app.route('/guest-login-273269803')
+def guest_login():
+	# define your existing guest credentials
+	guest_email = os.getenv('GUEST_EMAIL')
+	guest_password = os.getenv('GUEST_PASSWORD')
+
+	# look up the guest user
+	user = User.query.filter_by(email=guest_email).first()
+
+	if not user:
+		flash('Guest account not found.', 'danger')
+		return redirect(url_for('login'))
+
+	# double-check the password (optional)
+	if not user.check_password(guest_password):
+		flash('Guest password invalid.', 'danger')
+		return redirect(url_for('login'))
+
+	# log in the guest
+	session.permanent = True
+	login_user(user)
+	session['user_id'] = user.id
+
+	flash('Logged in as SDN guest. Welcome to Social Democracy Network', 'info')
+
+	# send them straight to chat or home
+	return redirect(url_for('home'))
+
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password_token(token):
     try:
