@@ -9,14 +9,24 @@
         {% else %}
             <span>Welcome, {{ current_user.display_name or current_user.username }}!</span>
         {% endif %}
-        <p>SDN has two separate chatrooms. </p>
-        <p>We host public and private chats and IM's on
+
+        <!-- <p>We host public and private chats and IM's on
         <a href="https://element.social-democracy.net" target="_blank">element web</a> and 
         <a href="https://element.io/download" target="_blank"> element desktop</a> via Matrix.
          A free <a href="https://matrix.org" target="_blank">matrix.org</a> account is required to use this service.</p>
         
         <p>We also have a public SDN chatroom written in Javascript, which is not tied to Matrix. The chatroom is integrated with the news page.
-        If you post a link to a news article that exists on the <a href="{{ url_for('news') }}">news page</a>, it will show a preview.</p>
+        If you post a link to a news article that exists on the <a href="{{ url_for('news') }}">news page</a>, it will show a preview.</p> -->
+
+        <p>The <a href="https://element.social-democracy.net" target="_blank">Matrix server</a> 
+        is online, but inactive and mainly used for encrypted messaging. A free 
+        <a href="https://matrix.org" target="_blank">matrix.org</a> account is required to use this service.</p>
+
+        <p>The <a href="{{ url_for('chat') }}" class="center-this">SDN chatroom</a>
+        (written in JavaScript) is a continuous thread (similar to Facebook or Discord),
+        and mainly serves as an archive of news from Twitter (X), Bluesky, screenshots and other news media and memes.
+        The chatroom is integrated with the news page. If you post a link to a news article that exists on the 
+        <a href="{{ url_for('news') }}">news page</a>, it will show a preview.</p>
 
         {% if not current_user.is_authenticated %}
             The SDN chatroom requires a free SDN account to use. Please 
