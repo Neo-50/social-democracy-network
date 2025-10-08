@@ -68,6 +68,8 @@ def login_required(f):
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
+app.config['WTF_CSRF_TIME_LIMIT'] = None
+csrf = CSRFProtect(app)
 
 import sqlalchemy as sa
 from sqlite3 import Connection as SQLite3Connection
@@ -88,7 +90,6 @@ login_manager.session_protection = "strong"
 login_manager.login_view = 'login'
 
 migrate = Migrate(app, db)
-csrf = CSRFProtect(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 @login_manager.user_loader
