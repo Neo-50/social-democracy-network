@@ -61,6 +61,22 @@ h2  {
     padding: 20px;
 }
 
+.ukraine-war {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #8feff2;
+    border-radius: 24px;
+    padding: 12px;
+    gap: 0;
+    line-height: 1;
+    font-weight: 600;
+}
+
+p {
+	margin: 0.2em;
+	line-height: 1em;
+}
+
 /* Mobile layout */
 @media (width <= 800px) {
     .home-page {
