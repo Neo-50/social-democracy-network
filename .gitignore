@@ -17,4 +17,4 @@ Thumbs.db
 
 node_modules/
 
-# migrations/
+mnt/storage/activism
