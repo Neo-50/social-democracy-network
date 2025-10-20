@@ -1,4 +1,4 @@
-import os
+import os, sys, shutil
 import logging
 import random
 import string
@@ -156,6 +156,39 @@ def active_users():
 def home():
     return render_template('home.html')
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+POETRY_BIN = os.environ.get("POETRY_BIN", "/home/doug/.local/bin/poetry")
+USE_SQLITE = app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite')
+
+def launch_metadata_scrape(article_id: int, url: str, USE_SQLITE: bool) -> None:
+	"""
+	Prod (Postgres): run via systemd-run + poetry
+	Dev (SQLite): run the module with the active interpreter (works on Windows)
+	"""
+	try:
+		if not USE_SQLITE and shutil.which("systemd-run"):
+			cmd = [
+				"systemd-run", "--user", "--scope",
+				"-p", "MemoryMax=500M",
+				"--working-directory", BASE_DIR,
+				POETRY_BIN, "run", "python", "-m", "utils.scraper_worker",
+				str(article_id), url,
+			]
+			subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+		else:
+			# Dev / SQLite (and any environment without systemd): run with current venv
+			cmd = [sys.executable, "-m", "utils.scraper_worker", str(article_id), url]
+			subprocess.Popen(
+				cmd,
+				cwd=BASE_DIR,
+				stdout=subprocess.DEVNULL,
+				stderr=subprocess.DEVNULL,
+			)
+	except FileNotFoundError:
+		logging.exception("Scraper spawn failed (file not found)")
+	except Exception:
+		logging.exception("Scraper spawn failed")
+
 @app.route('/news', methods=['GET', 'POST'])
 def news():
 	if request.method == 'POST':
@@ -195,17 +228,23 @@ def news():
 
 		# Background metadata scrape
 		if needs_scrape:
-			subprocess.Popen([
-			"systemd-run", "--user", "--scope",
-			"-p", "MemoryMax=500M",
-			"--working-directory=/home/doug/social-democracy-network",
-			"/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
-			str(article.id), url
-		])
-		if needs_scrape:
+			launch_metadata_scrape(article.id, url, USE_SQLITE)
 			return redirect(url_for("news", category=article.category, article=article.id, scrape=article.id))
 		else:
 			return redirect(url_for("news", category=article.category, article=article.id))
+
+		# if needs_scrape:
+		# 	subprocess.Popen([
+		# 	"systemd-run", "--user", "--scope",
+		# 	"-p", "MemoryMax=500M",
+		# 	"--working-directory=/home/doug/social-democracy-network",
+		# 	"/home/doug/.local/bin/poetry", "run", "python", "utils/scraper_worker.py",
+		# 	str(article.id), url
+		# ])
+		# if needs_scrape:
+		# 	return redirect(url_for("news", category=article.category, article=article.id, scrape=article.id))
+		# else:
+		# 	return redirect(url_for("news", category=article.category, article=article.id))
 
 	# GET logic
 	selected_category = request.args.get('category')
@@ -263,11 +302,7 @@ def news():
 			if scraped and scraped.get("embed_html"):
 				article.embed_html = scraped["embed_html"]
 
-	# Use `group_concat` on SQLite and `array_agg` on Postgres
-	# --- fetch aggregated rows for news (either sqlite or postgres) ---
-	use_sqlite = app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite')
-
-	if use_sqlite:
+	if USE_SQLITE:
 		reactions = (
 			db.session.query(
 				Reaction.article_id,
@@ -1483,12 +1518,12 @@ def send_chat_message():
 		}
 })
 
-# _X_HOSTS = {'x.com','twitter.com','mobile.twitter.com','fxtwitter.com','vxtwitter.com','fixupx.com'}
-# _BSKY_HOSTS = {'bsky.app','staging.bsky.app','www.bsky.app', 'fxbsky.app', 
-#                'vxbsky.app', 'bskye.app', 'bskyx.app', 'bsyy.app'}
-
 _X_HOST_RE = re.compile(
-	r'^(?:(?:www\.|mobile\.)?(?:x|twitter)\.com|(?:www\.)?(?:fx|vx)?twitter\.com|(?:www\.)?fixupx\.com)$',
+	r'^(?:(?:www\.|mobile\.)?(?:x|twitter)\.com'
+	r'|(?:www\.)?(?:fx|vx)?twitter\.com'
+	r'|(?:www\.)?fixupx\.com'
+	r'|(?:[\w-]+\.)?nitter\.[\w.-]+'
+	r')$',
 	re.I
 )
 
