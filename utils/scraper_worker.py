@@ -13,7 +13,6 @@ from models import NewsArticle
 
 log = logging.getLogger(__name__)
 
-
 def blank_metadata(url, domain):
     return {
         "title": url,
@@ -24,7 +23,6 @@ def blank_metadata(url, domain):
         "published": None,
         "needs_scrape": True,
     }
-
 
 def try_playwright_scrape(url, domain, debug=False):
     print(f"[PLAYWRIGHT] Starting scrape for {url}")
@@ -90,7 +88,7 @@ async def update_article(article_id, url):
         try:
             data = await asyncio.wait_for(
                 loop.run_in_executor(None, try_playwright_scrape, url, domain),
-                timeout=30
+                timeout=2
             )
         except asyncio.TimeoutError:
             print(f"[SCRAPER WORKER] Timeout exceeded for article {article_id}")
