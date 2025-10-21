@@ -18,3 +18,5 @@ Thumbs.db
 node_modules/
 
 mnt/storage/activism
+mnt/storage/x-media
+mnt/storage/x-media/**

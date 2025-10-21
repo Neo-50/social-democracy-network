@@ -16,7 +16,7 @@ from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
 from sqlalchemy.exc import IntegrityError
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, Response, jsonify, g
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, Response, jsonify, g, Blueprint
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
 from flask_socketio import SocketIO, emit, join_room
 from flask_migrate import Migrate
@@ -33,6 +33,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+from utils.media_paths import get_media_path
 app.config["MAX_CONTENT_LENGTH"] = 30 * 1024 * 1024  # 30MB
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'fallback_dev_key')
 app.config['SESSION_COOKIE_SECURE'] = True  # Required for HTTPS-only cookies
@@ -122,6 +123,15 @@ def update_user_last_active():
                 db.session.commit()
 
             g.current_user = user
+
+@app.route('/media/<path:filename>')
+def media(filename):
+    full_media_path = get_media_path()  # Base: /mnt/storage
+    print("Serving from:", full_media_path, "Filename:", filename)
+    return send_from_directory(full_media_path, filename)
+
+from routes import bp_archive_x
+app.register_blueprint(bp_archive_x)
 
 def get_online_users():
     app.logger.info('Handler reached')
@@ -712,19 +722,6 @@ def well_known_matrix(filename):
     response = Response(contents, mimetype='application/json')
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
-
-def get_media_path(*parts):
-    return os.path.join(app.root_path, 'mnt', 'storage', *parts)
-
-@app.route('/media/<path:filename>')
-def media(filename):
-    full_media_path = get_media_path()  # Base: /mnt/storage
-    print("Serving from:", full_media_path, "Filename:", filename)
-    return send_from_directory(full_media_path, filename)   
-
-@app.route('/media/widgets/<path:filename>')
-def widget_static(filename):
-    return send_from_directory('static/widgets', filename)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -1857,10 +1854,6 @@ def new_notification(data):
     print("🔥 [notifications] Rebroadcasting:", data)
     emit('new_notification', data, room=data['room_id'])
 
-
 if __name__ == '__main__':
     is_dev = os.environ.get("FLASK_ENV") == "development"
     socketio.run(app, debug=is_dev, use_reloader=is_dev)
-
-# if __name__ == "__main__":
-#     app.run(debug=False, use_reloader=False)

@@ -92,6 +92,9 @@
     {% if request.endpoint == 'messages' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/messages.css') }}">
     {% endif %}
+    {% if request.endpoint == 'archive_x.archive_x_page' %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/archive-x.css', v=2) }}">
+    {% endif %}
 </head>
 
 <body class="has-header">
@@ -120,7 +123,9 @@
             <a href="{{ url_for('news') }}">News</a>
             <a href="{{ url_for('chat_intro') }}">Chat</a>
             <a href="{{ url_for('activism') }}">Activism</a>
+            <!-- <a href="{{ url_for('home') }}"> -->
             <img src="/media/base/SDN_Title.png" alt="Social Democracy Network Title" class="title-image">
+            <!-- </a> -->
             <div class="title-mobile">s d n</div>
             <a href="{{ url_for('culture_history') }}">Culture & History</a>
             <a href="{{ url_for('environment') }}">Environment</a>

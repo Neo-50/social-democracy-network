@@ -29,6 +29,7 @@ bleach = "^6.2.0"
 tinycss2 = "^1.4.0"
 flask-socketio = "^5.5.1"
 flask-wtf = "^1.2.2"
+yt-dlp = "^2025.10.14"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

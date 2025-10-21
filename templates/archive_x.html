@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+	<h1>Archive X Video</h1>
+
+	<form method="post" id="archive-form">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+		<label for="url">Tweet URL</label>
+		<input id="url" name="url" type="url" required placeholder="https://x.com/username/status/1770…">
+		<button type="submit">Download</button>
+	</form>
+
+	<div id="feed">
+		{% if initial_items %}
+			{% for it in initial_items %}
+				<article style="border:1px solid #333;border-radius:12px;padding:12px;">
+					<div style="font-weight:600;margin-bottom:.25rem;">Tweet ID: {{ it.tweet_id }}</div>
+					<div class="gallery" style="display:grid;gap:.5rem;">
+						{% for v in it.videos %}
+							<video class="twitter-video" controls preload="metadata">
+								<source src="{{ url_for('media', filename=v) }}" type="video/mp4">
+							</video>
+						{% endfor %}
+					</div>
+				</article>
+			{% endfor %}
+		{% endif %}
+	</div>
+</div>
+
+<script>
+(() => {
+	const form = document.getElementById('archive-form');
+	const feed = document.getElementById('feed');
+
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const fd = new FormData(form);
+		const csrf = form.querySelector('input[name="csrf_token"]')?.value || '';
+
+		const btn = form.querySelector('button[type="submit"]');
+		btn.disabled = true; btn.textContent = 'Downloading…';
+
+		try {
+			const res = await fetch('/api/archive-x', {
+				method: 'POST',
+				headers: { 'X-CSRFToken': csrf },
+				body: fd
+			});
+			const data = await res.json();
+			if (!res.ok || !data.ok) { throw new Error(data.error || 'Download failed'); }
+
+			// Append a card to the feed
+			const card = document.createElement('article');
+			card.style = 'border:1px solid #333;border-radius:12px;padding:12px;';
+			card.innerHTML = `
+				<div style="font-weight:600;margin-bottom:.25rem;">Tweet ID: ${data.tweet_id}</div>
+				<div class="gallery" style="display:grid;gap:.5rem;">
+					${(data.videos || []).map(v => `
+						<video controls preload="metadata">
+							<source src="/media/${v}" type="video/mp4">
+						</video>
+					`).join('')}
+				</div>
+			`;
+			feed.prepend(card);
+			form.reset();
+		} catch (err) {
+			alert(err.message || 'Error');
+		} finally {
+			btn.disabled = false; btn.textContent = 'Download';
+		}
+	});
+})();
+</script>
+</div>
+{% endblock %}

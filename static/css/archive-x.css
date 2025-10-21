@@ -1,0 +1,36 @@
+.twitter-video {
+    height: auto;
+    max-width: 600px;
+}
+
+h1 {
+    color: magenta;
+}
+
+#url {
+    width: 600px;
+    padding: 12px 20px;
+    margin-left: 0;
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-size: 1em;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
+#archive-form {
+    width: fit-content;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+#feed {
+    overflow: auto;
+    min-height: 800px;
+    max-width: 700px;
+    border: 2px solid #8feff2;
+    border-radius: 24px;
+}
