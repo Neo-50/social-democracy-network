@@ -3,6 +3,13 @@
     max-width: 600px;
 }
 
+.gallery{
+	display:grid;
+	gap:.5rem;
+	grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+	align-items:start; /* don't stretch children vertically */
+}
+
 h1 {
     color: magenta;
 }

@@ -11,22 +11,37 @@
 	</form>
 
 	<div id="feed">
-		{% if initial_items %}
-			{% for it in initial_items %}
-				<article style="border:1px solid #333;border-radius:12px;padding:12px;">
-					<div style="font-weight:600;margin-bottom:.25rem;">Tweet ID: {{ it.tweet_id }}</div>
-					<div class="gallery" style="display:grid;gap:.5rem;">
-						{% for v in it.videos %}
-							<video class="twitter-video" controls preload="metadata">
-								<source src="{{ url_for('media', filename=v) }}" type="video/mp4">
-							</video>
-						{% endfor %}
+	{% if initial_items %}
+		{% for it in initial_items %}
+			<article style="border:1px solid #333;border-radius:12px;padding:12px;">
+				<div style="font-weight:600;margin-bottom:.25rem;">
+					Tweet ID: {{ it.tweet_id }}
+				</div>
+
+				{% if it.meta %}
+					<div style="margin-bottom:.35rem;">
+						{% if it.meta.author_name or it.meta.author_handle %}
+							<span>@{{ it.meta.author_handle }}</span>
+							{% if it.meta.author_name %} — <strong>{{ it.meta.author_name }}</strong>{% endif %}
+						{% endif %}
 					</div>
-				</article>
-			{% endfor %}
-		{% endif %}
-	</div>
+					{% if it.meta.text %}
+						<p style="margin:.25rem 0 .5rem 0;">{{ it.meta.text }}</p>
+					{% endif %}
+				{% endif %}
+
+				<div class="gallery" style="display:grid;gap:.5rem;">
+					{% for v in it.videos %}
+						<video class="twitter-video" controls preload="metadata">
+							<source src="{{ url_for('media', filename=v) }}" type="video/mp4">
+						</video>
+					{% endfor %}
+				</div>
+			</article>
+		{% endfor %}
+	{% endif %}
 </div>
+
 
 <script>
 (() => {
@@ -57,7 +72,7 @@
 				<div style="font-weight:600;margin-bottom:.25rem;">Tweet ID: ${data.tweet_id}</div>
 				<div class="gallery" style="display:grid;gap:.5rem;">
 					${(data.videos || []).map(v => `
-						<video controls preload="metadata">
+						<video class="twitter-video" controls preload="metadata">
 							<source src="/media/${v}" type="video/mp4">
 						</video>
 					`).join('')}
