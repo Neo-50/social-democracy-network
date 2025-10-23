@@ -31,12 +31,17 @@
 				{% endif %}
 
 				<div class="gallery" style="display:grid;gap:.5rem;">
-					{% for v in it.videos %}
-						<video class="twitter-video" controls preload="metadata">
-							<source src="{{ url_for('media', filename=v) }}" type="video/mp4">
+					{% for m in it.media %}
+						{% if m.kind == 'video' %}
+						<video class="twitter-video" controls preload="metadata" playsinline>
+							<source src="{{ url_for('media', filename=m.rel_path) }}" type="video/mp4">
 						</video>
+						{% elif m.kind == 'image' %}
+						<img class="twitter-image" src="{{ url_for('media', filename=m.rel_path) }}" alt="">
+						{% endif %}
 					{% endfor %}
 				</div>
+
 			</article>
 		{% endfor %}
 	{% endif %}

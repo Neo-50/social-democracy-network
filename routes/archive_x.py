@@ -1,4 +1,8 @@
-import os, re, html
+import os, re, html, urllib.parse
+from models.tweet_archive import TweetArchive
+from datetime import datetime
+import json as _json
+from app import db
 from flask import Blueprint, request, render_template
 from yt_dlp import YoutubeDL
 from utils.media_paths import get_media_path
@@ -13,55 +17,32 @@ def extract_tweet_id(url: str) -> str | None:
 	m = re.search(r'/status/(\d+)', url)
 	return m.group(1) if m else None
 
-# keep your imports + bp_archive_x + extract_tweet_id as-is
-
 @bp_archive_x.route('/archive-x', methods=['GET'])
 def archive_x_page():
-	root = get_media_path('x-media')
+	rows = (
+		db.session.query(TweetArchive)
+		.order_by(TweetArchive.downloaded_at_utc.desc())
+		.all()
+	)
 	items = []
-	if os.path.isdir(root):
-		groups = {}
-		for entry in os.scandir(root):
-			if not entry.is_file():
-				continue
-			name = entry.name
-			if not name.lower().endswith('.mp4'):
-				continue
-			tweet_id = name.split('-')[0]
-			rel = f'x-media/{name}'.replace('\\', '/')
-			groups.setdefault(tweet_id, []).append({'rel': rel, 'mtime': entry.stat().st_mtime})
-
-		for tid, files in groups.items():
-			files.sort(key=lambda x: x['mtime'], reverse=True)
-
-		import json
-		def load_meta(tid: str) -> dict:
-			path = os.path.join(root, f'{tid}.meta.json')
-			if os.path.isfile(path):
-				try:
-					with open(path, 'r', encoding='utf-8') as f:
-						return json.load(f)
-				except Exception:
-					return {}
-			return {}
-
-		items = sorted(
-			(
-				{
-					'tweet_id': tid,
-					'videos': [f['rel'] for f in files],
-					'mtime': files[0]['mtime'],
-					'meta': load_meta(tid),
-				}
-				for tid, files in groups.items()
-			),
-			key=lambda x: x['mtime'],
-			reverse=True
-		)
-	print('[ITEMS]:', items)
+	for r in rows:
+		items.append({
+			'tweet_id': r.tweet_id,
+			'meta': {
+				'url': r.source_url,
+				'author_handle': r.author_handle,
+				'author_name': r.author_name,
+				'text': r.text,
+				'like_count': r.like_count,
+				'repost_count': r.repost_count,
+				'comment_count': r.comment_count,
+				'timestamp': r.created_at_utc,
+			},
+			'media': r.media(),   # [{kind, rel_path}, ...]
+			'mtime': r.downloaded_at_utc,
+		})
+	print('[ITEMS]:', [(i['tweet_id'], len(i['media'])) for i in items])
 	return render_template('archive_x.html', initial_items=items)
-
-
 
 @bp_archive_x.route('/api/archive-x', methods=['POST'])
 def api_archive_x():
@@ -119,12 +100,12 @@ def api_archive_x():
 		if n.lower().endswith('.mp4') and n.startswith(str(tweet_id))
 	]
 
-	return {
-		'ok': True,
-		'tweet_id': tweet_id,
-		'videos': videos,
-		'meta': meta
-	}
+	# tabs! (snippet inside /api/archive-x after you finish downloads)
+	images = download_images(sorted(img_urls), tweet_id, target_abs, target_rel)
+	upsert_tweet(meta, videos, images)
+
+	return {'ok': True, 'tweet_id': tweet_id, 'videos': videos, 'images': images, 'meta': meta}
+
 
 def _normalize_info_from_ydl(info: dict, url: str) -> dict:
 	if isinstance(info, dict) and 'entries' in info and info['entries']:
@@ -238,3 +219,110 @@ def fetch_x_metadata(url: str) -> dict:
 	}
 	return res
 
+_PBS_RE = re.compile(r'https?://pbs\.twimg\.com/(media|tweet_video)/(?:[^\s"\'\)]+)', re.I)
+
+def _force_orig(url: str) -> str:
+	"""
+	Ensure pbs.twimg.com URLs request original size.
+	Examples:
+	  ...?format=jpg&name=small  -> name=orig
+	  ...?name=large             -> name=orig
+	"""
+	try:
+		u = urllib.parse.urlsplit(url)
+		q = urllib.parse.parse_qs(u.query, keep_blank_values=True)
+		q['name'] = ['orig']
+		new_q = urllib.parse.urlencode({k:v[-1] for k,v in q.items()}, doseq=True)
+		return urllib.parse.urlunsplit((u.scheme, u.netloc, u.path, new_q, u.fragment))
+	except Exception:
+		return url
+
+def extract_image_urls_from_ytinfo(info: dict) -> list[str]:
+	"""
+	Collect candidate image URLs from yt-dlp info dict.
+	"""
+	out = []
+	thumbs = (info or {}).get('thumbnails') or []
+	for t in thumbs:
+		u = t.get('url') or ''
+		if _PBS_RE.match(u):
+			out.append(_force_orig(u))
+	# Sometimes description contains pbs links; grab them too.
+	desc = (info or {}).get('description') or ''
+	for m in _PBS_RE.finditer(desc):
+		out.append(_force_orig(m.group(0)))
+	# de-dupe, preserve order
+	seen, uniq = set(), []
+	for u in out:
+		if u not in seen:
+			seen.add(u); uniq.append(u)
+	return uniq
+
+def extract_image_urls_from_syndication(j: dict) -> list[str]:
+	"""
+	Your existing fetch_tweet_json(parse_fields) can expose photos.
+	If not, this fallback scans the JSON text for pbs links.
+	"""
+	if not j:
+		return []
+	txt = _json.dumps(j, ensure_ascii=False)
+	urls = []
+	for m in _PBS_RE.finditer(txt):
+		urls.append(_force_orig(m.group(0)))
+	# de-dupe
+	seen, uniq = set(), []
+	for u in urls:
+		if u not in seen:
+			seen.add(u); uniq.append(u)
+	return uniq
+
+def download_images(urls: list[str], tweet_id: str, target_abs: str, target_rel: str) -> list[str]:
+	"""
+	Download each image URL -> x-media/<tweet_id>-img<N>.<ext>
+	Returns a list of relative paths suitable for your template.
+	"""
+	os.makedirs(target_abs, exist_ok=True)
+	out_paths = []
+	n = 0
+	for u in urls:
+		try:
+			r = requests.get(u, timeout=25, headers={'User-Agent':'Mozilla/5.0'})
+			if r.status_code != 200 or not r.content:
+				continue
+			ct = r.headers.get('Content-Type','').lower()
+			ext = '.jpg'
+			if 'png' in ct: ext = '.png'
+			elif 'webp' in ct: ext = '.webp'
+			elif 'gif' in ct: ext = '.gif'  # very rare for originals
+			n += 1
+			name = f'{tweet_id}-img{n}{ext}'
+			with open(os.path.join(target_abs, name), 'wb') as f:
+				f.write(r.content)
+			out_paths.append(f'{target_rel}/{name}'.replace('\\','/'))
+		except Exception:
+			continue
+	return out_paths
+
+def upsert_tweet(meta: dict, videos: list[str], images: list[str]) -> None:
+	media = (
+		[{ 'kind':'video', 'rel_path': rel } for rel in videos] +
+		[{ 'kind':'image', 'rel_path': rel } for rel in images]
+	)
+
+	row = TweetArchive.query.get(meta['tweet_id'])
+	if not row:
+		row = TweetArchive(tweet_id=meta['tweet_id'])
+		db.session.add(row)
+
+	row.source_url = meta.get('url')
+	row.author_handle = meta.get('author_handle')
+	row.author_name = meta.get('author_name')
+	row.text = meta.get('text')
+	row.created_at_utc = meta.get('timestamp') or meta.get('created_at')
+	row.like_count = meta.get('like_count')
+	row.repost_count = meta.get('repost_count')
+	row.comment_count = meta.get('comment_count')
+	row.media_json = _json.dumps(media, ensure_ascii=False)
+	row.downloaded_at_utc = int(datetime.utcnow().timestamp())
+
+	db.session.commit()
