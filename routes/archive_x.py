@@ -59,57 +59,91 @@ def api_archive_x():
 	os.makedirs(target_abs, exist_ok=True)
 
 	outtmpl = os.path.join(target_abs, f'{tweet_id}-%(format_id)s.%(ext)s')
-	opts = {
+
+	# A) Always get info first WITHOUT downloading (works for text-only posts)
+	meta_info = None
+	with YoutubeDL({
 		'quiet': True,
 		'noplaylist': True,
-		'outtmpl': outtmpl,
-		'format': 'bv*+ba/b',
-		'merge_output_format': 'mp4',
+		'skip_download': True,
 		'ignoreerrors': True,
 		'http_headers': {'User-Agent': 'Mozilla/5.0'},
-		# optional: if you have a cookies file, add it via env or config
-		# 'cookiefile': os.environ.get('YTDLP_COOKIES') or None,
-	}
+	}) as ydl:
+		try:
+			meta_info = ydl.extract_info(url, download=False)
+			print('**meta_info** ', meta_info)
+		except Exception:
+			meta_info = None
 
-	# 1) Download media and capture info dict
-	with YoutubeDL(opts) as ydl:
-		info = ydl.extract_info(url, download=True)
+	# B) Try to download media (if any); info may be None for text-only
+	try:
+		with YoutubeDL({
+			'quiet': True,
+			'noplaylist': True,
+			'outtmpl': outtmpl,
+			'format': 'bv*+ba/b',
+			'merge_output_format': 'mp4',
+			'ignoreerrors': True,
+			'http_headers': {'User-Agent': 'Mozilla/5.0'},
+		}) as ydl:
+			dl_info = ydl.extract_info(url, download=True)
+			# Prefer download info if it exists; otherwise keep metadata-only
+			if dl_info:
+				meta_info = dl_info
+				print('***meta_info with video: ', meta_info)
+	except Exception:
+		# no downloadable media is fine
+		pass
 
-	# 2) Normalize metadata from the *same* info dict (no extra network)
-	meta = _normalize_info_from_ydl(info, url)
+	# C) Normalize metadata (null-safe now) and fill gaps from syndication
+	# meta = _normalize_info_from_ydl(meta_info, url, tweet_id)
 
-	# 3) Fallback to the tweet JSON endpoint if text/author are missing
+	meta = _normalize_info_from_ydl(meta_info, url)
+	if not meta.get('tweet_id'):
+		meta['tweet_id'] = tweet_id  # fallback if info dict was empty
+
+	j = None
 	if not meta.get('text') or not meta.get('author_handle'):
 		j = fetch_tweet_json(tweet_id)
 		if j:
 			fields = parse_fields(j)
-			# merge (prefer yt-dlp where present; fill blanks from JSON)
 			meta['text'] = meta.get('text') or _strip_tco(fields.get('text') or '')
 			meta['author_name'] = meta.get('author_name') or (fields.get('author_name') or '')
 			meta['author_handle'] = meta.get('author_handle') or (fields.get('author_handle') or '')
-			# keep a created_at and source_url if handy
 			if fields.get('created_at'):
 				meta['created_at'] = fields['created_at']
 			if fields.get('source_url') and not meta.get('url'):
 				meta['url'] = fields['source_url']
 
-	# 4) Find downloaded videos for this tweet
+	# D) Collect whatever was downloaded (could be empty for text-only)
 	videos = [
 		f'{target_rel}/{n}'.replace('\\','/')
 		for n in os.listdir(target_abs)
 		if n.lower().endswith('.mp4') and n.startswith(str(tweet_id))
 	]
 
-	# tabs! (snippet inside /api/archive-x after you finish downloads)
+	# E) Image discovery + download (safe if meta_info is None)
+	img_urls = set()
+	img_urls.update(extract_image_urls_from_ytinfo(meta_info))
+	if j is None:
+		j = fetch_tweet_json(tweet_id)
+	if j:
+		img_urls.update(extract_image_urls_from_syndication(j))
+
 	images = download_images(sorted(img_urls), tweet_id, target_abs, target_rel)
+
+	# F) Persist to DB — media list may be empty [], which is valid
 	upsert_tweet(meta, videos, images)
 
 	return {'ok': True, 'tweet_id': tweet_id, 'videos': videos, 'images': images, 'meta': meta}
 
-
 def _normalize_info_from_ydl(info: dict, url: str) -> dict:
-	if isinstance(info, dict) and 'entries' in info and info['entries']:
-		info = info['entries'][0]
+	info = info or {}
+	# Some extractors return 'entries' for threads/playlists
+	if isinstance(info, dict) and info.get('entries'):
+		entries = info['entries'] or []
+		if entries:
+			info = entries[0] or {}
 
 	author_handle = (info.get('uploader_id') or '').strip()
 	author_name = (info.get('uploader') or '').strip()
