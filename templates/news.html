@@ -231,8 +231,8 @@
                     <option value="20" {% if request.args.get('limit', '20') == '20' %}selected{% endif %}>20</option>
                     <option value="50" {% if request.args.get('limit') == '50' %}selected{% endif %}>50</option>
                     <option value="100" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
-                    <option value="250" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
-                    <option value="500" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
+                    <option value="250" {% if request.args.get('limit') == '250' %}selected{% endif %}>250</option>
+                    <option value="500" {% if request.args.get('limit') == '500' %}selected{% endif %}>500</option>
                     <option value="all" {% if request.args.get('limit') == 'all' %}selected{% endif %}>All</option>
                 </select>
                 <label for="year-overview">Year Overview:</label>
