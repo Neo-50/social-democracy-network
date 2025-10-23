@@ -1,4 +1,4 @@
-import os, re, html, urllib.parse
+import os, re, html, urllib.parse, requests
 from models.tweet_archive import TweetArchive
 from datetime import datetime
 import json as _json
@@ -71,7 +71,7 @@ def api_archive_x():
 	}) as ydl:
 		try:
 			meta_info = ydl.extract_info(url, download=False)
-			print('**meta_info** ', meta_info)
+			print('**yt-dlp scraped metadata:** ')
 		except Exception:
 			meta_info = None
 
@@ -90,20 +90,25 @@ def api_archive_x():
 			# Prefer download info if it exists; otherwise keep metadata-only
 			if dl_info:
 				meta_info = dl_info
-				print('***meta_info with video: ', meta_info)
+				print('***yt-dlp detected video and scraped metadata***')
 	except Exception:
 		# no downloadable media is fine
+		print('***Exception: no video found***')
 		pass
 
 	# C) Normalize metadata (null-safe now) and fill gaps from syndication
 	# meta = _normalize_info_from_ydl(meta_info, url, tweet_id)
 
 	meta = _normalize_info_from_ydl(meta_info, url)
+	print('***Data normalizer ran: ', meta)
+
 	if not meta.get('tweet_id'):
 		meta['tweet_id'] = tweet_id  # fallback if info dict was empty
+		print('***Fallback to tweet id**')
 
 	j = None
 	if not meta.get('text') or not meta.get('author_handle'):
+		print('***Falling back to syndicated JSON***')
 		j = fetch_tweet_json(tweet_id)
 		if j:
 			fields = parse_fields(j)
@@ -114,6 +119,29 @@ def api_archive_x():
 				meta['created_at'] = fields['created_at']
 			if fields.get('source_url') and not meta.get('url'):
 				meta['url'] = fields['source_url']
+			print('***Fallback data: ', meta)
+	
+	# If we still don't have text/author, try oEmbed as a last resort
+	if not meta.get('text') or not meta.get('author_handle'):
+		url = meta.get('url') or f'https://x.com/i/web/status/{tweet_id}'
+		# Normalize FX/VX/whatever → x.com
+		url = (url
+			.replace('fxtwitter.com', 'x.com')
+			.replace('vxtwitter.com', 'x.com')
+			.replace('twitter.com', 'x.com'))
+		oe = fetch_tweet_oembed(url)
+
+		if oe:
+			oe_fields = _oembed_to_fields(oe)
+			# only fill blanks
+			if not meta.get('text') and oe_fields.get('text'):
+				meta['text'] = oe_fields['text']
+			if not meta.get('author_handle') and oe_fields.get('author_handle'):
+				meta['author_handle'] = oe_fields['author_handle']
+			if not meta.get('author_name') and oe_fields.get('author_name'):
+				meta['author_name'] = oe_fields['author_name']
+			if not meta.get('url') and oe_fields.get('source_url'):
+				meta['url'] = oe_fields['source_url']
 
 	# D) Collect whatever was downloaded (could be empty for text-only)
 	videos = [
@@ -166,16 +194,25 @@ def _normalize_info_from_ydl(info: dict, url: str) -> dict:
 	}
 
 
-def fetch_tweet_json(tweet_id: str) -> dict | None:
+def fetch_tweet_json(tweet_id):
+	url = f"https://cdn.syndication.twimg.com/tweet-result?id={tweet_id}"
 	try:
-		r = requests.get(TWEET_JSON, params={"id": tweet_id, "lang": "en"}, headers=UA, timeout=15)
-		if not r.ok:
+		resp = requests.get(url, timeout=15, headers={
+			'User-Agent': 'Mozilla/5.0',
+			'Accept': 'application/json,text/plain;q=0.9,*/*;q=0.8',
+		})
+		print(f"[SYNDICATE] {url} -> {resp.status_code} len={len(resp.text)}")
+		if not resp.ok:
 			return None
-		j = r.json()
-		# requires an id to be valid
-		return j if j and str(j.get("id_str") or j.get("id")) == str(tweet_id) else None
-	except Exception:
+		try:
+			return resp.json()
+		except Exception:
+			print("⚠️ JSON parse error, first 300 chars:", resp.text[:300])
+			return None
+	except Exception as e:
+		print(f"[SYNDICATE ERROR] {e}")
 		return None
+
 
 def parse_fields(j: dict) -> dict:
 	user = j.get("user") or {}
@@ -360,3 +397,44 @@ def upsert_tweet(meta: dict, videos: list[str], images: list[str]) -> None:
 	row.downloaded_at_utc = int(datetime.utcnow().timestamp())
 
 	db.session.commit()
+
+_BR_RE = re.compile(r'(<br\s*/?>|\n)+', re.I)
+
+def fetch_tweet_oembed(tweet_url: str) -> dict | None:
+	try:
+		r = requests.get(
+			'https://publish.twitter.com/oembed',
+			params={'url': tweet_url, 'omit_script': '1', 'hide_thread': '1'},
+			timeout=15,
+			headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'}
+		)
+		print(f"[OEMBED] {r.url} -> {r.status_code} len={len(r.text)}")
+		return r.json() if r.ok else None
+	except Exception as e:
+		print(f"[OEMBED ERROR] {e}")
+		return None
+
+def _oembed_to_fields(oe: dict) -> dict:
+	"""
+	Extract plain text + author from oEmbed HTML.
+	Returns {text, author_handle, author_name, source_url}
+	"""
+	out = {'text':'', 'author_handle':'', 'author_name':'', 'source_url':''}
+	if not oe: return out
+
+	out['author_name'] = oe.get('author_name') or ''
+	author_url = oe.get('author_url') or ''
+	out['source_url'] = oe.get('url') or ''  # sometimes present
+	# handle from author_url
+	if author_url.startswith('https://twitter.com/') or author_url.startswith('https://x.com/'):
+		out['author_handle'] = author_url.rstrip('/').split('/')[-1]
+
+	# strip the embed HTML to plain text
+	html_snip = oe.get('html') or ''
+	if html_snip:
+		# crude textization: remove tags, keep <br> as newlines
+		txt = _BR_RE.sub('\n', html_snip)
+		txt = re.sub(r'<[^>]+>', '', txt)
+		out['text'] = html.unescape(txt).strip()
+
+	return out

@@ -1,6 +1,13 @@
 .twitter-video {
     height: auto;
-    max-width: 600px;
+    max-width: 500px;
+    max-height: 500px;
+}
+
+.twitter-image {
+    height: auto;
+    max-width: 500px;
+    max-height: 500px;
 }
 
 .gallery{

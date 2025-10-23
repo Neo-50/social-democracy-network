@@ -6,17 +6,33 @@ document.querySelectorAll('.timestamp').forEach(el => {
 });
 
 function formatLocalDate(dateStr) {
-  const date = new Date(dateStr);
-  const options = {
-    month: 'numeric',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  }
-  return date.toLocaleString('en-US', options).replace(',', ' | ');
+	// Try normal Date parse first (works for ISO strings)
+	let date = new Date(dateStr);
+
+	// If that failed, treat it as a numeric epoch (sec or ms)
+	if (isNaN(date)) {
+		const n = Number(dateStr);
+		if (Number.isFinite(n)) {
+			// Heuristic: < 1e12 → seconds, otherwise milliseconds
+			date = new Date(n < 1e12 ? n * 1000 : n);
+		}
+	}
+
+	// If still invalid, return the original string
+	if (isNaN(date)) return dateStr;
+
+	const options = {
+		month: 'numeric',
+		day: 'numeric',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit',
+		hour12: true,
+	};
+
+	return date.toLocaleString('en-US', options).replace(',', ' |');
 }
+
 
 function formatTimestamp(container = document) {
     if (!(container instanceof Element) && container !== document) {
