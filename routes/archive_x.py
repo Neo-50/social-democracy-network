@@ -7,15 +7,35 @@ from flask import Blueprint, request, render_template
 from yt_dlp import YoutubeDL
 from utils.media_paths import get_media_path
 import requests, datetime as dt
+from pathlib import Path
 
 bp_archive_x = Blueprint('archive_x', __name__)
 _TCO_RE = re.compile(r'https?://t\.co/\w+', re.IGNORECASE)
+
+# matches both normal and partly escaped forms after we unescape
+_PBS_MEDIA_RE = re.compile(r'https?://pbs\.twimg\.com/(?:media|tweet_video)/[^\s"\'>)]+', re.I)
+_META_OG_RE  = re.compile(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']', re.I)
 TWEET_JSON = "https://cdn.syndication.twimg.com/widgets/tweet"
 UA = {"User-Agent": "Mozilla/5.0"}
 
 def extract_tweet_id(url: str) -> str | None:
 	m = re.search(r'/status/(\d+)', url)
 	return m.group(1) if m else None
+
+# add near top of archive_x.py (tabs, not spaces)
+def fetch_tweet_html(tweet_id: str) -> str | None:
+	url = f'https://x.com/i/web/status/{tweet_id}'
+	try:
+		r = requests.get(url, timeout=20, headers={
+			'User-Agent': 'Mozilla/5.0',
+			'Accept': 'text/html',
+			'Referer': 'https://x.com/',
+		})
+		print(f'[TWEETHTML] {url} -> {r.status_code} len={len(r.text)}')
+		return r.text if r.ok else None
+	except Exception as e:
+		print(f'[TWEETHTML ERROR] {e}')
+		return None
 
 @bp_archive_x.route('/archive-x', methods=['GET'])
 def archive_x_page():
@@ -108,7 +128,7 @@ def api_archive_x():
 
 	j = None
 	if not meta.get('text') or not meta.get('author_handle'):
-		print('***Falling back to syndicated JSON***')
+		print('***Falling back to fetch_tweet_json***')
 		j = fetch_tweet_json(tweet_id)
 		if j:
 			fields = parse_fields(j)
@@ -129,7 +149,15 @@ def api_archive_x():
 			.replace('fxtwitter.com', 'x.com')
 			.replace('vxtwitter.com', 'x.com')
 			.replace('twitter.com', 'x.com'))
+		
 		oe = fetch_tweet_oembed(url)
+
+		# after: oe = fetch_tweet_oembed(...)
+		oe_html = (oe or {}).get('html') or ''
+		if oe_html:
+			pbs_in_oe_plain = 'pbs.twimg.com' in oe_html
+			pbs_in_oe_esc   = 'pbs\\.twimg\\.com' in oe_html or 'pbs\\u002Etwimg\\u002Ecom' in oe_html
+			print(f"[DIAG] oEmbed html: len={len(oe_html)} pbs_plain={pbs_in_oe_plain} pbs_esc={pbs_in_oe_esc}")
 
 		if oe:
 			oe_fields = _oembed_to_fields(oe)
@@ -150,18 +178,17 @@ def api_archive_x():
 		if n.lower().endswith('.mp4') and n.startswith(str(tweet_id))
 	]
 
-	# E) Image discovery + download (safe if meta_info is None)
-	img_urls = set()
-	img_urls.update(extract_image_urls_from_ytinfo(meta_info))
-	if j is None:
-		j = fetch_tweet_json(tweet_id)
-	if j:
-		img_urls.update(extract_image_urls_from_syndication(j))
+	# When yt-dlp doesn’t provide counts, pull them from the same HTML
+	if any(meta.get(k) is None for k in ('like_count','repost_count','comment_count')):
+		counts = extract_counts_from_tweet_html(tweet_id)
+		for k,v in counts.items():
+			if meta.get(k) is None and v is not None:
+				meta[k] = v
 
-	images = download_images(sorted(img_urls), tweet_id, target_abs, target_rel)
+	images = []
 
 	# F) Persist to DB — media list may be empty [], which is valid
-	upsert_tweet(meta, videos, images)
+	upsert_tweet(meta, videos)
 
 	return {'ok': True, 'tweet_id': tweet_id, 'videos': videos, 'images': images, 'meta': meta}
 
@@ -348,33 +375,40 @@ def extract_image_urls_from_syndication(j: dict) -> list[str]:
 	return uniq
 
 def download_images(urls: list[str], tweet_id: str, target_abs: str, target_rel: str) -> list[str]:
-	"""
-	Download each image URL -> x-media/<tweet_id>-img<N>.<ext>
-	Returns a list of relative paths suitable for your template.
-	"""
 	os.makedirs(target_abs, exist_ok=True)
-	out_paths = []
-	n = 0
+	out_paths, n = [], 0
 	for u in urls:
 		try:
-			r = requests.get(u, timeout=25, headers={'User-Agent':'Mozilla/5.0'})
+			r = requests.get(u, timeout=25, headers={
+				'User-Agent': 'Mozilla/5.0',
+				'Referer': 'https://x.com/',     # <-- this often matters for pbs.twimg.com
+			})
 			if r.status_code != 200 or not r.content:
+				print(f"[IMG] skip {u} -> {r.status_code} len={len(r.content) if r.content else 0}")
 				continue
-			ct = r.headers.get('Content-Type','').lower()
+			ct = (r.headers.get('Content-Type') or '').lower()
 			ext = '.jpg'
 			if 'png' in ct: ext = '.png'
 			elif 'webp' in ct: ext = '.webp'
-			elif 'gif' in ct: ext = '.gif'  # very rare for originals
+			elif 'gif' in ct: ext = '.gif'
 			n += 1
 			name = f'{tweet_id}-img{n}{ext}'
 			with open(os.path.join(target_abs, name), 'wb') as f:
 				f.write(r.content)
-			out_paths.append(f'{target_rel}/{name}'.replace('\\','/'))
-		except Exception:
+			rel = f'{target_rel}/{name}'.replace('\\','/')
+			out_paths.append(rel)
+			print(f"[IMG] saved {rel}")
+		except Exception as e:
+			print(f"[IMG ERROR] {u} -> {e}")
 			continue
 	return out_paths
 
+
 def upsert_tweet(meta: dict, videos: list[str], images: list[str]) -> None:
+
+	videos = videos or []
+	images = images or []
+
 	media = (
 		[{ 'kind':'video', 'rel_path': rel } for rel in videos] +
 		[{ 'kind':'image', 'rel_path': rel } for rel in images]
@@ -438,3 +472,82 @@ def _oembed_to_fields(oe: dict) -> dict:
 		out['text'] = html.unescape(txt).strip()
 
 	return out
+
+
+def _force_orig(url: str) -> str:
+	u = urllib.parse.urlsplit(url)
+	q = urllib.parse.parse_qs(u.query, keep_blank_values=True)
+	q['name'] = ['orig']   # original size
+	new_q = urllib.parse.urlencode({k: v[-1] for k, v in q.items()}, doseq=True)
+	return urllib.parse.urlunsplit((u.scheme, u.netloc, u.path, new_q, u.fragment))
+
+def _html_unescape_slashes(txt: str) -> str:
+	# twitter often embeds in JSON with escapes
+	return (
+		txt.replace('\\/', '/')          # de-escape slashes
+		   .replace('\\u002F', '/')     # unicode slash
+		   .replace('&amp;', '&')       # common entity
+	)
+
+def extract_image_urls_from_tweet_html(tweet_id: str, html_text: str | None = None) -> list[str]:
+	raw = html_text
+	if raw is None:
+		url = f'https://x.com/i/web/status/{tweet_id}'
+		try:
+			r = requests.get(url, timeout=20, headers={
+				'User-Agent': 'Mozilla/5.0',
+				'Accept': 'text/html',
+				'Referer': 'https://x.com/',
+			})
+			if not r.ok:
+				print(f'[HTMLMEDIA] {url} -> {r.status_code}')
+				return []
+			raw = r.text
+		except Exception as e:
+			print(f'[HTMLMEDIA ERROR] {e}')
+			return []
+	raw = _html_unescape_slashes(raw)
+
+	urls, seen, out = [], set(), []
+
+	# 1) og:image
+	for m in _META_OG_RE.finditer(raw):
+		urls.append(_force_orig(m.group(1)))
+
+	# 2) any pbs media link
+	for m in _PBS_MEDIA_RE.finditer(raw):
+		urls.append(_force_orig(m.group(0)))
+
+	for u in urls:
+		if u not in seen:
+			seen.add(u); out.append(u)
+
+	print(f'[HTMLMEDIA FOUND] {tweet_id} -> {len(out)} images')
+	return out
+	
+_COUNT_KEYS = {
+	'like_count':    re.compile(r'"(?:favorite_count|like_count)"\s*:\s*(\d+)', re.I),
+	'repost_count':  re.compile(r'"(?:retweet_count|repost_count)"\s*:\s*(\d+)', re.I),
+	'comment_count': re.compile(r'"(?:reply_count|comment_count)"\s*:\s*(\d+)', re.I),
+}
+
+def extract_counts_from_tweet_html(tweet_id: str) -> dict:
+	url = f'https://x.com/i/web/status/{tweet_id}'
+	try:
+		r = requests.get(url, timeout=20, headers={
+			'User-Agent':'Mozilla/5.0',
+			'Accept':'text/html',
+			'Referer':'https://x.com/',
+		})
+		if not r.ok:
+			print(f'[HTMLCOUNTS] {url} -> {r.status_code}')
+			return {}
+		text = _html_unescape_slashes(r.text)
+		out = {}
+		for key, rx in _COUNT_KEYS.items():
+			m = rx.search(text)
+			out[key] = int(m.group(1)) if m else None
+		return out
+	except Exception as e:
+		print(f'[HTMLCOUNTS ERROR] {e}')
+		return {}
