@@ -32,8 +32,8 @@
                     <div>Tweet URL: ${data.url}</div>
                     <div >Tweet ID: ${data.tweet_id}</div>
                     <br>
-                    <div>${data.author_name}</div>
-                    <div>${data.author_handle}</div>
+					<span>@${data.author_handle}</span>—
+                    ${data.author_name}
                     <div>${data.text}</div>
                     <div class="gallery" style="display:grid;gap:.5rem;">
                         ${(data.primary_video || []).map(v => `
@@ -44,7 +44,8 @@
                     </div>
 					<span class="timestamp" data-timestamp="${data.created_at}">${data.created_at}</span>
                     <hr>
-					<div>❤️ ${data.counts.likes} | 🔁 ${data.counts.retweets}, | 💬 ${data.counts.replies}</div>
+					<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
+					 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
                 `;
 				feed.prepend(card);
 				form.reset();
@@ -56,13 +57,14 @@
                         <div>Tweet URL: ${data.url}</div>
 						<div>Tweet ID: ${data.tweet_id}</div>
                         <br>
-                        <div>${data.author_name}</div>
-                        <div>${data.author_handle}</div>
+                        <span>@${data.author_handle}</span>—
+                    	${data.author_name}
                         <div>${data.text}</div>
                         <div><img class="twitter-image" src="/media/${data.images[0]}" alt=""></div>
 						<span class="timestamp" data-timestamp="${data.created_at}">${data.created_at}</span>
                         <hr>
-						<div>❤️ ${data.counts.likes} | 🔁 ${data.counts.retweets}, | 💬 ${data.counts.replies}</div>
+						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
+						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
 					`;
 					feed.prepend(card);
 					form.reset();

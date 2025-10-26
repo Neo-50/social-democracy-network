@@ -207,9 +207,9 @@ def _call_once(bearer: str, guest: str, hsh: str, op: str, tweet_id: str, featur
 		"Accept": "application/json",
 		"Referer": f"https://x.com/i/web/status/{tweet_id}",
 	}
-	debug("GraphQL", op, hsh)
+	# debug("GraphQL", op, hsh)
 	r = SESSION.get(url, headers=h, timeout=25)
-	debug("Resp", r.status_code, "len", len(r.text) if r.text else 0)
+	# debug("Resp", r.status_code, "len", len(r.text) if r.text else 0)
 	return r
 
 def _call_with_backfill(bearer: str, guest: str, hsh: str, op: str, tweet_id: str):
@@ -397,6 +397,8 @@ def _extract_metadata(data):
 	Returns (text, author_name, author_handle, created_at, counts_dict, alt_desc)
 	Works for both TweetResultByRestId and TweetDetail shapes.
 	"""
+	print('>>>>>>>>> extract_metadata')
+
 	text = author_name = author_handle = created_at = alt_desc = None
 	counts = {
 		"likes": None,
@@ -428,12 +430,15 @@ def _extract_metadata(data):
 			res = None
 
 	if not res:
+		print('>>>>>>>>>>>>_extract_metadata failed, returning')
 		return (text, author_name, author_handle, created_at, counts, alt_desc)
 
 	legacy = res.get("legacy", {}) if isinstance(res, dict) else {}
 	text = legacy.get("full_text") or legacy.get("text")
 	created_at = legacy.get("created_at")
 	alt_desc = res.get("post_image_description")  # present for many org accounts
+
+	print('_extract_metadata: legacy, text, created_at, alt_desc:', legacy, text, created_at, alt_desc)
 
 	# counts live mostly under legacy
 	counts["likes"] = legacy.get("favorite_count")
@@ -451,6 +456,8 @@ def _extract_metadata(data):
 	author_name, author_handle = extract_author(res)
 	if not author_name and not author_handle:
 		debug("AUTHOR DEBUG:", json.dumps(res.get("core", {}), indent=2)[:800])
+
+	print('>>>>>> _extract_metadata end: ', author_name, author_handle, counts)
 
 	return (text, author_name, author_handle, created_at, counts, alt_desc)
 
@@ -495,29 +502,33 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		primary_vid = _choose_primary_video(vid_variants)
 		primary_url = (primary_vid or {}).get("url")
 
-		# text, author = _extract_text_author(data)
+		# text, author _ extract_text_author(data)
 		text, author_name, author_handle, created_at, counts, alt_desc = _extract_metadata(data)
+		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at, counts, alt_desc)
+
+		result = {
+			"primary_video": primary_url,
+			"images": [],
+			"text": text or alt_desc,
+			"author": author_name,
+			"author_handle": author_handle,
+			"created_at": created_at,
+			"counts": counts,
+			"alt_description": alt_desc,
+		}
+
 		if found:
 			# normalize image quality param to name=orig where applicable
 			def _norm(u: str) -> str:
-				if "pbs.twimg.com" in u:
+				if 'pbs.twimg.com' in u:
 					parts = list(urllib.parse.urlparse(u))
 					q = urllib.parse.parse_qs(parts[4], keep_blank_values=True)
-					q["name"] = ["orig"]
+					q['name'] = ['orig']
 					parts[4] = urllib.parse.urlencode({k:v[-1] for k,v in q.items()})
 					return urllib.parse.urlunparse(parts)
 				return u
-			images = sorted({_norm(u) for u in found if "pbs.twimg.com" in u})
-			
-			return {
-				"primary_video": primary_url,
-				"images": images,
-				"text": text,
-				"author_name": author_name,
-				"author_handle": author_handle,
-				"created_at": created_at,
-				"counts": counts,                # likes/retweets/replies/quotes/bookmarks/view
-				"alt_description": alt_desc,     # a.k.a. post_image_description
-			}
 
-	return {"images": [], "text": None, "author": None}
+			result["images"] = [_norm(u) for u in found if 'pbs.twimg.com' in u]
+
+		# --- ALWAYS return the result, even when no media were found
+		return result

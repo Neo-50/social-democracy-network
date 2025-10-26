@@ -37,6 +37,9 @@ def archive_x_page():
 				'likes': r.likes,
 				'retweets': r.retweets,
 				'comments': r.comments,
+				'quotes': r.quotes,
+				'bookmarks': r.bookmarks,
+				'views': r.views,
 				'timestamp': r.created_at_utc,
 			},
 			'media': r.media(),   # [{kind, rel_path}, ...]
@@ -56,6 +59,9 @@ def api_archive_x():
 		return {'ok': False, 'error': 'Could not detect tweet ID.'}, 400
 
 	media = fetch_tweet_media(tweet_url)
+
+	print('>>>>>>>fetch_tweet_media: ', media)
+
 	target_rel = 'x-media'
 	target_abs = get_media_path(target_rel)   # -> /mnt/storage/x-media
 	os.makedirs(target_abs, exist_ok=True)
@@ -101,7 +107,7 @@ def api_archive_x():
 	upsert_tweet(
 		meta={
 			'url': tweet_url,
-			'author_name': media.get('author_name'),
+			'author_name': media.get('author') or media.get('author_name'),
 			'author_handle': media.get('author_handle'),
 			'text': media.get('text'),
 			'timestamp': media.get('timestamp') or media.get('created_at'),
@@ -162,6 +168,9 @@ def upsert_tweet(meta: dict, tweet_id: int, primary_video, images, media_url) ->
 	row.likes = counts.get('likes')
 	row.retweets = counts.get('retweets') or counts.get('reposts')
 	row.comments = counts.get('replies') or counts.get('comments')
+	row.quotes = counts.get('quotes')
+	row.bookmarks = counts.get('bookmarks')
+	row.views = counts.get('views')
 	row.media_url = media_url
 
 	row.media_json = _json.dumps(media_list, ensure_ascii=False)
@@ -427,14 +436,14 @@ def get_guest_token():
 		"Accept": "application/json",
 	}
 
-	print("[DEBUG] Requesting guest token...")
-	print(f"[DEBUG] URL: {url}")
-	print(f"[DEBUG] Headers: {headers}")
+	# print("[DEBUG] Requesting guest token...")
+	# print(f"[DEBUG] URL: {url}")
+	# print(f"[DEBUG] Headers: {headers}")
 
 	try:
 		resp = requests.post(url, headers=headers, timeout=10)
-		print(f"[DEBUG] Response status: {resp.status_code}")
-		print(f"[DEBUG] Response text (first 300 chars): {resp.text[:300]}")
+		# print(f"[DEBUG] Response status: {resp.status_code}")
+		# print(f"[DEBUG] Response text (first 300 chars): {resp.text[:300]}")
 
 		if resp.status_code == 200:
 			data = resp.json()
