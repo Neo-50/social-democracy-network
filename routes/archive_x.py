@@ -1,6 +1,6 @@
 import os, re, html, urllib.parse, requests, glob
 from models.tweet_archive import TweetArchive
-from datetime import datetime
+from datetime import datetime, time
 import json as _json
 from app import db
 from flask import Blueprint, request, render_template
@@ -47,6 +47,17 @@ def archive_x_page():
 		})
 	print('[ITEMS]:', [(i['tweet_id'], len(i['media'])) for i in items])
 	return render_template('archive_x.html', initial_items=items)
+
+TW_DATE_FMT = '%a %b %d %H:%M:%S %z %Y'  # e.g., Wed Oct 22 12:08:35 +0000 2025
+
+def to_epoch_seconds(timestr: str) -> int | None:
+	if not timestr:
+		return None
+	try:
+		return int(datetime.strptime(timestr, "%a %b %d %H:%M:%S %z %Y").timestamp())
+	except Exception as e:
+		print(f"[WARN] Failed to parse timestamp '{timestr}': {e}")
+		return None
 
 @bp_archive_x.route('/api/archive-x', methods=['POST'])
 def api_archive_x():
@@ -102,6 +113,9 @@ def api_archive_x():
 		direct_media_url = primary_url
 	elif image_urls:
 		direct_media_url = image_urls[0]
+	
+	timestamp = media.get('timestamp') or media.get('created_at')
+	epoch_timestamp = to_epoch_seconds(timestamp)
 
 	# Upsert with local paths only
 	upsert_tweet(
@@ -110,7 +124,8 @@ def api_archive_x():
 			'author_name': media.get('author') or media.get('author_name'),
 			'author_handle': media.get('author_handle'),
 			'text': media.get('text'),
-			'timestamp': media.get('timestamp') or media.get('created_at'),
+			'created_at_utc': epoch_timestamp,
+			'downloaded_at_utc': int(time.time()),
 			'counts': media.get('counts') or {},
 		},
 		tweet_id=tweet_id,
