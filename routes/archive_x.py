@@ -171,7 +171,7 @@ def api_archive_x():
 		'primary_video': saved_video_paths,  # list so your JS .map() still works
 		'images': saved_image_paths,         # list of local rel paths
 		'text': media.get('text'),
-		'author_name': media.get('author_name'),
+		'author_name': media.get('author') or media.get('author_name'),
 		'author_handle': media.get('author_handle'),
 		'created_at_utc': epoch_timestamp,
 		'counts': media.get('counts'),
