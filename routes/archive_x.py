@@ -34,9 +34,9 @@ def archive_x_page():
 				'author_handle': r.author_handle,
 				'author_name': r.author_name,
 				'text': r.text,
-				'like_count': r.like_count,
-				'repost_count': r.repost_count,
-				'comment_count': r.comment_count,
+				'likes': r.likes,
+				'retweets': r.retweets,
+				'comments': r.comments,
 				'timestamp': r.created_at_utc,
 			},
 			'media': r.media(),   # [{kind, rel_path}, ...]
@@ -47,163 +47,126 @@ def archive_x_page():
 
 @bp_archive_x.route('/api/archive-x', methods=['POST'])
 def api_archive_x():
-	url = (request.form.get('url') or '').strip()
-	if not url:
+	tweet_url = (request.form.get('url') or '').strip()
+	if not tweet_url:
 		return {'ok': False, 'error': 'Missing URL'}, 400
 
-	tweet_id = extract_tweet_id(url)
+	tweet_id = extract_tweet_id(tweet_url)
 	if not tweet_id:
 		return {'ok': False, 'error': 'Could not detect tweet ID.'}, 400
-	
-	media = []
-	media = fetch_tweet_media(url)
-	print('@@@@@@@@@@@@@@@@ fetch_tweet_media: @@@@@@@@@@@@@@@', media)
 
+	media = fetch_tweet_media(tweet_url)
 	target_rel = 'x-media'
-	target_abs = get_media_path(target_rel)
+	target_abs = get_media_path(target_rel)   # -> /mnt/storage/x-media
 	os.makedirs(target_abs, exist_ok=True)
 
-	# outtmpl = os.path.join(target_abs, f'{tweet_id}-%(format_id)s.%(ext)s')
-	primary_url = media.get('primary_video')
+	primary_url   = media.get('primary_video') or media.get('primary_url')
+	image_urls    = media.get('images') or []
+
+	saved_video_paths = []
+	saved_image_paths = []
 
 	if primary_url:
+		# Prefer video; skip images entirely
 		base_name = str(tweet_id)
-		out_dir = get_media_path('x-media')  # /mnt/storage/x-media
-		os.makedirs(out_dir, exist_ok=True)
-
 		saved_abs = download_primary_video(
 			primary_url=primary_url,
-			tweet_url=url,
-			out_dir=out_dir,
+			tweet_url=tweet_url,
+			out_dir=target_abs,
 			base_name=base_name,
 		)
-
-		# Build relative path to serve from /media/
 		if saved_abs:
-			rel_path = os.path.relpath(saved_abs, get_media_path(''))
-			video_path = [rel_path.replace('\\', '/')]
-		else:
-			video_path = None
-	else:
-		video_path = None
+			rel_path = os.path.relpath(saved_abs, get_media_path('')).replace('\\', '/')
+			saved_video_paths = [rel_path]
 
-	upsert_tweet(media, tweet_id, primary_url, media.get('images'))
+	elif image_urls:
+		# No video → keep all images
+		img_rel_paths = download_images(
+			urls=image_urls,
+			tweet_id=tweet_id,
+			target_abs=target_abs,
+			target_rel=target_rel,
+		) or []
 
+		# Ensure forward slashes
+		saved_image_paths = [p.replace('\\', '/') for p in img_rel_paths]
 
-	return {'ok': True, 
-		 	"url": url,
-			'tweet_id': tweet_id, 
-			'primary_video': video_path,
-			'text': media.get('text'),
-			'images': media.get('images'), 
-			'author_name': media.get('author_name'), 
+	direct_media_url = None
+	if primary_url:
+		direct_media_url = primary_url
+	elif image_urls:
+		direct_media_url = image_urls[0]
+
+	# Upsert with local paths only
+	upsert_tweet(
+		meta={
+			'url': tweet_url,
+			'author_name': media.get('author_name'),
 			'author_handle': media.get('author_handle'),
-			'created_at': media.get('created_at'),
-			'counts': media.get('counts'),
-			'alt_description': media.get('alt_description')}
-
-def upsert_tweet(meta: dict, tweet_id: int, primary_video: str, images: list[str]) -> None:
-
-	primary_video = primary_video or []
-	images = images or []
-
-	media = (
-		[{ 'kind':'video', 'rel_path': rel } for rel in primary_video] +
-		[{ 'kind':'image', 'rel_path': rel } for rel in images]
+			'text': media.get('text'),
+			'timestamp': media.get('timestamp') or media.get('created_at'),
+			'counts': media.get('counts') or {},
+		},
+		tweet_id=tweet_id,
+		primary_video=saved_video_paths[0] if saved_video_paths else None,
+		images=saved_image_paths,
+		media_url=direct_media_url
 	)
 
-	row = TweetArchive.query.get(tweet_id)
-	if row is None:
-		row = TweetArchive(tweet_id=tweet_id)
-		db.session.add(row)
+	return {
+		'ok': True,
+		'url': tweet_url,
+		'tweet_id': tweet_id,
+		'primary_video': saved_video_paths,  # list so your JS .map() still works
+		'images': saved_image_paths,         # list of local rel paths
+		'text': media.get('text'),
+		'author_name': media.get('author_name'),
+		'author_handle': media.get('author_handle'),
+		'created_at': media.get('created_at'),
+		'counts': media.get('counts'),
+		'alt_description': media.get('alt_description'),
+	}, 200
 
-	row.source_url = meta.get('url')
-	row.author_name = meta.get('author_name')
-	row.author_handle = meta.get('author_handle')
-	row.text = meta.get('text')
-	row.created_at_utc = meta.get('created_at')
-	row.like_count = meta['counts'].get('likes')
-	row.repost_count = meta['counts'].get('retweets')
-	row.comment_count = meta['counts'].get('replies')
-	row.media_json = _json.dumps(media, ensure_ascii=False)
-	row.downloaded_at_utc = int(datetime.utcnow().timestamp())
-
-	db.session.commit()
-
-def upsert_tweet(meta: dict, tweet_id: int, primary_video, images) -> None:
-	# --- Normalize inputs ---
-	# primary_video can be: None | str | [str]  (accept all gracefully)
+def upsert_tweet(meta: dict, tweet_id: int, primary_video, images, media_url) -> None:
+	# Normalize
 	if isinstance(primary_video, (list, tuple)):
 		primary_video = primary_video[0] if primary_video else None
 	elif not isinstance(primary_video, str):
 		primary_video = None
 
-	# images can be: None | [str] | str (normalize to list[str])
 	if images is None:
 		images = []
 	elif isinstance(images, str):
 		images = [images]
 
-	# --- Build media_json according to your policy ---
+	# Build media_json with local paths only
 	if primary_video:
 		media_list = [{'kind': 'video', 'rel_path': primary_video}]
 	elif images:
-		media_list = [{'kind': 'image', 'rel_path': u} for u in images]
+		media_list = [{'kind': 'image', 'rel_path': p} for p in images]
 	else:
 		media_list = []
 
-	# --- Upsert row ---
 	row = TweetArchive.query.get(tweet_id)
 	if row is None:
 		row = TweetArchive(tweet_id=tweet_id)
 		db.session.add(row)
 
-	row.source_url   = meta.get('url')
-	row.author_name  = meta.get('author_name')
-	row.author_handle= meta.get('author_handle')
-	row.text         = meta.get('text')
-
-	ts = meta.get('timestamp') or meta.get('created_at')
-	row.created_at_utc = ts
+	row.source_url = meta.get('url')  # tweet page URL
+	row.author_name = meta.get('author_name')
+	row.author_handle = meta.get('author_handle')
+	row.text = meta.get('text')
+	row.created_at_utc = meta.get('timestamp') or meta.get('created_at')
 
 	counts = meta.get('counts') or {}
-	row.like_count    = counts.get('likes')
-	row.repost_count  = counts.get('retweets') or counts.get('reposts')
-	row.comment_count = counts.get('replies') or counts.get('comments')
+	row.likes = counts.get('likes')
+	row.retweets = counts.get('retweets') or counts.get('reposts')
+	row.comments = counts.get('replies') or counts.get('comments')
+	row.media_url = media_url
 
-	row.media_json        = _json.dumps(media_list, ensure_ascii=False)
+	row.media_json = _json.dumps(media_list, ensure_ascii=False)
 	row.downloaded_at_utc = int(datetime.utcnow().timestamp())
-
 	db.session.commit()
-
-def _normalize_info_from_ydl(info: dict, url: str) -> dict:
-	info = info or {}
-	# Some extractors return 'entries' for threads/playlists
-	if isinstance(info, dict) and info.get('entries'):
-		entries = info['entries'] or []
-		if entries:
-			info = entries[0] or {}
-
-	author_handle = (info.get('uploader_id') or '').strip()
-	author_name = (info.get('uploader') or '').strip()
-	tweet_text_raw = info.get('description') or info.get('fulltitle') or info.get('title') or ''
-	tweet_text = _strip_tco(tweet_text_raw)
-
-	return {
-		'platform': 'x',
-		'tweet_id': info.get('id') or '',
-		'url': info.get('webpage_url') or url,
-		'author_handle': author_handle,
-		'author_profile_url': f'https://x.com/{author_handle}' if author_handle else '',
-		'author_name': author_name,
-		'text': tweet_text,
-		'like_count': info.get('like_count'),
-		'comment_count': info.get('comment_count'),
-		'repost_count': info.get('repost_count') or info.get('reposts'),
-		'timestamp': info.get('timestamp'),
-		'thumbnails': info.get('thumbnails') or [],
-	}
-
 
 def fetch_tweet_json(tweet_id):
 	url = f"https://cdn.syndication.twimg.com/tweet-result?id={tweet_id}"

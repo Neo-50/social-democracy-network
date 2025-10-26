@@ -328,6 +328,69 @@ def _walk_media_urls(obj, found):
     elif isinstance(obj, list):
         for it in obj:
             _walk_media_urls(it, found)
+
+def _dig(d, *keys):
+	for k in keys:
+		if not isinstance(d, dict):
+			return None
+		d = d.get(k)
+	return d
+
+def extract_author(res: dict) -> tuple[str | None, str | None]:
+	"""
+	Return (author_name, author_handle) from varied X GraphQL shapes.
+	Looks in both ...legacy and ...core for name/screen_name.
+	"""
+	# Fast-path: common places
+	paths = [
+		# user under core.user_results.result.*
+		('core','user_results','result','legacy'),
+		('core','user_results','result','core'),
+		('core','user_results','result','result','legacy'),
+		('core','user_results','result','result','core'),
+
+		# sometimes directly under core.user / author / user
+		('core','user','legacy'),
+		('core','user','core'),
+		('author','legacy'),
+		('author','core'),
+		('user','legacy'),
+		('user','core'),
+	]
+
+	for p in paths:
+		block = _dig(res, *p)
+		if isinstance(block, dict):
+			# skip explicit unavailable wrappers if present
+			if block.get('__typename') == 'UserUnavailable':
+				continue
+			name   = block.get('name')
+			handle = block.get('screen_name')
+			if name or handle:
+				return name, handle
+
+	# Fallback: scan any dict that has a child named 'legacy' or 'core'
+	def _walk(obj):
+		if isinstance(obj, dict):
+			yield obj
+			for v in obj.values():
+				yield from _walk(v)
+		elif isinstance(obj, list):
+			for v in obj:
+				yield from _walk(v)
+
+	for d in _walk(res):
+		for key in ('legacy', 'core'):
+			block = d.get(key)
+			if isinstance(block, dict):
+				if block.get('__typename') == 'UserUnavailable':
+					continue
+				name   = block.get('name')
+				handle = block.get('screen_name')
+				if name or handle:
+					return name, handle
+
+	return None, None
 	
 def _extract_metadata(data):
 	"""
@@ -385,14 +448,9 @@ def _extract_metadata(data):
 	except Exception:
 		pass
 
-	# author (core → user_results → result → legacy)
-	u = (((res.get("core") or {}).get("user_results") or {}).get("result") or {})
-	# sometimes wrapped like {"result":{"__typename":"User","legacy":{...}}}
-	# or can be {"__typename":"UserUnavailable"}; guard for that
-	if u and u.get("__typename") != "UserUnavailable":
-		uleg = u.get("legacy") or {}
-		author_name = uleg.get("name")
-		author_handle = uleg.get("screen_name")
+	author_name, author_handle = extract_author(res)
+	if not author_name and not author_handle:
+		debug("AUTHOR DEBUG:", json.dumps(res.get("core", {}), indent=2)[:800])
 
 	return (text, author_name, author_handle, created_at, counts, alt_desc)
 
@@ -436,8 +494,6 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		# choose primary video (if any)
 		primary_vid = _choose_primary_video(vid_variants)
 		primary_url = (primary_vid or {}).get("url")
-
-
 
 		# text, author = _extract_text_author(data)
 		text, author_name, author_handle, created_at, counts, alt_desc = _extract_metadata(data)

@@ -21,16 +21,20 @@
 
             console.log('>>>>>> Data received from /api/archive-x: ', data)
 
-			if (data.primary_video) {
+			const hasVideo  = Array.isArray(data.primary_video) && data.primary_video.length > 0;
+            const hasImages = Array.isArray(data.images)        && data.images.length > 0;
+
+            if (hasVideo) {
 				// Append a card to the feed
-				const card = document.createElement('article');
-				card.style = 'border:1px solid #333;border-radius:12px;padding:12px;';
+				const card = document.createElement('div');
+                card.className = 'tweet-card';
 				card.innerHTML = `
-                    <div style="font-weight:600;margin-bottom:.25rem;">Tweet URL: ${data.url}</div>
-                    <div style="font-weight:600;margin-bottom:.25rem;">Tweet ID: ${data.tweet_id}</div>
-					<p>Created at: ${data.created_at}</p>
-					<p>Likes: ${data.counts.likes} | Retweets: ${data.counts.retweets}, | Comments: ${data.counts.replies}</p>
-					<p>${data.text}</p>
+                    <div>Tweet URL: ${data.url}</div>
+                    <div >Tweet ID: ${data.tweet_id}</div>
+                    <br>
+                    <div>${data.author_name}</div>
+                    <div>${data.author_handle}</div>
+                    <div>${data.text}</div>
                     <div class="gallery" style="display:grid;gap:.5rem;">
                         ${(data.primary_video || []).map(v => `
                             <video class="twitter-video" controls preload="metadata">
@@ -38,20 +42,27 @@
                             </video>
                         `).join('')}
                     </div>
+					<span class="timestamp" data-timestamp="${data.created_at}">${data.created_at}</span>
+                    <hr>
+					<div>❤️ ${data.counts.likes} | 🔁 ${data.counts.retweets}, | 💬 ${data.counts.replies}</div>
                 `;
 				feed.prepend(card);
 				form.reset();
 			} 
-			else if (data.images) {
-					const card = document.createElement('tweet-card');
+			else if (hasImages) {
+					const card = document.createElement('div');
+                    card.className = 'tweet-card'; 
 					card.innerHTML = ` 
-						<div>Tweet URL: ${data.url}</div>
+                        <div>Tweet URL: ${data.url}</div>
 						<div>Tweet ID: ${data.tweet_id}</div>
-						<div>Created at: ${data.created_at}</div>
-						<div>Likes: ${data.counts.likes} | Retweets: ${data.counts.retweets}, | Comments: ${data.counts.replies}</div>
-						<div>${data.text}</div>
-						<div><img class="twitter-image" src="${data.images[0]}"></div>
-						
+                        <br>
+                        <div>${data.author_name}</div>
+                        <div>${data.author_handle}</div>
+                        <div>${data.text}</div>
+                        <div><img class="twitter-image" src="/media/${data.images[0]}" alt=""></div>
+						<span class="timestamp" data-timestamp="${data.created_at}">${data.created_at}</span>
+                        <hr>
+						<div>❤️ ${data.counts.likes} | 🔁 ${data.counts.retweets}, | 💬 ${data.counts.replies}</div>
 					`;
 					feed.prepend(card);
 					form.reset();

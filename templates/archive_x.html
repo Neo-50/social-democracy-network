@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
-	<h1>Archive X Video</h1>
+	<h1>Save-a-Tweet (archive-x)</h1>
 
 	<form method="post" id="archive-form">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -11,48 +11,48 @@
 	</form>
 
 	<div id="feed">
-	{% if initial_items %}
-		{% for it in initial_items %}
-			<article style="border:1px solid #333;border-radius:12px;padding:12px;">
-				<div style="font-weight:600;margin-bottom:.25rem; line-height: 5px">
+		{% if initial_items %}
+			{% for it in initial_items %}
+				<div class="tweet-card">
 					Tweet ID: {{ it.tweet_id }}
-					<p>Source URL: <a href="{{ it.meta.url }}">{{ it.meta.url }}</a></p>
-					<p>Date Posted:
-					<span class="timestamp" data-timestamp="{{ it.meta.timestamp or it.meta.created_at_utc }}">
-						{{ it.meta.timestamp or it.meta.created_at_utc }}
-					</span>
-					</p>
-					<p>Likes: {{ it.meta.like_count }} | Reposts: {{ it.meta.repost_count }} |
-					Comments: {{ it.meta.comment_count }}</p>
-				</div>
-
-				{% if it.meta %}
-					<div style="margin-bottom:.35rem;">
-						{% if it.meta.author_name or it.meta.author_handle %}
-							<span>@{{ it.meta.author_handle }}</span>
-							{% if it.meta.author_name %} — <strong>{{ it.meta.author_name }}</strong>{% endif %}
+					<div>Source URL: <a href="{{ it.meta.url }}">{{ it.meta.url }}</a></div>
+					{% if it.meta %}
+						<div style="margin-bottom:.35rem;">
+							<br>
+							{% if it.meta.author_name or it.meta.author_handle %}
+								<span>@{{ it.meta.author_handle }}</span>
+								{% if it.meta.author_name %} — <strong>{{ it.meta.author_name }}</strong>{% endif %}
+							{% endif %}
+						</div>
+						{% if it.meta.text %}
+							<p style="margin:.25rem 0 .5rem 0;">{{ it.meta.text }}</p>
 						{% endif %}
-					</div>
-					{% if it.meta.text %}
-						<p style="margin:.25rem 0 .5rem 0;">{{ it.meta.text }}</p>
 					{% endif %}
-				{% endif %}
 
-				<div class="gallery" style="display:flex;gap:.5rem;">
-					{% for m in it.media %}
-						{% if m.kind == 'video' %}
-						<video class="twitter-video" controls preload="metadata" playsinline>
-							<source src="{{ url_for('media', filename=m.rel_path) }}" type="video/mp4">
-						</video>
-						{% elif m.kind == 'image' %}
-						<p><img class="twitter-image" src="{{ url_for('media', filename=m.rel_path) }}" alt=""></p>
-						{% endif %}
-					{% endfor %}
+					<div class="gallery" style="display:flex;gap:.5rem;">
+						{% for m in it.media %}
+							{% if m.kind == 'video' %}
+							<video class="twitter-video" controls preload="metadata" playsinline>
+								<source src="{{ url_for('media', filename=m.rel_path) }}" type="video/mp4">
+							</video>
+							{% elif m.kind == 'image' %}
+							<p><img class="twitter-image" src="{{ url_for('media', filename=m.rel_path) }}" alt=""></p>
+							{% endif %}
+						{% endfor %}
+					</div>
+
+					<div style="line-height: 5px">
+						<span class="timestamp" data-timestamp="{{ it.meta.timestamp or it.meta.created_at_utc }}">
+							{{ it.meta.timestamp or it.meta.created_at_utc }}
+						</span>
+						<hr>
+						</p>
+						<p>❤️ {{ it.meta.likes }} | 🔁 {{ it.meta.retweets }} | 💬 {{ it.meta.comments }}</p>
+					</div>
 				</div>
-
-			</article>
-		{% endfor %}
-	{% endif %}
+			{% endfor %}
+		{% endif %}
+	</div>
 </div>
 
 <script src="{{ url_for('static', filename='js/archive_x.js') }}"></script>
