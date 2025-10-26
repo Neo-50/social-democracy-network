@@ -1,6 +1,7 @@
 import os, re, html, urllib.parse, requests, glob
 from models.tweet_archive import TweetArchive
-from datetime import datetime, time
+from datetime import datetime
+import time
 import json as _json
 from app import db
 from flask import Blueprint, request, render_template
