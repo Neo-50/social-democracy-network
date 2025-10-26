@@ -42,8 +42,8 @@
 					</div>
 
 					<div style="line-height: 5px">
-						<span class="timestamp" data-timestamp="{{ it.meta.timestamp or it.meta.created_at_utc }}">
-							{{ it.meta.timestamp or it.meta.created_at_utc }}
+						<span class="timestamp" data-timestamp="{{ it.meta.created_at_utc or it.meta.timestamp }}">
+							{{ it.meta.created_at_utc or it.meta.timestamp }}
 						</span>
 						<hr>
 						</p>

@@ -6,14 +6,15 @@ document.querySelectorAll('.timestamp').forEach(el => {
 });
 
 function formatLocalDate(dateStr) {
+    if (!dateStr) return '';
+
 	// Try normal Date parse first (works for ISO strings)
 	let date = new Date(dateStr);
 
-	// If that failed, treat it as a numeric epoch (sec or ms)
-	if (isNaN(date)) {
+    if (isNaN(date.getTime())) {
 		const n = Number(dateStr);
 		if (Number.isFinite(n)) {
-			// Heuristic: < 1e12 → seconds, otherwise milliseconds
+			// < 1e12 → seconds, else milliseconds
 			date = new Date(n < 1e12 ? n * 1000 : n);
 		}
 	}
@@ -35,43 +36,56 @@ function formatLocalDate(dateStr) {
 
 
 function formatTimestamp(container = document) {
-    if (!(container instanceof Element) && container !== document) {
-        console.warn("formatTimestamp called with invalid container:", container);
-        return;
-    }
+	// Accept a DOM Element or document
+	if (!(container instanceof Element) && container !== document) {
+		console.warn("formatTimestamp called with invalid container:", container);
+		return;
+	}
 
-    const elements = container.querySelectorAll(".timestamp");
-    elements.forEach(el => {
-        const raw = el.dataset.timestamp;
-        try {
-            let date;
+	const els = container.querySelectorAll(".timestamp");
+	els.forEach(el => {
+		const rawAttr = (el.dataset.timestamp || "").trim();
+		if (!rawAttr) {
+			el.textContent = "";
+			return;
+		}
 
-            if (raw.includes('T') && raw.endsWith('Z')) {
-                // Format: ISO string from backend like 2025-07-29T08:40:00Z
-                date = new Date(raw);
-            } else {
-                // Format: 'YYYY-MM-DD HH:MM:SS'
-                const [datePart, timePart] = raw.split(" ");
-                const [year, month, day] = datePart.split("-").map(Number);
-                const [hour, minute, second] = timePart.split(":").map(Number);
-                date = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
-            }
+		let date;
 
-            const dateStr = date.toLocaleDateString('en-US', {
-                month: 'numeric',
-                day: 'numeric',
-                year: 'numeric'
-            });
+		// 1) Pure numeric → epoch (sec or ms)
+		if (/^\d+$/.test(rawAttr)) {
+			const n = Number(rawAttr);
+			date = new Date(n < 1e12 ? n * 1000 : n); // <1e12 → seconds
+		}
+		// 2) ISO (or anything Date can parse)
+		else if (rawAttr.includes("T")) {
+			date = new Date(rawAttr);
+		}
+		// 3) "YYYY-MM-DD HH:MM:SS"
+		else if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}$/.test(rawAttr)) {
+			const [d, t] = rawAttr.split(/\s+/);
+			const [y, m, dd] = d.split("-").map(Number);
+			const [hh, mm, ss] = t.split(":").map(Number);
+			// Interpret as UTC to be consistent with server-side epoch
+			date = new Date(Date.UTC(y, m - 1, dd, hh, mm, ss));
+		}
 
-            const timeStr = date.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit'
-            });
+		// Fallback/validation
+		if (!(date instanceof Date) || isNaN(date.getTime())) {
+			console.warn("Invalid timestamp:", rawAttr);
+			el.textContent = rawAttr; // leave as-is rather than empty
+			return;
+		}
 
-            el.textContent = `${dateStr} | ${timeStr}`;
-        } catch (err) {
-            console.warn("Invalid timestamp:", raw);
-        }
-    });
+		el.textContent = date.toLocaleString("en-US", {
+			month: "short",
+			day: "numeric",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: true,
+		}).replace(",", " |");
+	});
 }
+
 

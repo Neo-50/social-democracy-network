@@ -41,7 +41,7 @@ def archive_x_page():
 				'quotes': r.quotes,
 				'bookmarks': r.bookmarks,
 				'views': r.views,
-				'timestamp': r.created_at_utc,
+				'created_at_utc': r.created_at_utc,
 			},
 			'media': r.media(),   # [{kind, rel_path}, ...]
 			'mtime': r.downloaded_at_utc,
@@ -51,13 +51,33 @@ def archive_x_page():
 
 TW_DATE_FMT = '%a %b %d %H:%M:%S %z %Y'  # e.g., Wed Oct 22 12:08:35 +0000 2025
 
-def to_epoch_seconds(timestr: str) -> int | None:
-	if not timestr:
+def to_epoch_seconds(v):
+	"""Return UTC epoch seconds (int) from several possible inputs."""
+	if v is None:
 		return None
+
+	# Already numeric (seconds or ms)
+	if isinstance(v, (int, float)):
+		return int(v/1000) if v > 10**12 else int(v)
+
+	# Strings: numeric?
+	s = str(v).strip()
+	if s.isdigit():
+		n = int(s)
+		return int(n/1000) if n > 10**12 else n
+
+	# Try Twitter format (most common in your flow)
 	try:
-		return int(datetime.strptime(timestr, "%a %b %d %H:%M:%S %z %Y").timestamp())
+		return int(datetime.strptime(s, TW_DATE_FMT).timestamp())
+	except Exception:
+		pass
+
+	# Try ISO 8601 (just in case you ever feed one)
+	try:
+		# fromisoformat can handle "YYYY-MM-DDTHH:MM:SS[.fff][+/-HH:MM]"
+		return int(datetime.fromisoformat(s).timestamp())
 	except Exception as e:
-		print(f"[WARN] Failed to parse timestamp '{timestr}': {e}")
+		print(f"[timestamp] Failed to parse '{v}': {e}")
 		return None
 
 @bp_archive_x.route('/api/archive-x', methods=['POST'])
@@ -115,8 +135,17 @@ def api_archive_x():
 	elif image_urls:
 		direct_media_url = image_urls[0]
 	
-	timestamp = media.get('timestamp') or media.get('created_at')
-	epoch_timestamp = to_epoch_seconds(timestamp)
+	raw_ts = (
+		media.get('created_at_utc') or
+		media.get('timestamp_utc') or
+		media.get('timestamp') or
+		media.get('created_at')
+	)
+
+	epoch_timestamp = to_epoch_seconds(raw_ts)
+
+	print(f"[archiver] created_at raw -> {raw_ts!r}")
+	print(f"[archiver] created_at epoch -> {epoch_timestamp!r}")
 
 	# Upsert with local paths only
 	upsert_tweet(
@@ -144,7 +173,7 @@ def api_archive_x():
 		'text': media.get('text'),
 		'author_name': media.get('author_name'),
 		'author_handle': media.get('author_handle'),
-		'created_at': media.get('created_at'),
+		'created_at_utc': epoch_timestamp,
 		'counts': media.get('counts'),
 		'alt_description': media.get('alt_description'),
 	}, 200
@@ -178,7 +207,7 @@ def upsert_tweet(meta: dict, tweet_id: int, primary_video, images, media_url) ->
 	row.author_name = meta.get('author_name')
 	row.author_handle = meta.get('author_handle')
 	row.text = meta.get('text')
-	row.created_at_utc = meta.get('timestamp') or meta.get('created_at')
+	row.created_at_utc = meta.get('created_at_utc') or meta.get('timestamp') or meta.get('created_at')
 
 	counts = meta.get('counts') or {}
 	row.likes = counts.get('likes')
@@ -405,31 +434,6 @@ def fetch_tweet_oembed(tweet_url: str) -> dict | None:
 	except Exception as e:
 		print(f"[OEMBED ERROR] {e}")
 		return None
-
-def _oembed_to_fields(oe: dict) -> dict:
-	"""
-	Extract plain text + author from oEmbed HTML.
-	Returns {text, author_handle, author_name, source_url}
-	"""
-	out = {'text':'', 'author_handle':'', 'author_name':'', 'source_url':''}
-	if not oe: return out
-
-	out['author_name'] = oe.get('author_name') or ''
-	author_url = oe.get('author_url') or ''
-	out['source_url'] = oe.get('url') or ''  # sometimes present
-	# handle from author_url
-	if author_url.startswith('https://twitter.com/') or author_url.startswith('https://x.com/'):
-		out['author_handle'] = author_url.rstrip('/').split('/')[-1]
-
-	# strip the embed HTML to plain text
-	html_snip = oe.get('html') or ''
-	if html_snip:
-		# crude textization: remove tags, keep <br> as newlines
-		txt = _BR_RE.sub('\n', html_snip)
-		txt = re.sub(r'<[^>]+>', '', txt)
-		out['text'] = html.unescape(txt).strip()
-
-	return out
 
 def _force_orig(url: str) -> str:
 	u = urllib.parse.urlsplit(url)

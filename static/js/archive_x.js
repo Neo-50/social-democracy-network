@@ -42,12 +42,13 @@
                             </video>
                         `).join('')}
                     </div>
-					<span class="timestamp" data-timestamp="${data.created_at}">${data.created_at}</span>
+					<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
                     <hr>
 					<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 					 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
                 `;
 				feed.prepend(card);
+				formatTimestamp(card);
 				form.reset();
 			} 
 			else if (hasImages) {
@@ -61,12 +62,13 @@
                     	${data.author_name}
                         <div>${data.text}</div>
                         <div><img class="twitter-image" src="/media/${data.images[0]}" alt=""></div>
-						<span class="timestamp" data-timestamp="${data.created_at}">${data.created_at}</span>
+						<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
                         <hr>
 						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
 					`;
 					feed.prepend(card);
+					formatTimestamp(card);
 					form.reset();
 				}
 		} catch (err) {
