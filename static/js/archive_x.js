@@ -47,8 +47,8 @@
 					<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 					 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
                 `;
-				feed.prepend(card);
 				formatTimestamp(card);
+				feed.prepend(card);
 				form.reset();
 			} 
 			else if (hasImages) {
@@ -67,8 +67,8 @@
 						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
 					`;
-					feed.prepend(card);
 					formatTimestamp(card);
+					feed.prepend(card);
 					form.reset();
 				}
 			else {
@@ -86,8 +86,8 @@
 						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
 					`;
-					feed.prepend(card);
 					formatTimestamp(card);
+					feed.prepend(card);
 					form.reset();
 			}
 		} catch (err) {
