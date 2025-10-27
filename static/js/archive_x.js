@@ -17,7 +17,14 @@
 				body: fd
 			});
 			const data = await res.json();
-			if (!res.ok || !data.ok) { throw new Error(data.error || 'Download failed'); }
+			if (res.status === 409 || data.error === 'duplicate' || data.duplicate) {
+				showToast('Tweet has already been submitted!', 'danger');
+				return;
+			}
+			else if (!res.ok || !data.ok) { throw new Error(data.error || 'Download failed'); }
+
+			const counts = data.counts ?? {};
+			const views = counts.views ?? 0;
 
             console.log('>>>>>> Data received from /api/archive-x: ', data)
 

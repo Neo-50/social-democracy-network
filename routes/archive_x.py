@@ -1,10 +1,11 @@
 import os, re, html, urllib.parse, requests, glob
+from sqlalchemy import exists
 from models.tweet_archive import TweetArchive
 from datetime import datetime
 import time
 import json as _json
 from app import db
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, flash, render_template, jsonify
 from yt_dlp import YoutubeDL
 from utils.media_paths import get_media_path
 import requests, datetime as dt
@@ -23,7 +24,7 @@ def extract_tweet_id(url: str) -> str | None:
 def archive_x_page():
 	rows = (
 		db.session.query(TweetArchive)
-		.order_by(TweetArchive.downloaded_at_utc.desc())
+		.order_by(TweetArchive.created_at_utc.desc())
 		.all()
 	)
 	items = []
@@ -89,6 +90,19 @@ def api_archive_x():
 	tweet_id = extract_tweet_id(tweet_url)
 	if not tweet_id:
 		return {'ok': False, 'error': 'Could not detect tweet ID.'}, 400
+	
+	already_exists = db.session.query(
+		exists().where(TweetArchive.tweet_id == tweet_id)
+	).scalar()
+
+	# early exit on duplicate
+	if already_exists:
+		return jsonify({
+			"ok": False,
+			"error": "duplicate",
+			"message": "Tweet has already been submitted.",
+			"counts": {}  # keep shape consistent to avoid data.counts crash
+		}), 409  # Conflict (easy to branch on in JS)
 
 	media = fetch_tweet_media(tweet_url)
 
