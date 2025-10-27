@@ -391,7 +391,28 @@ def extract_author(res: dict) -> tuple[str | None, str | None]:
 					return name, handle
 
 	return None, None
-	
+
+def _pick(d, *path):
+	"""Safe nested getter: _pick(obj, 'a','b','c') -> obj['a']['b']['c'] or None."""
+	cur = d
+	for key in path:
+		if not isinstance(cur, dict) or key not in cur:
+			return None
+		cur = cur[key]
+	return cur
+
+def _full_text_from_result(res: dict, legacy: dict) -> str | None:
+	# 1) Longform (Blue) tweets — the *only* place with full text on long tweets
+	note_text = (
+		_pick(res, 'note_tweet', 'note_tweet_results', 'result', 'text') or
+		_pick(res, 'note_tweet_results', 'result', 'text') or
+		_pick(res, 'tweet', 'note_tweet_results', 'result', 'text')
+	)
+	if note_text:
+		return note_text
+
+	return legacy.get('full_text') or legacy.get('text')
+
 def _extract_metadata(data):
 	"""
 	Returns (text, author_name, author_handle, created_at, counts_dict, alt_desc)
@@ -432,13 +453,18 @@ def _extract_metadata(data):
 	if not res:
 		print('>>>>>>>>>>>>_extract_metadata failed, returning')
 		return (text, author_name, author_handle, created_at, counts, alt_desc)
-
+	
+	# ---- text extraction ----
 	legacy = res.get("legacy", {}) if isinstance(res, dict) else {}
-	text = legacy.get("full_text") or legacy.get("text")
-	created_at = legacy.get("created_at")
-	alt_desc = res.get("post_image_description")  # present for many org accounts
+	text = _full_text_from_result(res, legacy)
+	src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
+	print(f">>> [extract_metadata] text source={src}, length={len(text) if text else 0}")
 
-	print('_extract_metadata: legacy, text, created_at, alt_desc:', legacy, text, created_at, alt_desc)
+	created_at = legacy.get("created_at")
+	alt_desc = res.get("post_image_description")  # still okay
+	print(f">>> [extract_metadata] created_at={created_at}, alt_desc={bool(alt_desc)}")
+
+	print('>>> [extract_metadata] legacy, text, created_at, alt_desc:', legacy, text, created_at, alt_desc)
 
 	# counts live mostly under legacy
 	counts["likes"] = legacy.get("favorite_count")
