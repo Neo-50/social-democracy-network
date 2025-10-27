@@ -26,6 +26,18 @@
     margin: 10px;
 }
 
+#order-form {
+    padding-left: 20px;
+}
+
+#order {
+    width: 140px;
+	height: 2.2rem;            /* or whatever you prefer */
+	line-height: 2.2rem;       /* match the height */
+	padding: 0 0.5rem;         /* horizontal padding only */
+	vertical-align: middle;
+}
+
 .gallery{
 	display:grid;
 	gap:.5rem;

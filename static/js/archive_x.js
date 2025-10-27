@@ -104,3 +104,7 @@
 		}
 	});
 })();
+
+document.getElementById('order').addEventListener('change', function () {
+	document.getElementById('order-form').submit(); // sends GET ?order=...
+});

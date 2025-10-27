@@ -22,11 +22,14 @@ def extract_tweet_id(url: str) -> str | None:
 
 @bp_archive_x.route('/archive-x', methods=['GET'])
 def archive_x_page():
-	rows = (
-		db.session.query(TweetArchive)
-		.order_by(TweetArchive.created_at_utc.desc())
-		.all()
+	order = request.args.get('order', 'desc')
+	query = db.session.query(TweetArchive)
+	query = query.order_by(
+		TweetArchive.created_at_utc.asc() if order == 'asc'
+		else TweetArchive.created_at_utc.desc()
 	)
+	rows = query.all()
+
 	items = []
 	for r in rows:
 		items.append({
@@ -48,7 +51,7 @@ def archive_x_page():
 			'mtime': r.downloaded_at_utc,
 		})
 	print('[ITEMS]:', [(i['tweet_id'], len(i['media'])) for i in items])
-	return render_template('archive_x.html', initial_items=items)
+	return render_template('archive_x.html', initial_items=items, current_order=order)
 
 TW_DATE_FMT = '%a %b %d %H:%M:%S %z %Y'  # e.g., Wed Oct 22 12:08:35 +0000 2025
 
