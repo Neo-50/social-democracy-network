@@ -5,7 +5,7 @@ from datetime import datetime
 import time
 import json as _json
 from app import db
-from flask import Blueprint, request, flash, render_template, jsonify
+from flask import Blueprint, request, render_template, jsonify
 from yt_dlp import YoutubeDL
 from utils.media_paths import get_media_path
 import requests, datetime as dt

@@ -24,7 +24,7 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.utils import secure_filename
 from utils.metadata_scraper import try_youtube_scrape

@@ -4,6 +4,10 @@
 
 	form.addEventListener('submit', async (e) => {
 		e.preventDefault();
+		if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
+            showToast('Please login or create an account');
+            return;
+        }
 		const fd = new FormData(form);
 		const csrf = form.querySelector('input[name="csrf_token"]')?.value || '';
 

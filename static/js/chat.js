@@ -109,6 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // send message
     sendButton.addEventListener("click", () => {
+        if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
+            showToast('Please login or create an account');
+            return;
+        }
         const message = chatEditor.innerHTML.trim();
         if (message !== "") {
             fetch("/chat/send", {
@@ -135,6 +139,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     chatEditor.addEventListener('paste', async (e) => {
+        if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
+            showToast('Please login or create an account');
+            return;
+        }
         const cd = e.clipboardData || window.clipboardData;
 		if (!cd) return;
         // If an image file is on the clipboard, upload it directly
@@ -176,6 +184,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     chatEditor.addEventListener("keydown", (e) => {
+        if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
+            showToast('Please login or create an account');
+            return;
+        }
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault(); // Prevent newline
             sendButton.click(); // Trigger the click event on send button
