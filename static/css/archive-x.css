@@ -27,16 +27,23 @@
     margin: 10px;
 }
 
-#order-form {
-    padding-left: 20px;
-}
-
-#order {
+#orderSel, #monthSel, #yearSel {
     width: 140px;
-	height: 2.2rem;            /* or whatever you prefer */
+	height: 2rem;            /* or whatever you prefer */
 	line-height: 2.2rem;       /* match the height */
 	padding: 0 0.5rem;         /* horizontal padding only */
 	vertical-align: middle;
+}
+
+.filters {
+    margin-bottom: 10px;
+    padding-left: 14px
+}
+
+.control-panel  {
+    color: #C1C1C1;
+    font-weight: 600;
+    font-size: 1.2em;
 }
 
 .gallery{
@@ -51,7 +58,7 @@
 }
 
 #url {
-    width: 600px;
+    width: 420px;
     padding: 12px 20px;
     margin-left: 0;
     background-color: #1a1a1a;
@@ -66,8 +73,8 @@
 
 #archive-form {
     width: fit-content;
-    margin-left: 20px;
-    margin-bottom: 20px;
+    margin-left: 14px;
+    margin-bottom: 10px;
 }
 
 #feed {

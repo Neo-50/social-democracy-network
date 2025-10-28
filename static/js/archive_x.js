@@ -112,6 +112,22 @@
 	});
 })();
 
-document.getElementById('order').addEventListener('change', function () {
-	document.getElementById('order-form').submit(); // sends GET ?order=...
-});
+// document.getElementById('order').addEventListener('change', function () {
+// 	document.getElementById('order-form').submit(); // sends GET ?order=...
+// });
+
+const monthSel = document.getElementById('monthSel');
+const yearSel = document.getElementById('yearSel');
+const orderSel = document.getElementById('orderSel');
+
+function updateUrl() {
+	const params = new URLSearchParams(window.location.search);
+	params.set('month', monthSel.value);
+	params.set('year', yearSel.value);
+	params.set('order', orderSel.value);
+	window.location.search = params.toString();
+}
+
+monthSel.addEventListener('change', updateUrl);
+yearSel.addEventListener('change', updateUrl);
+orderSel.addEventListener('change', updateUrl);

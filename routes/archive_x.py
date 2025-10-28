@@ -1,7 +1,8 @@
 import os, re, html, urllib.parse, requests, glob
 from sqlalchemy import exists
 from models.tweet_archive import TweetArchive
-from datetime import datetime
+from datetime import datetime, timezone
+import calendar
 import time
 import json as _json
 from app import db
@@ -23,7 +24,26 @@ def extract_tweet_id(url: str) -> str | None:
 @bp_archive_x.route('/archive-x', methods=['GET'])
 def archive_x_page():
 	order = request.args.get('order', 'desc')
-	query = db.session.query(TweetArchive)
+
+	# month: 1–12, year: 4-digit. Default to *current UTC* month/year.
+	now = datetime.now(timezone.utc)
+	month = request.args.get('month', type=int) or now.month
+	year = request.args.get('year', type=int) or now.year
+
+	# Boundaries for the selected month (UTC)
+	start = datetime(year, month, 1, tzinfo=timezone.utc)
+	next_month = month + 1 if month < 12 else 1
+	next_year = year + 1 if month == 12 else year
+	end = datetime(next_year, next_month, 1, tzinfo=timezone.utc)
+
+	start_ts = int(start.timestamp())
+	end_ts = int(end.timestamp())
+
+	query = db.session.query(TweetArchive).filter(
+		TweetArchive.created_at_utc >= start_ts,
+		TweetArchive.created_at_utc < end_ts,
+	)
+
 	query = query.order_by(
 		TweetArchive.created_at_utc.asc() if order == 'asc'
 		else TweetArchive.created_at_utc.desc()
@@ -51,7 +71,19 @@ def archive_x_page():
 			'mtime': r.downloaded_at_utc,
 		})
 	print('[ITEMS]:', [(i['tweet_id'], len(i['media'])) for i in items])
-	return render_template('archive_x.html', initial_items=items, current_order=order)
+
+	months = [(i, calendar.month_name[i]) for i in range(1, 13)]
+	years = [2025, 2024]
+
+	return render_template(
+		'archive_x.html',
+		initial_items=items,
+		current_order=order,
+		current_month=month,
+		current_year=year,
+		months=months,
+		years=years,
+	)
 
 TW_DATE_FMT = '%a %b %d %H:%M:%S %z %Y'  # e.g., Wed Oct 22 12:08:35 +0000 2025
 

@@ -2,21 +2,47 @@
 {% block content %}
 <div class="max-w-2xl mx-auto">
 	<h1>Save-a-Tweet (archive-x)</h1>
-
-	<form method="post" id="archive-form">
-		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-		<label for="url">Tweet URL</label>
-		<input id="url" name="url" type="url" required placeholder="https://x.com/username/status/1770…">
-		<button type="submit">Download</button>
-	</form>
-	<form id="order-form" method="get" action="{{ url_for('archive_x.archive_x_page') }}" style="margin:1rem 0;">
-		<label for="order">Sort by:</label>
-		<select id="order" name="order">
-			<option value="desc" {% if current_order == 'desc' %}selected{% endif %}>Newest first</option>
-			<option value="asc"  {% if current_order == 'asc'  %}selected{% endif %}>Oldest first</option>
-		</select>
-		<noscript><button type="submit">Apply</button></noscript>
-	</form>
+	<div class="control-panel">
+		<form method="post" id="archive-form">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+			<label for="url">Tweet URL:</label>
+			<input id="url" name="url" type="url" required placeholder="https://x.com/username/status/1770…">
+			<button type="submit">Download</button>
+		</form>
+		<!-- <form id="order-form" method="get" action="{{ url_for('archive_x.archive_x_page') }}">
+			<label for="order">Sort by:</label>
+			<select id="order" name="order">
+				<option value="desc" {% if current_order == 'desc' %}selected{% endif %}>Newest first</option>
+				<option value="asc"  {% if current_order == 'asc'  %}selected{% endif %}>Oldest first</option>
+			</select>
+			<noscript><button type="submit">Apply</button></noscript>
+		</form> -->
+		<div class="filters">
+			<label>
+				Order:
+				<select id="orderSel">
+					<option value="desc" {{ 'selected' if current_order == 'desc' else '' }}>Newest first</option>
+					<option value="asc"  {{ 'selected' if current_order == 'asc' else '' }}>Oldest first</option>
+				</select>
+			</label>
+			<label>
+				Month:
+				<select id="monthSel">
+					{% for val, name in months %}
+						<option value="{{ val }}" {{ 'selected' if val == current_month else '' }}>{{ name }}</option>
+					{% endfor %}
+				</select>
+			</label>
+			<label>
+				Year:
+				<select id="yearSel">
+					{% for y in years %}
+						<option value="{{ y }}" {{ 'selected' if y == current_year else '' }}>{{ y }}</option>
+					{% endfor %}
+				</select>
+			</label>
+		</div>
+	</div>
 
 	<div id="feed">
 		{% if initial_items %}
