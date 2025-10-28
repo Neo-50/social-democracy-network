@@ -40,7 +40,7 @@
 				const card = document.createElement('div');
                 card.className = 'tweet-card';
 				card.innerHTML = `
-                    <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</div>
+                    <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
                     <div >Tweet ID: ${data.tweet_id}</div>
                     <br>
 					<span>@${data.author_handle}</span>—
