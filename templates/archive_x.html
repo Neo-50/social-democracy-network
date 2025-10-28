@@ -49,7 +49,7 @@
 			{% for it in initial_items %}
 				<div class="tweet-card">
 					Tweet ID: {{ it.tweet_id }}
-					<div>Source URL: <a href="{{ it.meta.url }}">{{ it.meta.url }}</a></div>
+					<div>Source URL: <a href="{{ it.meta.url }}" target="_blank">{{ it.meta.url }}</a></div>
 					{% if it.meta %}
 						<div style="margin-bottom:.35rem;">
 							<br>
@@ -59,7 +59,7 @@
 							{% endif %}
 						</div>
 						{% if it.meta.text %}
-							<p style="margin:.25rem 0 .5rem 0;">{{ it.meta.text }}</p>
+							<div class="tweet-text">{{ it.meta.text }}</div>
 						{% endif %}
 					{% endif %}
 

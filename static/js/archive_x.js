@@ -40,12 +40,12 @@
 				const card = document.createElement('div');
                 card.className = 'tweet-card';
 				card.innerHTML = `
-                    <div>Tweet URL: ${data.url}</div>
+                    <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</div>
                     <div >Tweet ID: ${data.tweet_id}</div>
                     <br>
 					<span>@${data.author_handle}</span>—
                     ${data.author_name}
-                    <div>${data.text}</div>
+                    <div class="tweet-text">${data.text}</div>
                     <div class="gallery" style="display:grid;gap:.5rem;">
                         ${(data.primary_video || []).map(v => `
                             <video class="twitter-video" controls preload="metadata">
@@ -69,12 +69,12 @@
 						.map(img => `<img class="twitter-image" src="/media/${img}" alt="">`)
 						.join('');
 					card.innerHTML = ` 
-                        <div>Tweet URL: ${data.url}</div>
+                        <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
 						<div>Tweet ID: ${data.tweet_id}</div>
                         <br>
                         <span>@${data.author_handle}</span>—
                     	${data.author_name}
-                        <div>${data.text}</div>
+                        <div class="tweet-text">${data.text}</div>
                         <div class="gallery">${imagesHTML}</div>
 						<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
                         <hr>
@@ -89,12 +89,12 @@
 					const card = document.createElement('div');
                     card.className = 'tweet-card'; 
 					card.innerHTML = ` 
-                        <div>Tweet URL: ${data.url}</div>
+                        <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
 						<div>Tweet ID: ${data.tweet_id}</div>
                         <br>
                         <span>@${data.author_handle}</span>—
                     	${data.author_name}
-                        <div>${data.text}</div>
+                        <div class="tweet-text">${data.text}</div>
 						<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
                         <hr>
 						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}

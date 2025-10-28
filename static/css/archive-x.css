@@ -27,6 +27,11 @@
     margin: 10px;
 }
 
+.tweet-text {
+	white-space: pre-wrap;
+    margin-bottom: 10px;
+}
+
 #orderSel, #monthSel, #yearSel {
     width: 140px;
 	height: 2rem;            /* or whatever you prefer */
