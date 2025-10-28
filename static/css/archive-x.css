@@ -1,16 +1,17 @@
 .twitter-video {
     height: auto;
-    max-width: 500px;
-    max-height: 500px;
+    max-width: 600px;
+    max-height: 600px;
     margin-bottom: 20px;
     border-radius: 24px;
 }
 
 .twitter-image {
     height: auto;
-    max-width: 500px;
-    max-height: 500px;
+    max-width: 600px;
+    max-height: 600px;
     border-radius: 24px;
+    padding: 10px;
 }
 
 .timestamp {
@@ -39,10 +40,14 @@
 }
 
 .gallery{
-	display:grid;
-	gap:.5rem;
+    display: flex;
+    flex-direction: row;
 	grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-	align-items:start; /* don't stretch children vertically */
+	align-items:start;
+    border: 1px solid #bbb;
+    border-radius: 24px;
+    overflow-y: auto;
+    margin-bottom: 14px;
 }
 
 #url {

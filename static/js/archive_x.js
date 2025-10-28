@@ -64,7 +64,10 @@
 			} 
 			else if (hasImages) {
 					const card = document.createElement('div');
-                    card.className = 'tweet-card'; 
+                    card.className = 'tweet-card';
+					const imagesHTML = (data.images || [])
+						.map(img => `<img class="twitter-image" src="/media/${img}" alt="">`)
+						.join('');
 					card.innerHTML = ` 
                         <div>Tweet URL: ${data.url}</div>
 						<div>Tweet ID: ${data.tweet_id}</div>
@@ -72,7 +75,7 @@
                         <span>@${data.author_handle}</span>—
                     	${data.author_name}
                         <div>${data.text}</div>
-                        <div><img class="twitter-image" src="/media/${data.images[0]}" alt=""></div>
+                        <div class="gallery">${imagesHTML}</div>
 						<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
                         <hr>
 						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}

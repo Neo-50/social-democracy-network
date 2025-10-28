@@ -413,6 +413,40 @@ def _full_text_from_result(res: dict, legacy: dict) -> str | None:
 
 	return legacy.get('full_text') or legacy.get('text')
 
+def _extract_reply_context(res: dict, legacy: dict) -> dict:
+	"""
+	Returns:
+	{
+		'is_reply': bool,
+		'reply_to_tweet_id': str|None,
+		'reply_to_user_id': str|None,
+		'reply_to_screen_name': str|None,
+		'conversation_id': str|None,
+	}
+	"""
+	reply = {
+		'is_reply': False,
+		'reply_to_tweet_id': None,
+		'reply_to_user_id': None,
+		'reply_to_screen_name': None,
+		'conversation_id': None,
+	}
+	if not isinstance(legacy, dict):
+		return reply
+
+	# Classic reply fields live under legacy
+	reply_to_tweet_id = legacy.get('in_reply_to_status_id_str')
+	if reply_to_tweet_id:
+		reply['is_reply'] = True
+		reply['reply_to_tweet_id'] = reply_to_tweet_id
+		reply['reply_to_user_id'] = legacy.get('in_reply_to_user_id_str')
+		reply['reply_to_screen_name'] = legacy.get('in_reply_to_screen_name')
+
+	# Helpful for threading/grouping
+	reply['conversation_id'] = legacy.get('conversation_id_str')
+	return reply
+
+
 def _extract_metadata(data):
 	"""
 	Returns (text, author_name, author_handle, created_at, counts_dict, alt_desc)
@@ -420,7 +454,7 @@ def _extract_metadata(data):
 	"""
 	print('>>>>>>>>> extract_metadata')
 
-	text = author_name = author_handle = created_at = alt_desc = None
+	text = author_name = author_handle = created_at = alt_desc = reply_ctx = None
 	counts = {
 		"likes": None,
 		"retweets": None,
@@ -452,11 +486,15 @@ def _extract_metadata(data):
 
 	if not res:
 		print('>>>>>>>>>>>>_extract_metadata failed, returning')
-		return (text, author_name, author_handle, created_at, counts, alt_desc)
+		return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx)
 	
 	# ---- text extraction ----
 	legacy = res.get("legacy", {}) if isinstance(res, dict) else {}
 	text = _full_text_from_result(res, legacy)
+	reply_ctx = _extract_reply_context(res, legacy)
+	print(f">>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
+		f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
+		f"conv_id={reply_ctx['conversation_id']}")
 	src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
 	print(f">>> [extract_metadata] text source={src}, length={len(text) if text else 0}")
 
@@ -483,9 +521,7 @@ def _extract_metadata(data):
 	if not author_name and not author_handle:
 		debug("AUTHOR DEBUG:", json.dumps(res.get("core", {}), indent=2)[:800])
 
-	print('>>>>>> _extract_metadata end: ', author_name, author_handle, counts)
-
-	return (text, author_name, author_handle, created_at, counts, alt_desc)
+	return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx)
 
 
 def fetch_tweet_media(url_or_id: str) -> dict:
@@ -529,8 +565,8 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		primary_url = (primary_vid or {}).get("url")
 
 		# text, author _ extract_text_author(data)
-		text, author_name, author_handle, created_at, counts, alt_desc = _extract_metadata(data)
-		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at, counts, alt_desc)
+		text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx = _extract_metadata(data)
+		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx)
 
 		result = {
 			"primary_video": primary_url,
