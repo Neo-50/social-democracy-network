@@ -43,6 +43,8 @@ def archive_x_page():
 		TweetArchive.created_at_utc >= start_ts,
 		TweetArchive.created_at_utc < end_ts,
 	)
+	monthly_total  = query.count()
+	total_tweets = TweetArchive.query.count()
 
 	query = query.order_by(
 		TweetArchive.created_at_utc.asc() if order == 'asc'
@@ -75,11 +77,16 @@ def archive_x_page():
 	months = [(i, calendar.month_name[i]) for i in range(1, 13)]
 	years = [2025, 2024]
 
+	month_name = calendar.month_name[month]
+
 	return render_template(
 		'archive_x.html',
 		initial_items=items,
+		total_tweets=total_tweets,
+		monthly_total=monthly_total,
 		current_order=order,
 		current_month=month,
+		month_name=month_name,
 		current_year=year,
 		months=months,
 		years=years,

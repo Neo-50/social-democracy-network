@@ -32,6 +32,17 @@
     margin-bottom: 10px;
 }
 
+.totals {
+    width: fit-content;
+    font-weight: 600;
+    font-size: 1.4em;
+    color: #C1C1C1;
+    border: 1px solid #C1C1C1;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    padding: 6px;
+}
+
 #orderSel, #monthSel, #yearSel {
     width: 140px;
 	height: 2rem;            /* or whatever you prefer */
