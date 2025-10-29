@@ -20,24 +20,29 @@
         <meta name="twitter:image" content="{{ article_to_highlight.image_url }}">
 
     {% elif focus %}
-        {% if initial_items %}
-            <meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ initial_items[0].meta.author_handle }}">
-            <meta property="og:title" content="@{{ initial_items[0].meta.author_handle }} - 
-            {{ initial_items[0].meta.author_name }}">
-            <meta property="og:description" content="{{ initial_items[0].meta.text }}">
+        {% set focused_tweet = None %}
+        {% if focus and initial_items %}
+            {% for tweet in initial_items %}
+                {% if tweet.tweet_id|string == focus|string %}
+                    {% set focused_tweet = tweet %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if focused_tweet %}
+            <meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ focused_tweet.meta.author_handle }}">
+            <meta property="og:title" content="@{{ focused_tweet.meta.author_handle }} - {{ focused_tweet.meta.author_name }}">
+            <meta property="og:description" content="{{ focused_tweet.meta.text }}">
             <meta property="og:type" content="article">
-            <meta property="og:url" content="https://social-democracy.net/news?article={{ article_to_highlight.id }}">
             <meta name="twitter:card" content="summary_large_image">
-            <meta name="twitter:title" content="@{{ initial_items[0].meta.author_handle }} - 
-            {{ initial_items[0].meta.author_name }}">
-                <meta name="twitter:description" content="{{ initial_items[0].meta.text }}">
+            <meta name="twitter:title" content="@{{ focused_tweet.meta.author_handle }} - {{ focused_tweet.meta.author_name }}">
+            <meta name="twitter:description" content="{{ focused_tweet.meta.text }}">
+
             {% set preview_image = None %}
-            {% for kind, path in initial_items[0].media %}
+            {% for kind, path in focused_tweet.media %}
                 {% if kind == 'image' and not preview_image %}
                     {% set preview_image = url_for('media', filename=path, _external=True) %}
                 {% endif %}
             {% endfor %}
-
             {% if preview_image %}
                 <meta name="twitter:image" content="{{ preview_image }}">
             {% endif %}
