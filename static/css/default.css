@@ -462,6 +462,11 @@ button {
   border: none;
   border-radius: 24px;
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+button:hover {
+  background-color: #888;
 }
 
 .flash-message {
