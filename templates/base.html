@@ -30,14 +30,13 @@
         <meta name="twitter:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
         <meta name="twitter:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
 
-        {% set preview_image = None %}
-        {% for kind, path in focused_tweet.media %}
-            {% if kind == 'image' and not preview_image %}
-                {% set preview_image = url_for('media', filename=path, _external=True) %}
-            {% endif %}
-        {% endfor %}
+        {% set img_rel = focused_tweet.media
+            | selectattr('kind', 'equalto', 'image')
+            | map(attribute='rel_path')
+            | first %}
 
-        {% if preview_image %}
+        {% if img_rel %}
+            {% set preview_image = url_for('media', filename=img_rel, _external=True) %}
             <meta property="og:image" content="{{ preview_image }}">
             <meta name="twitter:image" content="{{ preview_image }}">
         {% endif %}
