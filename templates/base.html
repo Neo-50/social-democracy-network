@@ -19,36 +19,27 @@
         <meta name="twitter:description" content="{{ article_to_highlight.description }}">
         <meta name="twitter:image" content="{{ article_to_highlight.image_url }}">
 
-    {% elif focus and initial_items %}
-		{% set focused_tweet = None %}
-		{% for t in initial_items %}
-			{% if t.tweet_id|string == focus|string %}
-				{% set focused_tweet = t %}
-			{% endif %}
-		{% endfor %}
+	{% if focused_tweet %}
+        <meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ focused_tweet.meta.author_handle }}">
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
+        <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
+        <meta property="og:url" content="{{ request.url }}">
 
-		{% if focused_tweet %}
-			<meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ focused_tweet.meta.author_handle }}">
-			<meta property="og:type" content="article">
-			<meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
-			<meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
-			<meta property="og:url" content="{{ request.url }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
+        <meta name="twitter:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
 
-			<meta name="twitter:card" content="summary_large_image">
-			<meta name="twitter:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
-			<meta name="twitter:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
-
-			{% set preview_image = None %}
-			{% for kind, path in focused_tweet.media %}
-				{% if kind == 'image' and not preview_image %}
-					{% set preview_image = url_for('media', filename=path, _external=True) %}
-				{% endif %}
-			{% endfor %}
-			{% if preview_image %}
-				<meta property="og:image" content="{{ preview_image }}">
-				<meta name="twitter:image" content="{{ preview_image }}">
-			{% endif %}
-		{% endif %}
+        {% set preview_image = None %}
+        {% for kind, path in focused_tweet.media %}
+            {% if kind == 'image' and not preview_image %}
+                {% set preview_image = url_for('media', filename=path, _external=True) %}
+            {% endif %}
+        {% endfor %}
+        {% if preview_image %}
+            <meta property="og:image" content="{{ preview_image }}">
+            <meta name="twitter:image" content="{{ preview_image }}">
+        {% endif %}
     {% else %}
         <meta property="og:site_name" content="Social Democracy Network">
         <meta property="og:title" content="Social Democracy Network">

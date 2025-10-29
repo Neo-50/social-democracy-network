@@ -92,6 +92,7 @@ def archive_x_page():
 	years = [2025, 2024]
 
 	month_name = calendar.month_name[month]
+	focused_tweet = next((it for it in items if str(it['tweet_id']) == str(focus)), None)
 
 	return render_template(
 		'archive_x.html',
@@ -104,7 +105,8 @@ def archive_x_page():
 		current_year=year,
 		months=months,
 		years=years,
-		focus=focus
+		focus=focus,
+		focused_tweet=focused_tweet
 	)
 
 TW_DATE_FMT = '%a %b %d %H:%M:%S %z %Y'  # e.g., Wed Oct 22 12:08:35 +0000 2025
