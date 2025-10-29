@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
-	<h1>Save-a-Tweet (archive-x)</h1>
+	<h1><a href="https://social-democracy.net/archive-x">Save-a-Tweet (archive-x)</a></h1>
 	<div class="totals">Total Tweets Archived: <strong>{{ total_tweets }}</strong></br><hr>
 	Total for {{ month_name }}, {{ current_year }}: <strong>{{ monthly_total }}</strong></div>
 	<div class="control-panel">
@@ -86,6 +86,7 @@
 						<p>👀 {{ it.meta.views }} | ❤️ {{ it.meta.likes }} | 💬 {{ it.meta.comments }}
 							 | 🔁 {{ it.meta.retweets }} |  ” {{ it.meta.quotes }} | 🔖 {{ it.meta.bookmarks }}</p>
 					</div>
+					<button type="button" class="sharelink" onclick="copyTweetLink('{{ it.tweet_id }}')">🔗 Copy Share Link</button>
 				</div>
 			{% endfor %}
 		{% endif %}

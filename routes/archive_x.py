@@ -1,5 +1,5 @@
 import os, re, html, urllib.parse, requests, glob
-from sqlalchemy import exists
+from sqlalchemy import exists, case
 from models.tweet_archive import TweetArchive
 from datetime import datetime, timezone
 import calendar
@@ -24,18 +24,27 @@ def extract_tweet_id(url: str) -> str | None:
 @bp_archive_x.route('/archive-x', methods=['GET'])
 def archive_x_page():
 	order = request.args.get('order', 'desc')
-
-	# month: 1–12, year: 4-digit. Default to *current UTC* month/year.
+	focus = request.args.get('focus')
 	now = datetime.now(timezone.utc)
-	month = request.args.get('month', type=int) or now.month
-	year = request.args.get('year', type=int) or now.year
+
+	if focus:
+		t = db.session.query(TweetArchive).filter_by(tweet_id=focus).first()
+		if t:
+			focus_dt = datetime.fromtimestamp(t.created_at_utc, tz=timezone.utc)
+			month = focus_dt.month
+			year  = focus_dt.year
+		else:
+			month = request.args.get('month', type=int) or now.month
+			year  = request.args.get('year',  type=int) or now.year
+	else:
+		month = request.args.get('month', type=int) or now.month
+		year  = request.args.get('year',  type=int) or now.year
 
 	# Boundaries for the selected month (UTC)
 	start = datetime(year, month, 1, tzinfo=timezone.utc)
 	next_month = month + 1 if month < 12 else 1
 	next_year = year + 1 if month == 12 else year
 	end = datetime(next_year, next_month, 1, tzinfo=timezone.utc)
-
 	start_ts = int(start.timestamp())
 	end_ts = int(end.timestamp())
 
@@ -46,12 +55,17 @@ def archive_x_page():
 	monthly_total  = query.count()
 	total_tweets = TweetArchive.query.count()
 
-	query = query.order_by(
-		TweetArchive.created_at_utc.asc() if order == 'asc'
-		else TweetArchive.created_at_utc.desc()
-	)
+	if focus:
+		priority = case((TweetArchive.tweet_id == focus, 0), else_=1)
+		secondary = (TweetArchive.created_at_utc.asc()
+		             if order == 'asc' else TweetArchive.created_at_utc.desc())
+		query = query.order_by(priority, secondary)
+	else:
+		query = query.order_by(
+			TweetArchive.created_at_utc.asc() if order == 'asc'
+			else TweetArchive.created_at_utc.desc()
+		)
 	rows = query.all()
-
 	items = []
 	for r in rows:
 		items.append({
@@ -90,6 +104,7 @@ def archive_x_page():
 		current_year=year,
 		months=months,
 		years=years,
+		focus=focus
 	)
 
 TW_DATE_FMT = '%a %b %d %H:%M:%S %z %Y'  # e.g., Wed Oct 22 12:08:35 +0000 2025

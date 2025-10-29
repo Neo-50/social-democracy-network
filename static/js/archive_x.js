@@ -131,3 +131,38 @@ function updateUrl() {
 monthSel.addEventListener('change', updateUrl);
 yearSel.addEventListener('change', updateUrl);
 orderSel.addEventListener('change', updateUrl);
+
+function copyTweetLink(tweetId) {
+	// Get the current URL origin (e.g., https://social-democracy.net)
+	const baseUrl = window.location.origin;
+	// Always link back to /archive-x with focus param
+	const shareUrl = `${baseUrl}/archive-x?focus=${tweetId}`;
+	
+	// Use the modern clipboard API
+	navigator.clipboard.writeText(shareUrl)
+		.then(() => {
+			// Optional toast or temporary visual feedback
+			const btn = event.currentTarget;
+			const originalText = btn.textContent;
+			btn.textContent = "✅ Copied!";
+			setTimeout(() => btn.textContent = originalText, 1500);
+		})
+		.catch(err => {
+			console.error("Clipboard copy failed:", err);
+			alert("Unable to copy link");
+		});
+}
+
+function copyTweetLink(tweetId) {
+	const baseUrl = window.location.origin;
+	const shareUrl = `${baseUrl}/archive-x?focus=${tweetId}`;
+
+	navigator.clipboard.writeText(shareUrl)
+		.then(() => {
+			showToast("✅ Link copied to clipboard");
+		})
+		.catch(err => {
+			console.error("Clipboard copy failed:", err);
+			showToast("⚠️ Unable to copy link");
+		});
+}

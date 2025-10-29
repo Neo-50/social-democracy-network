@@ -69,6 +69,29 @@
     font-size: 1.2em;
 }
 
+.sharelink {
+    background-color: transparent;
+    color: #00e3ea;
+    border: none;
+    padding: 0;
+    margin-left: 0;
+    margin-bottom: 20px;
+    margin-top: 5px;
+    font-size: 1em;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sharelink:hover {
+    color: white;
+}
+
 .gallery{
     display: flex;
     flex-direction: row;
