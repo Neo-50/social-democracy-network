@@ -183,6 +183,9 @@
                     Uncategorized/Other</a></li>
             </ul>
         </div>
+        <div class="archive-x-warning-page">
+            <a href="{{ url_for('archive_x_warning') }}">TwitterX Archive</a> 🚨<span style="color: red;">Warning:</span> Graphic Content
+        </div>
         <form method="GET" action="{{ url_for('news') }}">
             <select name="category" id="mobile-categories" onchange="this.form.submit()">
                 <option value="">All Categories (select to filter)</option>

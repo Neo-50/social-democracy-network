@@ -115,6 +115,9 @@
     {% if request.endpoint == 'archive_x.archive_x_page' %}
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/archive-x.css', v=2) }}">
     {% endif %}
+    {% if request.endpoint == 'archive_x_warning' %}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/archive-x-warning.css', v=2) }}">
+    {% endif %}
 </head>
 
 <body class="has-header">

@@ -671,6 +671,10 @@ p {
   }
 }
 
+.archive-x-warning-page {
+    margin-top: 20px;
+}
+
 /* Mobile layout */
 
 @media (width <=800px) {

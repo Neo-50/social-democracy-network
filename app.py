@@ -133,6 +133,10 @@ def media(filename):
 from routes import bp_archive_x
 app.register_blueprint(bp_archive_x)
 
+@app.route('/archive-x-warning')
+def archive_x_warning():
+	return render_template('archive-x-warning.html')
+
 def get_online_users():
     app.logger.info('Handler reached')
     threshold = datetime.now(timezone.utc) - timedelta(minutes=15)

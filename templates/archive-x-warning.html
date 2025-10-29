@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="title">TwitterX Archive</div>
+    <div class="warning-message">
+        <span style="color:red;">🚨Warning:</span> This page contains graphic and disturbing images and videos of war.<br>
+
+        <div class="proceed"><a href="{{ url_for('archive_x.archive_x_page') }}">I am over 18 and wish to enter</a></div>
+    </div>
+    <div class="text">
+    "As long as there are slaughter houses there will always be battlefields."<br> ― Leo Tolstoy, What I Believe
+    </div>
+
+	<div class="disclaimer">
+        <strong><u>Disclaimer:</u></strong><br>
+		<strong>Fair Use</strong> This archive operates under the principles of fair use as defined in 17 U.S.C. §107. 
+		Reproduction is limited to what is necessary for commentary, criticism, news reporting, education, and research. 
+		All content is presented for non-commercial, informational purposes with attribution to the original source.
+	</div>
+{% endblock %}
