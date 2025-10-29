@@ -70,8 +70,6 @@ def login_required(f):
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 app.config['WTF_CSRF_TIME_LIMIT'] = None
-app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.jinja_env.auto_reload = True
 csrf = CSRFProtect(app)
 
 import sqlalchemy as sa
@@ -166,45 +164,7 @@ def active_users():
 
 @app.route('/')
 def home():
-    return render_template('home.html', is_admin=is_admin)
-
-@app.route('/update-daily-video', methods=['POST'])
-@login_required
-def update_daily_video():
-	if not current_user.is_admin:
-		abort(403)
-
-	url = request.form.get('video_url', '').strip()
-	if not url:
-		abort(400)
-
-	file_path = 'templates/home.html'
-
-	# Read the file
-	with open(file_path, 'r', encoding='utf-8') as f:
-		html = f.read()
-
-	print("✅ Updated daily.html with new iframe:", url)
-
-	# Replace only inside the placeholder region
-	pattern = re.compile(
-		r'(<!-- DAILY_VIDEO_START -->)(.*?)(<!-- DAILY_VIDEO_END -->)',
-		re.DOTALL
-	)
-
-	new_iframe = f'''\\1
-	<div class="video-container">
-		<iframe id="dailyVideoFrame" src="{url}" allowfullscreen></iframe>
-	</div>
-	\\3'''
-
-	new_html = re.sub(pattern, new_iframe, html)
-
-	# Write back to file
-	with open(file_path, 'w', encoding='utf-8') as f:
-		f.write(new_html)
-
-	return jsonify(success=True)
+    return render_template('home.html')
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 POETRY_BIN = os.environ.get("POETRY_BIN", "/home/doug/.local/bin/poetry")
