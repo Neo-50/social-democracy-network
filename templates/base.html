@@ -19,7 +19,7 @@
         <meta name="twitter:description" content="{{ article_to_highlight.description }}">
         <meta name="twitter:image" content="{{ article_to_highlight.image_url }}">
 
-	{% if focused_tweet %}
+	{% elif focused_tweet %}
         <meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ focused_tweet.meta.author_handle }}">
         <meta property="og:type" content="article">
         <meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
