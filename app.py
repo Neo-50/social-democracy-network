@@ -70,6 +70,8 @@ def login_required(f):
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 app.config['WTF_CSRF_TIME_LIMIT'] = None
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.jinja_env.auto_reload = True
 csrf = CSRFProtect(app)
 
 import sqlalchemy as sa
@@ -182,6 +184,8 @@ def update_daily_video():
 	with open(file_path, 'r', encoding='utf-8') as f:
 		html = f.read()
 
+	print("✅ Updated daily.html with new iframe:", url)
+
 	# Replace only inside the placeholder region
 	pattern = re.compile(
 		r'(<!-- DAILY_VIDEO_START -->)(.*?)(<!-- DAILY_VIDEO_END -->)',
@@ -189,10 +193,10 @@ def update_daily_video():
 	)
 
 	new_iframe = f'''\\1
-    <div class="video-container">
-        <iframe id="dailyVideoFrame" src="{url}" allowfullscreen></iframe>
-    </div>
-    \\3'''
+	<div class="video-container">
+		<iframe id="dailyVideoFrame" src="{url}" allowfullscreen></iframe>
+	</div>
+	\\3'''
 
 	new_html = re.sub(pattern, new_iframe, html)
 

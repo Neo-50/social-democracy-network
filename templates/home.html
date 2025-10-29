@@ -128,11 +128,11 @@
         </ul>
     </section>
     <section class="home-center">
-    <!-- DAILY_VIDEO_START -->
-    <div class="video-container">
-        <iframe id="dailyVideoFrame" src="https://www.youtube.com/embed/G_yCtjcBquI" allowfullscreen></iframe>
-    </div>
-    <!-- DAILY_VIDEO_END -->
+        <!-- DAILY_VIDEO_START -->
+        <div class="video-container">
+            <iframe id="dailyVideoFrame" src="https://www.youtube.com/embed/aMRA9oL0bRA" allowfullscreen></iframe>
+        </div>
+        <!-- DAILY_VIDEO_END -->
         {% if is_admin() %}
         <form id="daily-video-form" class="daily-video" method="POST" action="{{ url_for('update_daily_video') }}">
             <input type="url" id="daily-video-url" name="video_url" placeholder="https://example.com/video" required>
