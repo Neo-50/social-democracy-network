@@ -603,6 +603,13 @@ def _extract_metadata(data):
 	"qid=", quote_ctx['quote_tweet_id'],
 	"user=", quote_ctx['quote_screen_name'],
 	"text_len=", len(quote_ctx['quote_full_text'] or "") )
+
+	quote_meta = []
+	quote_meta['is_quote'] = quote_ctx['is_quote']
+	quote_meta['quote_tweet_id'] = quote_ctx['quote_tweet_id']
+	quote_meta['quote_screen_name'] = quote_ctx['quote_screen_name']
+	quote_meta['quote_full_text'] = quote_ctx['quote_full_text']
+
 	src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
 	print(f">>> [extract_metadata] text source={src}, length={len(text) if text else 0}")
 
@@ -629,7 +636,7 @@ def _extract_metadata(data):
 	if not author_name and not author_handle:
 		debug("AUTHOR DEBUG:", json.dumps(res.get("core", {}), indent=2)[:800])
 
-	return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx)
+	return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_meta)
 
 
 def fetch_tweet_media(url_or_id: str) -> dict:
@@ -673,8 +680,8 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		primary_url = (primary_vid or {}).get("url")
 
 		# text, author _ extract_text_author(data)
-		text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx = _extract_metadata(data)
-		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx)
+		text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
+		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_ctx)
 
 		result = {
 			"primary_video": primary_url,
@@ -685,6 +692,8 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 			"created_at": created_at,
 			"counts": counts,
 			"alt_description": alt_desc,
+			"reply_ctx": reply_ctx,
+			"quote_ctx": quote_ctx
 		}
 
 		if found:

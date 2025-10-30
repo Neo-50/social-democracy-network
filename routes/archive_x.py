@@ -249,6 +249,8 @@ def api_archive_x():
 		'created_at_utc': epoch_timestamp,
 		'counts': media.get('counts'),
 		'alt_description': media.get('alt_description'),
+		'reply_ctx': media.get('reply_ctx'),
+		'quote_ctx': media.get('quote_ctx')
 	}, 200
 
 def upsert_tweet(meta: dict, tweet_id: int, primary_video, images, media_url) -> None:
