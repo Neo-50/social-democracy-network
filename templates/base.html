@@ -21,7 +21,7 @@
 
 	{% elif focused_tweet %}
         <meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ focused_tweet.meta.author_handle }}">
-        <meta property="og:type" content="article">
+        
         <meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
         <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(200, True) }}">
         <meta property="og:url" content="{{ request.url }}">
@@ -34,6 +34,7 @@
         
         {% if vid_rel %}
         {% set preview_video = url_for('media', filename=vid_rel, _external=True) %}
+            <meta property="og:type" content="video.other">
             <meta property="og:video" content="{{ preview_video }}">
             <meta property="og:video:secure_url" content="{{ preview_video }}">
             <meta property="og:video:type" content="video/mp4">
@@ -49,6 +50,7 @@
 
         {% if img_rel %}
             {% set preview_image = url_for('media', filename=img_rel, _external=True) %}
+            <meta property="og:type" content="article">
             <meta name="twitter:card" content="summary_large_image">
             <meta property="og:image" content="{{ preview_image }}">
             <meta name="twitter:image" content="{{ preview_image }}">
@@ -59,6 +61,7 @@
     {% else %}
         <meta property="og:site_name" content="Social Democracy Network">
         <meta property="og:title" content="Social Democracy Network">
+        <meta property="og:type" content="article">
         <meta property="og:description" content="Homebrew news-link aggregator, free chat, IM and tweet archive">
         <meta property="og:url" content="{{ request.url }}">
     {% endif %}
