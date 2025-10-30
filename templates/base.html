@@ -39,6 +39,7 @@
             <meta property="og:video:type" content="video/mp4">
             <meta property="og:video:width" content="1280">
             <meta property="og:video:height" content="720">
+            <meta property="og:image" content="{{ url_for('media', filename='news/default-article-image.png', _external=True) }}">
         {% endif %}
 
         {% set img_rel = focused_tweet.media
