@@ -57,7 +57,7 @@
                     <hr>
 					<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 					 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
-					<button type="button" class="sharelink" onclick="copyTweetLink('{{ it.tweet_id }}')">🔗 Copy Share Link</button>
+					<button type="button" class="sharelink" onclick="copyTweetLink('{{ ${data.tweet_id} }}')">🔗 Copy Share Link</button>
                 `;
 				formatTimestamp(card);
 				feed.prepend(card);
@@ -81,7 +81,7 @@
                         <hr>
 						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
-						<button type="button" class="sharelink" onclick="copyTweetLink('{{ it.tweet_id }}')">🔗 Copy Share Link</button>
+						<button type="button" class="sharelink" onclick="copyTweetLink('{{ ${data.tweet_id} }}')">🔗 Copy Share Link</button>
 					`;
 					formatTimestamp(card);
 					feed.prepend(card);
@@ -101,7 +101,7 @@
                         <hr>
 						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
 						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
-						<button type="button" class="sharelink" onclick="copyTweetLink('{{ it.tweet_id }}')">🔗 Copy Share Link</button>
+						<button type="button" class="sharelink" onclick="copyTweetLink('{{ ${data.tweet_id} }}')">🔗 Copy Share Link</button>
 					`;
 					formatTimestamp(card);
 					feed.prepend(card);
