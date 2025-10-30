@@ -446,6 +446,109 @@ def _extract_reply_context(res: dict, legacy: dict) -> dict:
 	reply['conversation_id'] = legacy.get('conversation_id_str')
 	return reply
 
+def _get(d, path, default=None):
+	"""Safe nested get: path like ('a','b','c')."""
+	cur = d or {}
+	for k in path:
+		if not isinstance(cur, dict) or k not in cur:
+			return default
+		cur = cur[k]
+	return cur
+
+def extract_quote_context(res: dict, legacy: dict) -> dict:
+	"""
+	Returns:
+	{
+		'is_quote': bool,
+		'quote_tweet_id': str|None,
+		'quote_user_id': str|None,
+		'quote_screen_name': str|None,
+		'quote_full_text': str|None,
+	}
+	"""
+	quote = {
+		'is_quote': False,
+		'quote_tweet_id': None,
+		'quote_user_id': None,
+		'quote_screen_name': None,
+		'quote_full_text': None,
+	}
+
+	# 1) Quick legacy flag
+	if isinstance(legacy, dict) and legacy.get('is_quote_status'):
+		quote['is_quote'] = True
+
+	# 2) Find the quoted tweet id in multiple possible places
+	candidates_id = [
+		legacy.get('quoted_status_id_str') if isinstance(legacy, dict) else None,
+		res.get('quoted_status_id_str') if isinstance(res, dict) else None,
+		_get(res, ('quoted_status_result', 'result', 'rest_id')),
+		_get(res, ('legacy', 'quoted_status_id_str')),
+	]
+
+	for qid in candidates_id:
+		if qid:
+			quote['quote_tweet_id'] = qid
+			quote['is_quote'] = True
+			break
+
+	# 3) Locate the quoted status object itself (several schemas)
+	quoted_status = None
+	if isinstance(legacy, dict):
+		quoted_status = (
+			legacy.get('quoted_status')
+			or _get(legacy, ('quoted_status_result', 'result'))
+		)
+
+	if not quoted_status and isinstance(res, dict):
+		quoted_status = (
+			res.get('quoted_status')
+			or _get(res, ('quoted_status_result', 'result'))
+			or _get(res, ('tweet', 'legacy', 'quoted_status'))  # sometimes nested
+		)
+
+	# 4) Pull user + text from whichever form we found
+	if isinstance(quoted_status, dict):
+		# Legacy user shape
+		user_legacy = quoted_status.get('user', {})
+		# GraphQL user shape
+		user_graphql = _get(quoted_status, ('core', 'user_results', 'result', 'legacy'), {}) or {}
+
+		user_obj = user_legacy if user_legacy else user_graphql
+
+		if user_obj:
+			quote['quote_user_id'] = user_obj.get('id_str')
+			quote['quote_screen_name'] = user_obj.get('screen_name')
+
+		quote['quote_full_text'] = (
+			quoted_status.get('full_text')
+			or _get(quoted_status, ('legacy', 'full_text'))
+			or quoted_status.get('text')
+		)
+
+		# If we still don't have the id, try from the quoted status itself
+		if not quote['quote_tweet_id']:
+			quote['quote_tweet_id'] = (
+				quoted_status.get('id_str')
+				or _get(quoted_status, ('rest_id',))
+				or _get(quoted_status, ('legacy', 'id_str'))
+			)
+			if quote['quote_tweet_id']:
+				quote['is_quote'] = True
+
+	# 5) Fallback: parse screen_name from the permalink if present
+	if not quote['quote_screen_name'] and isinstance(legacy, dict):
+		url = _get(legacy, ('quoted_status_permalink', 'expanded'))
+		# e.g., https://twitter.com/SCREENNAME/status/12345
+		if url and '/status/' in url:
+			try:
+				path = url.split('twitter.com/', 1)[1]
+				quote['quote_screen_name'] = path.split('/', 1)[0]
+				quote['is_quote'] = True
+			except Exception:
+				pass
+
+	return quote
 
 def _extract_metadata(data):
 	"""
@@ -492,9 +595,14 @@ def _extract_metadata(data):
 	legacy = res.get("legacy", {}) if isinstance(res, dict) else {}
 	text = _full_text_from_result(res, legacy)
 	reply_ctx = _extract_reply_context(res, legacy)
+	quote_ctx = extract_quote_context(res, legacy)
 	print(f">>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
 		f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
 		f"conv_id={reply_ctx['conversation_id']}")
+	print("QUOTE DEBUG:",
+	"qid=", quote_ctx['quote_tweet_id'],
+	"user=", quote_ctx['quote_screen_name'],
+	"text_len=", len(quote_ctx['quote_full_text'] or "") )
 	src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
 	print(f">>> [extract_metadata] text source={src}, length={len(text) if text else 0}")
 
