@@ -34,8 +34,8 @@
         
         {% if vid_rel %}
         {% set preview_video = url_for('media', filename=vid_rel, _external=True) %}
-            <meta property="og:type" content="video.other">
             <meta property="og:video" content="{{ preview_video }}">
+            <meta property="og:video:secure_url" content="{{ preview_video }}">
             <meta property="og:video:type" content="video/mp4">
             <meta property="og:video:width" content="1280">
             <meta property="og:video:height" content="720">
@@ -52,6 +52,9 @@
             <meta name="twitter:card" content="summary_large_image">
             <meta property="og:image" content="{{ preview_image }}">
             <meta name="twitter:image" content="{{ preview_image }}">
+            <meta property="og:image" content="{{ url_for('media', filename=img_rel, _external=True) }}">
+        {% else %}
+            <meta property="og:image" content="{{ url_for('media', filename='news/default-article-image.png', _external=True) }}">
         {% endif %}
     {% else %}
         <meta property="og:site_name" content="Social Democracy Network">
