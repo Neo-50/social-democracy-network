@@ -25,6 +25,7 @@
         <meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
         <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
         <meta property="og:url" content="{{ request.url }}">
+        
 
         {% set vid_rel = focused_tweet.media
         | selectattr('kind', 'equalto', 'video')
@@ -54,6 +55,7 @@
 
         {% if img_rel %}
             {% set preview_image = url_for('media', filename=img_rel, _external=True) %}
+            <meta name="twitter:card" content="summary_large_image">
             <meta property="og:image" content="{{ preview_image }}">
             <meta name="twitter:image" content="{{ preview_image }}">
         {% endif %}
