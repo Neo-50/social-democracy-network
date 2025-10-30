@@ -23,29 +23,22 @@
         <meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ focused_tweet.meta.author_handle }}">
         <meta property="og:type" content="article">
         <meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
-        <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
+        <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(200, True) }}">
         <meta property="og:url" content="{{ request.url }}">
         
 
         {% set vid_rel = focused_tweet.media
-        | selectattr('kind', 'equalto', 'video')
-        | map(attribute='rel_path')
-        | first %}
+            | selectattr('kind', 'equalto', 'video')
+            | map(attribute='rel_path')
+            | first %}
         
         {% if vid_rel %}
         {% set preview_video = url_for('media', filename=vid_rel, _external=True) %}
+            <meta property="og:type" content="video.other">
             <meta property="og:video" content="{{ preview_video }}">
             <meta property="og:video:type" content="video/mp4">
             <meta property="og:video:width" content="1280">
             <meta property="og:video:height" content="720">
-
-            <meta name="twitter:card" content="player">
-            <!-- <meta name="twitter:player" content="{{ preview_video}}"> -->
-            <!-- optional custom embed -->
-            <meta name="twitter:player:width" content="1280">
-            <meta name="twitter:player:height" content="720">
-            <meta name="twitter:player:stream" content="{{ preview_video}}">
-            <meta name="twitter:player:stream:content_type" content="video/mp4">
         {% endif %}
 
         {% set img_rel = focused_tweet.media
