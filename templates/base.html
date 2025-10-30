@@ -25,12 +25,6 @@
         <meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
         <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
         <meta property="og:url" content="{{ request.url }}">
-        
-        <!-- optional custom embed -->
-        <meta name="twitter:player:width" content="1280">
-        <meta name="twitter:player:height" content="720">
-        <meta name="twitter:player:stream" content="https://social-democracy.net/media/x-media/1983195045038601080.mp4">
-        <meta name="twitter:player:stream:content_type" content="video/mp4">
 
         {% set img_rel = focused_tweet.media
             | selectattr('kind', 'equalto', 'image')
