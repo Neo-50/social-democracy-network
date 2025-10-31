@@ -669,12 +669,14 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
 		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
 
-		text = (
-			f"{text}\n\n"
-			f'<div class="quote-container">'
-			f'<a href="https://nitter.space/{quote_ctx["quote_handle"]}/status/{quote_ctx["quote_tweet_id"]}" target="_blank">'
-			f"Quoting:</a> @{quote_ctx['quote_handle']}\n{quote_ctx['quote_full_text']}</div>"
-		)
+		check_quote_text = quote_ctx['quote_full_text']
+		if check_quote_text:
+			quote_block = (
+				f'<div class="quote-container">'
+				f'<a href="https://nitter.space/{quote_ctx["quote_handle"]}/status/{quote_ctx["quote_tweet_id"]}" target="_blank">'
+				f"Quoting:</a> @{quote_ctx['quote_handle']}\n{quote_ctx['quote_full_text']}</div>"
+			)
+			text = f"{text}\n\n{quote_block}"
 
 		print('>>>>>> Concatenate quote to text: ', text)
 
