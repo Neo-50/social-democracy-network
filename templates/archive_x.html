@@ -11,14 +11,6 @@
 			<input id="url" name="url" type="url" required placeholder="https://x.com/username/status/1770…">
 			<button type="submit">Download</button>
 		</form>
-		<!-- <form id="order-form" method="get" action="{{ url_for('archive_x.archive_x_page') }}">
-			<label for="order">Sort by:</label>
-			<select id="order" name="order">
-				<option value="desc" {% if current_order == 'desc' %}selected{% endif %}>Newest first</option>
-				<option value="asc"  {% if current_order == 'asc'  %}selected{% endif %}>Oldest first</option>
-			</select>
-			<noscript><button type="submit">Apply</button></noscript>
-		</form> -->
 		<div class="filters">
 			<label>
 				Order:
@@ -61,7 +53,7 @@
 							{% endif %}
 						</div>
 						{% if it.meta.text %}
-							<div class="tweet-text">{{ it.meta.text }}</div>
+							<div class="tweet-text">{{ it.meta.text | safe }}</div>
 						{% endif %}
 					{% endif %}
 
