@@ -22,7 +22,7 @@
 	{% elif focused_tweet %}
         <meta property="og:site_name" content="Social Democracy Network | TwitterX @{{ focused_tweet.meta.author_handle }}">
         <meta property="og:title" content="Tweet by {{ focused_tweet.meta.author_name }}">
-        <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') | truncate(400, True) }}">
+        <meta property="og:description" content="{{ focused_tweet.meta.text | replace('\n',' ') }}">
         <meta property="og:url" content="{{ request.url }}">
         
 
