@@ -208,13 +208,7 @@ def api_archive_x():
 	elif image_urls:
 		direct_media_url = image_urls[0]
 	
-	raw_ts = (
-		media.get('created_at_utc') or
-		media.get('timestamp_utc') or
-		media.get('timestamp') or
-		media.get('created_at')
-	)
-
+	raw_ts = media.get('created_at_utc')
 	epoch_timestamp = to_epoch_seconds(raw_ts)
 
 	print(f"[archiver] created_at raw -> {raw_ts!r}")
@@ -249,8 +243,7 @@ def api_archive_x():
 		'created_at_utc': epoch_timestamp,
 		'counts': media.get('counts'),
 		'alt_description': media.get('alt_description'),
-		'reply_ctx': media.get('reply_ctx'),
-		'quote_ctx': media.get('quote_ctx')
+		'reply_ctx': media.get('reply_ctx')
 	}, 200
 
 def upsert_tweet(meta: dict, tweet_id: int, primary_video, images, media_url) -> None:

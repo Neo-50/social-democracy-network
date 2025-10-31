@@ -30,7 +30,7 @@
 			const counts = data.counts ?? {};
 			const views = counts.views ?? 0;
 
-            console.log('>>>>>> Data received from /api/archive-x: ', data)
+            console.log('>>>>>> Data received from /api/archive-x: ', data);
 
 			const hasVideo  = Array.isArray(data.primary_video) && data.primary_video.length > 0;
             const hasImages = Array.isArray(data.images)        && data.images.length > 0;
@@ -69,7 +69,6 @@
 					const imagesHTML = (data.images || [])
 						.map(img => `<img class="twitter-image" src="/media/${img}" alt="">`)
 						.join('');
-					const quoteHTML = ()
 					card.innerHTML = ` 
                         <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
 						<div>Tweet ID: ${data.tweet_id}</div>
@@ -77,7 +76,6 @@
                         <span>@${data.author_handle}</span>—
                     	${data.author_name}
                         <div class="tweet-text">${data.text}</div>
-
                         <div class="gallery">${imagesHTML}</div>
 						<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
                         <hr>

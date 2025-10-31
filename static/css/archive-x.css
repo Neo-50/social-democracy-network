@@ -32,6 +32,12 @@
     margin-bottom: 10px;
 }
 
+.quote-container {
+    border: 1px solid #bbb;
+    border-radius: 12px;
+    padding: 6px;
+}
+
 .disclaimer {
     color: #C1C1C1;
     font-size: 1em;

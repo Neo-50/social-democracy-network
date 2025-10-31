@@ -461,16 +461,16 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 	{
 		'is_quote': bool,
 		'quote_tweet_id': str|None,
-		'quote_user_id': str|None,
-		'quote_screen_name': str|None,
+		'quote_author_name': str|None,
+		'quote_handle': str|None,
 		'quote_full_text': str|None,
 	}
 	"""
 	quote = {
 		'is_quote': False,
 		'quote_tweet_id': None,
-		'quote_user_id': None,
-		'quote_screen_name': None,
+		'quote_author_name': None,
+		'quote_handle': None,
 		'quote_full_text': None,
 	}
 
@@ -509,16 +509,6 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 
 	# 4) Pull user + text from whichever form we found
 	if isinstance(quoted_status, dict):
-		# Legacy user shape
-		user_legacy = quoted_status.get('user', {})
-		# GraphQL user shape
-		user_graphql = _get(quoted_status, ('core', 'user_results', 'result', 'legacy'), {}) or {}
-
-		user_obj = user_legacy if user_legacy else user_graphql
-
-		if user_obj:
-			quote['quote_user_id'] = user_obj.get('id_str')
-			quote['quote_screen_name'] = user_obj.get('screen_name')
 
 		quote['quote_full_text'] = (
 			quoted_status.get('full_text')
@@ -536,14 +526,14 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 			if quote['quote_tweet_id']:
 				quote['is_quote'] = True
 
-	# 5) Fallback: parse screen_name from the permalink if present
-	if not quote['quote_screen_name'] and isinstance(legacy, dict):
+	# Parse handle from the permalink if present
+	if not quote['quote_handle'] and isinstance(legacy, dict):
 		url = _get(legacy, ('quoted_status_permalink', 'expanded'))
 		# e.g., https://twitter.com/SCREENNAME/status/12345
 		if url and '/status/' in url:
 			try:
 				path = url.split('twitter.com/', 1)[1]
-				quote['quote_screen_name'] = path.split('/', 1)[0]
+				quote['quote_handle'] = path.split('/', 1)[0]
 				quote['is_quote'] = True
 			except Exception:
 				pass
@@ -596,28 +586,24 @@ def _extract_metadata(data):
 	text = _full_text_from_result(res, legacy)
 	reply_ctx = _extract_reply_context(res, legacy)
 	quote_ctx = extract_quote_context(res, legacy)
-	print(f">>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
+
+	print(f">>>>>>>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
 		f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
 		f"conv_id={reply_ctx['conversation_id']}")
-	print("QUOTE DEBUG:",
+	
+	print(">>>>>>>> [extract_metadata] quote_ctx:",
 	"qid=", quote_ctx['quote_tweet_id'],
-	"user=", quote_ctx['quote_screen_name'],
+	"quote_author_name", quote_ctx['quote_author_name'],
+	"quote_handle", quote_ctx['quote_handle'],
 	"text_len=", len(quote_ctx['quote_full_text'] or "") )
-
-	quote_meta = []
-	quote_meta['is_quote'] = quote_ctx['is_quote']
-	quote_meta['quote_tweet_id'] = quote_ctx['quote_tweet_id']
-	quote_meta['quote_screen_name'] = quote_ctx['quote_screen_name']
-	quote_meta['quote_full_text'] = quote_ctx['quote_full_text']
 
 	src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
 	print(f">>> [extract_metadata] text source={src}, length={len(text) if text else 0}")
 
-	created_at = legacy.get("created_at")
+	created_at_utc = legacy.get("created_at")
 	alt_desc = res.get("post_image_description")  # still okay
-	print(f">>> [extract_metadata] created_at={created_at}, alt_desc={bool(alt_desc)}")
-
-	print('>>> [extract_metadata] legacy, text, created_at, alt_desc:', legacy, text, created_at, alt_desc)
+	
+	print('>>> [extract_metadata] legacy, text, created_at, alt_desc:', legacy, text, created_at_utc, alt_desc)
 
 	# counts live mostly under legacy
 	counts["likes"] = legacy.get("favorite_count")
@@ -636,7 +622,7 @@ def _extract_metadata(data):
 	if not author_name and not author_handle:
 		debug("AUTHOR DEBUG:", json.dumps(res.get("core", {}), indent=2)[:800])
 
-	return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_meta)
+	return (text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
 
 
 def fetch_tweet_media(url_or_id: str) -> dict:
@@ -680,8 +666,17 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		primary_url = (primary_vid or {}).get("url")
 
 		# text, author _ extract_text_author(data)
-		text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
-		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_ctx)
+		text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
+		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
+
+		text = (
+			f"{text}\n\n"
+			f'<div class="quote-container">'
+			f'<a href="https://nitter.space/{quote_ctx["quote_handle"]}/status/{quote_ctx["quote_tweet_id"]}" target="_blank">'
+			f"Quoting:</a> @{quote_ctx['quote_handle']}\n{quote_ctx['quote_full_text']}</div>"
+		)
+
+		print('>>>>>> Concatenate quote to text: ', text)
 
 		result = {
 			"primary_video": primary_url,
@@ -689,11 +684,10 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 			"text": text or alt_desc,
 			"author": author_name,
 			"author_handle": author_handle,
-			"created_at": created_at,
+			"created_at_utc": created_at_utc,
 			"counts": counts,
 			"alt_description": alt_desc,
 			"reply_ctx": reply_ctx,
-			"quote_ctx": quote_ctx
 		}
 
 		if found:
