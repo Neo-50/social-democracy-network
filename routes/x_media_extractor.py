@@ -235,17 +235,6 @@ def _extract_id(s: str) -> str:
 	m = TWEET_ID_RE.search(s)
 	return m.group(1) if m else s.strip()
 
-# def _walk_media_urls(obj, found):
-# 	if isinstance(obj, dict):
-# 		# media items (photos/videos)
-# 		for k, v in obj.items():
-# 			if k in ("media_url_https", "media_url") and isinstance(v, str):
-# 				if "pbs.twimg.com" in v or "video.twimg.com" in v:
-# 					found.add(v)
-# 		for v in obj.values(): _walk_media_urls(v, found)
-# 	elif isinstance(obj, list):
-# 		for it in obj: _walk_media_urls(it, found)
-
 def _collect_video_variants(obj, out: list):
 	"""
 	Append dicts like {"url": "...", "bitrate": 832000, "content_type": "video/mp4"} to 'out'.
@@ -454,6 +443,25 @@ def _get(d, path, default=None):
 			return default
 		cur = cur[k]
 	return cur
+
+def fetch_tweet_json(tweet_id):
+	url = f"https://cdn.syndication.twimg.com/tweet-result?id={tweet_id}"
+	try:
+		resp = requests.get(url, timeout=15, headers={
+			'User-Agent': 'Mozilla/5.0',
+			'Accept': 'application/json,text/plain;q=0.9,*/*;q=0.8',
+		})
+		print(f"[SYNDICATE] {url} -> {resp.status_code} len={len(resp.text)}")
+		if not resp.ok:
+			return None
+		try:
+			return resp.json()
+		except Exception:
+			print("⚠️ JSON parse error, first 300 chars:", resp.text[:300])
+			return None
+	except Exception as e:
+		print(f"[SYNDICATE ERROR] {e}")
+		return None
 
 def extract_quote_context(res: dict, legacy: dict) -> dict:
 	"""

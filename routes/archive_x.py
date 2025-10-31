@@ -290,25 +290,6 @@ def upsert_tweet(meta: dict, tweet_id: int, primary_video, images, media_url) ->
 	row.downloaded_at_utc = int(datetime.utcnow().timestamp())
 	db.session.commit()
 
-def fetch_tweet_json(tweet_id):
-	url = f"https://cdn.syndication.twimg.com/tweet-result?id={tweet_id}"
-	try:
-		resp = requests.get(url, timeout=15, headers={
-			'User-Agent': 'Mozilla/5.0',
-			'Accept': 'application/json,text/plain;q=0.9,*/*;q=0.8',
-		})
-		print(f"[SYNDICATE] {url} -> {resp.status_code} len={len(resp.text)}")
-		if not resp.ok:
-			return None
-		try:
-			return resp.json()
-		except Exception:
-			print("⚠️ JSON parse error, first 300 chars:", resp.text[:300])
-			return None
-	except Exception as e:
-		print(f"[SYNDICATE ERROR] {e}")
-		return None
-
 
 def parse_fields(j: dict) -> dict:
 	user = j.get("user") or {}
