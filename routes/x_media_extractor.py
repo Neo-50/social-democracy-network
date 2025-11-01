@@ -593,12 +593,22 @@ def _extract_metadata(data):
 	reply_ctx = _extract_reply_context(res, legacy)
 	quote_ctx = extract_quote_context(res, legacy)
 
-	if quote_ctx["is_quote"]:
-		quoted_id = str(quote_ctx["quote_tweet_id"])
+	if quote_ctx.get("is_quote"):
+		quoted_id = str(quote_ctx.get("quote_tweet_id"))
 		quoted_tweet_data = fetch_tweet_media(quoted_id)
-		print('>>>>>>>>>[_extract_metadata]: quoted_tweet_data: ', quoted_tweet_data)
-		quote_ctx['quote_full_text'] = quoted_tweet_data['text']
-		author_name = quoted_tweet_data['author']
+		print('>>>>>>>>> [_extract_metadata]: quoted_tweet_data:', quoted_tweet_data)
+
+		if isinstance(quoted_tweet_data, dict):
+			text_val = quoted_tweet_data.get('text')
+			author_val = quoted_tweet_data.get('author')
+
+			if text_val and text_val.strip():
+				quote_ctx['quote_full_text'] = text_val
+
+			if author_val and author_val.strip():
+				author_name = author_val
+		else:
+			print('>>>>>>>>> [_extract_metadata]: quote scrape returned invalid data')
 
 	print(f">>>>>>>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
 		f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
