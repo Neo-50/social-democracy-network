@@ -469,7 +469,6 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 	{
 		'is_quote': bool,
 		'quote_tweet_id': str|None,
-		'quote_author_name': str|None,
 		'quote_handle': str|None,
 		'quote_full_text': str|None,
 	}
@@ -477,7 +476,6 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 	quote = {
 		'is_quote': False,
 		'quote_tweet_id': None,
-		'quote_author_name': None,
 		'quote_handle': None,
 		'quote_full_text': None,
 	}
@@ -595,13 +593,19 @@ def _extract_metadata(data):
 	reply_ctx = _extract_reply_context(res, legacy)
 	quote_ctx = extract_quote_context(res, legacy)
 
+	if quote_ctx["is_quote"]:
+		quoted_id = str(quote_ctx["quote_tweet_id"])
+		quoted_tweet_data = fetch_tweet_media(quoted_id)
+		print('>>>>>>>>>[_extract_metadata]: quoted_tweet_data: ', quoted_tweet_data)
+		quote_ctx['quote_full_text'] = quoted_tweet_data['text']
+		author_name = quoted_tweet_data['author']
+
 	print(f">>>>>>>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
 		f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
 		f"conv_id={reply_ctx['conversation_id']}")
 	
 	print(">>>>>>>> [extract_metadata] quote_ctx:",
 	"qid=", quote_ctx['quote_tweet_id'],
-	"quote_author_name", quote_ctx['quote_author_name'],
 	"quote_handle", quote_ctx['quote_handle'],
 	"text_len=", len(quote_ctx['quote_full_text'] or "") )
 
@@ -675,14 +679,14 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 
 		# text, author _ extract_text_author(data)
 		text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
-		print('>>>>>>>fetch_tweet_media:', text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
+		print('>>>>>>>[fetch_tweet_media] _extract_metadata:', text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
 
 		check_quote_text = quote_ctx['quote_full_text']
 		if check_quote_text:
 			quote_block = (
 				f'<div class="quote-container">'
 				f'<a href="https://nitter.space/{quote_ctx["quote_handle"]}/status/{quote_ctx["quote_tweet_id"]}" target="_blank">'
-				f"Quoting:</a> @{quote_ctx['quote_handle']}\n{quote_ctx['quote_full_text']}</div>"
+				f"Quoting:</a> @{quote_ctx['quote_handle']} — ({author_name})\n{quote_ctx['quote_full_text']}</div>"
 			)
 			text = f"{text}\n\n{quote_block}"
 
