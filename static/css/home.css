@@ -77,45 +77,6 @@ p {
 	line-height: 1em;
 }
 
-#daily-video-form {
-    margin: 0;
-    padding: 0;
-}
-
-#daily-video-url {
-    background-color: black;
-    color: white;
-    border-radius: 24px;
-    width: 300px;
-    height: 32px;
-}
-
-.daily-video-update-button {
-    background-color: #1a1a1a;
-    border: 3px solid #00e3ea;
-    color: #00e3ea;
-    padding: 2px 8px;
-    max-width: 102px;
-    margin-left: 0;
-    font-size: 1em;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    text-decoration: none;
-    white-space: normal;
-    overflow-wrap: normal;
-    word-break: normal;
-    line-height: 1;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-}
-
-.daily-video-update-button:hover {
-    background-color: #333;
-    color: white;
-}
-
 /* Mobile layout */
 @media (width <= 800px) {
     .home-page {
