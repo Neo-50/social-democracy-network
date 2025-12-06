@@ -205,29 +205,6 @@ function maybeHandleBase64Images(editor) {
   return Promise.resolve();
 }
 
-// --- embed scroll helper (define once) ---
-// if (!window.notifyEmbedRendered) {
-//   window.notifyEmbedRendered = (() => {
-//     let scheduled = false;
-//     return function notifyEmbedRendered() {
-//       if (scheduled) return;
-//       scheduled = true;
-//       requestAnimationFrame(() => {
-//         scheduled = false;
-//         if (typeof window.scrollWhenStable === 'function') {
-//           // quick settle to catch late iframe size changes
-//           scrollWhenStable({ maxMs: 1200, settleMs: 200, checkMs: 80, force: true });
-//         } else if (typeof window.scrollChatToBottom === 'function') {
-//           // fall back to your existing scroll helper
-//           scrollChatToBottom();
-//           setTimeout(scrollChatToBottom, 300);
-//         }
-//       });
-//     };
-//   })();
-// }
-
-
 function scrollWhenStable(maxMs = 8000, settleMs = 800, checkMs = 200) {
     const el = document.querySelector('.chat-container');
     if (!el) return;
@@ -551,12 +528,6 @@ function renderUrlPreview(msgElement, data) {
         }
     }
 }
-
-    // if (data.embed_html) {
-    //     preview.innerHTML = data.embed_html;
-    //     messageBody.after(preview);
-    //     return;
-    // }
 
 function loadMessages(beforeId = null, prepend = false) {
     if (isLoading) return;

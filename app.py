@@ -402,6 +402,34 @@ def veganism():
     print('***Veganism Messages***', 'messages: ', messages)
     return render_template("veganism.html", messages=messages)
 
+@app.route('/veganism/send', methods=['POST'])
+def veganism_send():
+    print('****Veganism send hit****')
+    data = request.get_json(silent=True) or {}
+    url = (data.get('url') or '').strip()
+
+    if not url:
+        return jsonify(success=False, error='Error: Missing URL!'), 400
+    
+    if Veganism.query.filter_by(content=url).all():
+        return jsonify(success=False, error='Error: URL already submitted!'), 400
+    else: 
+        new_row = Veganism(
+            user_id=current_user.id,
+            content=url,
+            file_url='',
+            file_name='',
+            message_type='',
+            timestamp=datetime.now(timezone.utc)
+        )
+	
+        print(new_row)
+
+        db.session.add(new_row)
+        db.session.commit()
+
+    return jsonify(success=True, url=url), 200
+
 @app.route('/culture_history')
 def culture_history():
     return render_template('culture_history.html')
@@ -1608,11 +1636,6 @@ def url_preview():
 	url = request.args.get("url")
 	if not url:
 		return jsonify({"error": "No URL"}), 400
-
-	# if "youtube.com" in url or "youtu.be" in url:
-	# 	data = try_youtube_scrape(url)
-	# 	if data:
-	# 		return jsonify(data)
             
 	if "youtube.com" in url or "youtu.be" in url:
 		data = try_youtube_scrape(url)
@@ -1645,6 +1668,7 @@ def url_preview():
 		return jsonify({"error": "Not found"}), 404
 
 	return jsonify({
+        "id": article.id,
 		"url": article.url,
 		"title": article.title,
 		"description": article.description,

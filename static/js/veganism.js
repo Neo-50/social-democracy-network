@@ -9,78 +9,61 @@ document.addEventListener("DOMContentLoaded", () => {
             showToast('Please login or create an account');
             return;
         }
-        showToast('You clicked the submit button!');
-        // const fd = new FormData(form);
-        // const csrf = form.querySelector('input[name="csrf_token"]')?.value || '';
-    });
+        
+        const fd = new FormData(form);
+        url = fd.get("url");
+        csrfToken = fd.get("csrf_token");
 
-    // send message
-    // sendButton.addEventListener("click", () => {
-    //     if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
-    //         showToast('Please login or create an account');
-    //         return;
-    //     }
-    //     const message = chatEditor.innerHTML.trim();
-    //     if (message !== "") {
-    //         fetch("/veganism/send", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "X-CSRFToken": window.csrfToken
-    //             },
-    //             body: JSON.stringify({
-    //                 content: message,
-    //                 message_type: "text"
-    //             })
-    //         })
-    //             .then(res => res.json())
-    //             .then(data => {
-    //                 if (data.success) {
-    //                     chatEditor.innerHTML = "";
-    //                 } else {
-    //                     console.error("Error sending message:", data.error);
-    //                 }
-    //             });
-    //     }
-    // });
+        if (url !== "") {
+            fetch("/veganism/send", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify({ url })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Success!');
+                        newPost(data);
+                        fetch(`/api/url-preview?url=${encodeURIComponent(data.url)}`)
+                            .then(res => res.ok ? res.json() : null)
+                            .then(data => {
+                                if (data) {
+                                    renderUrlPreview(data);
+                                    showToast('Submitted successfully');
+                                }
+                            })
+                            .catch(err => console.error("URL preview error:", err));
+                        // chatEditor.innerHTML = "";
+                    } else {
+                        showToast(data.error);
+                        console.error("Error sending message:", data.error);
+                    }
+                });
+        }
+    });
 });
 
-function deleteMessage(messageId) {
-    if (!confirm("Are you sure you want to delete this message?")) return;
-
-    fetch(`/veganism/delete_message/${messageId}`, {
-        method: "DELETE",
-        headers: {
-            "X-CSRFToken": window.csrfToken,
-        },
-    })
-        .then(res => {
-            if (res.ok) {
-                const msgEl = document.querySelector(`.veganism[data-message-id="${messageId}"]`);
-                if (msgEl) msgEl.remove();
-            } else {
-                alert("Failed to delete message");
-            }
-        })
-        .catch(err => {
-            console.error("Delete failed:", err);
-            alert("Error occurred while deleting message");
-        });
+function newPost(data) {
+    const postsContainer = document.getElementById('veganism-feed');
+    console.log('**** DATA ****', data, 'postsContainer: ', postsContainer);
+    postsContainer.innerHTML = `<div class="vegan-post">${data.url}</div>`;
 }
 
-function renderUrlPreview(msgElement, data) {
+function renderUrlPreview(data) {
+    const veganPost = document.querySelector('.vegan-post');
+    if(!veganPost) {
+        showToast('veganPost not found!');
+        return
+    }
     const preview = document.createElement("div");
     preview.className = "url-preview";
-    const messageBody = msgElement.querySelector('.message-body');
+    preview.innerHTML = 'This is a test of the emergency broadcasting system';
 
-    let container = msgElement.querySelector('.url-previews');
-    if (!container) {
-        container = document.createElement('div');
-        container.className = 'url-previews';
-        messageBody.after(container);
-    }
-
-    console.log('renderUrlPreview data.type: ', data.type);
+    veganPost.after(preview);
 
     switch (data.type) {
         case 'youtube': {
@@ -88,7 +71,7 @@ function renderUrlPreview(msgElement, data) {
             wrap.className = 'url-embed';
             wrap.dataset.url = data.url;
             wrap.innerHTML = data.embed_html || '';
-            container.appendChild(wrap);
+            veganPost.appendChild(wrap);
             return;
         }
 
@@ -96,7 +79,7 @@ function renderUrlPreview(msgElement, data) {
             const wrap = document.createElement('div');
             wrap.className = 'url-embed';
             wrap.dataset.url = data.url;			// use data.url (no undefined 'url')
-            container.appendChild(wrap);
+            veganPost.appendChild(wrap);
 
             const tweetId = data.tweet_id || extractTweetId(data.url) || extractTweetId(data.embed_html);
 
@@ -126,7 +109,7 @@ function renderUrlPreview(msgElement, data) {
         case 'bluesky': {
             const wrap = document.createElement('div');
             wrap.className = 'url-embed';
-            container.appendChild(wrap);
+            veganPost.appendChild(wrap);
 
             // 1) Put the oEmbed blockquote in the DOM (do NOT remove/replace it)
             wrap.innerHTML = data.embed_html || `<a href="${data.url}" target="_blank" rel="noopener">View on Bluesky</a>`;
@@ -160,6 +143,9 @@ function renderUrlPreview(msgElement, data) {
                             <div class="preview-title">${data.title || data.url}</div>
                             ${data.image_url ? `<img src="${data.image_url}" class="preview-image">` : ""}
                         </a>
+                        ${data.id ? `<div><span class="article-info sdn-url"></span>
+                                    <a href="https://social-democracy.net/news?article=${data.id}" target="_blank">
+                                    https://social-democracy.net/news?article=${data.id}</a></div>` : ""}
                         ${data.description ? `<div><span class="article-info description"></span> ${data.description}</div>` : ""}
                         ${data.source ? `<div><span class="article-info source"></span> ${data.source}</div>` : ""}
                         ${formattedDate ? `<div><span class="article-info published"></span> ${formattedDate}</div>` : ""}
@@ -168,7 +154,7 @@ function renderUrlPreview(msgElement, data) {
                     </div>
                 </div>
             `;
-            messageBody.after(preview);
+            veganPost.after(preview);
         }
     }
 }
@@ -177,4 +163,27 @@ function extractUrls(text) {
     if (typeof text !== 'string') return [];
     const urlRegex = /https?:\/\/[^\s]+/g;
     return [...text.matchAll(urlRegex)].map(m => m[0]);
+}
+
+function deleteMessage(messageId) {
+    if (!confirm("Are you sure you want to delete this message?")) return;
+
+    fetch(`/veganism/delete_message/${messageId}`, {
+        method: "DELETE",
+        headers: {
+            "X-CSRFToken": window.csrfToken,
+        },
+    })
+        .then(res => {
+            if (res.ok) {
+                const msgEl = document.querySelector(`.veganism[data-message-id="${messageId}"]`);
+                if (msgEl) msgEl.remove();
+            } else {
+                alert("Failed to delete message");
+            }
+        })
+        .catch(err => {
+            console.error("Delete failed:", err);
+            alert("Error occurred while deleting message");
+        });
 }

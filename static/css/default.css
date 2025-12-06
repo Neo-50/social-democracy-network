@@ -337,6 +337,11 @@ a:focus {
 
 /* Article Info Headings */
 
+.article-info.sdn-url::before {
+  content: "SDN Link";
+  color: #bbb;
+}
+
 .article-info.description::before {
   content: "Description";
   color: #bbb;
