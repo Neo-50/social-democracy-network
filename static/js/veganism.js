@@ -3,6 +3,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById('veganism-form');
     const feed = document.getElementById('veganism-feed');
 
+    const posts = feed.querySelectorAll('.vegan-post');
+    if (!posts.length) {
+        showToast('Error, can’t find post containers');
+        return;
+    }
+
+    posts.forEach(post => {
+        const url = post.textContent.trim();
+        if (!url) return;
+
+        fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                // success path
+                renderUrlPreview(data); // pass the element if you want to inject into it
+            })
+            .catch(err => {
+                console.error('URL preview error:', err);
+                showToast('Error generating preview');
+            });
+    });
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {

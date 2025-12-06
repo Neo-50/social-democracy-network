@@ -396,11 +396,11 @@ def activism():
 def environment():
     return render_template('environment.html')
 
-@app.route('/veganism')
+@app.route('/veganism', methods=['GET'])
 def veganism():
-    messages = Veganism.query.order_by(Veganism.timestamp.asc()).all()
-    print('***Veganism Messages***', 'messages: ', messages)
-    return render_template("veganism.html", messages=messages)
+    vposts = Veganism.query.order_by(Veganism.timestamp.asc()).all()
+    print('***Veganism Messages***', 'Posts: ', vposts)
+    return render_template("veganism.html", vposts=vposts)
 
 @app.route('/veganism/send', methods=['POST'])
 def veganism_send():
