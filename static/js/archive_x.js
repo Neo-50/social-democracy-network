@@ -115,10 +115,6 @@
 	});
 })();
 
-// document.getElementById('order').addEventListener('change', function () {
-// 	document.getElementById('order-form').submit(); // sends GET ?order=...
-// });
-
 const monthSel = document.getElementById('monthSel');
 const yearSel = document.getElementById('yearSel');
 const orderSel = document.getElementById('orderSel');

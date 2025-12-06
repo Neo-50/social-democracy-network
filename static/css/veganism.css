@@ -1,3 +1,48 @@
+.veganism-main {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 10px;
+}
+
+.veganism-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #00e3ea;
+    border-radius: 24px;
+}
+
+#veganism-form {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    width: 100%;
+}
+
+.veganism-messages {
+    display: flex;
+    width: 100%;
+    height: 400px;
+    margin-bottom: 10px;
+    border: 1px solid #00e3ea;
+    border-radius: 24px;
+}
+
+.veganism-left,
+.veganism-right {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 24px;
+    max-width: 900px;
+}
+
 .wikipedia {
     display: flex;
     flex-direction: column;
@@ -18,29 +63,24 @@
     gap: 10px;
 }
 
-.veganism-main {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 20px;
-    padding: 0 10px;
-}
-
-.veganism-left,
-.veganism-right {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
-    background-color: #1a1a1a;
-    padding: 20px;
-    border-radius: 24px;
-    max-width: 900px;
-}
-
 h2 {
     margin-bottom: 10px;
     margin-top: 0;
+}
+
+#url {
+    flex-direction: row;
+    width: 100%;
+    min-height: 45px;
+    max-height: 200px;
+    color: #ddd;
+    padding: 10px;
+    border-radius: 24px;
+    background-color: #1a1a1a;
+    border: 1px solid #00e3ea;
+    margin-bottom: 5px;
+    overflow-y: auto;
+    word-wrap: normal;
 }
 
 .substack-post-embed {

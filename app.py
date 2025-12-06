@@ -6,7 +6,7 @@ from bleach import clean
 from bleach.css_sanitizer import CSSSanitizer
 from bs4 import BeautifulSoup
 from db_init import db
-from models import User, NewsArticle, NewsComment, Message, ChatMessage, Reaction
+from models import User, NewsArticle, NewsComment, Message, ChatMessage, Reaction, Veganism
 from models.reactions import reaction_user
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
@@ -398,7 +398,9 @@ def environment():
 
 @app.route('/veganism')
 def veganism():
-    return render_template('veganism.html')
+    messages = Veganism.query.order_by(Veganism.timestamp.asc()).all()
+    print('***Veganism Messages***', 'messages: ', messages)
+    return render_template("veganism.html", messages=messages)
 
 @app.route('/culture_history')
 def culture_history():
@@ -698,10 +700,6 @@ def chat():
                 "user_ids": r.user_ids,
                 "target_id": r.target_id,
             })
-    # user_map = {
-    #     user.id: user.display_name
-    #     for user in db.session.query(User.id, User.display_name).all()
-    # }
 
     user_map = {
         user.id: {

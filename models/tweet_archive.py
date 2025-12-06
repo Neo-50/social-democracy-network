@@ -2,7 +2,6 @@ from datetime import datetime
 from app import db
 import json
 
-
 class TweetArchive(db.Model):
 	__tablename__ = 'tweet_archive'
 	tweet_id = db.Column(db.String, primary_key=True)

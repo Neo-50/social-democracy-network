@@ -17,6 +17,18 @@
     </div>
     <section class="veganism-main">
         <div class="veganism-left">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="veganism-wrapper">
+                <div class="veganism-feed" id="veganism-feed">
+                    <div class="veganism-messages" id="veganism-messages"></div>
+                </div>
+                <form method="post" id="veganism-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input id="url" name="url" type="url" required placeholder="Paste URL here…">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+            
             <h2>Recent News</h2>
             <ul>
                 <li>
@@ -140,6 +152,16 @@
             </div>
         </div>
     </section>
+    <script>
+        const currentUser = {
+            id: "{{ current_user.id }}",
+            username: "{{ current_user.username }}",
+            display_name: "{{ current_user.display_name }}",
+            is_admin: "{{ 'true' if current_user.is_admin else 'false' }}"
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/timestamp.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/veganism.js') }}"></script>
 </main>
 
 {% endblock %}
