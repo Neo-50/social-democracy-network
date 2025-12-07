@@ -6,11 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const posts = feed.querySelectorAll('.vegan-post');
 
     if(posts.length) {
-        console.log('*********Found posts!');
         posts.forEach(post => {
             let url = post.textContent.trim();
             if (!url) return;
-            console.log('************Adding post ID: ', post.id);
             fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
                 .then(res => {
                     if (res.status === 404) {
@@ -36,10 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     veganismButton = document.querySelector('.submit-button');
 
-    console.log('*************veganismButton:', veganismButton);
-
     veganismButton.addEventListener("click", async(e) => {
-        showToast('GOOD MOOOOOORNING VIETNAM');
         e.preventDefault();
 
         if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
@@ -49,9 +44,6 @@ document.addEventListener("DOMContentLoaded", () => {
         veganismForm = document.getElementById("veganism-form");
         const url = document.getElementById("url").value.trim();
         const csrfToken = veganismForm.querySelector('input[name="csrf_token"]').value;
-
-        console.log("*********URL:", url);
-        console.log("*********CSRF:", csrfToken);
 
         if (url !== "") {
             
@@ -66,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Success!');
                         newPost(data);
                         let newPostId = `post-${data.post_id}`;
                         fetch(`/api/url-preview?url=${encodeURIComponent(data.url)}`)
@@ -74,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             .then(data => {
                                 if (data) {
                                     renderUrlPreview(data, newPostId);
-                                    showToast('Submitted successfully');
+                                    showToast('Post submitted successfully!');
                                 }
                             })
                             .catch(err => console.error("URL preview error:", err));
