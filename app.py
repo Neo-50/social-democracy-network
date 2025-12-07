@@ -1637,18 +1637,17 @@ def normalize_article_url(raw):
 
     parsed = urlparse(raw)
 
-    # force https
     scheme = 'https'
+    path = parsed.path   # <-- no rstrip('/')
 
-    # strip trailing slash from path
-    path = parsed.path.rstrip('/')
-
-    return urlunparse((scheme,
-                       parsed.netloc.lower(),
-                       path,
-                       '',  # params
-                       parsed.query,
-                       ''))  # fragment
+    return urlunparse((
+        scheme,
+        parsed.netloc.lower(),
+        path,
+        '',
+        parsed.query,
+        ''
+    ))
 
 @app.route("/api/url-preview")
 def url_preview():
