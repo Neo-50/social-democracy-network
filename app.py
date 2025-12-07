@@ -422,13 +422,12 @@ def veganism_send():
             message_type='',
             timestamp=datetime.now(timezone.utc)
         )
-	
-        print(new_row)
 
         db.session.add(new_row)
         db.session.commit()
+        print('*********Adding new row to DB: ', new_row, new_row.id)
 
-    return jsonify(success=True, url=url), 200
+    return jsonify(success=True, post_id=new_row.id, url=url), 200
 
 @app.route('/culture_history')
 def culture_history():

@@ -23,16 +23,15 @@
                 <div class="veganism-feed" id="veganism-feed">
                     {% if vposts %}
 			            {% for post in vposts %}
-                        <div class="vegan-post">{{ post.content or ''}}</div>
+                        <div class="vegan-post" id="post-{{ post.id }}">{{ post.content or ''}}</div>
                         {% endfor %}
-
                     {% endif %}
                 </div>
-                <form method="post" id="veganism-form">
+                <div id="veganism-form">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input id="url" name="url" type="url" required placeholder="Paste URL here…">
                     <button type="submit" class="submit-button">Submit</button>
-                </form>
+                </div>
             </div>
             
             <!-- <ul>

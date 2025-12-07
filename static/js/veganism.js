@@ -1,47 +1,55 @@
 // veganism.js
+const form = document.getElementById('veganism-form');
+const feed = document.getElementById('veganism-feed');
+
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById('veganism-form');
-    const feed = document.getElementById('veganism-feed');
-
     const posts = feed.querySelectorAll('.vegan-post');
-    if (!posts.length) {
-        showToast('Error, can’t find post containers');
-        return;
-    }
 
-    posts.forEach(post => {
-        const url = post.textContent.trim();
-        if (!url) return;
+    if(posts.length) {
+        console.log('*********Found posts!');
+        posts.forEach(post => {
+            let url = post.textContent.trim();
+            if (!url) return;
+            console.log('************Adding post ID: ', post.id);
+            fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    // success path
+                    renderUrlPreview(data, post.id);
+                })
+                .catch(err => {
+                    console.error('URL preview error:', err);
+                    showToast('Error generating preview');
+                });
+        });
+    };
 
-        fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
-                return res.json();
-            })
-            .then(data => {
-                // success path
-                renderUrlPreview(data); // pass the element if you want to inject into it
-            })
-            .catch(err => {
-                console.error('URL preview error:', err);
-                showToast('Error generating preview');
-            });
-    });
+    veganismButton = document.querySelector('.submit-button');
 
-    form.addEventListener('submit', async (e) => {
+    console.log('*************veganismButton:', veganismButton);
+
+    veganismButton.addEventListener("click", async(e) => {
+        showToast('GOOD MOOOOOORNING VIETNAM');
         e.preventDefault();
+
         if (window.CURRENT_USER_ID == null || window.CURRENT_USER_ID == 0) {
             showToast('Please login or create an account');
             return;
         }
-        
-        const fd = new FormData(form);
-        url = fd.get("url");
-        csrfToken = fd.get("csrf_token");
+        veganismForm = document.getElementById("veganism-form");
+        const url = document.getElementById("url").value.trim();
+        const csrfToken = veganismForm.querySelector('input[name="csrf_token"]').value;
+
+        console.log("*********URL:", url);
+        console.log("*********CSRF:", csrfToken);
 
         if (url !== "") {
+            
             fetch("/veganism/send", {
                 method: "POST",
                 headers: {
@@ -55,11 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (data.success) {
                         showToast('Success!');
                         newPost(data);
+                        let newPostId = `post-${data.post_id}`;
                         fetch(`/api/url-preview?url=${encodeURIComponent(data.url)}`)
                             .then(res => res.ok ? res.json() : null)
                             .then(data => {
                                 if (data) {
-                                    renderUrlPreview(data);
+                                    renderUrlPreview(data, newPostId);
                                     showToast('Submitted successfully');
                                 }
                             })
@@ -75,23 +84,21 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function newPost(data) {
-    const postsContainer = document.getElementById('veganism-feed');
-    console.log('**** DATA ****', data, 'postsContainer: ', postsContainer);
-    postsContainer.innerHTML = `<div class="vegan-post">${data.url}</div>`;
+    console.log('**** DATA ****', data);
+    const html = `<div class="vegan-post" id="post-${data.post_id}">${data.url}</div>`
+    feed.insertAdjacentHTML('afterbegin', html);
 }
 
-function renderUrlPreview(data) {
-    const veganPost = document.querySelector('.vegan-post');
+function renderUrlPreview(data, postId) {
+    const feed = document.getElementById('veganism-feed');
+    const veganPost = feed.querySelector(`#${postId}`);
+
+    console.log('*******feed, veganPost*********', feed, veganPost, postId);
+
     if(!veganPost) {
         showToast('veganPost not found!');
         return
     }
-    const preview = document.createElement("div");
-    preview.className = "url-preview";
-    preview.innerHTML = 'This is a test of the emergency broadcasting system';
-
-    veganPost.after(preview);
-
     switch (data.type) {
         case 'youtube': {
             const wrap = document.createElement('div');
@@ -105,7 +112,7 @@ function renderUrlPreview(data) {
         case 'x': {
             const wrap = document.createElement('div');
             wrap.className = 'url-embed';
-            wrap.dataset.url = data.url;			// use data.url (no undefined 'url')
+            wrap.dataset.url = data.url;
             veganPost.appendChild(wrap);
 
             const tweetId = data.tweet_id || extractTweetId(data.url) || extractTweetId(data.embed_html);
@@ -113,13 +120,13 @@ function renderUrlPreview(data) {
             window.whenTwitterReady().then(twt => {
                 if (twt?.widgets?.createTweet && tweetId) {
                     twt.widgets.createTweet(tweetId, wrap, { theme: 'dark', dnt: true })
-                        .catch(() => {						// only fallback on failure
+                        .catch(() => {
                             wrap.innerHTML = data.embed_html || '';
                             twt.widgets.load?.(wrap);
                         });
-                    return;									// <-- important: don’t run the fallback below
+                    return;
                 }
-                // Fallback path when we don’t have an id or the API is missing
+                
                 wrap.innerHTML = data.embed_html || '';
                 twt?.widgets?.load?.(wrap);
             });
@@ -163,7 +170,7 @@ function renderUrlPreview(data) {
                     });
                 }
             }
-            preview.innerHTML = `
+            veganPost.innerHTML = `
                 <div class="preview-container">
                     <div class="preview-container-inner">
                         <a href="${data.url}" target="_blank" class="preview-link">
@@ -181,7 +188,6 @@ function renderUrlPreview(data) {
                     </div>
                 </div>
             `;
-            veganPost.after(preview);
         }
     }
 }
