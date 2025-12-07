@@ -15,6 +15,7 @@ import subprocess
 from itsdangerous import URLSafeTimedSerializer
 from markupsafe import Markup
 from functools import wraps
+from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort, send_from_directory, Response, jsonify, g, Blueprint
 from flask_login import current_user, login_user, login_required, logout_user, LoginManager
@@ -398,7 +399,13 @@ def environment():
 
 @app.route('/veganism', methods=['GET'])
 def veganism():
-    vposts = Veganism.query.order_by(Veganism.timestamp.asc()).all()
+    vposts = (
+        Veganism.query
+        .outerjoin(NewsArticle, Veganism.content == NewsArticle.url)
+        .order_by(desc(NewsArticle.timestamp))
+        .all()
+    )
+    # vposts = Veganism.query.order_by(Veganism.timestamp.asc()).all()
     print('***Veganism Messages***', 'Posts: ', vposts)
     return render_template("veganism.html", vposts=vposts)
 
