@@ -24,7 +24,7 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 from flask_mail import Mail
 from flask_mail import Message as flask_message
 from utils.metadata_scraper import extract_metadata
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 from werkzeug.exceptions import RequestEntityTooLarge
 from werkzeug.utils import secure_filename
 from utils.metadata_scraper import try_youtube_scrape
@@ -1629,10 +1629,35 @@ def _oembed_bsky(url: str) -> dict | None:
         }
     except Exception:
         return None
+    
+def normalize_article_url(raw):
+    raw = (raw or "").strip()
+    if not raw:
+        return ""
+
+    parsed = urlparse(raw)
+
+    # force https
+    scheme = 'https'
+
+    # strip trailing slash from path
+    path = parsed.path.rstrip('/')
+
+    return urlunparse((scheme,
+                       parsed.netloc.lower(),
+                       path,
+                       '',  # params
+                       parsed.query,
+                       ''))  # fragment
 
 @app.route("/api/url-preview")
 def url_preview():
-	url = request.args.get("url")
+	raw_url = (request.args.get("url") or "").strip()
+	if not raw_url:
+		return jsonify({"error": "No URL"}), 400
+
+	url = normalize_article_url(raw_url)
+
 	if not url:
 		return jsonify({"error": "No URL"}), 400
             
@@ -1664,6 +1689,16 @@ def url_preview():
 		
 	article = NewsArticle.query.filter_by(url=url).first()
 	if not article:
+		print("URL preview: article not found for URL:", repr(url))
+
+		similar = (NewsArticle.query
+			.filter(NewsArticle.url.ilike(f"%{url[:80]}%"))
+			.limit(5)
+			.all())
+		print("Similar URLs in DB:")
+		for a in similar:
+			print("  ->", repr(a.url))    
+		
 		return jsonify({"error": "Not found"}), 404
 
 	return jsonify({

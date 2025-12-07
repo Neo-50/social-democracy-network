@@ -13,13 +13,18 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log('************Adding post ID: ', post.id);
             fetch(`/api/url-preview?url=${encodeURIComponent(url)}`)
                 .then(res => {
+                    if (res.status === 404) {
+                        console.log('No preview found for URL, skipping:', url);
+                        showToast("No preview found for URL!");
+                        return null;
+                    }
                     if (!res.ok) {
                         throw new Error(`HTTP ${res.status}`);
                     }
                     return res.json();
                 })
                 .then(data => {
-                    // success path
+                    if (!data) return;
                     renderUrlPreview(data, post.id);
                 })
                 .catch(err => {
