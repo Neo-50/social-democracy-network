@@ -402,10 +402,12 @@ def veganism():
     vposts = (
         Veganism.query
         .outerjoin(NewsArticle, Veganism.content == NewsArticle.url)
-        .order_by(desc(NewsArticle.timestamp))
+        .order_by(
+            NewsArticle.published.desc().nullslast(),  # newest published first
+            Veganism.id.desc(),                        # tie-breaker, stable order
+        )
         .all()
     )
-    # vposts = Veganism.query.order_by(Veganism.timestamp.asc()).all()
     print('***Veganism Messages***', 'Posts: ', vposts)
     return render_template("veganism.html", vposts=vposts)
 
