@@ -129,6 +129,7 @@
                 <option value="Uncategorized">Uncategorized/Other</option>
                 <option value="Political Corruption">US Political Corruption</option>
                 <option value="ICE & Immigration">ICE Raids & Immigration</option>
+                <option value="Police Brutality">Police Brutality</option>
                 <option value="Protests & Activism">Protests & Activism</option>
                 <option value="Climate & Environment">Climate & Environment</option>
                 <option value="Science & Technology">Science & Technology</option>
@@ -151,6 +152,9 @@
                  <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
                     class="{{ 'active' if selected_category == 'ICE & Immigration' else '' }}">
                     Immigration ICE Raids & Abductions</a></li>
+                 <li><a href="{{ url_for('news', category='Police Brutality') }}"
+                    class="{{ 'active' if selected_category == 'Police Brutality' else '' }}">
+                    Police Brutality</a></li>
                 <li><a href="{{ url_for('news', category='Protests & Activism') }}"
                     class="{{ 'active' if selected_category == 'Protests & Activism' else '' }}">
                     Protests & Activism</a></li>
@@ -193,6 +197,8 @@
                     Political Corruption</option>
                 <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
                     Immigration</option>
+                <option value="Police Brutality" {{ 'selected' if selected_category=='Police Brutality'
+                else '' }}>Police Brutality/option>
                 <option value="Protests & Activism" {{ 'selected' if selected_category=='Protests & Activism' else '' }}>
                     Protests & Activism</option>
                 <option value="Climate & Environment" {{ 'selected' if selected_category=='Climate & Environment' else '' }}>
@@ -384,6 +390,7 @@
                                     <option value="Disasters">Disasters</option>
                                     <option value="Political Corruption">US Political Corruption</option>
                                     <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
+                                    <option value="Police Brutality">Police Brutality</option>
                                     <option value="Middle East">Middle East</option>
                                     <option value="Ukraine War">Ukraine War</option>
                                     <option value="US/International Conflict">US/International Conflict</option>
