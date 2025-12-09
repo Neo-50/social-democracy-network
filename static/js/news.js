@@ -568,7 +568,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function copyLink(articleId) {
     const id = parseInt(articleId);
-    const url = new URL('https://social-democracy.net/news');
+    let url = new URL(window.location.href);
+    url = url.origin;
     url.searchParams.set("article", id);
 
     navigator.clipboard.writeText(url.toString())
