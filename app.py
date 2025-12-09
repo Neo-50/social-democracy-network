@@ -1661,6 +1661,7 @@ def normalize_article_url(raw):
 @app.route("/api/url-preview")
 def url_preview():
 	raw_url = (request.args.get("url") or "").strip()
+	data_type = None
 	if not raw_url:
 		return jsonify({"error": "No URL"}), 400
 
@@ -1669,12 +1670,18 @@ def url_preview():
 	if not url:
 		return jsonify({"error": "No URL"}), 400
             
-	if "youtube.com" in url or "youtu.be" in url:
-		data = try_youtube_scrape(url)
-		if data:
-			data['type'] = 'youtube'   # <- add
-			data['url'] = url          # <- add (try_youtube_scrape didn’t include it)
-			return jsonify(data)
+	# if "youtube.com" in url or "youtu.be" in url:
+	# 	if data:
+	# 		data['type'] = 'youtube'
+	# 	article = NewsArticle.query.filter_by(url=url).first()
+	# 	if not article:
+	# 		return jsonify({"error": "Not found"}), 404
+        
+		# data = try_youtube_scrape(url)
+		# if data:
+		# 	data['type'] = 'youtube'   # <- add
+		# 	data['url'] = url          # <- add (try_youtube_scrape didn’t include it)
+		# 	return jsonify(data)
 	
 	# X / Twitter (incl. alt domains)
 	x_url, x_id = _normalize_x_url(url)
@@ -1696,6 +1703,7 @@ def url_preview():
 			pass
 		
 	article = NewsArticle.query.filter_by(url=url).first()
+	video_id = None
 	if not article:
 		print("URL preview: article not found for URL:", repr(url))
 
@@ -1708,6 +1716,10 @@ def url_preview():
 			print("  ->", repr(a.url))    
 		
 		return jsonify({"error": "Not found"}), 404
+	if article:
+		if "youtube.com" in url or "youtu.be" in url:
+			data_type =  'youtube'
+			video_id = extract_youtube_video_id(url)
 
 	return jsonify({
         "id": article.id,
@@ -1719,8 +1731,27 @@ def url_preview():
 		"published": article.published,
 		"source": article.source,
 		"category": article.category,
-        "type": "card"
+        "type": data_type or "card",
+        "embed_html": f'''
+            <div class='responsive-youtube'>
+                <iframe
+                    src='https://www.youtube.com/embed/{video_id}?enablejsapi=1'
+                    frameborder='0'
+                    loading='lazy'
+                    allowfullscreen>
+                </iframe>
+            </div>
+            ''' if video_id is not None else ''
     })
+
+def extract_youtube_video_id(url):
+    parsed = urlparse(url)
+    if "youtu.be" in parsed.netloc:
+        return parsed.path.lstrip("/")
+    if "youtube.com" in parsed.netloc:
+        qs = dict(part.split('=') for part in parsed.query.split('&') if '=' in part)
+        return qs.get("v")
+    return None
 
 @app.route("/chat/upload_chat_image", methods=["POST"])
 @login_required

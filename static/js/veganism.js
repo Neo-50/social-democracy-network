@@ -89,7 +89,7 @@ function renderUrlPreview(data, postId) {
     const feed = document.getElementById('veganism-feed');
     const veganPost = feed.querySelector(`#${postId}`);
 
-    console.log('*******feed, veganPost*********', feed, veganPost, postId);
+    console.log('*******feed, veganPost*********', postId, data.type);
 
     if(!veganPost) {
         showToast('veganPost not found!');
@@ -97,11 +97,35 @@ function renderUrlPreview(data, postId) {
     }
     switch (data.type) {
         case 'youtube': {
-            const wrap = document.createElement('div');
-            wrap.className = 'url-embed';
-            wrap.dataset.url = data.url;
-            wrap.innerHTML = data.embed_html || '';
-            veganPost.appendChild(wrap);
+            console.log('**** DATA **** data.url: ', data.url, 'data.id: ', data.id, 'data.description: ', data.description, 'data.source: ', data.source,
+                'data.published: ', data.published, 'data.authors: ', data.authors, 'data.category: ', data.category);
+            let formattedDate = "";
+            if (data.published) {
+                const date = new Date(data.published);
+                if (!isNaN(date)) {
+                    // Example: "July 9, 2025"
+                    formattedDate = date.toLocaleDateString(undefined, {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                }
+            }
+            veganPost.innerHTML = `
+                <div class="preview-container">
+                    <div class="preview-container-inner">
+                        ${data.embed_html}
+                        ${data.id ? `<div><span class="article-info sdn-url"></span>
+                                    <a href="https://social-democracy.net/news?article=${data.id}" target="_blank">
+                                    https://social-democracy.net/news?article=${data.id}</a></div>` : ""}
+                        ${data.description ? `<div><span class="article-info description"></span> ${data.description}</div>` : ""}
+                        ${data.source ? `<div><span class="article-info source"></span> ${data.source}</div>` : ""}
+                        ${formattedDate ? `<div><span class="article-info published"></span> ${formattedDate}</div>` : ""}
+                        ${data.authors ? `<div><span class="article-info authors"></span> ${data.authors}</div>` : ""}
+                        ${data.category ? `<div><span class="article-info category"></span> ${data.category}</div>` : ""}
+                    </div>
+                </div>
+            `;
             return;
         }
 

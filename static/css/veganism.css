@@ -89,6 +89,12 @@
     width: 100%;
 }
 
+iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 24px;
+}
+
 .wikipedia {
     display: flex;
     flex-direction: column;
