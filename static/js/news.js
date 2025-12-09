@@ -568,17 +568,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
 function copyLink(articleId) {
     const id = parseInt(articleId);
-    let url = new URL(window.location.href);
-    url = url.origin;
+    const url = new URL("/news", window.location.origin);
+
     url.searchParams.set("article", id);
 
     navigator.clipboard.writeText(url.toString())
-        .then(() => {
-            showToast("🔗 Link copied!");
-        })
-        .catch(() => {
-            showToast("❌ Failed to copy link.");
-        });
+      .then(() => showToast("🔗 Link copied!"))
+      .catch(() => showToast("❌ Failed to copy link."));
 }
 
 async function loadYearOverview(year) {
