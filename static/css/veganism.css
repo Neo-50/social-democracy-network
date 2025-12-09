@@ -28,9 +28,10 @@
 .veganism-feed {
     display: flex;
     flex-direction: column;
+    align-items: center;
     overflow-x: auto;
     width: 100%;
-    height: 700px;
+    height: 740px;
     padding: 10px;
     margin-bottom: 10px;
     border: 2px solid #00e3ea;
@@ -39,7 +40,7 @@
 
 .submit-button {
     background-color: #1a1a1a;
-    border: 1px solid #00e3ea;
+    border: 2px solid #00e3ea;
     color: #00e3ea;
     padding: 6px 10px;
     max-height: 36px;
@@ -129,7 +130,7 @@ h2 {
     padding: 10px;
     border-radius: 24px;
     background-color: #1a1a1a;
-    border: 1px solid #00e3ea;
+    border: 2px solid #00e3ea;
     margin-bottom: 5px;
     overflow-y: auto;
 }
