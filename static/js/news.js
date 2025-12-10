@@ -596,7 +596,7 @@ async function loadYearOverview(year) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const { count, articles } = await res.json();
 
-		const container = document.getElementById('year-overview');
+		const container = document.getElementById('news-main');
 		container.innerHTML = '';
 
 		// Group by YYYY-MM-DD

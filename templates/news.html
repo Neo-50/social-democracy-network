@@ -159,7 +159,8 @@
                     {% endif %}
                     Category:
                     <select id="link-dropdown">
-                        <option value="">Choose a page…</option>
+                        <option value="">[select category]</option>
+                        <option value="{{ url_for('news') }}">All Categories</option>
                         <option value="{{ url_for('news', category='Political Corruption') }}">Political Corruption</option>
                         <option value="{{ url_for('news', category='ICE & Immigration') }}">Ice & Immigration</option>
                         <option value="{{ url_for('news', category='Police Brutality') }}">Police Brutality</option>
@@ -236,7 +237,7 @@
         </div>
     </section>
 
-    <section class="news-main">
+    <section class="news-main" id="news-main">
         <div class="articles-container">
             {% for article in articles %}
                 {% if scrape_id == article.id and article.needs_scrape %}
