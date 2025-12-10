@@ -28,6 +28,22 @@
 	width: fit-content;
 }
 
+@media (width <=800px) {
+	.submit-news-article {
+		display: none;
+	}
+
+	.submit-news-article.visible {
+		display: flex;
+	}
+}
+
+.submit-article-container {
+	margin-top: 20px;
+	padding: 0;
+}
+
+
 .archive-x-warning-page {
 	display: flex;
 	flex-direction: column;
@@ -36,6 +52,41 @@
 
 .content-warning {
 	font-size: .8em;
+}
+
+.sort-box {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+.sort-container {
+	margin-top: 60px;
+	padding: 5px;
+	width: fit-content;
+	height: fit-content;
+	display: flex;
+	flex-direction: column;
+}
+
+@media (width <=800px) {
+	.sort-container {
+		margin-top: 10px;
+		min-width: 450px;
+	}
+}
+
+.sort-form {
+    font-size: 0.9rem;
+    color: #bbb;
+}
+
+.sort-form select {
+	background-color: #1a1a1a;
+	color: #bbb;
+	padding: 8px 10px;
+	border: none;
+	width: fit-content;
 }
 
 .news-article {
@@ -71,6 +122,14 @@ button:hover {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
+}
+
+@media (width <=800px) {
+	.articles-container {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+	}
 }
 
 .comments-thread {
@@ -230,7 +289,7 @@ p {
 }
 
 #category {
-    width: 300px;
+    width: 250px;
     padding: 8px 10px;
     margin-bottom: 10px;
     background-color: #1a1a1a;
@@ -304,34 +363,6 @@ p {
     margin-bottom: 14px;
     font-size: 1.2rem;
     color: #bbb;
-}
-
-.sort-box {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-}
-
-.sort-container {
-	margin-top: 70px;
-	padding: 5px;
-	width: fit-content;
-	height: fit-content;
-	display: flex;
-	flex-direction: column;
-}
-
-.sort-form {
-    font-size: 0.9rem;
-    color: #bbb;
-}
-
-.sort-form select {
-	background-color: #1a1a1a;
-	color: #bbb;
-	padding: 8px 10px;
-	border: none;
-	width: fit-content;
 }
 
 .news-main h2 a:hover {
@@ -738,11 +769,6 @@ p {
         display: none
     }
 
-    .submit-article-container {
-        margin-top: 20px;
-        padding: 0;
-    }
-
     #mobile-categories {
         display: flex;
         align-items: flex-start;
@@ -771,11 +797,6 @@ p {
         border-radius: 4px;
         font-size: 16px;
         box-sizing: border-box;
-    }
-
-    .news-toprow,
-    .news-main {
-        width: 100%;
     }
 
     .newsfeed-button {
