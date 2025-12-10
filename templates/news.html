@@ -118,149 +118,125 @@
 </div>
 
 <main class="news-page">
-    <section class="news-left">
-        <form method="POST" id="submit-news" action="{{ url_for('news') }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="submit-article-container">
-                <input type="url" name="url" placeholder="Paste news article URL here..." required>
-                <button type="submit" class="submit-article">Submit</button>
-            </div>
-            <select name="category" id="category">
-                <option value="Uncategorized">Uncategorized/Other</option>
-                <option value="Political Corruption">US Political Corruption</option>
-                <option value="ICE & Immigration">ICE Raids & Immigration</option>
-                <option value="Police Brutality">Police Brutality</option>
-                <option value="Protests & Activism">Protests & Activism</option>
-                <option value="Climate & Environment">Climate & Environment</option>
-                <option value="Science & Technology">Science & Technology</option>
-                <option value="Economy & Finance">Economy & Finance</option>
-                <option value="Food & Health">Food & Health</option>
-                <option value="Disasters">Disasters</option>
-                <option value="Middle East">Middle East</option>
-                <option value="Ukraine War">Ukraine War</option>
-                <option value="US/International Conflict">US/International Conflict</option>
-            </select>
-        </form>
-
-        <div class="category-links">
-            <ul>
-                <li><a href="{{ url_for('news') }}"
-                    class="{{ 'active' if not selected_category else '' }}">All</a></li>
-                <li><a href="{{ url_for('news', category='Political Corruption') }}"
-                    class="{{ 'active' if selected_category == 'Political Corruption' else '' }}">
-                    US Political Corruption</a></li>
-                 <li><a href="{{ url_for('news', category='ICE & Immigration') }}"
-                    class="{{ 'active' if selected_category == 'ICE & Immigration' else '' }}">
-                    Immigration ICE Raids & Abductions</a></li>
-                 <li><a href="{{ url_for('news', category='Police Brutality') }}"
-                    class="{{ 'active' if selected_category == 'Police Brutality' else '' }}">
-                    Police Brutality</a></li>
-                <li><a href="{{ url_for('news', category='Protests & Activism') }}"
-                    class="{{ 'active' if selected_category == 'Protests & Activism' else '' }}">
-                    Protests & Activism</a></li>
-                <li><a href="{{ url_for('news', category='Climate & Environment') }}"
-                    class="{{ 'active' if selected_category == 'Climate & Environment' else '' }}">
-                    Climate & Environment</a></li>
-                <li><a href="{{ url_for('news', category='Science & Technology') }}"
-                    class="{{ 'active' if selected_category == 'Science & Technology' else '' }}">
-                    Science & Technology</a></li>
-                <li><a href="{{ url_for('news', category='Economy & Finance') }}"
-                    class="{{ 'active' if selected_category == 'Economy & Finance' else '' }}">
-                    Economy & Finance</a></li>
-                <li><a href="{{ url_for('news', category='Food & Health') }}"
-                    class="{{ 'active' if selected_category == 'Food & Health' else '' }}">
-                    Food & Health</a></li>
-                <li><a href="{{ url_for('news', category='Disasters') }}"
-                    class="{{ 'active' if selected_category == 'Disasters' else '' }}">
-                    Disasters</a></li>
-                <li><a href="{{ url_for('news', category='Middle East') }}"
-                    class="{{ 'active' if selected_category == 'Middle East' else '' }}">
-                    Middle East</a></li>
-                <li><a href="{{ url_for('news', category='Ukraine War') }}"
-                    class="{{ 'active' if selected_category == 'Ukraine War' else '' }}">
-                    Ukraine War</a></li>
-                <li><a href="{{ url_for('news', category='US/International Conflict') }}"
-                    class="{{ 'active' if selected_category == 'US/International Conflict' else '' }}">
-                    US/International Conflict & Crises</a></li>
-                <li><a href="{{ url_for('news', category='Uncategorized') }}"
-                    class="{{ 'active' if selected_category == 'Uncategorized' else '' }}">
-                    Uncategorized/Other</a></li>
-            </ul>
-        </div>
-        <div class="archive-x-warning-page">
-            <a href="{{ url_for('archive_x_warning') }}">TwitterX Archive</a> 🚨<span style="color: red;">Warning:</span> Graphic Content
-        </div>
-        <form method="GET" action="{{ url_for('news') }}">
-            <select name="category" id="mobile-categories" onchange="this.form.submit()">
-                <option value="">All Categories (select to filter)</option>
-                <option value="Political Corruption" {{ 'selected' if selected_category=='Political Corruption' else '' }}>US
-                    Political Corruption</option>
-                <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
-                    Immigration</option>
-                <option value="Police Brutality" {{ 'selected' if selected_category=='Police Brutality'
-                else '' }}>Police Brutality/option>
-                <option value="Protests & Activism" {{ 'selected' if selected_category=='Protests & Activism' else '' }}>
-                    Protests & Activism</option>
-                <option value="Climate & Environment" {{ 'selected' if selected_category=='Climate & Environment' else '' }}>
-                    Climate & Environment</option>
-                <option value="Science & Technology" {{ 'selected' if selected_category=='Science & Technology' else '' }}>
-                    Science & Technology</option>
-                <option value="Economy & Finance" {{ 'selected' if selected_category=='Economy & Finance' else '' }}>Economy & Finance</option>
-                <option value="Food & Health" {{ 'selected' if selected_category=='Food & Health' else '' }}>Food & Health</option>
-                <option value="Disasters" {{ 'selected' if selected_category=='Disasters' else '' }}>Disasters</option>
-                <option value="Middle East" {{ 'selected' if selected_category=='Middle East' else '' }}>Middle East</option>
-                <option value="Ukraine War" {{ 'selected' if selected_category=='Ukraine War' else '' }}>Ukraine War</option>
-                <option value="US/International Conflict" {{ 'selected' if selected_category=='US/International Conflict'
-                    else '' }}>US/International Conflict</option>
-                <option value="Uncategorized" {{ 'selected' if selected_category=='Uncategorized' else '' }}>Other/Uncategorized</option>
-            </select>
-        </form>
-    </section>
-
-    <section class="news-right">
-        <div class="article-count">
-            {% if selected_category %}
-                {{ selected_category }} ({{ count }} articles)
-            {% else %}
-                All Categories ({{ count }} articles)
-            {% endif %}
-        </div>
+    <section class="news-toprow">
         <div class="sort-container">
-            <form method="get" class="sort-form" style="margin-bottom: 1em;">
+            <div class="article-count">
                 {% if selected_category %}
-                    <input type="hidden" name="category" value="{{ selected_category }}">
+                    {{ selected_category }} ({{ count }} articles)
+                {% else %}
+                    All Categories ({{ count }} articles)
                 {% endif %}
-                <label for="sort">Sort by:</label>
-                <select name="sort" id="sort" onchange="this.form.submit()">
-                    <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Newest First</option>
-                    <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
-                </select>
-                <label for="limit">Show:</label>
-                <select name="limit" id="limit" onchange="this.form.submit()">
-                    <option value="20" {% if request.args.get('limit', '20') == '20' %}selected{% endif %}>20</option>
-                    <option value="50" {% if request.args.get('limit') == '50' %}selected{% endif %}>50</option>
-                    <option value="100" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
-                    <option value="250" {% if request.args.get('limit') == '250' %}selected{% endif %}>250</option>
-                    <option value="500" {% if request.args.get('limit') == '500' %}selected{% endif %}>500</option>
-                    <option value="all" {% if request.args.get('limit') == 'all' %}selected{% endif %}>All</option>
-                </select>
-                <label for="year-overview">Year Overview:</label>
-                <select id="year-overview-select" onchange="if (this.value) window.location.href=this.value;">
-                    <option value="">Select year…</option>
-                    <option value="{{ url_for('news', category='2025') }}">2025</option>
-                    <option value="{{ url_for('news', category='2024') }}">2024</option>
-                    <option value="{{ url_for('news', category='2023') }}">2023</option>
-                    <option value="{{ url_for('news', category='2022') }}">2022</option>
-                    <option value="{{ url_for('news', category='2021') }}">2021</option>
-                    <option value="{{ url_for('news', category='2020') }}">2020</option>
-                    <option value="{{ url_for('news', category='2019') }}">2019</option>
-                    <option value="{{ url_for('news', category='2018') }}">2018</option>
-                    <option value="{{ url_for('news', category='2017') }}">2017</option>
-                    <option value="{{ url_for('news', category='2016') }}">2016</option>
+            </div>
+            <form method="GET" action="{{ url_for('news') }}">
+                <select name="category" id="mobile-categories" onchange="this.form.submit()">
+                    <option value="">All Categories (select to filter)</option>
+                    <option value="Political Corruption" {{ 'selected' if selected_category=='Political Corruption' else '' }}>US
+                        Political Corruption</option>
+                    <option value="ICE & Immigration" {{ 'selected' if selected_category=='ICE & Immigration' else '' }}>ICE &
+                        Immigration</option>
+                    <option value="Police Brutality" {{ 'selected' if selected_category=='Police Brutality'
+                    else '' }}>Police Brutality/option>
+                    <option value="Protests & Activism" {{ 'selected' if selected_category=='Protests & Activism' else '' }}>
+                        Protests & Activism</option>
+                    <option value="Climate & Environment" {{ 'selected' if selected_category=='Climate & Environment' else '' }}>
+                        Climate & Environment</option>
+                    <option value="Science & Technology" {{ 'selected' if selected_category=='Science & Technology' else '' }}>
+                        Science & Technology</option>
+                    <option value="Economy & Finance" {{ 'selected' if selected_category=='Economy & Finance' else '' }}>Economy & Finance</option>
+                    <option value="Food & Health" {{ 'selected' if selected_category=='Food & Health' else '' }}>Food & Health</option>
+                    <option value="Disasters" {{ 'selected' if selected_category=='Disasters' else '' }}>Disasters</option>
+                    <option value="Middle East" {{ 'selected' if selected_category=='Middle East' else '' }}>Middle East</option>
+                    <option value="Ukraine War" {{ 'selected' if selected_category=='Ukraine War' else '' }}>Ukraine War</option>
+                    <option value="US/International Conflict" {{ 'selected' if selected_category=='US/International Conflict'
+                        else '' }}>US/International Conflict</option>
+                    <option value="Uncategorized" {{ 'selected' if selected_category=='Uncategorized' else '' }}>Other/Uncategorized</option>
                 </select>
             </form>
+            <div class="sort-box">
+                <form method="get" class="sort-form" style="margin-bottom: 1em;">
+                    {% if selected_category %}
+                        <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                    Category:
+                    <select id="link-dropdown">
+                        <option value="">Choose a page…</option>
+                        <option value="{{ url_for('news', category='Political Corruption') }}">Political Corruption</option>
+                        <option value="{{ url_for('news', category='ICE & Immigration') }}">Ice & Immigration</option>
+                        <option value="{{ url_for('news', category='Police Brutality') }}">Police Brutality</option>
+                        <option value="{{ url_for('news', category='Protests & Activism') }}">Protests & Activism</option>
+                        <option value="{{ url_for('news', category='Climate & Environment') }}">Climate & Environment</option>
+                        <option value="{{ url_for('news', category='Science & Technology') }}">Science & Technology</option>
+                        <option value="{{ url_for('news', category='Economy & Finance') }}">Economy & Finance</option>
+                        <option value="{{ url_for('news', category='Food & Health') }}">Food & Health</option>
+                        <option value="{{ url_for('news', category='Disasters') }}">Disasters</option>
+                        <option value="{{ url_for('news', category='Middle East') }}">Middle East</option>
+                        <option value="{{ url_for('news', category='Ukraine War') }}">Ukraine War</option>
+                        <option value="{{ url_for('news', category='US/International Conflict') }}">US/International Conflict</option>
+                        <option value="{{ url_for('news', category='Uncategorized') }}">Uncategorized</option>
+                    </select>
+                    <label for="sort">Sort by:</label>
+                    <select name="sort" id="sort" onchange="this.form.submit()">
+                        <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Newest First</option>
+                        <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
+                    </select>
+                    <label for="limit">Show:</label>
+                    <select name="limit" id="limit" onchange="this.form.submit()">
+                        <option value="20" {% if request.args.get('limit', '20') == '20' %}selected{% endif %}>20</option>
+                        <option value="50" {% if request.args.get('limit') == '50' %}selected{% endif %}>50</option>
+                        <option value="100" {% if request.args.get('limit') == '100' %}selected{% endif %}>100</option>
+                        <option value="250" {% if request.args.get('limit') == '250' %}selected{% endif %}>250</option>
+                        <option value="500" {% if request.args.get('limit') == '500' %}selected{% endif %}>500</option>
+                        <option value="all" {% if request.args.get('limit') == 'all' %}selected{% endif %}>All</option>
+                    </select>
+                    <label for="year-overview">Year Overview:</label>
+                    <select id="year-overview-select" onchange="if (this.value) window.location.href=this.value;">
+                        <option value="">Select year…</option>
+                        <option value="{{ url_for('news', category='2025') }}">2025</option>
+                        <option value="{{ url_for('news', category='2024') }}">2024</option>
+                        <option value="{{ url_for('news', category='2023') }}">2023</option>
+                        <option value="{{ url_for('news', category='2022') }}">2022</option>
+                        <option value="{{ url_for('news', category='2021') }}">2021</option>
+                        <option value="{{ url_for('news', category='2020') }}">2020</option>
+                        <option value="{{ url_for('news', category='2019') }}">2019</option>
+                        <option value="{{ url_for('news', category='2018') }}">2018</option>
+                        <option value="{{ url_for('news', category='2017') }}">2017</option>
+                        <option value="{{ url_for('news', category='2016') }}">2016</option>
+                    </select>
+                </form>
+            </div>
         </div>
         <div id="year-overview"></div>
+         <div class="submit-news-article">
+            <form method="POST" id="submit-news" action="{{ url_for('news') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="submit-article-container">
+                    <input type="url" name="url" placeholder="[paste news link]" required>
+                    <button type="submit" class="submit-article">Submit</button>
+                </div>
+                <select name="category" id="category">
+                    <option value="Uncategorized">Uncategorized/Other</option>
+                    <option value="Political Corruption">US Political Corruption</option>
+                    <option value="ICE & Immigration">ICE Raids & Immigration</option>
+                    <option value="Police Brutality">Police Brutality</option>
+                    <option value="Protests & Activism">Protests & Activism</option>
+                    <option value="Climate & Environment">Climate & Environment</option>
+                    <option value="Science & Technology">Science & Technology</option>
+                    <option value="Economy & Finance">Economy & Finance</option>
+                    <option value="Food & Health">Food & Health</option>
+                    <option value="Disasters">Disasters</option>
+                    <option value="Middle East">Middle East</option>
+                    <option value="Ukraine War">Ukraine War</option>
+                    <option value="US/International Conflict">US/International Conflict</option>
+                </select>
+            </form>
+            <div class="archive-x-warning-page">
+                <span><a href="{{ url_for('archive_x_warning') }}">[TwitterX Archive]</a></span>
+                <span class="content-warning">🚨<span style="color: red;">Warning</span> Contains Graphic Content</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="news-main">
         <div class="articles-container">
             {% for article in articles %}
                 {% if scrape_id == article.id and article.needs_scrape %}

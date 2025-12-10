@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    document.getElementById('link-dropdown').addEventListener('change', function () {
+        if (this.value) {
+            window.location.href = this.value;
+        }
+    });
+
     //Listen for clicks on emoji drawers & toggle
     emojiNewsDrawerListeners();
 
