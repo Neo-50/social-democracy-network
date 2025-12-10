@@ -62,12 +62,14 @@ h2  {
     padding: 20px;
 }
 
-.ukraine-war {
+.ukraine-war,
+.vivisection-stats {
     display: flex;
     flex-direction: column;
     border: 2px solid #8feff2;
     border-radius: 24px;
     padding: 12px;
+    margin-bottom: 10px;
     gap: 0;
     line-height: 1;
     font-weight: 600;
