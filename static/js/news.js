@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
         window.initCommentSocket();
     }
 
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('toggle-edit-article')) {
+            articleEditForm = e.target.nextElementSibling;
+            articleEditForm.classList.toggle('visible');
+        }
+    });
+
     //Listen for clicks on emoji drawers & toggle
     emojiNewsDrawerListeners();
 
@@ -89,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Delete failed:', err);
         }
     });
+
 
     document.querySelectorAll(".comment-content img").forEach(img => {
         if (img.src.includes("/media/news/") && !img.className) {
@@ -238,7 +246,7 @@ function onceConnected(socket, fn) {
 
 function renderNewsComment(data) {
     const article = document.querySelector(`.news-article[id="${data.article_id}"]`)
-                || document.querySelector(`.news-article[data-article-id="${data.article_id}"]`);
+            || document.querySelector(`.news-article[data-article-id="${data.article_id}"]`);
     if (!article) return;
 
     console.log('renderNewsComment | article_id: ', data.article_id,
@@ -544,7 +552,6 @@ document.querySelectorAll('.reply-toggle').forEach(button => {
     button.addEventListener('click', () => {
         const wrapper = button.closest('.comment-container');
         const drawer = wrapper.querySelector('.reply-drawer');
-        console.log('reply-toggle | ', 'wrapper ', wrapper, '| drawer ', drawer)
         if (drawer) {
             drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
         }

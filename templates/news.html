@@ -261,154 +261,156 @@
             </form>
         </div>
         <div id="year-overview"></div>
-
-        {% for article in articles %}
-            {% if scrape_id == article.id and article.needs_scrape %}
-                <div class="news-article loading-article">
-                <div class="spinner"></div> Fetching metadata...
-                </div>
-            {% else %}
-                <div class="news-article" id="{{ article.id }}" data-article-id="{{ article.id }}">
-                    <div class="article-info-wrapper">
-                        <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
-                        {% if article.description %}
-                        <p>
-                            <span class="article-info description"></span>
-                            <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
-                        </p>
-                        {% endif %}
-                        <p><span class="article-info source"></span> {{ article.source }}</p>
-                        {% if article.published %}
-                            <p><span class="article-info published"></span>
-                                {{ article.published | datetimeformat("%B %d, %Y") }}
+        <div class="articles-container">
+            {% for article in articles %}
+                {% if scrape_id == article.id and article.needs_scrape %}
+                    <div class="news-article loading-article">
+                    <div class="spinner"></div> Fetching metadata...
+                    </div>
+                {% else %}
+                    <div class="news-article" id="{{ article.id }}" data-article-id="{{ article.id }}">
+                        <div class="article-info-wrapper">
+                            <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                            {% if article.description %}
+                            <p>
+                                <span class="article-info description"></span>
+                                <span class="formatted-description">{{ article.formatted_description() | safe }}</span>
                             </p>
-                        {% endif %}
-                        {% if article.authors %}
-                            <p><span class="article-info authors"></span>{{ article.authors }}</p>
-                        {% endif %}
-                        <p><span class="article-info category"></span> {{ article.category or 'None'}}</p>
-                        <div class="article-card {% if article.id == highlight_id %}highlight{% endif %}"></div>
-                        {% if article.archive_url %}
-                            <p><span class="article-info archive-url"></span><a href="{{ article.archive_url }}" target="_blank">{{ article.archive_url }}</a></p>
-                        {% endif %}
-                        <button type="button" class="sharelink" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
-                    </div>
-
-                    {% if article.embed_html %}
-                    <div class="news-embed-wrapper">
-                        <div class="youtube-placeholder" data-src="{{ article.embed_html | safe }}"></div>
-                    </div>
-                    {% else %}
-                        {% if article.image_url %}
-                            <img src="{{ article.image_url }}" class="news-image">
-                        {% endif %}
-                    {% endif %}
-                    <div class="article-wrapper-reactions">
-                        <div class="reactions-container"></div>
-                        <div class="article-toolbar-reactions">
-                            <!-- Unicode reactions button -->
-                            <button type="button" class="unicode-emoji-button" data-emoji-type="unicode"">
-                                <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
-                            </button>
-                            <div class="unicode-wrapper-reaction">
-                                <emoji-picker></emoji-picker>
-                            </div>
-                            <!-- Custom reactions button -->
-                            <button type="button" class="custom-emoji-button" data-emoji-type="custom">😺</button>
-                            <div class="custom-wrapper-reaction">
-                                <!-- JS will inject emoji drawer below -->
-                            </div>
+                            {% endif %}
+                            <p><span class="article-info source"></span> {{ article.source }}</p>
+                            {% if article.published %}
+                                <p><span class="article-info published"></span>
+                                    {{ article.published | datetimeformat("%B %d, %Y") }}
+                                </p>
+                            {% endif %}
+                            {% if article.authors %}
+                                <p><span class="article-info authors"></span>{{ article.authors }}</p>
+                            {% endif %}
+                            <p><span class="article-info category"></span> {{ article.category or 'None'}}</p>
+                            <div class="article-card {% if article.id == highlight_id %}highlight{% endif %}"></div>
+                            {% if article.archive_url %}
+                                <p><span class="article-info archive-url"></span><a href="{{ article.archive_url }}" target="_blank">{{ article.archive_url }}</a></p>
+                            {% endif %}
+                            <button type="button" class="sharelink" onclick="copyLink('{{ article.id }}')">🔗 Copy Share Link</button>
                         </div>
-                    </div>
-                    <div class="comments-wrapper">
-                        <h2>Discussion</h2>
-                        {% if session.get('user_id') %}
-                            <div class="comments-thread">
-                                {% for comment in article.comments if comment.parent_id is none %}
-                                    {{ render_comment(comment, article) }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <div class="post-comment-container">
-                            {% if session.get('user_id') %}
-                                <div class="comment-box" style="position: relative;">
-                                    <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
-                                    <input type="hidden" name="comment-content" class="hidden-content">
-                                
-                                    <!-- Unicode emoji picker -->
-                                    <button type="button" class="unicode-emoji-button" data-emoji-type="unicode">
-                                        <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
-                                    </button>
-                                    <div class="unicode-emoji-wrapper">
-                                        <emoji-picker></emoji-picker>
-                                    </div>
 
-                                    <!-- Custom emoji picker -->
-                                    <button type="button" class="custom-emoji-button" data-emoji-type="custom">😺</button>
-                                    <div class="custom-emoji-wrapper">
-                                    <!-- JS will inject emoji drawer below -->
-                                    </div>
-                                    <!-- Upload button -->
-                                    <button type="button" class="upload-button">
-                                        📎
-                                    </button>
-                                    <input type="file" class="file-input" style="display: none;" />
-                                    <button type="submit" class="newsfeed-button">Post Comment</button>
+                        {% if article.embed_html %}
+                        <div class="news-embed-wrapper">
+                            <div class="youtube-placeholder" data-src="{{ article.embed_html | safe }}"></div>
+                        </div>
+                        {% else %}
+                            {% if article.image_url %}
+                                <img src="{{ article.image_url }}" class="news-image">
+                            {% endif %}
+                        {% endif %}
+                        <div class="article-wrapper-reactions">
+                            <div class="reactions-container"></div>
+                            <div class="article-toolbar-reactions">
+                                <!-- Unicode reactions button -->
+                                <button type="button" class="unicode-emoji-button" data-emoji-type="unicode"">
+                                    <img class=" icon" src="media/icons/emoji.png" alt="emoji.png">
+                                </button>
+                                <div class="unicode-wrapper-reaction">
+                                    <emoji-picker></emoji-picker>
                                 </div>
-                            {% else %}
-                                <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
+                                <!-- Custom reactions button -->
+                                <button type="button" class="custom-emoji-button" data-emoji-type="custom">😺</button>
+                                <div class="custom-wrapper-reaction">
+                                    <!-- JS will inject emoji drawer below -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comments-wrapper">
+                            <h2>Discussion</h2>
+                            {% if session.get('user_id') %}
+                                <div class="comments-thread">
+                                    {% for comment in article.comments if comment.parent_id is none %}
+                                        {{ render_comment(comment, article) }}
+                                    {% endfor %}
+                                </div>
                             {% endif %}
                         </div>
-                    </form>
-                    {% if is_admin() %}
-                        <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" class="article-edit-form">
+                        <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            Title: <input name="title" value="{{ article.title or '' }}">
-                            Description: <textarea name="description">{{ article.description or '' }}</textarea>
-                            Authors: <input name="authors" value="{{ article.authors or '' }}">
-                            Source: <input name="source" value="{{ article.source or '' }}">
-                            Published: <input type="date" name="published" value="{{ article.published or '' }}">
-                            Image URL: <input name="image_url" value="{{ article.image_url or '' }}">
-                            Archive URL: <input name="archive_url" value="{{ article.archive_url or '' }}">
-                            <button type="submit" class="newsfeed-button">Update</button>
+                            <div class="post-comment-container">
+                                {% if session.get('user_id') %}
+                                    <div class="comment-box" style="position: relative;">
+                                        <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
+                                        <input type="hidden" name="comment-content" class="hidden-content">
+                                    
+                                        <!-- Unicode emoji picker -->
+                                        <button type="button" class="unicode-emoji-button" data-emoji-type="unicode">
+                                            <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                                        </button>
+                                        <div class="unicode-emoji-wrapper">
+                                            <emoji-picker></emoji-picker>
+                                        </div>
+
+                                        <!-- Custom emoji picker -->
+                                        <button type="button" class="custom-emoji-button" data-emoji-type="custom">😺</button>
+                                        <div class="custom-emoji-wrapper">
+                                        <!-- JS will inject emoji drawer below -->
+                                        </div>
+                                        <!-- Upload button -->
+                                        <button type="button" class="upload-button">
+                                            📎
+                                        </button>
+                                        <input type="file" class="file-input" style="display: none;" />
+                                        <button type="submit" class="newsfeed-button">Post Comment</button>
+                                    </div>
+                                {% else %}
+                                    <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
+                                {% endif %}
+                            </div>
                         </form>
-                    {% endif %}
-                    <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <div class="new-category-container">
-                            {% if is_admin() or current_user_obj.id == article.user_id %}
-                                <select name="new-category" id="new-category">
-                                    <option value="Uncategorized">Uncategorized</option>
-                                    <option value="Protests & Activism">Protests & Activism</option>
-                                    <option value="Climate & Environment">Climate & Environment</option>
-                                    <option value="Science & Technology">Science & Technology</option>
-                                    <option value="Economy & Finance">Economy & Finance</option>
-                                    <option value="Food & Health">Food & Health</option>
-                                    <option value="Disasters">Disasters</option>
-                                    <option value="Political Corruption">US Political Corruption</option>
-                                    <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
-                                    <option value="Police Brutality">Police Brutality</option>
-                                    <option value="Middle East">Middle East</option>
-                                    <option value="Ukraine War">Ukraine War</option>
-                                    <option value="US/International Conflict">US/International Conflict</option>
-                                </select>
+                        {% if is_admin() %}
+                            <div id="toggle-admin-form {{ article.id }}" class="toggle-edit-article">Edit Article</div>
+                            <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" id="edit-article {{ article.id }}" class="article-edit-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                Title: <input name="title" value="{{ article.title or '' }}">
+                                Description: <textarea name="description">{{ article.description or '' }}</textarea>
+                                Authors: <input name="authors" value="{{ article.authors or '' }}">
+                                Source: <input name="source" value="{{ article.source or '' }}">
+                                Published: <input type="date" name="published" value="{{ article.published or '' }}">
+                                Image URL: <input name="image_url" value="{{ article.image_url or '' }}">
+                                Archive URL: <input name="archive_url" value="{{ article.archive_url or '' }}">
                                 <button type="submit" class="newsfeed-button">Update</button>
-                            {% endif %}
-                        </div>
-                    </form>
-                    {% if is_admin() or current_user_obj.id == article.user_id %}
-                        <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                            </form>
+                        {% endif %}
+                        <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
-                                Article</button>
+                            <div class="new-category-container">
+                                {% if is_admin() or current_user_obj.id == article.user_id %}
+                                    <select name="new-category" id="new-category">
+                                        <option value="Uncategorized">Uncategorized</option>
+                                        <option value="Protests & Activism">Protests & Activism</option>
+                                        <option value="Climate & Environment">Climate & Environment</option>
+                                        <option value="Science & Technology">Science & Technology</option>
+                                        <option value="Economy & Finance">Economy & Finance</option>
+                                        <option value="Food & Health">Food & Health</option>
+                                        <option value="Disasters">Disasters</option>
+                                        <option value="Political Corruption">US Political Corruption</option>
+                                        <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
+                                        <option value="Police Brutality">Police Brutality</option>
+                                        <option value="Middle East">Middle East</option>
+                                        <option value="Ukraine War">Ukraine War</option>
+                                        <option value="US/International Conflict">US/International Conflict</option>
+                                    </select>
+                                    <button type="submit" class="newsfeed-button">Update</button>
+                                {% endif %}
+                            </div>
                         </form>
-                    {% endif %}
-                </div>
-            {% endif %}
-        {% endfor %}
+                        {% if is_admin() or current_user_obj.id == article.user_id %}
+                            <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
+                                    Article</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
     </section>
 
     <div id="user-popup" class="popup" style="display: none;">

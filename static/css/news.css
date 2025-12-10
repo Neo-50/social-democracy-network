@@ -1,9 +1,9 @@
 /* Styling for the news page only */
 .news-page {
     display: grid;
-    grid-template-columns: max-content minmax(300px, 1000px);
+    grid-template-columns: max-content minmax(300px, 100%);
     max-width: 100%;
-    grid-gap: 30px;
+    grid-gap: 10px;
     padding: 0.5rem;
     box-sizing: border-box;
 }
@@ -20,6 +20,8 @@
     background-color: #1a1a1a;
     padding: 20px;
     margin: 5px 0;
+    font-size: .8em;
+    line-height: 1;
     border-radius: 24px;
     border: 1px solid #8feff2;
     display: flex;
@@ -37,6 +39,16 @@
     .news-article {
         padding: 10px;
     }
+}
+
+button:hover {
+	background-color: transparent;
+}
+
+.articles-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
 .comments-thread {
@@ -91,7 +103,7 @@
 h2 {
     margin-top: 10px;
     margin-bottom: 12px;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 600;
 }
 
@@ -131,13 +143,14 @@ p {
 }
 
 .article-info {
-    font-size: 1em;
+    font-size: 1.1em;
     font-weight: 550;
     margin-right: 4px;
 }
 
 .article-info-wrapper{
-    line-height: 1.4;
+    line-height: 1;
+    font-size: 1.1em;
     width: 100%;
 }
 
@@ -291,35 +304,52 @@ p {
 }
 
 .sort-form select {
-  background-color: #1a1a1a;
-  color: #bbb;
-  padding: 8px 10px;
-  border: none;
-  width: fit-content;
+	background-color: #1a1a1a;
+	color: #bbb;
+	padding: 8px 10px;
+	border: none;
+	width: fit-content;
 }
 
 .news-right h2 a:hover {
     color: #666;
 }
 
+.toggle-edit-article {
+	color: #00e3ea;
+	border: 2px solid #00e3ea;
+	width: fit-content;
+	border-radius: 12px;
+	padding: 6px;
+	margin-bottom: 0;
+}
+
+.toggle-edit-article:hover {
+	color: white;
+	cursor: pointer;
+}
 
 .article-edit-form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 500px;
-  gap: 8px;
-  margin-top: 0;
+	display: none;
+	flex-direction: column;
+	width: 100%;
+	max-width: 500px;
+	gap: 8px;
+	margin-top: 0;
+}
+
+.article-edit-form.visible{
+    display: flex;
 }
 
 .article-edit-form input,
 .article-edit-form textarea {
-  background-color: #222;
-  color: #fff;
-  border: 1px solid #555;
-  padding: 6px;
-  width: 100%;
-  border-radius: 6px;
+	background-color: #222;
+	color: #fff;
+	border: 1px solid #555;
+	padding: 6px;
+	width: 100%;
+	border-radius: 6px;
 }
 
 .article-edit-form input[type="date"] {
@@ -511,7 +541,6 @@ p {
     padding: 2px;
     width: min-content;
     border-radius: 24px;
-    border: 2px solid #00e3ea;
     background-color: black;
 }
 
