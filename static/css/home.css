@@ -17,6 +17,10 @@ h2  {
     margin-bottom: 10px;
 }
 
+iframe {
+    border-radius: 24px;
+}
+
 /* Left, center, and right columns */
 .home-page .home-left,
 .home-page .home-center,
@@ -60,6 +64,7 @@ h2  {
     border: 2px solid #8feff2;
     border-radius: 24px;
     padding: 20px;
+    margin-bottom: 10px;
 }
 
 .ukraine-war,
