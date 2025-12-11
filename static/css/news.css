@@ -21,7 +21,16 @@
     justify-content: space-between;
 }
 
+@media (width <=800px) {
+    .news-toprow {
+        display: flex;
+        flex-direction: column;
+        justify-content: left;
+    }
+}
+
 .submit-news-article {
+    display: block;
 	margin-right: 0;
 	padding-left: 10px;
 	border-left: 6px solid black;
@@ -34,7 +43,7 @@
 	}
 
 	.submit-news-article.visible {
-		display: flex;
+		display: block;
 	}
 }
 
@@ -43,14 +52,39 @@
 	padding: 0;
 }
 
+.toggle-submit-article {
+    display: none;
+}
+
+@media (width <=800px) {
+    .toggle-submit-article {
+        display: flex;
+        font-size: .9em;
+        flex-direction: row;
+        border-radius: 24px;
+        padding: 5px;
+        margin-top: 5px;
+        width: fit-content;
+        color: #bbb;
+        border: 2px solid #00e3ea;
+        box-sizing: border-box;
+    }
+
+    .toggle-submit-article:hover {
+        color: white;
+        cursor: pointer;
+    }
+}
 
 .archive-x-warning-page {
-	display: flex;
+	display: block;
+    margin-top: 10px;
 	flex-direction: column;
 	justify-content: center;
 }
 
 .content-warning {
+    display: block;
 	font-size: .8em;
 }
 
@@ -62,7 +96,7 @@
 
 .sort-container {
 	margin-top: 60px;
-	padding: 5px;
+	padding: 6px;
 	width: fit-content;
 	height: fit-content;
 	display: flex;
@@ -73,6 +107,8 @@
 	.sort-container {
 		margin-top: 10px;
 		min-width: 450px;
+        overflow: none;
+        white-space: wrap;
 	}
 }
 
@@ -239,8 +275,7 @@ p {
 
 .news-toprow input[type="url"] {
     width: 300px;
-    padding: 12px 20px;
-    margin-left: 0;
+    padding: 6px 10px;
     background-color: #1a1a1a;
     color: white;
     border: none;
@@ -265,7 +300,7 @@ p {
 }
 
 .submit-article {
-    padding: 12px 20px;
+    padding: 6px 10px;
     font-size: 1em;
     margin-left: 3px;
     margin-top: 2px;
@@ -292,6 +327,7 @@ p {
     width: 250px;
     padding: 8px 10px;
     margin-bottom: 10px;
+    margin-left: 0;
     background-color: #1a1a1a;
     color: #bbb;
     border: 0;
@@ -651,11 +687,6 @@ p {
     gap: 5px;
     align-items: flex-end;
 }
-
-/* .reply strong {
-    display: inline-block;
-    margin-bottom: 2px;
-} */
 
 .comment-header {
     display: flex;

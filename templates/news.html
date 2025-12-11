@@ -182,6 +182,9 @@
             </div>
         </div>
         <div id="year-overview"></div>
+        {% if session.get('user_id') %}
+            <div id="toggle-submit-article" class="toggle-submit-article">Submit New Article</div>
+        {% endif %}
          <div class="submit-news-article">
             <form method="POST" id="submit-news" action="{{ url_for('news') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -205,10 +208,10 @@
                     <option value="US/International Conflict">US/International Conflict</option>
                 </select>
             </form>
-            <div class="archive-x-warning-page">
-                <span><a href="{{ url_for('archive_x_warning') }}">[TwitterX Archive]</a></span>
-                <span class="content-warning">🚨<span style="color: red;">Warning</span> Contains Graphic Content</span>
-            </div>
+        </div>
+        <div class="archive-x-warning-page">
+            <span><a href="{{ url_for('archive_x_warning') }}">[TwitterX Archive]</a></span>
+            <span class="content-warning">🚨<span style="color: red;">Warning</span> Contains Graphic Content</span>
         </div>
     </section>
 

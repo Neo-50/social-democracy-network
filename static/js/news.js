@@ -18,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
             articleEditForm = e.target.nextElementSibling;
             articleEditForm.classList.toggle('visible');
         }
+        if (e.target.classList.contains('toggle-submit-article')) {
+            submitNewsArticle = e.target.nextElementSibling;
+            submitNewsArticle.classList.toggle('visible');
+        }
     });
 
     document.getElementById('link-dropdown').addEventListener('change', function () {
