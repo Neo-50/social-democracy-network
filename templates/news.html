@@ -185,33 +185,35 @@
         {% if session.get('user_id') %}
             <div id="toggle-submit-article" class="toggle-submit-article">Submit New Article</div>
         {% endif %}
-         <div class="submit-news-article">
-            <form method="POST" id="submit-news" action="{{ url_for('news') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="submit-article-container">
-                    <input type="url" name="url" placeholder="[paste news link]" required>
-                    <button type="submit" class="submit-article">Submit</button>
-                </div>
-                <select name="category" id="category">
-                    <option value="Uncategorized">Uncategorized/Other</option>
-                    <option value="Political Corruption">US Political Corruption</option>
-                    <option value="ICE & Immigration">ICE Raids & Immigration</option>
-                    <option value="Police Brutality">Police Brutality</option>
-                    <option value="Protests & Activism">Protests & Activism</option>
-                    <option value="Climate & Environment">Climate & Environment</option>
-                    <option value="Science & Technology">Science & Technology</option>
-                    <option value="Economy & Finance">Economy & Finance</option>
-                    <option value="Food & Health">Food & Health</option>
-                    <option value="Disasters">Disasters</option>
-                    <option value="Middle East">Middle East</option>
-                    <option value="Ukraine War">Ukraine War</option>
-                    <option value="US/International Conflict">US/International Conflict</option>
-                </select>
-            </form>
-        </div>
-        <div class="archive-x-warning-page">
-            <span><a href="{{ url_for('archive_x_warning') }}">[TwitterX Archive]</a></span>
-            <span class="content-warning">🚨<span style="color: red;">Warning</span> Contains Graphic Content</span>
+        <div class="submit-article-archivex">
+            <div class="submit-news-article">
+                <form method="POST" id="submit-news" action="{{ url_for('news') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="submit-article-container">
+                        <input type="url" name="url" placeholder="[paste news link]" required>
+                        <button type="submit" class="submit-article">Submit</button>
+                    </div>
+                    <select name="category" id="category">
+                        <option value="Uncategorized">Uncategorized/Other</option>
+                        <option value="Political Corruption">US Political Corruption</option>
+                        <option value="ICE & Immigration">ICE Raids & Immigration</option>
+                        <option value="Police Brutality">Police Brutality</option>
+                        <option value="Protests & Activism">Protests & Activism</option>
+                        <option value="Climate & Environment">Climate & Environment</option>
+                        <option value="Science & Technology">Science & Technology</option>
+                        <option value="Economy & Finance">Economy & Finance</option>
+                        <option value="Food & Health">Food & Health</option>
+                        <option value="Disasters">Disasters</option>
+                        <option value="Middle East">Middle East</option>
+                        <option value="Ukraine War">Ukraine War</option>
+                        <option value="US/International Conflict">US/International Conflict</option>
+                    </select>
+                </form>
+            </div>
+            <div class="archive-x-warning-page">
+                <span><a href="{{ url_for('archive_x_warning') }}">[TwitterX Archive]</a></span>
+                <span class="content-warning">🚨<span style="color: red;">Warning</span> Contains Graphic Content</span>
+            </div>
         </div>
     </section>
 

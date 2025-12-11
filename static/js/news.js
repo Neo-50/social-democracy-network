@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
             articleEditForm.classList.toggle('visible');
         }
         if (e.target.classList.contains('toggle-submit-article')) {
-            submitNewsArticle = e.target.nextElementSibling;
+            const submitWrapper = e.target.nextElementSibling;
+            const submitNewsArticle = submitWrapper.querySelector('.submit-news-article');
             submitNewsArticle.classList.toggle('visible');
         }
     });
