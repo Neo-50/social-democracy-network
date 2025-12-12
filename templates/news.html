@@ -225,7 +225,7 @@
                     <div class="spinner"></div> Fetching metadata...
                     </div>
                 {% else %}
-                    <div class="news-article" id="{{ article.id }}" data-article-id="{{ article.id }}">
+                    <div class="news-article {% if article.id == highlight_id %}highlight{% endif %}" id="{{ article.id }}" data-article-id="{{ article.id }}">
                         <div class="article-info-wrapper">
                             <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
                             {% if article.description %}
