@@ -211,7 +211,7 @@ a:focus {
     border-radius: 0;
     padding: 2px;
     border: none;
-    font-size: 1.2em;
+    font-size: 24px;
 }
 
 .emoji-reaction.custom:hover,
