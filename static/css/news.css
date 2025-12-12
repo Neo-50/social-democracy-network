@@ -182,12 +182,6 @@ button:hover {
 	}
 }
 
-.comments-thread {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-}
-
 .comment-container {
     display: flex;
     position: relative;
@@ -419,7 +413,8 @@ p {
     color: #666;
 }
 
-.toggle-edit-article {
+.toggle-edit-article,
+.toggle-comments-section {
 	color: #00e3ea;
 	border: 2px solid #00e3ea;
 	width: fit-content;
@@ -428,9 +423,25 @@ p {
 	margin-bottom: 0;
 }
 
-.toggle-edit-article:hover {
+.toggle-edit-article:hover,
+.toggle-comments-section:hover {
 	color: white;
 	cursor: pointer;
+}
+
+.comments-thread {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.comments-section {
+    display: none;
+    flex-direction: column;
+}
+
+.comments-section.visible {
+    display: flex;
 }
 
 .article-edit-form {

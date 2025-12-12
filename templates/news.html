@@ -277,56 +277,59 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="comments-wrapper">
-                            <h2>Discussion
-                                {% set n = article.comments|length %}
-                                {% if n == 1 %}
-                                    ({{ n }} comment)
-                                {% else %}
-                                    ({{ n }} comments)
-                                {% endif %}
-                            </h2>
-                            {% if session.get('user_id') %}
-                                <div class="comments-thread">
-                                    {% for comment in article.comments if comment.parent_id is none %}
-                                        {{ render_comment(comment, article) }}
-                                    {% endfor %}
-                                </div>
+                        <h2>Discussion
+                            {% set n = article.comments|length %}
+                            {% if n == 1 %}
+                                ({{ n }} comment)
+                            {% else %}
+                                ({{ n }} comments)
                             {% endif %}
-                        </div>
-                        <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <div class="post-comment-container">
+                        </h2>
+                        <div id="toggle-comments-section" class="toggle-comments-section">show/hide</div>
+                        <div class="comments-section">
+                            <div class="comments-wrapper">
                                 {% if session.get('user_id') %}
-                                    <div class="comment-box" style="position: relative;">
-                                        <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
-                                        <input type="hidden" name="comment-content" class="hidden-content">
-                                    
-                                        <!-- Unicode emoji picker -->
-                                        <button type="button" class="unicode-emoji-button" data-emoji-type="unicode">
-                                            <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
-                                        </button>
-                                        <div class="unicode-emoji-wrapper">
-                                            <emoji-picker></emoji-picker>
-                                        </div>
-
-                                        <!-- Custom emoji picker -->
-                                        <button type="button" class="custom-emoji-button" data-emoji-type="custom">😺</button>
-                                        <div class="custom-emoji-wrapper">
-                                        <!-- JS will inject emoji drawer below -->
-                                        </div>
-                                        <!-- Upload button -->
-                                        <button type="button" class="upload-button">
-                                            📎
-                                        </button>
-                                        <input type="file" class="file-input" style="display: none;" />
-                                        <button type="submit" class="newsfeed-button">Post Comment</button>
+                                    <div class="comments-thread">
+                                        {% for comment in article.comments if comment.parent_id is none %}
+                                            {{ render_comment(comment, article) }}
+                                        {% endfor %}
                                     </div>
-                                {% else %}
-                                    <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
                                 {% endif %}
                             </div>
-                        </form>
+                            <form method="POST" action="{{ url_for('add_comment', article_id=article.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="post-comment-container">
+                                    {% if session.get('user_id') %}
+                                        <div class="comment-box" style="position: relative;">
+                                            <div class="comment-editor" contenteditable="true" placeholder="Write a comment..." id="comment-content-main" required></div>
+                                            <input type="hidden" name="comment-content" class="hidden-content">
+                                        
+                                            <!-- Unicode emoji picker -->
+                                            <button type="button" class="unicode-emoji-button" data-emoji-type="unicode">
+                                                <img class="icon" src="media/icons/emoji.png" alt="emoji.png">
+                                            </button>
+                                            <div class="unicode-emoji-wrapper">
+                                                <emoji-picker></emoji-picker>
+                                            </div>
+
+                                            <!-- Custom emoji picker -->
+                                            <button type="button" class="custom-emoji-button" data-emoji-type="custom">😺</button>
+                                            <div class="custom-emoji-wrapper">
+                                            <!-- JS will inject emoji drawer below -->
+                                            </div>
+                                            <!-- Upload button -->
+                                            <button type="button" class="upload-button">
+                                                📎
+                                            </button>
+                                            <input type="file" class="file-input" style="display: none;" />
+                                            <button type="submit" class="newsfeed-button">Post Comment</button>
+                                        </div>
+                                    {% else %}
+                                        <p><a href="{{ url_for('login') }}" class="newsfeed-button">Log in</a> to comment.</p>
+                                    {% endif %}
+                                </div>
+                            </form>
+                        </div>
                         {% if is_admin() %}
                             <div id="toggle-admin-form {{ article.id }}" class="toggle-edit-article">Edit Article</div>
                             <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" id="edit-article {{ article.id }}" class="article-edit-form">

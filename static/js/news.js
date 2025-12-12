@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitNewsArticle = submitWrapper.querySelector('.submit-news-article');
             submitNewsArticle.classList.toggle('visible');
         }
+        if (e.target.classList.contains('toggle-comments-section')) {
+            const commentsSection = e.target.nextElementSibling;
+            commentsSection.classList.toggle('visible');
+        }
     });
 
     document.getElementById('link-dropdown').addEventListener('change', function () {
