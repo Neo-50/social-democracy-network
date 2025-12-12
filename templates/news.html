@@ -278,7 +278,14 @@
                             </div>
                         </div>
                         <div class="comments-wrapper">
-                            <h2>Discussion</h2>
+                            <h2>Discussion
+                                {% set n = article.comments|length %}
+                                {% if n == 1 %}
+                                    ({{ n }} comment)
+                                {% else %}
+                                    ({{ n }} comments)
+                                {% endif %}
+                            </h2>
                             {% if session.get('user_id') %}
                                 <div class="comments-thread">
                                     {% for comment in article.comments if comment.parent_id is none %}
