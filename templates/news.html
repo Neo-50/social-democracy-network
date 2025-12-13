@@ -128,7 +128,7 @@
                 {% endif %}
             </div>
             <div class="sort-box">
-                <form method="get" class="sort-form" style="margin-bottom: 1em;">
+                <form method="get" class="sort-form">
                     {% if selected_category %}
                         <input type="hidden" name="category" value="{{ selected_category }}">
                     {% endif %}
@@ -150,11 +150,13 @@
                         <option value="{{ url_for('news', category='US/International Conflict') }}">US/International Conflict</option>
                         <option value="{{ url_for('news', category='Uncategorized') }}">Uncategorized</option>
                     </select>
+                    <br>
                     <label for="sort">Sort by:</label>
                     <select name="sort" id="sort" onchange="this.form.submit()">
                         <option value="desc" {% if request.args.get('sort') == 'desc' %}selected{% endif %}>Newest First</option>
                         <option value="asc" {% if request.args.get('sort') == 'asc' %}selected{% endif %}>Oldest First</option>
                     </select>
+                    <br>
                     <label for="limit">Show:</label>
                     <select name="limit" id="limit" onchange="this.form.submit()">
                         <option value="20" {% if request.args.get('limit', '20') == '20' %}selected{% endif %}>20</option>
@@ -164,6 +166,7 @@
                         <option value="500" {% if request.args.get('limit') == '500' %}selected{% endif %}>500</option>
                         <option value="all" {% if request.args.get('limit') == 'all' %}selected{% endif %}>All</option>
                     </select>
+                    <br>
                     <label for="year-overview">Year Overview:</label>
                     <select id="year-overview-select" onchange="if (this.value) window.location.href=this.value;">
                         <option value="">Select year…</option>
