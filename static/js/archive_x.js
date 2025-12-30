@@ -32,13 +32,18 @@
 
             console.log('>>>>>> Data received from /api/archive-x: ', data);
 
-			const hasVideo  = Array.isArray(data.primary_video) && data.primary_video.length > 0;
+			const hasVideo  = Array.isArray(data.videos) && data.videos.length > 0;
             const hasImages = Array.isArray(data.images)        && data.images.length > 0;
 
             if (hasVideo) {
 				// Append a card to the feed
 				const card = document.createElement('div');
                 card.className = 'tweet-card';
+				const videosHTML = (data.videos || [])
+					.map(vid => `<video class="twitter-video" controls preload="metadata">
+									<source src="/media/${vid}" type="video/mp4">
+								</video>`)
+					.join('');
 				card.innerHTML = `
                     <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
                     <div >Tweet ID: ${data.tweet_id}</div>
@@ -46,13 +51,7 @@
 					<span>@${data.author_handle}</span>—
                     ${data.author_name}
                     <div class="tweet-text">${data.text}</div>
-                    <div class="gallery" style="display:grid;gap:.5rem;">
-                        ${(data.primary_video || []).map(v => `
-                            <video class="twitter-video" controls preload="metadata">
-                                <source src="/media/${v}" type="video/mp4">
-                            </video>
-                        `).join('')}
-                    </div>
+                    <div class="gallery">${videosHTML}</div>
 					<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
                     <hr>
 					<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}

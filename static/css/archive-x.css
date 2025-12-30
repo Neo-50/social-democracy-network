@@ -4,6 +4,7 @@
     max-height: 600px;
     margin-bottom: 20px;
     border-radius: 24px;
+    display: block;
 }
 
 .twitter-image {

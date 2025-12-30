@@ -11,6 +11,7 @@ from yt_dlp import YoutubeDL
 from utils.media_paths import get_media_path
 import requests, datetime as dt
 from routes.x_media_extractor import fetch_tweet_media
+from urllib.parse import urlparse
 
 bp_archive_x = Blueprint('archive_x', __name__)
 _TCO_RE = re.compile(r'https?://t\.co/\w+', re.IGNORECASE)
@@ -423,6 +424,10 @@ def extract_image_urls_from_ytinfo(info: dict) -> list[str]:
 			seen.add(u); uniq.append(u)
 	return uniq
 
+
+def _is_mp4(url: str) -> bool:
+    return urlparse(url).path.endswith(".mp4")
+
 def download_primary_video(video_url: str, tweet_url: str, out_dir: str, base_name: str) -> str | None:
 
     """
@@ -435,7 +440,7 @@ def download_primary_video(video_url: str, tweet_url: str, out_dir: str, base_na
     os.makedirs(out_dir, exist_ok=True)
 
     # MP4: direct download
-    if video_url.endswith(".mp4"):
+    if _is_mp4(video_url):
         ext = ".mp4"
         path = os.path.join(out_dir, f"{base_name}{ext}")
         with requests.get(video_url, stream=True, timeout=90) as r:
@@ -455,7 +460,7 @@ def download_primary_video(video_url: str, tweet_url: str, out_dir: str, base_na
 
     # find the produced file (mp4 or mkv depending on the stream)
     files = sorted(glob.glob(os.path.join(out_dir, f"{base_name}.*")), key=os.path.getmtime, reverse=True)
-    return files if files else None
+    return files[0] if files else None
 
 def download_images(urls: list[str], tweet_id: str, target_abs: str, target_rel: str) -> list[str]:
 	os.makedirs(target_abs, exist_ok=True)
