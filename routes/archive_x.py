@@ -180,11 +180,11 @@ def api_archive_x():
 	saved_image_paths = []
 
 	if video_urls:
-		base_name = str(tweet_id)
+		base_name = str(tweet_id)	
 
 		for idx, url in enumerate(video_urls, start=1):
 			saved_abs = download_primary_video(
-				primary_url=url,
+				video_url=url,
 				tweet_url=tweet_url,
 				out_dir=target_abs,
 				base_name=f"{base_name}_{idx}",   # make filenames unique
@@ -242,7 +242,7 @@ def api_archive_x():
 			'counts': media.get('counts') or {},
 		},
 		tweet_id=tweet_id,
-		primary_video=saved_video_paths[0] if saved_video_paths else None,
+		videos=saved_video_paths if saved_video_paths else None,
 		images=saved_image_paths,
 		media_url=direct_media_url
 	)
@@ -251,7 +251,7 @@ def api_archive_x():
 		'ok': True,
 		'url': tweet_url,
 		'tweet_id': tweet_id,
-		'primary_video': saved_video_paths,  # list so your JS .map() still works
+		'videos': saved_video_paths,  # list so your JS .map() still works
 		'images': saved_image_paths,         # list of local rel paths
 		'text': media.get('text'),
 		'author_name': media.get('author') or media.get('author_name'),
@@ -262,21 +262,23 @@ def api_archive_x():
 		'reply_ctx': media.get('reply_ctx')
 	}, 200
 
-def upsert_tweet(meta: dict, tweet_id: int, primary_video, images, media_url) -> None:
+def upsert_tweet(meta: dict, tweet_id: int, videos, images, media_url) -> None:
 	# Normalize
-	if isinstance(primary_video, (list, tuple)):
-		primary_video = primary_video[0] if primary_video else None
-	elif not isinstance(primary_video, str):
-		primary_video = None
+	# if isinstance(videos, (list, tuple)):
+	# 	videos = videos[0] if videos else None
+	# elif not isinstance(videos, str):
+	# 	videos = None
 
+	if videos is None:
+		videos = []
 	if images is None:
 		images = []
 	elif isinstance(images, str):
 		images = [images]
 
 	# Build media_json with local paths only
-	if primary_video:
-		media_list = [{'kind': 'video', 'rel_path': primary_video}]
+	if videos:
+		media_list = [{'kind': 'video', 'rel_path': v} for v in videos]
 	elif images:
 		media_list = [{'kind': 'image', 'rel_path': p} for p in images]
 	else:
@@ -421,21 +423,22 @@ def extract_image_urls_from_ytinfo(info: dict) -> list[str]:
 			seen.add(u); uniq.append(u)
 	return uniq
 
-def download_primary_video(primary_url: str, tweet_url: str, out_dir: str, base_name: str) -> str | None:
+def download_primary_video(video_url: str, tweet_url: str, out_dir: str, base_name: str) -> str | None:
+
     """
     Saves a single video file and returns its absolute path.
     For MP4 we stream directly; for HLS (.m3u8) we delegate to yt-dlp.
     """
-    if not primary_url:
+    if not video_url:
         return None
 
     os.makedirs(out_dir, exist_ok=True)
 
     # MP4: direct download
-    if primary_url.endswith(".mp4"):
+    if video_url.endswith(".mp4"):
         ext = ".mp4"
         path = os.path.join(out_dir, f"{base_name}{ext}")
-        with requests.get(primary_url, stream=True, timeout=90) as r:
+        with requests.get(video_url, stream=True, timeout=90) as r:
             r.raise_for_status()
             with open(path, "wb") as f:
                 for chunk in r.iter_content(1 << 20):  # 1MB chunks
@@ -448,11 +451,11 @@ def download_primary_video(primary_url: str, tweet_url: str, out_dir: str, base_
     ydl_opts = {"quiet": True, "format": "best", "outtmpl": outtmpl}
     with YoutubeDL(ydl_opts) as ydl:
         # Use the m3u8 URL directly; yt-dlp will fetch & mux the best representation
-        ydl.download([primary_url or tweet_url])
+        ydl.download([video_url or tweet_url])
 
     # find the produced file (mp4 or mkv depending on the stream)
     files = sorted(glob.glob(os.path.join(out_dir, f"{base_name}.*")), key=os.path.getmtime, reverse=True)
-    return files[0] if files else None
+    return files if files else None
 
 def download_images(urls: list[str], tweet_id: str, target_abs: str, target_rel: str) -> list[str]:
 	os.makedirs(target_abs, exist_ok=True)
