@@ -171,24 +171,40 @@ def api_archive_x():
 	target_abs = get_media_path(target_rel)   # -> /mnt/storage/x-media
 	os.makedirs(target_abs, exist_ok=True)
 
-	primary_url   = media.get('primary_video') or media.get('primary_url')
-	image_urls    = media.get('images') or []
+	# primary_url   = media.get('primary_video') or media.get('primary_url')
+
+	video_urls = media.get("video_urls") or []
+	image_urls = media.get('images') or []
 
 	saved_video_paths = []
 	saved_image_paths = []
 
-	if primary_url:
-		# Prefer video; skip images entirely
+	if video_urls:
 		base_name = str(tweet_id)
-		saved_abs = download_primary_video(
-			primary_url=primary_url,
-			tweet_url=tweet_url,
-			out_dir=target_abs,
-			base_name=base_name,
-		)
-		if saved_abs:
-			rel_path = os.path.relpath(saved_abs, get_media_path('')).replace('\\', '/')
-			saved_video_paths = [rel_path]
+
+		for idx, url in enumerate(video_urls, start=1):
+			saved_abs = download_primary_video(
+				primary_url=url,
+				tweet_url=tweet_url,
+				out_dir=target_abs,
+				base_name=f"{base_name}_{idx}",   # make filenames unique
+			)
+			if saved_abs:
+				rel_path = os.path.relpath(saved_abs, get_media_path("")).replace("\\", "/")
+				saved_video_paths.append(rel_path)
+
+	# if primary_urls:
+	# 	# Prefer video; skip images entirely
+	# 	base_name = str(tweet_id)
+	# 	saved_abs = download_primary_video(
+	# 		primary_url=primary_url,
+	# 		tweet_url=tweet_url,
+	# 		out_dir=target_abs,
+	# 		base_name=base_name,
+	# 	)
+	# 	if saved_abs:
+	# 		rel_path = os.path.relpath(saved_abs, get_media_path('')).replace('\\', '/')
+	# 		saved_video_paths = [rel_path]
 
 	elif image_urls:
 		# No video → keep all images
@@ -203,11 +219,11 @@ def api_archive_x():
 		saved_image_paths = [p.replace('\\', '/') for p in img_rel_paths]
 
 	direct_media_url = None
-	if primary_url:
-		direct_media_url = primary_url
+	if video_urls:
+		direct_media_url = video_urls[0]
 	elif image_urls:
 		direct_media_url = image_urls[0]
-	
+
 	raw_ts = media.get('created_at_utc')
 	epoch_timestamp = to_epoch_seconds(raw_ts)
 

@@ -287,6 +287,23 @@ def _choose_primary_video(variants: list[dict]) -> dict | None:
 	# Last resort: first variant
 	return variants[0]
 
+def _find_video_nodes(obj, out: list):
+    """
+    Append dict nodes that look like a single video media object:
+    it has video_info.variants (a list).
+    """
+    if isinstance(obj, dict):
+        vi = obj.get("video_info")
+        if isinstance(vi, dict) and isinstance(vi.get("variants"), list):
+            out.append(obj)
+            return  # IMPORTANT: don't keep recursing inside this node; it's already a unit
+
+        for v in obj.values():
+            _find_video_nodes(v, out)
+
+    elif isinstance(obj, list):
+        for it in obj:
+            _find_video_nodes(it, out)
 
 def _walk_media_urls(obj, found):
     if isinstance(obj, dict):
@@ -680,12 +697,21 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 						data = data_alt
 						break
 		
-		vid_variants = []
-		_collect_video_variants(data, vid_variants)
+		video_urls = []
 
-		# choose primary video (if any)
-		primary_vid = _choose_primary_video(vid_variants)
-		primary_url = (primary_vid or {}).get("url")
+		video_nodes = []
+		_find_video_nodes(data, video_nodes)   # helper that finds each dict with video_info.variants
+
+		for node in video_nodes:
+			variants = []
+			_collect_video_variants(node, variants)   # collect only inside this node
+			best = _choose_primary_video(variants)
+			u = (best or {}).get("url")
+			if isinstance(u, str) and u:
+				video_urls.append(u)
+
+		# dedupe while preserving order
+		video_urls = list(dict.fromkeys(video_urls))
 
 		# text, author _ extract_text_author(data)
 		text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
@@ -703,7 +729,7 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		print('>>>>>> Concatenate quote to text: ', text)
 
 		result = {
-			"primary_video": primary_url,
+			"video_urls": video_urls,
 			"images": [],
 			"text": text or alt_desc,
 			"author": author_name,
