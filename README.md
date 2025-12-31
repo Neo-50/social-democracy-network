@@ -9,7 +9,8 @@ This site aims to amplify independent media, support activism, and provide a spa
 - 💬 Comment threads with nested replies and moderation
 - 🔼 Reaction system for comments and news articles with unicode and custom emojis
 - ☠️ TwitterX archiving tool: https://social-democracy.net/archive-x
-- 🧑 User registration/login system with admin tools
+- 🧑 User accounts with email verification and session-based authentication
+- 🛡️ Admin tools
 - 🧠 Clean, responsive layout styled with custom CSS
 - 🔒 Secure password hashing and session handling
 
@@ -18,4 +19,4 @@ This site aims to amplify independent media, support activism, and provide a spa
 - **Backend:** Flask, Flask-SQLAlchemy
 - **Frontend:** HTML, CSS (custom), Jinja2 templates
 - **Database:** PostgreSQL (production), SQLite (local)
-- **Other Tools:** Requests, BeautifulSoup, Poetry
+- **Other Tools:** Requests, BeautifulSoup, Poetry, Subprocess (metadata scraper), Timezone-aware datetime handling, dotenv (environment-based config), 
