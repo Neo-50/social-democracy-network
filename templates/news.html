@@ -333,49 +333,48 @@
                                 </div>
                             </form>
                         </div>
-                        {% if is_admin() %}
-                            <div id="toggle-admin-form {{ article.id }}" class="toggle-edit-article">Edit Article</div>
-                            <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" id="edit-article {{ article.id }}" class="article-edit-form">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                Title: <input name="title" value="{{ article.title or '' }}">
-                                Description: <textarea name="description">{{ article.description or '' }}</textarea>
-                                Authors: <input name="authors" value="{{ article.authors or '' }}">
-                                Source: <input name="source" value="{{ article.source or '' }}">
-                                Published: <input type="date" name="published" value="{{ article.published or '' }}">
-                                Image URL: <input name="image_url" value="{{ article.image_url or '' }}">
-                                Archive URL: <input name="archive_url" value="{{ article.archive_url or '' }}">
-                                <button type="submit" class="newsfeed-button">Update</button>
-                            </form>
-                        {% endif %}
-                        <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <div class="new-category-container">
-                                {% if is_admin() or current_user_obj.id == article.user_id %}
-                                    <select name="new-category" id="new-category">
-                                        <option value="Uncategorized">Uncategorized</option>
-                                        <option value="Protests & Activism">Protests & Activism</option>
-                                        <option value="Climate & Environment">Climate & Environment</option>
-                                        <option value="Science & Technology">Science & Technology</option>
-                                        <option value="Economy & Finance">Economy & Finance</option>
-                                        <option value="Food & Health">Food & Health</option>
-                                        <option value="Disasters">Disasters</option>
-                                        <option value="Political Corruption">US Political Corruption</option>
-                                        <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
-                                        <option value="Police Brutality">Police Brutality</option>
-                                        <option value="Middle East">Middle East</option>
-                                        <option value="Ukraine War">Ukraine War</option>
-                                        <option value="US/International Conflict">US/International Conflict</option>
-                                    </select>
-                                    <button type="submit" class="newsfeed-button">Update</button>
-                                {% endif %}
-                            </div>
-                        </form>
                         {% if is_admin() or current_user_obj.id == article.user_id %}
-                            <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
-                                    Article</button>
-                            </form>
+                            <div id="toggle-admin-form {{ article.id }}" class="toggle-edit-article">Edit Article</div>
+                            <div class="edit-article-container">
+                                <form method="POST" action="{{ url_for('edit_article', article_id=article.id) }}" 
+                                    id="edit-article {{ article.id }}" class="article-edit-form">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    Title: <input name="title" value="{{ article.title or '' }}">
+                                    Description: <textarea name="description">{{ article.description or '' }}</textarea>
+                                    Authors: <input name="authors" value="{{ article.authors or '' }}">
+                                    Source: <input name="source" value="{{ article.source or '' }}">
+                                    Published: <input type="date" name="published" value="{{ article.published or '' }}"><br>
+                                    Image URL: <input name="image_url" value="{{ article.image_url or '' }}">
+                                    Archive URL: <input name="archive_url" value="{{ article.archive_url or '' }}">
+                                    <button type="submit" class="newsfeed-button">Update</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('update_article_category', article_id=article.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <div class="new-category-container">
+                                            <select name="new-category" id="new-category">
+                                                <option value="Uncategorized">Uncategorized</option>
+                                                <option value="Protests & Activism">Protests & Activism</option>
+                                                <option value="Climate & Environment">Climate & Environment</option>
+                                                <option value="Science & Technology">Science & Technology</option>
+                                                <option value="Economy & Finance">Economy & Finance</option>
+                                                <option value="Food & Health">Food & Health</option>
+                                                <option value="Disasters">Disasters</option>
+                                                <option value="Political Corruption">US Political Corruption</option>
+                                                <option value="ICE & Immigration">Immigration ICE Raids Abductions</option>
+                                                <option value="Police Brutality">Police Brutality</option>
+                                                <option value="Middle East">Middle East</option>
+                                                <option value="Ukraine War">Ukraine War</option>
+                                                <option value="US/International Conflict">US/International Conflict</option>
+                                            </select>
+                                            <button type="submit" class="newsfeed-button">Update</button>
+                                    </div>
+                                </form>
+                                <form method="POST" action="{{ url_for('delete_article', article_id=article.id) }}" style="display:inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="delete-button" onclick="return confirm('Delete this article?')">🗑 Delete
+                                        Article</button>
+                                </form>
+                            </div>
                         {% endif %}
                     </div>
                 {% endif %}

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof window.initCommentSocket === "function") {
         window.initCommentSocket();
     }
-
+    // Toggle buttons
     document.addEventListener('click', (e) => {
         if (e.target.classList.contains('toggle-edit-article')) {
             articleEditForm = e.target.nextElementSibling;

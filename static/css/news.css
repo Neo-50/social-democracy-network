@@ -455,7 +455,7 @@ p {
     display: flex;
 }
 
-.article-edit-form {
+.edit-article-container {
 	display: none;
 	flex-direction: column;
 	width: 100%;
@@ -464,7 +464,7 @@ p {
 	margin-top: 0;
 }
 
-.article-edit-form.visible{
+.edit-article-container.visible{
     display: flex;
 }
 
