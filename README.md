@@ -17,7 +17,7 @@ This site aims to amplify independent media, support activism, and provide a spa
 
 ## Tech Stack
 
-- **Backend:** Flask, Flask-SQLAlchemy
-- **Frontend:** HTML, CSS (custom), Jinja2 templates
+- **Backend:** Python, Flask, SQLAlchemy ORM, Flask-Login, Flask-WTF (CSRF), itsdangerous, Flask-SocketIO (real-time messaging)
+- **Frontend:** HTML, CSS (custom), Jinja2 templates, JavaScript
 - **Database:** PostgreSQL (production), SQLite (local) managed via DBeaver
-- **Other Tools:** Requests, BeautifulSoup, Poetry, Subprocess (metadata scraper), Timezone-aware datetime handling, dotenv (environment-based config), 
+- **Other Tools:** Requests, BeautifulSoup, Poetry, Subprocess (metadata scraper), Timezone-aware datetime handling, dotenv (environment-based config), link metadata extraction and previews, server-side HTML and CSS sanitization
