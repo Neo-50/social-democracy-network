@@ -7,17 +7,18 @@ This site aims to amplify independent media, support activism, and provide a spa
 
 - 🌐 Submit and discuss news articles with metadata extraction
 - 💬 Comment threads with nested replies and moderation
-- 🔼 Upvote/downvote system per user per comment/reply
+- 🔼 Reaction system for comments and news articles with unicode and custom emojis
+- 🔼 TwitterX archiving tool: https://social-democracy.net/archive-x
 - 🧑 User registration/login system with admin tools
 - 🧠 Clean, responsive layout styled with custom CSS
 - 🔒 Secure password hashing and session handling
 
 ## Tech Stack
 
-- **Backend:** Flask, Flask-SQLAlchemy, Flask-Migrate
+- **Backend:** Flask, Flask-SQLAlchemy
 - **Frontend:** HTML, CSS (custom), Jinja2 templates
 - **Database:** PostgreSQL (production), SQLite (local)
-- **Other Tools:** Newspaper3k, BeautifulSoup, Poetry
+- **Other Tools:** Requests, BeautifulSoup, Poetry
 
 ## Setup Instructions
 
