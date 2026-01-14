@@ -1,3 +1,9 @@
+@media (width <= 768px) {
+    h1 {
+        font-size: 26px;
+    }
+}
+
 .twitter-video {
     height: auto;
     max-width: 600px;
@@ -48,7 +54,7 @@
 
 @media (width <= 768px) {
     .disclaimer {
-        width: 540px;
+        width: 360px;
     }
 }
 
@@ -63,8 +69,14 @@
     padding: 6px;
 }
 
+@media (width <= 768px) {
+    .totals {
+        font-size: 1.2em;
+    }
+}
+
 #url {
-    width: 380px;
+    width: 440px;
     height: 2rem;
 	padding: 0 0.5rem;
     margin-left: 0;
@@ -76,6 +88,12 @@
     box-sizing: border-box;
     outline: none;
     transition: box-shadow 0.2s ease;
+}
+
+@media (width <= 768px) {
+    #url {
+        width: 240px;
+    }
 }
 
 .download-tweet {
@@ -93,7 +111,7 @@
 
 .filters {
     margin-bottom: 10px;
-    padding-left: 14px
+    padding-left: 14px;
 }
 
 .control-panel  {
