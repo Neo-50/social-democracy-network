@@ -7,9 +7,9 @@
 	<div class="control-panel">
 		<form method="post" id="archive-form">
 			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-			<label for="url">Tweet URL:</label>
+			<label for="url">Tweet URL:</label><br>
 			<input id="url" name="url" type="url" required placeholder="https://x.com/username/status/1770…">
-			<button type="submit">Download</button>
+			<button type="submit" class="download-tweet">Download</button>
 		</form>
 		<div class="filters">
 			<label>
@@ -20,7 +20,7 @@
 				</select>
 			</label>
 			<label>
-				Month:
+				<br>Month:
 				<select id="monthSel">
 					{% for val, name in months %}
 						<option value="{{ val }}" {{ 'selected' if val == current_month else '' }}>{{ name }}</option>
@@ -28,7 +28,7 @@
 				</select>
 			</label>
 			<label>
-				Year:
+				<br>Year:
 				<select id="yearSel">
 					{% for y in years %}
 						<option value="{{ y }}" {{ 'selected' if y == current_year else '' }}>{{ y }}</option>
@@ -84,8 +84,8 @@
 		{% endif %}
 	</div>
 	<div class="disclaimer"><strong><u>Disclaimer:</u></strong><br>
-		<strong>Fair Use</strong> This archive operates under the principles of fair use as defined in 17 U.S.C. §107. 
-		Reproduction is limited to what is necessary for commentary, criticism, news reporting, education, and research. 
+		<strong>Fair Use</strong> This archive operates under the principles of fair use as defined in 17 U.S.C. §107.
+		Reproduction is limited to what is necessary for commentary, criticism, news reporting, education, and research.
 		All content is presented for non-commercial, informational purposes with attribution to the original source.
 	</div>
 </div>

@@ -46,6 +46,12 @@
     margin: 20px;
 }
 
+@media (width <= 768px) {
+    .disclaimer {
+        width: 540px;
+    }
+}
+
 .totals {
     width: fit-content;
     font-weight: 600;
@@ -57,12 +63,32 @@
     padding: 6px;
 }
 
+#url {
+    width: 380px;
+    height: 2rem;
+	padding: 0 0.5rem;
+    margin-left: 0;
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    font-size: 1em;
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
+.download-tweet {
+    padding: 0.4rem 0.5rem;
+}
+
 #orderSel, #monthSel, #yearSel {
     width: 140px;
-	height: 2rem;            /* or whatever you prefer */
-	line-height: 2.2rem;       /* match the height */
+	height: 1.8rem;            /* or whatever you prefer */
+	line-height: 1.8rem;       /* match the height */
 	padding: 0 0.5rem;         /* horizontal padding only */
 	vertical-align: middle;
+    margin-bottom: 5px;
 }
 
 .filters {
@@ -108,20 +134,6 @@
     border-radius: 24px;
     overflow-y: auto;
     margin-bottom: 14px;
-}
-
-#url {
-    width: 420px;
-    padding: 12px 20px;
-    margin-left: 0;
-    background-color: #1a1a1a;
-    color: white;
-    border: none;
-    border-radius: 999px;
-    font-size: 1em;
-    box-sizing: border-box;
-    outline: none;
-    transition: box-shadow 0.2s ease;
 }
 
 #archive-form {
