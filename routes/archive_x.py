@@ -90,7 +90,7 @@ def archive_x_page():
 	print('[ITEMS]:', [(i['tweet_id'], len(i['media'])) for i in items])
 
 	months = [(i, calendar.month_name[i]) for i in range(1, 13)]
-	years = [2025, 2024, 2023]
+	years = [2026, 2025, 2024, 2023, 2022, 2021, 2020]
 
 	month_name = calendar.month_name[month]
 	focused_tweet = next((it for it in items if str(it['tweet_id']) == str(focus)), None)

@@ -170,6 +170,7 @@
                     <label for="year-overview">Year Overview:</label>
                     <select id="year-overview-select" onchange="if (this.value) window.location.href=this.value;">
                         <option value="">Select year…</option>
+                        <option value="{{ url_for('news', category='2026') }}">2026</option>
                         <option value="{{ url_for('news', category='2025') }}">2025</option>
                         <option value="{{ url_for('news', category='2024') }}">2024</option>
                         <option value="{{ url_for('news', category='2023') }}">2023</option>
@@ -180,6 +181,8 @@
                         <option value="{{ url_for('news', category='2018') }}">2018</option>
                         <option value="{{ url_for('news', category='2017') }}">2017</option>
                         <option value="{{ url_for('news', category='2016') }}">2016</option>
+                        <option value="{{ url_for('news', category='2015') }}">2015</option>
+                        <option value="{{ url_for('news', category='2014') }}">2014</option>
                     </select>
                 </form>
             </div>
