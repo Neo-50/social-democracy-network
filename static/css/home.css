@@ -68,7 +68,8 @@ iframe {
 }
 
 .ukraine-war,
-.vivisection-stats {
+.vivisection-stats,
+.gaza-stats {
     display: flex;
     flex-direction: column;
     border: 2px solid #8feff2;
