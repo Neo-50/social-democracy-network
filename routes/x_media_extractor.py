@@ -494,6 +494,7 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 		'is_quote': False,
 		'quote_tweet_id': None,
 		'quote_handle': None,
+		'quote_author_name': None,
 		'quote_full_text': None,
 	}
 
@@ -548,6 +549,12 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 			)
 			if quote['quote_tweet_id']:
 				quote['is_quote'] = True
+		if quoted_status:
+			quote['quote_author_name'] = (
+				_get(quoted_status, ('core', 'user_results', 'result', 'legacy', 'name'))
+				or _get(quoted_status, ('user', 'name'))
+			)
+			print('-----------> quote_author_name: ', quote['quote_author_name'])
 
 	# Parse handle from the permalink if present
 	if not quote['quote_handle'] and isinstance(legacy, dict):
@@ -560,6 +567,7 @@ def extract_quote_context(res: dict, legacy: dict) -> dict:
 				quote['is_quote'] = True
 			except Exception:
 				pass
+	
 
 	return quote
 
@@ -618,12 +626,13 @@ def _extract_metadata(data):
 		if isinstance(quoted_tweet_data, dict):
 			text_val = quoted_tweet_data.get('text')
 			author_val = quoted_tweet_data.get('author')
+			print('*****************author_val: ', author_val)
 
 			if text_val and text_val.strip():
 				quote_ctx['quote_full_text'] = text_val
 
 			if author_val and author_val.strip():
-				author_name = author_val
+				quote_ctx['quote_author_name'] = author_val
 		else:
 			print('>>>>>>>>> [_extract_metadata]: quote scrape returned invalid data')
 
@@ -634,6 +643,7 @@ def _extract_metadata(data):
 	print(">>>>>>>> [extract_metadata] quote_ctx:",
 	"qid=", quote_ctx['quote_tweet_id'],
 	"quote_handle", quote_ctx['quote_handle'],
+	"quote_author_name", quote_ctx['quote_author_name'],
 	"text_len=", len(quote_ctx['quote_full_text'] or "") )
 
 	src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
@@ -716,13 +726,14 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		# text, author _ extract_text_author(data)
 		text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
 		print('>>>>>>>[fetch_tweet_media] _extract_metadata:', text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
+		print('***********************quote_ctx:', quote_ctx)
 
 		check_quote_text = quote_ctx['quote_full_text']
 		if check_quote_text:
 			quote_block = (
 				f'<div class="quote-container">'
 				f'<a href="https://nitter.space/{quote_ctx["quote_handle"]}/status/{quote_ctx["quote_tweet_id"]}" target="_blank">'
-				f"Quoting:</a> @{quote_ctx['quote_handle']} — ({author_name})\n{quote_ctx['quote_full_text']}</div>"
+				f"Quoting:</a> @{quote_ctx['quote_handle']} — ({quote_ctx['quote_author_name']})\n{quote_ctx['quote_full_text']}</div>"
 			)
 			text = f"{text}\n\n{quote_block}"
 
