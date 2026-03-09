@@ -1,9 +1,9 @@
-const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 'kekw.png', 'kekl.png', 'lizardkek.gif', 'leo-kek.png',
+const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 'kekbounce.webp', 'kekw.png', 'kekl.png', 'lizardkek.gif', 'leo-kek.png',
     'trolldog.png', 'whyyy.webp', 'derp.png', 'gasp.png', 'hmm-2.png', 'huh-turtle.png',
      'trump.png', 'vance.png', 'bernie.png', 'aoc.png', 'biden-thumbsup.png', 'noem.png', 'noem-sp.png', 'feldman.png', 'luigi.png',
-    'dogesmile.png', 'pikathink.png', 'pika-surprised.png', 'guillotine.png', 'nonazis.png',
+    'dogesmile.png', 'pikathink.png', 'pika-surprised.png', 'guillotine.png', 'nonazis.png', 'freeman-right.webp',
 
-    'gir.webp', 'gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-flat.webp', 'gir-suit.png', 'gir-happy.png', 'zimthonk.png',
+    'gir.webp', 'gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-flat.webp', 'gir-suit.png', 'gir-happy.png', 'zimthonk.png', 'fidgetspinner.webp',
     
     'anya-this.webp', 'pika-wave.webp',  'anime-tea.webp', 'cat-coding.webp', 'scared-hamster.gif',
 
@@ -23,7 +23,7 @@ const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 
     'pepe-police.png', 'pepe-sleep.png', 'pepe-ukraine.png', 'pepe-wizard.png', 'pepe-yep.png', 'pepe-yikes.png',
 
     'cat-angry.png', 'cat-sadness.png', 'cat-blankie.webp', 'cat-newspaper.webp', 'cat-kiss.webp', 'cat-peek.webp', 'cat-dead.webp', 
-    'cat-huh.webp', 'catto-huh.webp', 'cat-smug.webp', 'cat-crown.webp',
+    'cat-huh.webp', 'catto-huh.webp', 'cat-smug.webp', 'cat-crown.webp', 'uwucat.webp',
     'catblip.webp', 'catblush.webp', 'catclap.webp', 'catcool.webp', 'catcry.webp', 'catcry2.webp', 'catcry3.webp', 'catcry4.webp', 'catcry5.webp',
     'catdance.webp', 'catjam.webp', 'catno.webp', 'catpolice.webp', 'catrave.webp', 'catsadge.png', 'catshake.webp', 'nyas-popcorn.webp',
     'catstare.webp', 'cat-thumbsup.webp', 'cat-thumbsup02.webp', 'cattocry.webp', 'cat-cry.webp', 'close.webp', 'clowncat.webp', 'meowyey.webp', 'nekocatsip.webp',
