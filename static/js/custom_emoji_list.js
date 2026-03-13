@@ -4,6 +4,7 @@ const customEmojis = ['clueless.png', 'pout.png', 'red_angry.png', 'gavin.png', 
     'dogesmile.png', 'pikathink.png', 'pika-surprised.png', 'guillotine.png', 'nonazis.png', 'freeman-right.webp',
 
     'gir.webp', 'gir-cool.webp', 'gir-hyper.webp', 'gir-stare.webp', 'gir-flat.webp', 'gir-suit.png', 'gir-happy.png', 'zimthonk.png', 'fidgetspinner.webp',
+    'fedora.png',
     
     'anya-this.webp', 'pika-wave.webp',  'anime-tea.webp', 'cat-coding.webp', 'scared-hamster.gif',
 
