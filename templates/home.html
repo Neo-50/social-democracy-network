@@ -157,6 +157,12 @@
                 allowfullscreen></iframe>
         </div>
         <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/lWZQUqdmKWc" title="GDF - A War For Israel"
+                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+            gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+        </div>
+        <div class="video-container">
             <iframe src="https://www.youtube.com/embed/pr5wC3ejudI" title="GDF - A War For Israel"
                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
             gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
@@ -192,7 +198,7 @@
             <p><a href="https://www.worldbank.org/en/news/press-release/2025/02/25/updated-ukraine-recovery-and-reconstruction-needs-assessment-released" target="_blank">
             Estimated cost: US $524 billion over 10 years</a> (published Feb 2025)</p>
         </div>
-        <div class="video-container">
+        <!-- <div class="video-container">
             <iframe src="https://www.youtube.com/embed/Xnqna6P-9fQ"
                 title="PBS Cuts and consequences: The end of USAID" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
                         gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
@@ -233,12 +239,17 @@
                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
             gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
                 allowfullscreen></iframe>
-        </div>
+        </div> -->
     </section>
     <section class="home-right">
         {% if current_user.is_authenticated %}
             <h2>Welcome, {{ current_user.display_name or current_user.username }}!</h2>
         {% endif %}
+        <div class="image-container">
+            <a href="https://www.nokings.org" target="_blank">
+                <img src="{{ url_for('media', filename='home/nokings.jpg') }}" alt="nokings.jpg" class="responsive-image">
+            </a>
+        </div>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/BYeVEIq2SSE" title="Chris Korda - Apologize to the Future"
                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
@@ -256,19 +267,20 @@
             </div>
             <div class="image-container">
                 <a href="https://www.un.org/en/about-us/how-to-donate-to-the-un-system" target="_blank">
-                    <img src="{{ url_for('media', filename='home/un-logo.png') }}" alt="un-logo.png" alt="un-logo.png" class="responsive-image">
+                    <img src="{{ url_for('media', filename='home/un-logo.png') }}" alt="un-logo.png" class="responsive-image">
                 </a>
                 <a href="https://www.un.org/en/about-us/how-to-donate-to-the-un-system" target="_blank">
                     <strong>Donate to the United Nations</strong>
                 </a>
             </div>
         </div>
-        <div class="image-container">
+        <iframe src="https://gazacasualties.org/embed" width="320" height="140" style="border:0" title="Live Gaza death toll"></iframe>
+        <!-- <div class="image-container">
             <a href="https://social-democracy.net/archive-x?focus=2026794979570454660" target="_blank">
             <img src="{{ url_for('media', filename='home/gaza_info.jpg') }}" alt="gaza_info.jpg"
                 class="responsive-image">
             </a>
-        </div>
+        </div> -->
         <div class="home-trackers">
             <h2>Trackers</h2>
             • <a href="https://iran-war-live.com/" target="_blank">
