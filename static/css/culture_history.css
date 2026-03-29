@@ -27,6 +27,13 @@ main {
     gap: 20px;
 }
 
+.bach-synth-div {
+    border-radius: 24px;
+    border: 2px solid #00e3ea;
+    width: fit-content;
+    padding: 10px;
+}
+
 @media (width <= 800px) {
     .content-row {
         flex-flow: row wrap;
