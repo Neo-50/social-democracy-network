@@ -32,80 +32,39 @@
 
             console.log('>>>>>> Data received from /api/archive-x: ', data);
 
-			const hasVideo  = Array.isArray(data.videos) && data.videos.length > 0;
-            const hasImages = Array.isArray(data.images)        && data.images.length > 0;
-
-            if (hasVideo) {
-				// Append a card to the feed
-				const card = document.createElement('div');
-                card.className = 'tweet-card';
-				const videosHTML = (data.videos || [])
+				const videosHTML = (Array.isArray(data.videos) ? data.videos : [])
 					.map(vid => `<video class="twitter-video" controls preload="metadata">
 									<source src="/media/${vid}" type="video/mp4">
 								</video>`)
 					.join('');
+
+				const imagesHTML = (Array.isArray(data.images) ? data.images : [])
+					.map(img => `<img class="twitter-image" src="/media/${img}" alt="">`)
+				.join('');
+
+				const galleryHTML = videosHTML || imagesHTML
+					? `<div class="gallery">${videosHTML}${imagesHTML}</div>`
+					: '';
+
+				const card = document.createElement('div');
+				card.className = 'tweet-card';
 				card.innerHTML = `
-                    <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
-                    <div >Tweet ID: ${data.tweet_id}</div>
-                    <br>
+					<div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
+					<div>Tweet ID: ${data.tweet_id}</div>
+					<br>
 					<span>@${data.author_handle}</span>—
-                    ${data.author_name}
-                    <div class="tweet-text">${data.text}</div>
-                    <div class="gallery">${videosHTML}</div>
+					${data.author_name}
+					<div class="tweet-text">${data.text}</div>
+					${galleryHTML}
 					<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
-                    <hr>
+					<hr>
 					<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
-					 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
+					 | 🔁 ${data.counts.retweets} | 🗨️ ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
 					<button type="button" class="sharelink" onclick="copyTweetLink('${data.tweet_id}')">🔗 Copy Share Link</button>
-                `;
+				`;
 				formatTimestamp(card);
 				feed.prepend(card);
 				form.reset();
-			} 
-			else if (hasImages) {
-					const card = document.createElement('div');
-                    card.className = 'tweet-card';
-					const imagesHTML = (data.images || [])
-						.map(img => `<img class="twitter-image" src="/media/${img}" alt="">`)
-						.join('');
-					card.innerHTML = ` 
-                        <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
-						<div>Tweet ID: ${data.tweet_id}</div>
-                        <br>
-                        <span>@${data.author_handle}</span>—
-                    	${data.author_name}
-                        <div class="tweet-text">${data.text}</div>
-                        <div class="gallery">${imagesHTML}</div>
-						<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
-                        <hr>
-						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
-						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
-						<button type="button" class="sharelink" onclick="copyTweetLink('${data.tweet_id}')">🔗 Copy Share Link</button>
-					`;
-					formatTimestamp(card);
-					feed.prepend(card);
-					form.reset();
-				}
-			else {
-					const card = document.createElement('div');
-                    card.className = 'tweet-card'; 
-					card.innerHTML = ` 
-                        <div>Tweet URL: <a href="${data.url}" target="_blank">${data.url}</a></div>
-						<div>Tweet ID: ${data.tweet_id}</div>
-                        <br>
-                        <span>@${data.author_handle}</span>—
-                    	${data.author_name}
-                        <div class="tweet-text">${data.text}</div>
-						<span class="timestamp" data-timestamp="${data.created_at_utc ?? ''}"></span>
-                        <hr>
-						<div>👀 ${data.counts.views} | ❤️ ${data.counts.likes} | 💬 ${data.counts.replies}
-						 | 🔁 ${data.counts.retweets} | ” ${data.counts.quotes} | 🔖 ${data.counts.bookmarks}</div>
-						<button type="button" class="sharelink" onclick="copyTweetLink('${data.tweet_id}')">🔗 Copy Share Link</button>
-					`;
-					formatTimestamp(card);
-					feed.prepend(card);
-					form.reset();
-			}
 		} catch (err) {
 			alert(err.message || 'Error');
 		} finally {
@@ -129,27 +88,6 @@ function updateUrl() {
 monthSel.addEventListener('change', updateUrl);
 yearSel.addEventListener('change', updateUrl);
 orderSel.addEventListener('change', updateUrl);
-
-function copyTweetLink(tweetId) {
-	// Get the current URL origin (e.g., https://social-democracy.net)
-	const baseUrl = window.location.origin;
-	// Always link back to /archive-x with focus param
-	const shareUrl = `${baseUrl}/archive-x?focus=${tweetId}`;
-	
-	// Use the modern clipboard API
-	navigator.clipboard.writeText(shareUrl)
-		.then(() => {
-			// Optional toast or temporary visual feedback
-			const btn = event.currentTarget;
-			const originalText = btn.textContent;
-			btn.textContent = "✅ Copied!";
-			setTimeout(() => btn.textContent = originalText, 1500);
-		})
-		.catch(err => {
-			console.error("Clipboard copy failed:", err);
-			alert("Unable to copy link");
-		});
-}
 
 function copyTweetLink(tweetId) {
 	const baseUrl = window.location.origin;

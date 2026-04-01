@@ -181,7 +181,7 @@ def api_archive_x():
 	saved_image_paths = []
 
 	if video_urls:
-		base_name = str(tweet_id)	
+		base_name = str(tweet_id)
 
 		for idx, url in enumerate(video_urls, start=1):
 			saved_abs = download_primary_video(
@@ -194,21 +194,8 @@ def api_archive_x():
 				rel_path = os.path.relpath(saved_abs, get_media_path("")).replace("\\", "/")
 				saved_video_paths.append(rel_path)
 
-	# if primary_urls:
-	# 	# Prefer video; skip images entirely
-	# 	base_name = str(tweet_id)
-	# 	saved_abs = download_primary_video(
-	# 		primary_url=primary_url,
-	# 		tweet_url=tweet_url,
-	# 		out_dir=target_abs,
-	# 		base_name=base_name,
-	# 	)
-	# 	if saved_abs:
-	# 		rel_path = os.path.relpath(saved_abs, get_media_path('')).replace('\\', '/')
-	# 		saved_video_paths = [rel_path]
-
-	elif image_urls:
-		# No video → keep all images
+	if image_urls:
+		# Download all images regardless of whether videos were also present
 		img_rel_paths = download_images(
 			urls=image_urls,
 			tweet_id=tweet_id,
@@ -277,13 +264,10 @@ def upsert_tweet(meta: dict, tweet_id: int, videos, images, media_url) -> None:
 	elif isinstance(images, str):
 		images = [images]
 
-	# Build media_json with local paths only
-	if videos:
-		media_list = [{'kind': 'video', 'rel_path': v} for v in videos]
-	elif images:
-		media_list = [{'kind': 'image', 'rel_path': p} for p in images]
-	else:
-		media_list = []
+	# Build media_json with local paths only — include both videos and images
+	media_list = []
+	media_list += [{'kind': 'video', 'rel_path': v} for v in videos]
+	media_list += [{'kind': 'image', 'rel_path': p} for p in images]
 
 	row = TweetArchive.query.get(tweet_id)
 	if row is None:
