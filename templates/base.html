@@ -79,9 +79,9 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
     {% endif %}
 
-    {% if request.endpoint == 'activism' %}
+    <!-- {% if request.endpoint == 'activism' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/activism.css') }}">
-    {% endif %}
+    {% endif %} -->
     
     {% if request.endpoint == 'culture_history' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/culture_history.css') }}">
@@ -159,12 +159,13 @@
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('news') }}">News</a>
             <a href="{{ url_for('chat_intro') }}">Chat</a>
-            <a href="{{ url_for('activism') }}">Activism</a>
+            <!-- <a href="{{ url_for('activism') }}">Activism</a> -->
+             <a href="{{ url_for('culture_history') }}">Culture & History</a>
             <a href="{{ url_for('home') }}" style="all: unset; cursor: pointer; display: contents;">
                 <img src="/media/base/SDN_Title02.png" alt="Social Democracy Network Title" class="title-image">
             </a>
             <div class="title-mobile">s d n</div>
-            <a href="{{ url_for('culture_history') }}">Culture & History</a>
+            
             <a href="{{ url_for('environment') }}">Environment</a>
             <a href="{{ url_for('veganism') }}">Veganism</a>
             <a href="{{ url_for('about') }}">About</a>
@@ -174,7 +175,7 @@
                 <a href="{{ url_for('home') }}">Home</a>
                 <a href="{{ url_for('news') }}">News</a>
                 <a href="{{ url_for('chat_intro') }}">Chat</a>
-                <a href="{{ url_for('activism') }}">Activism</a>
+                <!-- <a href="{{ url_for('activism') }}">Activism</a> -->
                 <a href="{{ url_for('environment') }}">Environment</a>
                 <a href="{{ url_for('culture_history') }}">Culture & History</a>
                 <a href="{{ url_for('veganism') }}">Veganism</a>

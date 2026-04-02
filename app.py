@@ -389,9 +389,9 @@ def news():
 		user_map=user_map
 	)
 
-@app.route('/activism')
-def activism():
-    return render_template('activism.html')
+# @app.route('/activism')
+# def activism():
+#     return render_template('activism.html')
 
 @app.route('/environment')
 def environment():
