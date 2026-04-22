@@ -21,6 +21,11 @@ headlines {
     text-align: left;
 }
 
+.twitter-video {
+    width: 100%;
+    height: auto;
+    max-height: 750px;
+}
 
 iframe {
     border-radius: 24px;
