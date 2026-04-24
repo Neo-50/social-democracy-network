@@ -196,7 +196,7 @@ def sitemap():
         urls.append(f'https://social-democracy.net/news?article={article_id}')
     
     xml_lines = ['<?xml version="1.0" encoding="UTF-8"?>']
-    xml_lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/0/9">')
+    xml_lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
     for url in urls:
         xml_lines.append(f'  <url><loc>{url}</loc></url>')
     xml_lines.append('</urlset>')
