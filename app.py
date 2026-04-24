@@ -167,6 +167,42 @@ def active_users():
         'offline': [user_data(u) for u in offline],
 })
 
+@app.route('/sitemap.xml')
+def sitemap():
+    urls = []
+    
+    # Static pages
+    static_pages = [
+        '/',
+        '/news',
+        '/archive-x',
+        '/archive-x-warning',
+        '/culture_history',
+        '/environment',
+        '/veganism',
+        '/about',
+    ]
+    for page in static_pages:
+        urls.append(f'https://social-democracy.net{page}')
+    
+    # Tweet archive URLs
+    tweet_ids = db.session.execute(sa.text('SELECT tweet_id FROM tweet_archive')).scalars().all()
+    for tweet_id in tweet_ids:
+        urls.append(f'https://social-democracy.net/archive-x?focus={tweet_id}')
+    
+    # News article URLs
+    article_ids = db.session.execute(sa.text('SELECT id FROM news_article')).scalars().all()
+    for article_id in article_ids:
+        urls.append(f'https://social-democracy.net/news?article={article_id}')
+    
+    xml_lines = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml_lines.append('<urlset xmlns="http://www.sitemaps.org/schemas/0/9">')
+    for url in urls:
+        xml_lines.append(f'  <url><loc>{url}</loc></url>')
+    xml_lines.append('</urlset>')
+    
+    return Response('\n'.join(xml_lines), mimetype='application/xml')
+
 @app.route('/')
 def home():
     return render_template('home.html')
