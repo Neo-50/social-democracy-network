@@ -27,7 +27,15 @@ main {
     gap: 20px;
 }
 
-.bach-synth-div {
+.mp3-outer-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 10px auto;
+    gap: 20px;
+}
+
+.mp3-inner-container {
     border-radius: 24px;
     border: 2px solid #00e3ea;
     width: fit-content;
@@ -36,6 +44,10 @@ main {
 
 @media (width <= 800px) {
     .content-row {
+        flex-flow: row wrap;
+    }
+
+    .mp3-outer-container {
         flex-flow: row wrap;
     }
 }
