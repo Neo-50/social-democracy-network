@@ -100,11 +100,11 @@
     padding: 0.4rem 0.5rem;
 }
 
-#orderSel, #monthSel, #yearSel {
+#orderSel, #monthSel, #yearSel, #limitSel {
     width: 140px;
-	height: 1.8rem;            /* or whatever you prefer */
-	line-height: 1.8rem;       /* match the height */
-	padding: 0 0.5rem;         /* horizontal padding only */
+	height: 1.8rem;
+	line-height: 1.8rem;
+	padding: 0 0.5rem;
 	vertical-align: middle;
     margin-bottom: 5px;
 }

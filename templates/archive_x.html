@@ -37,6 +37,17 @@
 					{% endfor %}
 				</select>
 			</label>
+			<label>
+				<br>Show:
+				<select id="limitSel">
+						<option value="50" {{ 'selected' if current_limit == '50' else '' }}>50</option>
+						<option value="100"  {{ 'selected' if current_limit == '100' else '' }}>100</option>
+						<option value="200"  {{ 'selected' if current_limit == '200' else '' }}>200</option>
+						<option value="300"  {{ 'selected' if current_limit == '300' else '' }}>300</option>
+						<option value="400"  {{ 'selected' if current_limit == '400' else '' }}>400</option>
+						<option value="All"  {{ 'selected' if current_limit == 'All' else '' }}>All</option>
+				</select>
+			</label>
 		</div>
 	</div>
 

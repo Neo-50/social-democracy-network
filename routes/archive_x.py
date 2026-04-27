@@ -27,6 +27,7 @@ def archive_x_page():
 	order = request.args.get('order', 'desc')
 	focus = request.args.get('focus')
 	now = datetime.now(timezone.utc)
+	raw_limit = request.args.get('limit', '100')
 
 	if focus:
 		t = db.session.query(TweetArchive).filter_by(tweet_id=focus).first()
@@ -66,7 +67,16 @@ def archive_x_page():
 			TweetArchive.created_at_utc.asc() if order == 'asc'
 			else TweetArchive.created_at_utc.desc()
 		)
-	rows = query.all()
+	
+	try:
+		limit_int = None if raw_limit == 'all' else max(1, int(raw_limit))
+	except ValueError:
+		limit_int = 50
+
+	if limit_int is not None:
+		rows = query.limit(limit_int).all()
+	else:
+		rows = query.all()
 	items = []
 	for r in rows:
 		items.append({
@@ -94,6 +104,7 @@ def archive_x_page():
 
 	month_name = calendar.month_name[month]
 	focused_tweet = next((it for it in items if str(it['tweet_id']) == str(focus)), None)
+	current_limit = 'All' if limit_int is None else str(limit_int)
 
 	return render_template(
 		'archive_x.html',
@@ -104,6 +115,7 @@ def archive_x_page():
 		current_month=month,
 		month_name=month_name,
 		current_year=year,
+		current_limit=current_limit,
 		months=months,
 		years=years,
 		focus=focus,

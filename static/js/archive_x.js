@@ -76,18 +76,21 @@
 const monthSel = document.getElementById('monthSel');
 const yearSel = document.getElementById('yearSel');
 const orderSel = document.getElementById('orderSel');
+const limitSel = document.getElementById('limitSel');
 
 function updateUrl() {
 	const params = new URLSearchParams(window.location.search);
 	params.set('month', monthSel.value);
 	params.set('year', yearSel.value);
 	params.set('order', orderSel.value);
+	params.set('limit', limitSel.value);
 	window.location.search = params.toString();
 }
 
 monthSel.addEventListener('change', updateUrl);
 yearSel.addEventListener('change', updateUrl);
 orderSel.addEventListener('change', updateUrl);
+limitSel.addEventListener('change', updateUrl);
 
 function copyTweetLink(tweetId) {
 	const baseUrl = window.location.origin;
