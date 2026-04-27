@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta property="og:locale" content="en_US">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Democracy Network</title>
+    <title>{% block title %}Social Democracy Network{% endblock %}</title>
     {% if article_to_highlight %}
         <meta property="og:site_name" content="Social Democracy Network | {{ article_to_highlight.source }}">
         <meta property="og:title" content="{{ article_to_highlight.title }}">
