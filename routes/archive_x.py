@@ -27,7 +27,7 @@ def archive_x_page():
 	order = request.args.get('order', 'desc')
 	focus = request.args.get('focus')
 	now = datetime.now(timezone.utc)
-	raw_limit = request.args.get('limit', '100')
+	raw_limit = request.args.get('limit', '50')
 
 	if focus:
 		t = db.session.query(TweetArchive).filter_by(tweet_id=focus).first()
