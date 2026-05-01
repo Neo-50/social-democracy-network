@@ -415,6 +415,7 @@ a:focus {
     width: 100%;
     max-width: 100%;
     height: auto;
+    max-height: 500px;
     border-radius: 24px;
     border: 2px solid #00e3ea;
     box-sizing: border-box;

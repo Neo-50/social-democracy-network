@@ -291,6 +291,16 @@
         {% if current_user.is_authenticated %}
             <h2>Welcome, {{ current_user.display_name or current_user.username }}!</h2>
         {% endif %}
+        <div class="image-container">
+            <a href="https://socialdemocracynetwork.substack.com/p/lovelace-new-mexico-a-house-of-horrors" target="_blank">
+            <img src="{{ url_for('media', filename='home/substack-lovelace-article-image.jpeg') }}" 
+            alt="substack-lovelace-article-image.jpeg" class="responsive-image">
+            </a>
+            <a href="https://socialdemocracynetwork.substack.com/p/lovelace-new-mexico-a-house-of-horrors" target="_blank">
+                🚨 Exclusive Report: "Lovelace: New Mexico,<br>
+                A House of Horrors"
+            </a>
+        </div>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/HsQUPag3x7M" title="Democracy Now Top US & World Headlines"
                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
