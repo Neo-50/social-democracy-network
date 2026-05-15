@@ -95,10 +95,6 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/chat_intro.css') }}">
     {% endif %}
 
-    {% if request.endpoint == 'chat' %}
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
-    {% endif %}
-
     {% if request.endpoint == 'about' %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
     {% endif %}
