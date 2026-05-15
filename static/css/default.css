@@ -376,11 +376,11 @@ a:focus {
 
 .video-container {
     position: relative;
-    width: 100%;
+    width: 96%;
     max-width: 96%;
     min-width: 300px;
     aspect-ratio: 16 / 9;
-    margin-bottom: 20px;
+    margin: 10px auto;
     overflow: hidden;
     box-sizing: border-box;
 }
