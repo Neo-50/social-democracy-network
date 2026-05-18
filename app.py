@@ -474,8 +474,8 @@ def veganism_send():
 
     return jsonify(success=True, post_id=new_row.id, url=url), 200
 
-@app.route('/media')
-def media():
+@app.route('/media_library')
+def media_library():
     return render_template('media.html')
 
 @app.route('/about')
