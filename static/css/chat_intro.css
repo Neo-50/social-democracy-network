@@ -8,11 +8,27 @@
 }
 
 .matrix-logo {
-  display: flex;
-  align-self: center;
-  width: 60%;
-  height: auto;
-  margin: 0 auto;
+    display: inline-block;
+    width: 500px;
+    height: 200px;
+    background-image: url('/media/home/matrix.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.matrix-logo:hover {
+    background-image: url('/media/home/matrix-hover.png');
+    width: 500px;
+    height: 200px;
+}
+
+body::after {
+    content: url('/media/home/matrix-hover.png');
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    z-index: -1;
 }
 
 .matrix-message {
