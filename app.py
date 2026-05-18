@@ -177,7 +177,7 @@ def sitemap():
         '/news',
         '/archive-x',
         '/archive-x-warning',
-        '/culture_history',
+        '/media',
         '/environment',
         '/veganism',
         '/about',
@@ -474,9 +474,9 @@ def veganism_send():
 
     return jsonify(success=True, post_id=new_row.id, url=url), 200
 
-@app.route('/culture_history')
-def culture_history():
-    return render_template('culture_history.html')
+@app.route('/media')
+def media():
+    return render_template('media.html')
 
 @app.route('/about')
 def about():
