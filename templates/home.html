@@ -209,11 +209,17 @@
         </ul> -->
     </section>
     <section class="home-center">
-        <h1><a href="https://www.motherjones.com/politics/2026/05/roundup-glyphosate-spraying-lake-tahoe-sierra-california-el-dorado-lassen-national-forests-us-forest-service-fire-restoration-plan/"
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/KQCbBN_tBMk" title="Democracy Now U.S. Bombs Iran Despite Peace Talks"
+                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
+                    gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+        </div>
+        <!-- <h1><a href="https://www.motherjones.com/politics/2026/05/roundup-glyphosate-spraying-lake-tahoe-sierra-california-el-dorado-lassen-national-forests-us-forest-service-fire-restoration-plan/"
             target="_blank">US GOVERNMENT SPRAYS TOXIC GLYPHOSATE NEAR LAKE TAHOE</h1>
         <video class="twitter-video" controls="" preload="metadata" playsinline="">
             <source src="media/x-media/2057593557255442734_1.mp4" type="video/mp4">
-        </video>
+        </video> -->
             <!-- <img src="/media/x-media/2049542943137026108-img1.jpg" alt="Rashida Tlaib Statement On Supreme Court Guts Voting Rights Act"
             style="width: 100%; height: auto;"></a> -->
         <!-- <div class="headlines">
@@ -299,16 +305,6 @@
         {% if current_user.is_authenticated %}
             <h2>Welcome, {{ current_user.display_name or current_user.username }}!</h2>
         {% endif %}
-        <div class="image-container">
-            <a href="https://socialdemocracynetwork.substack.com/p/lovelace-new-mexico-a-house-of-horrors" target="_blank">
-            <img src="{{ url_for('media', filename='home/substack-lovelace-article-image.jpeg') }}" 
-            alt="substack-lovelace-article-image.jpeg" class="responsive-image">
-            </a>
-            <a href="https://socialdemocracynetwork.substack.com/p/lovelace-new-mexico-a-house-of-horrors" target="_blank">
-                🚨 Exclusive Report: "Lovelace, New Mexico:<br>
-                A House of Horrors"
-            </a>
-        </div>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/T1omqCrvapw" title="Democracy Now Top US & World Headlines"
                 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
@@ -333,6 +329,16 @@
                     <strong>Donate to the United Nations</strong>
                 </a>
             </div>
+        </div>
+        <div class="image-container">
+            <a href="https://socialdemocracynetwork.substack.com/p/lovelace-new-mexico-a-house-of-horrors" target="_blank">
+            <img src="{{ url_for('media', filename='home/substack-lovelace-article-image.jpeg') }}" 
+            alt="substack-lovelace-article-image.jpeg" class="responsive-image">
+            </a>
+            <a href="https://socialdemocracynetwork.substack.com/p/lovelace-new-mexico-a-house-of-horrors" target="_blank">
+                🚨 Exclusive Report: "Lovelace, New Mexico:<br>
+                A House of Horrors"
+            </a>
         </div>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/BYeVEIq2SSE" title="Chris Korda - Apologize to the Future"
