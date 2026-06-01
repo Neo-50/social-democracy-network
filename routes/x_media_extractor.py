@@ -609,8 +609,17 @@ def _extract_metadata(data):
 			res = None
 
 	if not res:
-		print('>>>>>>>>>>>>_extract_metadata failed, returning')
-		return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx)
+		print(
+			f'>>>>>>>>>>>>_extract_metadata failed, returning\n'
+			f'  text={text!r}\n'
+			f'  author_name={author_name!r}\n'
+			f'  author_handle={author_handle!r}\n'
+			f'  created_at={created_at!r}\n'
+			f'  counts={counts!r}\n'
+			f'  alt_desc={alt_desc!r}\n'
+			f'  reply_ctx={reply_ctx!r}'
+		)
+		return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, None)
 	
 	# ---- text extraction ----
 	legacy = res.get("legacy", {}) if isinstance(res, dict) else {}
@@ -618,23 +627,37 @@ def _extract_metadata(data):
 	reply_ctx = _extract_reply_context(res, legacy)
 	quote_ctx = extract_quote_context(res, legacy)
 
+	# if quote_ctx.get("is_quote"):
+	# 	quoted_id = str(quote_ctx.get("quote_tweet_id"))
+	# 	quoted_tweet_data = fetch_tweet_media(quoted_id)
+	# 	print('>>>>>>>>> [_extract_metadata]: quoted_tweet_data:', quoted_tweet_data)
+
+	# 	if isinstance(quoted_tweet_data, dict):
+	# 		text_val = quoted_tweet_data.get('text')
+	# 		author_val = quoted_tweet_data.get('author')
+	# 		print('*****************author_val: ', author_val)
+
+	# 		if text_val and text_val.strip():
+	# 			quote_ctx['quote_full_text'] = text_val
+
+	# 		if author_val and author_val.strip():
+	# 			quote_ctx['quote_author_name'] = author_val
+	# 	else:
+	# 		print('>>>>>>>>> [_extract_metadata]: quote scrape returned invalid data')
 	if quote_ctx.get("is_quote"):
 		quoted_id = str(quote_ctx.get("quote_tweet_id"))
-		quoted_tweet_data = fetch_tweet_media(quoted_id)
-		print('>>>>>>>>> [_extract_metadata]: quoted_tweet_data:', quoted_tweet_data)
-
-		if isinstance(quoted_tweet_data, dict):
-			text_val = quoted_tweet_data.get('text')
-			author_val = quoted_tweet_data.get('author')
-			print('*****************author_val: ', author_val)
-
-			if text_val and text_val.strip():
-				quote_ctx['quote_full_text'] = text_val
-
-			if author_val and author_val.strip():
-				quote_ctx['quote_author_name'] = author_val
-		else:
-			print('>>>>>>>>> [_extract_metadata]: quote scrape returned invalid data')
+		try:
+			quoted_tweet_data = fetch_tweet_media(quoted_id)
+			print('>>>>>>>>> [_extract_metadata]: quoted_tweet_data:', quoted_tweet_data)
+			if isinstance(quoted_tweet_data, dict):
+				text_val = quoted_tweet_data.get('text')
+				author_val = quoted_tweet_data.get('author')
+				if text_val and text_val.strip():
+					quote_ctx['quote_full_text'] = text_val
+				if author_val and author_val.strip():
+					quote_ctx['quote_author_name'] = author_val
+		except Exception as e:
+			print(f'>>>>>>>>> [_extract_metadata]: quoted tweet {quoted_id} unavailable: {e}')
 
 	print(f">>>>>>>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
 		f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
