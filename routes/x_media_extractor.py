@@ -6,7 +6,8 @@ UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like 
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": UA, "Accept-Language": "en-US,en;q=0.9"})
 
-ABS_JS_RE = re.compile(r'https://abs\.twimg\.com/responsive-web/client-web/[^"]+?\.js')
+# ABS_JS_RE = re.compile(r'https://abs\.twimg\.com/responsive-web/client-web/[^"]+?\.js')
+ABS_JS_RE = re.compile(r'https://abs\.twimg\.com/x-web/x-web/assets/[^"\'`\s]+?\.js')
 SCRIPT_SRC_RE = re.compile(r'<script[^>]+src="([^"]+\.js)"', re.IGNORECASE)
 BEARER_RE = re.compile(r'Bearer\s+([A-Za-z0-9%\-_.~]+)')
 GRAPHQL_PATH_RE = re.compile(r'/graphql/([A-Za-z0-9_-]+)/([A-Za-z_]+)')
@@ -14,6 +15,7 @@ MAP_RE_VARIANTS = [
 	re.compile(r'{"queryId":"([A-Za-z0-9_-]{10,})","operationName":"(Tweet[A-Za-z0-9_]+)"}'),
 	re.compile(r'operationName:"(Tweet[A-Za-z0-9_]+)".{0,80}?queryId:"([A-Za-z0-9_-]{10,})"'),
 	re.compile(r'queryId:"([A-Za-z0-9_-]{10,})".{0,80}?operationName:"(Tweet[A-Za-z0-9_]+)"'),
+	re.compile(r'params:\{id:`([A-Za-z0-9_-]{10,})`[^}]*?name:`(Tweet[A-Za-z0-9_]+)`')
 ]
 TWEET_ID_RE = re.compile(r'(?:status|statuses)/(\d+)')
 _MISSING_RE = re.compile(r"The following features cannot be null:\s*([^}]+?)(?:\"|$)")
@@ -22,6 +24,9 @@ _MISSING_RE = re.compile(r"The following features cannot be null:\s*([^}]+?)(?:\
 _CACHE = {"bearer": None, "ops": None, "ops_ts": 0}
 
 BEARER_STATIC = "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+RELAY_PARAMS_RE = re.compile(
+    r'params:\{id:`([A-Za-z0-9_-]{10,})`[^}]*?name:`(Tweet[A-Za-z0-9_]+)`'
+)
 
 def debug(*args):
 	print("[X]", *args)
@@ -629,24 +634,6 @@ def _extract_metadata(data):
 	text = _full_text_from_result(res, legacy)
 	reply_ctx = _extract_reply_context(res, legacy)
 	quote_ctx = extract_quote_context(res, legacy)
-
-	# if quote_ctx.get("is_quote"):
-	# 	quoted_id = str(quote_ctx.get("quote_tweet_id"))
-	# 	quoted_tweet_data = fetch_tweet_media(quoted_id)
-	# 	print('>>>>>>>>> [_extract_metadata]: quoted_tweet_data:', quoted_tweet_data)
-
-	# 	if isinstance(quoted_tweet_data, dict):
-	# 		text_val = quoted_tweet_data.get('text')
-	# 		author_val = quoted_tweet_data.get('author')
-	# 		print('*****************author_val: ', author_val)
-
-	# 		if text_val and text_val.strip():
-	# 			quote_ctx['quote_full_text'] = text_val
-
-	# 		if author_val and author_val.strip():
-	# 			quote_ctx['quote_author_name'] = author_val
-	# 	else:
-	# 		print('>>>>>>>>> [_extract_metadata]: quote scrape returned invalid data')
 	if quote_ctx.get("is_quote"):
 		quoted_id = str(quote_ctx.get("quote_tweet_id"))
 		try:
@@ -711,9 +698,39 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 	guest = _guest_token(bearer)
 	debug("guest token", guest)
 	if not guest: return {"images": [], "text": None, "author": None}
+
+	seed = "https://x.com/?lang=en"
+	r = _fetch(seed)
+	if not (r.ok and r.text): return None
+	js_urls = ABS_JS_RE.findall(r.text) or [u for u in SCRIPT_SRC_RE.findall(r.text) if "abs.twimg.com" in u]
+	print('js_urls: ', js_urls)
+	print('$$$$$ START SEARCH $$$$$$')
+	for jsu in js_urls[:8]:
+		try:
+			js = _fetch(jsu)
+			if not (js and js.ok and js.text):
+				print(f"!!! fetch failed for {jsu}, js={js}")
+				continue
+			text = js.text
+			# patterns = { ... }
+			patterns = {
+				"abs.twimg.com refs": r'abs\.twimg\.com/[^"\'`]+\.js',
+				"webpack chunk map": r'\{[0-9]+:"[a-zA-Z0-9]+"',
+				"hash-only filenames": r'"[a-f0-9]{8,20}\.js"',
+				"x-web path fragments": r'x-web/x-web/[A-Za-z0-9_\-]+',
+			}
+			for name, pat in patterns.items():
+				matches = re.findall(pat, text)
+				print(name, "->", len(matches), matches[:5])
+		except Exception as e:
+			import traceback
+			print(f"!!! EXCEPTION on {jsu}: {e}")
+			traceback.print_exc()
 	ops = _discover_ops(tid)
 	debug("ops", ops)
-	if not ops: return {"images": [], "text": None, "author": None}
+	if not ops:
+		print('@@@@ OPS IS NONE @@@@')
+		return {"images": [], "text": None, "author": None}
 
 	# prefer TweetResultByRestId then TweetDetail
 	cands = [x for x in ops if x[1] == "TweetResultByRestId"] + [x for x in ops if x[1] == "TweetDetail"]
