@@ -1,0 +1,127 @@
+{
+  "data": {
+    "tweet_result_by_rest_id": {
+      "id": "VHdlZXRSZXN1bHRzOjIwNjk0MTg2MDA5OTgzNTk1MjQ=",
+      "rest_id": "2069418600998359524",
+      "result": {
+        "__typename": "Tweet",
+        "cashtag_attachments": [],
+        "conversation_muted": false,
+        "core": {
+          "user_results": {
+            "id": "VXNlclJlc3VsdHM6NzkwMjMwOTcyODk3Nzc5NzEz",
+            "result": {
+              "__typename": "User",
+              "avatar": {
+                "image_url": "https://pbs.twimg.com/profile_images/2019046730805698560/uxLJNS_J_normal.jpg"
+              },
+              "core": {
+                "name": "Sammi🦋",
+                "screen_name": "StoriesBySammi"
+              },
+              "follow_request_sent": false,
+              "id": "VXNlcjo3OTAyMzA5NzI4OTc3Nzk3MTM=",
+              "identity_profile_labels_highlighted_label": {},
+              "privacy": {
+                "protected": false
+              },
+              "profile_image_shape": "Circle",
+              "relationship_perspectives": {
+                "blocking": false,
+                "following": false,
+                "muting": false
+              },
+              "rest_id": "790230972897779713",
+              "super_follow_eligible": false,
+              "super_followed_by": false,
+              "super_following": false,
+              "verification": {
+                "is_blue_verified": true
+              }
+            }
+          }
+        },
+        "counts": {
+          "bookmark_count": 57,
+          "favorite_count": 738,
+          "reply_count": 60,
+          "retweet_count": 779
+        },
+        "details": {
+          "cashtag_entities": [],
+          "created_at_ms": 1782222817000,
+          "display_text_range": [
+            0,
+            278
+          ],
+          "full_text": "The Trump administration just made it legal to kill 400,000 wild animals a year in secret. No public notice. No comment period. Just done.\n\nThe USDA finalized rules this April gutting decades of public participation requirements on 193 million acres of national forest. Logging, https://t.co/M09AshkwDH",
+          "hashtag_entities": [],
+          "smarttags": []
+        },
+        "edit_control": {
+          "__typename": "EditControlInitial",
+          "edit_tweet_ids": [
+            "2069418600998359524"
+          ]
+        },
+        "grok_translated_post_with_availability": {
+          "is_available": false
+        },
+        "id": "VHdlZXQ6MjA2OTQxODYwMDk5ODM1OTUyNA==",
+        "legacy": {},
+        "media_entities2": [
+          {
+            "ext_alt_text": "A brown bear walks through dense green vegetation beside a deep blue mountain lake. Forested slopes and rugged peaks rise in the background beneath a clear summer sky, highlighting the wildlife and wilderness of public lands.",
+            "ext_playlists": [],
+            "id_str": "2069418589568831488",
+            "indices": [
+              279,
+              302
+            ],
+            "media_url_https": "https://pbs.twimg.com/media/HLgNPjLXEAAomsu.jpg",
+            "original_info": {
+              "height": 793,
+              "width": 906
+            },
+            "type": "photo"
+          }
+        ],
+        "mention_entities": [],
+        "note_tweet": {
+          "is_expandable": true,
+          "note_tweet_results": {
+            "id": "Tm90ZVR3ZWV0UmVzdWx0czoyMDY5NDE4NjAwODIyMTc3Nzky",
+            "result": {
+              "__typename": "NoteTweet",
+              "entity_set": {
+                "hashtags": [
+                  {
+                    "indices": [
+                      1140,
+                      1151
+                    ],
+                    "text": "DemsUnited"
+                  }
+                ],
+                "smarttags": [],
+                "symbols": [],
+                "urls": [],
+                "user_mentions": []
+              },
+              "id": "Tm90ZVR3ZWV0OjIwNjk0MTg2MDA4MjIxNzc3OTI=",
+              "text": "The Trump administration just made it legal to kill 400,000 wild animals a year in secret. No public notice. No comment period. Just done.\n\nThe USDA finalized rules this April gutting decades of public participation requirements on 193 million acres of national forest. Logging, drilling, mining, road building — all can now be approved before the public ever hears about it.\n\nThat includes Wildlife Services — the federal program that kills more than 400,000 native animals every year. Coyotes. Bears. Wolves. Beavers. Mountain lions. Killed on behalf of ranching interests, with your tax dollars, on your public land. Now completely out of public view.\n\n150,000 public comments opposing these rules were thrown out. Attorneys general from 17 states objected. Tribal governments objected. The administration didn't care.\n\n\"Information is power. Our voices are power. And the Trump administration is trying to strip both away so corporations can make a quick buck off our public lands.\" — Wendy Park, Center for Biological Diversity.\n\nWho gave the government permission to kill 400,000 wild animals a year and hide it from the rest of us?\n\n#DemsUnited"
+            }
+          }
+        },
+        "quick_promote_eligibility": {
+          "eligibility": "IneligibleUserUnauthorized"
+        },
+        "rest_id": "2069418600998359524",
+        "url_entities": [],
+        "views": {
+          "count": "8543"
+        }
+      }
+    }
+  }
+}

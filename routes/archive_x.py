@@ -185,7 +185,7 @@ def api_archive_x():
 	os.makedirs(target_abs, exist_ok=True)
 
 	# primary_url   = media.get('primary_video') or media.get('primary_url')
-
+	media = media or {}
 	video_urls = media.get("video_urls") or []
 	image_urls = media.get('images') or []
 

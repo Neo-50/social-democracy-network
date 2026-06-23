@@ -1,5 +1,6 @@
 import os, sys, shutil
 import logging
+logging.getLogger("charset_normalizer").setLevel(logging.WARNING)
 import random
 import string
 from bleach import clean

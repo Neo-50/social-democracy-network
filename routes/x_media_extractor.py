@@ -24,6 +24,7 @@ _MISSING_RE = re.compile(r"The following features cannot be null:\s*([^}]+?)(?:\
 _CACHE = {"bearer": None, "ops": None, "ops_ts": 0}
 
 BEARER_STATIC = "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+OPS_STATIC = [("yWDFc6br9uCD20JoQGYaaA", "TweetResultByRestId")]
 RELAY_PARAMS_RE = re.compile(
     r'params:\{id:`([A-Za-z0-9_-]{10,})`[^}]*?name:`(Tweet[A-Za-z0-9_]+)`'
 )
@@ -121,7 +122,7 @@ def _vars_for_op(op: str, tweet_id: str) -> dict:
 			"withV2Timeline": True
 		}
 	return {
-		"tweetId": tweet_id,
+		"restId": tweet_id,
 		"withCommunity": False,
 		"includePromotedContent": False,
 		"withVoice": True,
@@ -596,25 +597,48 @@ def _extract_metadata(data):
 		"views": None,
 	}
 
+	# try:
+	# 	# Typical happy path:
+	# 	res = data["data"]["tweetResult"]["result"]
+	# except Exception:
+	# 	# Some ops nest it differently; try a couple fallbacks
+	# 	try:
+	# 		timeline = data["data"]["threaded_conversation_with_injections_v2"]["instructions"]
+	# 		# Find the first Tweet item
+	# 		for instr in timeline:
+	# 			for entry in instr.get("entries", []):
+	# 				item = (((entry.get("content") or {}).get("itemContent") or {})
+	# 				        .get("tweet_results") or {}).get("result")
+	# 				if item and item.get("__typename") == "Tweet":
+	# 					res = item
+	# 					raise StopIteration
+	# 	except StopIteration:
+	# 		pass
+	# 	except Exception:
+	# 		res = None
 	try:
-		# Typical happy path:
-		res = data["data"]["tweetResult"]["result"]
+		res = data["data"]["tweet_result_by_rest_id"]["result"]
 	except Exception:
-		# Some ops nest it differently; try a couple fallbacks
-		try:
-			timeline = data["data"]["threaded_conversation_with_injections_v2"]["instructions"]
-			# Find the first Tweet item
-			for instr in timeline:
-				for entry in instr.get("entries", []):
-					item = (((entry.get("content") or {}).get("itemContent") or {})
-					        .get("tweet_results") or {}).get("result")
-					if item and item.get("__typename") == "Tweet":
-						res = item
-						raise StopIteration
-		except StopIteration:
-			pass
-		except Exception:
-			res = None
+		res = None
+
+	if res:
+		details = res.get("details", {})
+		note = (((res.get("note_tweet") or {}).get("note_tweet_results") or {}).get("result") or {})
+		text = note.get("text") or details.get("full_text")
+
+		user = (((res.get("core") or {}).get("user_results") or {}).get("result") or {})
+		user_core = user.get("core", {})
+		author_name = user_core.get("name")
+		author_handle = user_core.get("screen_name")
+
+		created_at = details.get("created_at_ms")  # epoch ms int
+
+		c = res.get("counts", {})
+		counts["likes"] = c.get("favorite_count")
+		counts["retweets"] = c.get("retweet_count")
+		counts["replies"] = c.get("reply_count")
+		counts["bookmarks"] = c.get("bookmark_count")
+		counts["views"] = (res.get("views") or {}).get("count")
 
 	if not res:
 		print(
@@ -703,7 +727,6 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 	r = _fetch(seed)
 	if not (r.ok and r.text): return None
 	js_urls = ABS_JS_RE.findall(r.text) or [u for u in SCRIPT_SRC_RE.findall(r.text) if "abs.twimg.com" in u]
-	print('js_urls: ', js_urls)
 	print('$$$$$ START SEARCH $$$$$$')
 	for jsu in js_urls[:8]:
 		try:
@@ -726,7 +749,8 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 			import traceback
 			print(f"!!! EXCEPTION on {jsu}: {e}")
 			traceback.print_exc()
-	ops = _discover_ops(tid)
+	# ops = _discover_ops(tid)
+	ops = OPS_STATIC
 	debug("ops", ops)
 	if not ops:
 		print('@@@@ OPS IS NONE @@@@')
@@ -736,6 +760,9 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 	cands = [x for x in ops if x[1] == "TweetResultByRestId"] + [x for x in ops if x[1] == "TweetDetail"]
 	for hsh, op in cands or ops:
 		data = _call_with_backfill(bearer, guest, hsh, op, tid)
+		if data:
+			with open("debug_tweet_response.json", "w", encoding="utf-8") as f:
+				json.dump(data, f, indent=2, ensure_ascii=False)
 		if not data: continue
 		found = set()
 		_walk_media_urls(data, found)
@@ -768,12 +795,12 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		# dedupe while preserving order
 		video_urls = list(dict.fromkeys(video_urls))
 
-		# text, author _ extract_text_author(data)
+		
 		text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx = _extract_metadata(data)
 		print('>>>>>>>[fetch_tweet_media] _extract_metadata:', text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
 		print('***********************quote_ctx:', quote_ctx)
 
-		check_quote_text = quote_ctx['quote_full_text']
+		check_quote_text = quote_ctx['quote_full_text'] if quote_ctx else None
 		if check_quote_text:
 			quote_block = (
 				f'<div class="quote-container">'
