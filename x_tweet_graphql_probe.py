@@ -71,7 +71,7 @@ def discover_bearer() -> str | None:
 				token = unquote(m.group(1))
 				debug("SUCCESS", f"discovered bearer len={len(token)} :: {token[:20]}... (redacted)")
 				return token
-	debug("ERROR", "bearer not found")
+	debug("ERROR", "x_tweet_graphql_probe: bearer not found")
 	return None
 
 def get_guest(bearer: str) -> str | None:

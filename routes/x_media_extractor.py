@@ -21,6 +21,8 @@ _MISSING_RE = re.compile(r"The following features cannot be null:\s*([^}]+?)(?:\
 # simple in-process cache to avoid repeated discovery on one run
 _CACHE = {"bearer": None, "ops": None, "ops_ts": 0}
 
+BEARER_STATIC = "AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+
 def debug(*args):
 	print("[X]", *args)
 
@@ -36,24 +38,25 @@ def _fetch(url: str):
 	debug("GET", url, "->", r.status_code, "len", len(r.text) if r.text else 0)
 	return r
 
-def _discover_bearer() -> str | None:
-	if _CACHE["bearer"]:
-		return _CACHE["bearer"]
-	seed = "https://x.com/?lang=en"
-	r = _fetch(seed)
-	if not (r.ok and r.text): return None
-	js_urls = ABS_JS_RE.findall(r.text) or [u for u in SCRIPT_SRC_RE.findall(r.text) if "abs.twimg.com" in u]
-	for jsu in js_urls[:8]:
-		js = _fetch(jsu)
-		if not (js.ok and js.text): continue
-		m = BEARER_RE.search(js.text)
-		if m:
-			token = _unquote(m.group(1))
-			_CACHE["bearer"] = token
-			debug("bearer discovered len", len(token))
-			return token
-	debug("bearer not found")
-	return None
+# def _discover_bearer() -> str | None:
+	# print("!!!!!!!!!!!!&*&*&*&*&*&*&*&*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	# if _CACHE["bearer"]:
+	# 	return _CACHE["bearer"]
+	# seed = "https://x.com/?lang=en"
+	# r = _fetch(seed)
+	# if not (r.ok and r.text): return None
+	# js_urls = ABS_JS_RE.findall(r.text) or [u for u in SCRIPT_SRC_RE.findall(r.text) if "abs.twimg.com" in u]
+	# for jsu in js_urls[:8]:
+	# 	js = _fetch(jsu)
+	# 	if not (js.ok and js.text): continue
+	# 	m = BEARER_RE.search(js.text)
+	# 	if m:
+	# 		token = _unquote(m.group(1))
+	# 		_CACHE["bearer"] = token
+	# 		debug("bearer discovered len", len(token))
+	# 		return token
+	# debug("x_media_extractor: bearer not found")
+	# return None
 
 def _guest_token(bearer: str) -> str | None:
 	h = {"Authorization": f"Bearer {bearer}", "Accept": "application/json", "User-Agent": UA}
@@ -701,13 +704,15 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 	tid = _extract_id(url_or_id)
 	debug("TweetID", tid)
 
-	bearer = _discover_bearer()
+	# bearer = _discover_bearer()
+	bearer = BEARER_STATIC
+	debug("bearer set, len", len(bearer) if bearer else 0)
 	if not bearer: return {"images": [], "text": None, "author": None}
-
 	guest = _guest_token(bearer)
+	debug("guest token", guest)
 	if not guest: return {"images": [], "text": None, "author": None}
-
 	ops = _discover_ops(tid)
+	debug("ops", ops)
 	if not ops: return {"images": [], "text": None, "author": None}
 
 	# prefer TweetResultByRestId then TweetDetail
