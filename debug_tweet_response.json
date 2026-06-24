@@ -1,85 +1,134 @@
 {
   "data": {
     "tweet_result_by_rest_id": {
-      "id": "VHdlZXRSZXN1bHRzOjIwNjk2NTkyODM3ODA3MzkzMjg=",
-      "rest_id": "2069659283780739328",
+      "id": "VHdlZXRSZXN1bHRzOjIwNjk2NzUxNDMxOTQ4ODIyNjY=",
+      "rest_id": "2069675143194882266",
       "result": {
         "__typename": "Tweet",
         "cashtag_attachments": [],
         "conversation_muted": false,
         "core": {
           "user_results": {
-            "id": "VXNlclJlc3VsdHM6MTc3NjI2OTIzMDE1OTE0NzAwOA==",
+            "id": "VXNlclJlc3VsdHM6MTE5NjAyOTIwNTYyNjEzMDQzMg==",
             "result": {
               "__typename": "User",
               "avatar": {
-                "image_url": "https://pbs.twimg.com/profile_images/2051584078982291464/B_QyEgqf_normal.jpg"
+                "image_url": "https://pbs.twimg.com/profile_images/1989760761883734016/JC0vOV6O_normal.jpg"
               },
               "core": {
-                "name": "Drop Site",
-                "screen_name": "DropSiteNews"
+                "name": "Tamer Nahed",
+                "screen_name": "Tamer_Alnoaizy"
               },
               "follow_request_sent": false,
-              "id": "VXNlcjoxNzc2MjY5MjMwMTU5MTQ3MDA4",
+              "id": "VXNlcjoxMTk2MDI5MjA1NjI2MTMwNDMy",
               "identity_profile_labels_highlighted_label": {},
               "privacy": {
                 "protected": false
               },
               "professional": {
-                "id": "UHJvZmVzc2lvbmFsOjIwMzczNDUzNDc4NDQ5Mzk4Njg=",
-                "rest_id": "2037345347844939868"
+                "id": "UHJvZmVzc2lvbmFsOjE4MDc4MjI4MzEwMDQwNDUzMzc=",
+                "rest_id": "1807822831004045337"
               },
-              "profile_image_shape": "Square",
+              "profile_image_shape": "Circle",
               "relationship_perspectives": {
                 "blocking": false,
                 "following": false,
                 "muting": false
               },
-              "rest_id": "1776269230159147008",
+              "rest_id": "1196029205626130432",
               "super_follow_eligible": false,
               "super_followed_by": false,
               "super_following": false,
               "verification": {
-                "is_blue_verified": true,
-                "verified_type": "Business"
+                "is_blue_verified": true
               }
             }
           }
         },
         "counts": {
-          "bookmark_count": 16,
-          "favorite_count": 528,
+          "bookmark_count": 7,
+          "favorite_count": 92,
           "reply_count": 3,
-          "retweet_count": 112
+          "retweet_count": 52
         },
         "details": {
           "cashtag_entities": [],
-          "created_at_ms": 1782280200000,
+          "created_at_ms": 1782283981000,
           "display_text_range": [
             0,
-            280
+            276
           ],
-          "full_text": "Claire Valdez was arrested in 2025 during a protest outside the offices of U.S. Senators Chuck Schumer and Kirsten Gillibrand over their votes against a resolution to halt U.S. arms sales to Israel.  \n\nShe was also among elected officials detained during an ICE-related protest in",
+          "full_text": "I feel proud and happy to see water trucks going out every day to reach displaced families in Gaza. Today was truck #2, carrying 6,000 liters of clean water to an area facing severe shortages.\n\nPeople here are in urgent need of water, and the situation is getting harder every https://t.co/5Xvj6Mwvlb",
           "hashtag_entities": [],
           "smarttags": []
         },
         "edit_control": {
           "__typename": "EditControlInitial",
           "edit_tweet_ids": [
-            "2069659283780739328"
+            "2069675143194882266"
           ]
         },
         "grok_translated_post_with_availability": {
           "is_available": false
         },
-        "id": "VHdlZXQ6MjA2OTY1OTI4Mzc4MDczOTMyOA==",
+        "id": "VHdlZXQ6MjA2OTY3NTE0MzE5NDg4MjI2Ng==",
         "legacy": {},
-        "media_entities2": [],
+        "media_entities2": [
+          {
+            "additional_media_info": {},
+            "ext_playlists": [],
+            "id_str": "2069674470499815424",
+            "indices": [
+              277,
+              300
+            ],
+            "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/2069674470499815424/img/17Dhv97zVnElpCde.jpg",
+            "original_info": {
+              "height": 3840,
+              "width": 2160
+            },
+            "type": "video",
+            "video_info": {
+              "duration_millis": 10751,
+              "variants": [
+                {
+                  "content_type": "application/x-mpegURL",
+                  "url": "https://video.twimg.com/amplify_video/2069674470499815424/pl/bwy7AyUhJd9oawl1.m3u8?tag=28"
+                },
+                {
+                  "bitrate": 632000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2069674470499815424/vid/avc1/320x568/gsPrOEomiSq2tsOy.mp4?tag=28"
+                },
+                {
+                  "bitrate": 950000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2069674470499815424/vid/avc1/480x852/AoiHIyjeEy9Z9efY.mp4?tag=28"
+                },
+                {
+                  "bitrate": 2176000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2069674470499815424/vid/avc1/720x1280/K0lwM0ugNytFs5he.mp4?tag=28"
+                },
+                {
+                  "bitrate": 10368000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2069674470499815424/vid/avc1/1080x1920/7jwBb-PyUO-Ui1o2.mp4?tag=28"
+                },
+                {
+                  "bitrate": 25128000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2069674470499815424/vid/avc1/2160x3840/ub7mt5D0VNMI7BPG.mp4?tag=28"
+                }
+              ]
+            }
+          }
+        ],
         "mention_entities": [],
         "note_tweet": {
           "is_expandable": true,
           "note_tweet_results": {
-            "id": "Tm90ZVR3ZWV0UmVzdWx0czoyMDY5NjU5MjgzNzI2MjE3MjE3",
+            "id": "Tm90ZVR3ZWV0UmVzdWx0czoyMDY5Njc1MTQzMDc3NDQ5NzI4",
             "result": {
               "__typename": "NoteTweet",
               "entity_set": {
@@ -89,8 +138,8 @@
                 "urls": [],
                 "user_mentions": []
               },
-              "id": "Tm90ZVR3ZWV0OjIwNjk2NTkyODM3MjYyMTcyMTc=",
-              "text": "Claire Valdez was arrested in 2025 during a protest outside the offices of U.S. Senators Chuck Schumer and Kirsten Gillibrand over their votes against a resolution to halt U.S. arms sales to Israel.  \n\nShe was also among elected officials detained during an ICE-related protest in 2026."
+              "id": "Tm90ZVR3ZWV0OjIwNjk2NzUxNDMwNzc0NDk3Mjg=",
+              "text": "I feel proud and happy to see water trucks going out every day to reach displaced families in Gaza. Today was truck #2, carrying 6,000 liters of clean water to an area facing severe shortages.\n\nPeople here are in urgent need of water, and the situation is getting harder every day. Many large organizations have stopped delivering water, increasing the suffering of families in the camps.\n\nThese families live in extremely dangerous areas and risk their lives every day, yet access to clean water remains very difficult. The need is enormous, and thousands of families are still waiting for these supplies.\n\nWe will continue this work as long as we can. A water truck will go out every day, God willing, because water is not a luxury it is a human right."
             }
           }
         },
@@ -98,108 +147,112 @@
           "eligibility": "IneligibleUserUnauthorized"
         },
         "quoted_tweet_results": {
-          "id": "VHdlZXRSZXN1bHRzOjIwNjk2MzQ1MzE4MTcwMzgwMTM=",
-          "rest_id": "2069634531817038013",
+          "id": "VHdlZXRSZXN1bHRzOjIwNjk2NzA2NDQ0NTE1MDgzOTA=",
+          "rest_id": "2069670644451508390",
           "result": {
             "__isTweetResult": "Tweet",
             "__typename": "Tweet",
             "core": {
               "user_results": {
-                "id": "VXNlclJlc3VsdHM6NDM0MjU5NzU=",
+                "id": "VXNlclJlc3VsdHM6MjAxMjI1MjIxODI1NTM1NTkwNA==",
                 "result": {
                   "__typename": "User",
                   "avatar": {
-                    "image_url": "https://pbs.twimg.com/profile_images/1630687586715942916/Q1-EhgXu_normal.png"
+                    "image_url": "https://pbs.twimg.com/profile_images/2012252782154149888/iZZgXGG3_normal.jpg"
                   },
                   "core": {
-                    "name": "Spectrum News NY1",
-                    "screen_name": "NY1"
+                    "name": "SAKE FOR GAZA",
+                    "screen_name": "SAKEFORGAZA"
                   },
-                  "id": "VXNlcjo0MzQyNTk3NQ==",
+                  "id": "VXNlcjoyMDEyMjUyMjE4MjU1MzU1OTA0",
                   "identity_profile_labels_highlighted_label": {},
                   "privacy": {
                     "protected": false
                   },
-                  "profile_image_shape": "Square",
-                  "rest_id": "43425975",
+                  "profile_image_shape": "Circle",
+                  "rest_id": "2012252218255355904",
                   "super_followed_by": false,
                   "verification": {
-                    "is_blue_verified": false,
-                    "verified_type": "Business"
+                    "is_blue_verified": false
                   }
                 }
               }
             },
             "details": {
               "cashtag_entities": [],
-              "created_at_ms": 1782274298000,
+              "created_at_ms": 1782282908000,
               "display_text_range": [
                 0,
-                184
+                275
               ],
-              "full_text": "Claire Valdez said she will \"stand up to the genocide\" and \"continue to call for Palestinian liberation\" after winning the Democratic primary for New York's 7th Congressional District. https://t.co/tsbYsKje64",
+              "full_text": "Our second water truck has set off toward one of the most dangerous and remote neighborhoods in Gaza City.\n\nThis truck is carrying 6,000 liters of fresh drinking water.\n\nPlease support and share so we can continue providing water to families in need.\n\nhttps://t.co/Cev3rFmthJ https://t.co/R0KDl7Vv97",
               "hashtag_entities": [],
               "smarttags": []
             },
             "grok_translated_post_with_availability": {
               "is_available": false
             },
-            "id": "VHdlZXQ6MjA2OTYzNDUzMTgxNzAzODAxMw==",
+            "id": "VHdlZXQ6MjA2OTY3MDY0NDQ1MTUwODM5MA==",
             "media_entities2": [
               {
                 "additional_media_info": {},
                 "ext_playlists": [],
-                "id_str": "2069634432386879488",
+                "id_str": "2069670071320891392",
                 "indices": [
-                  185,
-                  208
+                  276,
+                  299
                 ],
-                "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/2069634432386879488/img/0Zuskofx0R-GJQnJ.jpg",
+                "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/2069670071320891392/img/u3QUehb4ZVkbOAq8.jpg",
                 "original_info": {
-                  "height": 1920,
-                  "width": 1080
+                  "height": 1280,
+                  "width": 720
                 },
                 "type": "video",
                 "video_info": {
-                  "duration_millis": 17233,
+                  "duration_millis": 78578,
                   "variants": [
                     {
                       "content_type": "application/x-mpegURL",
-                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/pl/lnwUq499OAiFTPMb.m3u8?tag=28&v=c5f"
+                      "url": "https://video.twimg.com/amplify_video/2069670071320891392/pl/kGkenbxKbz-0zOso.m3u8?tag=28"
                     },
                     {
                       "bitrate": 632000,
                       "content_type": "video/mp4",
-                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/320x568/gJwN5Cxv0MlVxLo5.mp4?tag=28"
+                      "url": "https://video.twimg.com/amplify_video/2069670071320891392/vid/avc1/320x568/2LokgrCV-JUBjcfA.mp4?tag=28"
                     },
                     {
                       "bitrate": 950000,
                       "content_type": "video/mp4",
-                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/480x852/uYGAV0Xh1uCPYUxw.mp4?tag=28"
+                      "url": "https://video.twimg.com/amplify_video/2069670071320891392/vid/avc1/480x852/fYtNXDZS0-agEOyE.mp4?tag=28"
                     },
                     {
                       "bitrate": 2176000,
                       "content_type": "video/mp4",
-                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/720x1280/7tU1jTdcYj8JAZ2k.mp4?tag=28"
-                    },
-                    {
-                      "bitrate": 10368000,
-                      "content_type": "video/mp4",
-                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/1080x1920/kHRBbBI7uV43-KCm.mp4?tag=28"
+                      "url": "https://video.twimg.com/amplify_video/2069670071320891392/vid/avc1/720x1280/dsowB-kQuE0Onwhm.mp4?tag=28"
                     }
                   ]
                 }
               }
             ],
             "mention_entities": [],
-            "rest_id": "2069634531817038013",
-            "url_entities": []
+            "rest_id": "2069670644451508390",
+            "url_entities": [
+              {
+                "display_url": "chuffed.org/project/165801",
+                "expanded_url": "http://chuffed.org/project/165801",
+                "indices": [
+                  252,
+                  275
+                ],
+                "url": "https://t.co/Cev3rFmthJ"
+              }
+            ]
           }
         },
-        "rest_id": "2069659283780739328",
+        "rest_id": "2069675143194882266",
         "url_entities": [],
         "views": {
-          "count": "18925"
+          "count": "1175"
         }
       }
     }
