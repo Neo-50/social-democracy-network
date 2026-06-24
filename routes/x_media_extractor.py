@@ -416,17 +416,17 @@ def _pick(d, *path):
 		cur = cur[key]
 	return cur
 
-def _full_text_from_result(res: dict, legacy: dict) -> str | None:
-	# 1) Longform (Blue) tweets — the *only* place with full text on long tweets
-	note_text = (
-		_pick(res, 'note_tweet', 'note_tweet_results', 'result', 'text') or
-		_pick(res, 'note_tweet_results', 'result', 'text') or
-		_pick(res, 'tweet', 'note_tweet_results', 'result', 'text')
-	)
-	if note_text:
-		return note_text
+# def _full_text_from_result(res: dict, legacy: dict) -> str | None:
+# 	# 1) Longform (Blue) tweets — the *only* place with full text on long tweets
+# 	note_text = (
+# 		_pick(res, 'note_tweet', 'note_tweet_results', 'result', 'text') or
+# 		_pick(res, 'note_tweet_results', 'result', 'text') or
+# 		_pick(res, 'tweet', 'note_tweet_results', 'result', 'text')
+# 	)
+# 	if note_text:
+# 		return note_text
 
-	return legacy.get('full_text') or legacy.get('text')
+# 	return legacy.get('full_text') or legacy.get('text')
 
 def _extract_reply_context(res: dict, legacy: dict) -> dict:
 	"""
@@ -489,96 +489,96 @@ def fetch_tweet_json(tweet_id):
 		print(f"[SYNDICATE ERROR] {e}")
 		return None
 
-def extract_quote_context(res: dict, legacy: dict) -> dict:
-	"""
-	Returns:
-	{
-		'is_quote': bool,
-		'quote_tweet_id': str|None,
-		'quote_handle': str|None,
-		'quote_full_text': str|None,
-	}
-	"""
-	quote = {
-		'is_quote': False,
-		'quote_tweet_id': None,
-		'quote_handle': None,
-		'quote_author_name': None,
-		'quote_full_text': None,
-	}
+# def extract_quote_context(res: dict, legacy: dict) -> dict:
+# 	"""
+# 	Returns:
+# 	{
+# 		'is_quote': bool,
+# 		'quote_tweet_id': str|None,
+# 		'quote_handle': str|None,
+# 		'quote_full_text': str|None,
+# 	}
+# 	"""
+# 	quote = {
+# 		'is_quote': False,
+# 		'quote_tweet_id': None,
+# 		'quote_handle': None,
+# 		'quote_author_name': None,
+# 		'quote_full_text': None,
+# 	}
 
-	# 1) Quick legacy flag
-	if isinstance(legacy, dict) and legacy.get('is_quote_status'):
-		quote['is_quote'] = True
+# 	# 1) Quick legacy flag
+# 	if isinstance(legacy, dict) and legacy.get('is_quote_status'):
+# 		quote['is_quote'] = True
 
-	# 2) Find the quoted tweet id in multiple possible places
-	candidates_id = [
-		legacy.get('quoted_status_id_str') if isinstance(legacy, dict) else None,
-		res.get('quoted_status_id_str') if isinstance(res, dict) else None,
-		_get(res, ('quoted_status_result', 'result', 'rest_id')),
-		_get(res, ('legacy', 'quoted_status_id_str')),
-	]
+# 	# 2) Find the quoted tweet id in multiple possible places
+# 	candidates_id = [
+# 		legacy.get('quoted_status_id_str') if isinstance(legacy, dict) else None,
+# 		res.get('quoted_status_id_str') if isinstance(res, dict) else None,
+# 		_get(res, ('quoted_status_result', 'result', 'rest_id')),
+# 		_get(res, ('legacy', 'quoted_status_id_str')),
+# 	]
 
-	for qid in candidates_id:
-		if qid:
-			quote['quote_tweet_id'] = qid
-			quote['is_quote'] = True
-			break
+# 	for qid in candidates_id:
+# 		if qid:
+# 			quote['quote_tweet_id'] = qid
+# 			quote['is_quote'] = True
+# 			break
 
-	# 3) Locate the quoted status object itself (several schemas)
-	quoted_status = None
-	if isinstance(legacy, dict):
-		quoted_status = (
-			legacy.get('quoted_status')
-			or _get(legacy, ('quoted_status_result', 'result'))
-		)
+# 	# 3) Locate the quoted status object itself (several schemas)
+# 	quoted_status = None
+# 	if isinstance(legacy, dict):
+# 		quoted_status = (
+# 			legacy.get('quoted_status')
+# 			or _get(legacy, ('quoted_status_result', 'result'))
+# 		)
 
-	if not quoted_status and isinstance(res, dict):
-		quoted_status = (
-			res.get('quoted_status')
-			or _get(res, ('quoted_status_result', 'result'))
-			or _get(res, ('tweet', 'legacy', 'quoted_status'))  # sometimes nested
-		)
+# 	if not quoted_status and isinstance(res, dict):
+# 		quoted_status = (
+# 			res.get('quoted_status')
+# 			or _get(res, ('quoted_status_result', 'result'))
+# 			or _get(res, ('tweet', 'legacy', 'quoted_status'))  # sometimes nested
+# 		)
 
-	# 4) Pull user + text from whichever form we found
-	if isinstance(quoted_status, dict):
+# 	# 4) Pull user + text from whichever form we found
+# 	if isinstance(quoted_status, dict):
 
-		quote['quote_full_text'] = (
-			quoted_status.get('full_text')
-			or _get(quoted_status, ('legacy', 'full_text'))
-			or quoted_status.get('text')
-		)
+# 		quote['quote_full_text'] = (
+# 			quoted_status.get('full_text')
+# 			or _get(quoted_status, ('legacy', 'full_text'))
+# 			or quoted_status.get('text')
+# 		)
 
-		# If we still don't have the id, try from the quoted status itself
-		if not quote['quote_tweet_id']:
-			quote['quote_tweet_id'] = (
-				quoted_status.get('id_str')
-				or _get(quoted_status, ('rest_id',))
-				or _get(quoted_status, ('legacy', 'id_str'))
-			)
-			if quote['quote_tweet_id']:
-				quote['is_quote'] = True
-		if quoted_status:
-			quote['quote_author_name'] = (
-				_get(quoted_status, ('core', 'user_results', 'result', 'legacy', 'name'))
-				or _get(quoted_status, ('user', 'name'))
-			)
-			print('-----------> quote_author_name: ', quote['quote_author_name'])
+# 		# If we still don't have the id, try from the quoted status itself
+# 		if not quote['quote_tweet_id']:
+# 			quote['quote_tweet_id'] = (
+# 				quoted_status.get('id_str')
+# 				or _get(quoted_status, ('rest_id',))
+# 				or _get(quoted_status, ('legacy', 'id_str'))
+# 			)
+# 			if quote['quote_tweet_id']:
+# 				quote['is_quote'] = True
+# 		if quoted_status:
+# 			quote['quote_author_name'] = (
+# 				_get(quoted_status, ('core', 'user_results', 'result', 'legacy', 'name'))
+# 				or _get(quoted_status, ('user', 'name'))
+# 			)
+# 			print('-----------> quote_author_name: ', quote['quote_author_name'])
 
-	# Parse handle from the permalink if present
-	if not quote['quote_handle'] and isinstance(legacy, dict):
-		url = _get(legacy, ('quoted_status_permalink', 'expanded'))
-		# e.g., https://twitter.com/SCREENNAME/status/12345
-		if url and '/status/' in url:
-			try:
-				path = url.split('twitter.com/', 1)[1]
-				quote['quote_handle'] = path.split('/', 1)[0]
-				quote['is_quote'] = True
-			except Exception:
-				pass
+# 	# Parse handle from the permalink if present
+# 	if not quote['quote_handle'] and isinstance(legacy, dict):
+# 		url = _get(legacy, ('quoted_status_permalink', 'expanded'))
+# 		# e.g., https://twitter.com/SCREENNAME/status/12345
+# 		if url and '/status/' in url:
+# 			try:
+# 				path = url.split('twitter.com/', 1)[1]
+# 				quote['quote_handle'] = path.split('/', 1)[0]
+# 				quote['is_quote'] = True
+# 			except Exception:
+# 				pass
 	
 
-	return quote
+# 	return quote
 
 def _extract_metadata(data):
 	"""
@@ -633,12 +633,41 @@ def _extract_metadata(data):
 
 		created_at = details.get("created_at_ms")  # epoch ms int
 
+		quoted = (res.get("quoted_tweet_results") or {}).get("result")
+		quote_ctx = None
+		if quoted:
+			q_details = quoted.get("details", {})
+			q_note = (((quoted.get("note_tweet") or {}).get("note_tweet_results") or {}).get("result") or {})
+			q_text = q_note.get("text") or q_details.get("full_text")
+
+			q_user = (((quoted.get("core") or {}).get("user_results") or {}).get("result") or {})
+			q_user_core = q_user.get("core", {})
+
+			quote_ctx = {
+				"quote_full_text": q_text,
+				"quote_author_name": q_user_core.get("name"),
+				"quote_handle": q_user_core.get("screen_name"),
+				"quote_tweet_id": quoted.get("rest_id"),
+				"quote_created_at_ms": q_details.get("created_at_ms"),
+			}
+
 		c = res.get("counts", {})
 		counts["likes"] = c.get("favorite_count")
 		counts["retweets"] = c.get("retweet_count")
 		counts["replies"] = c.get("reply_count")
 		counts["bookmarks"] = c.get("bookmark_count")
 		counts["views"] = (res.get("views") or {}).get("count")
+		print(
+			f'>>>>>>>>>>>>_extract_metadata SUCCESS\n'
+			f'  text={text!r}\n'
+			f'  author_name={author_name!r}\n'
+			f'  author_handle={author_handle!r}\n'
+			f'  created_at={created_at!r}\n'
+			f'  counts={counts!r}\n'
+			f'  alt_desc={alt_desc!r}\n'
+			f'  reply_ctx={reply_ctx!r}'
+		)
+		return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_ctx)
 
 	if not res:
 		print(
@@ -651,64 +680,64 @@ def _extract_metadata(data):
 			f'  alt_desc={alt_desc!r}\n'
 			f'  reply_ctx={reply_ctx!r}'
 		)
-		return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, None)
+		return (text, author_name, author_handle, created_at, counts, alt_desc, reply_ctx, quote_ctx)
 	
-	# ---- text extraction ----
-	legacy = res.get("legacy", {}) if isinstance(res, dict) else {}
-	text = _full_text_from_result(res, legacy)
-	reply_ctx = _extract_reply_context(res, legacy)
-	quote_ctx = extract_quote_context(res, legacy)
-	if quote_ctx.get("is_quote"):
-		quoted_id = str(quote_ctx.get("quote_tweet_id"))
-		try:
-			quoted_tweet_data = fetch_tweet_media(quoted_id)
-			print('>>>>>>>>> [_extract_metadata]: quoted_tweet_data:', quoted_tweet_data)
-			if isinstance(quoted_tweet_data, dict):
-				text_val = quoted_tweet_data.get('text')
-				author_val = quoted_tweet_data.get('author')
-				if text_val and text_val.strip():
-					quote_ctx['quote_full_text'] = text_val
-				if author_val and author_val.strip():
-					quote_ctx['quote_author_name'] = author_val
-		except Exception as e:
-			print(f'>>>>>>>>> [_extract_metadata]: quoted tweet {quoted_id} unavailable: {e}')
+	# # ---- text extraction ----
+	# legacy = res.get("legacy", {}) if isinstance(res, dict) else {}
+	# text = _full_text_from_result(res, legacy)
+	# reply_ctx = _extract_reply_context(res, legacy)
+	# quote_ctx = extract_quote_context(res, legacy)
+	# if quote_ctx.get("is_quote"):
+	# 	quoted_id = str(quote_ctx.get("quote_tweet_id"))
+	# 	try:
+	# 		quoted_tweet_data = fetch_tweet_media(quoted_id)
+	# 		print('>>>>>>>>> [_extract_metadata]: quoted_tweet_data:', quoted_tweet_data)
+	# 		if isinstance(quoted_tweet_data, dict):
+	# 			text_val = quoted_tweet_data.get('text')
+	# 			author_val = quoted_tweet_data.get('author')
+	# 			if text_val and text_val.strip():
+	# 				quote_ctx['quote_full_text'] = text_val
+	# 			if author_val and author_val.strip():
+	# 				quote_ctx['quote_author_name'] = author_val
+	# 	except Exception as e:
+	# 		print(f'>>>>>>>>> [_extract_metadata]: quoted tweet {quoted_id} unavailable: {e}')
 
-	print(f">>>>>>>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
-		f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
-		f"conv_id={reply_ctx['conversation_id']}")
+	# print(f">>>>>>>> [extract_metadata] is_reply={reply_ctx['is_reply']}, "
+	# 	f"reply_to={reply_ctx['reply_to_screen_name']} id={reply_ctx['reply_to_tweet_id']}, "
+	# 	f"conv_id={reply_ctx['conversation_id']}")
 	
-	print(">>>>>>>> [extract_metadata] quote_ctx:",
-	"qid=", quote_ctx['quote_tweet_id'],
-	"quote_handle", quote_ctx['quote_handle'],
-	"quote_author_name", quote_ctx['quote_author_name'],
-	"text_len=", len(quote_ctx['quote_full_text'] or "") )
+	# print(">>>>>>>> [extract_metadata] quote_ctx:",
+	# "qid=", quote_ctx['quote_tweet_id'],
+	# "quote_handle", quote_ctx['quote_handle'],
+	# "quote_author_name", quote_ctx['quote_author_name'],
+	# "text_len=", len(quote_ctx['quote_full_text'] or "") )
 
-	src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
-	print(f">>> [extract_metadata] text source={src}, length={len(text) if text else 0}")
+	# src = 'note_tweet_results' if _pick(res, 'note_tweet_results') or _pick(res, 'note_tweet') else 'legacy'
+	# print(f">>> [extract_metadata] text source={src}, length={len(text) if text else 0}")
 
-	created_at_utc = legacy.get("created_at")
-	alt_desc = res.get("post_image_description")  # still okay
+	# created_at_utc = legacy.get("created_at")
+	# alt_desc = res.get("post_image_description")  # still okay
 	
-	print('>>> [extract_metadata] legacy, text, created_at, alt_desc:', legacy, text, created_at_utc, alt_desc)
+	# print('>>> [extract_metadata] legacy, text, created_at, alt_desc:', legacy, text, created_at_utc, alt_desc)
 
-	# counts live mostly under legacy
-	counts["likes"] = legacy.get("favorite_count")
-	counts["retweets"] = legacy.get("retweet_count")
-	counts["replies"] = legacy.get("reply_count")
-	counts["quotes"] = legacy.get("quote_count")
-	# sometimes present
-	counts["bookmarks"] = legacy.get("bookmark_count") or res.get("bookmarks_count")
-	# views: occasionally at res["views"]["count"]
-	try:
-		counts["views"] = int((res.get("views") or {}).get("count"))
-	except Exception:
-		pass
+	# # counts live mostly under legacy
+	# counts["likes"] = legacy.get("favorite_count")
+	# counts["retweets"] = legacy.get("retweet_count")
+	# counts["replies"] = legacy.get("reply_count")
+	# counts["quotes"] = legacy.get("quote_count")
+	# # sometimes present
+	# counts["bookmarks"] = legacy.get("bookmark_count") or res.get("bookmarks_count")
+	# # views: occasionally at res["views"]["count"]
+	# try:
+	# 	counts["views"] = int((res.get("views") or {}).get("count"))
+	# except Exception:
+	# 	pass
 
-	author_name, author_handle = extract_author(res)
-	if not author_name and not author_handle:
-		debug("AUTHOR DEBUG:", json.dumps(res.get("core", {}), indent=2)[:800])
+	# author_name, author_handle = extract_author(res)
+	# if not author_name and not author_handle:
+	# 	debug("AUTHOR DEBUG:", json.dumps(res.get("core", {}), indent=2)[:800])
 
-	return (text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
+	# return (text, author_name, author_handle, created_at_utc, counts, alt_desc, reply_ctx, quote_ctx)
 
 
 def fetch_tweet_media(url_or_id: str) -> dict:
@@ -727,7 +756,6 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 	r = _fetch(seed)
 	if not (r.ok and r.text): return None
 	js_urls = ABS_JS_RE.findall(r.text) or [u for u in SCRIPT_SRC_RE.findall(r.text) if "abs.twimg.com" in u]
-	print('$$$$$ START SEARCH $$$$$$')
 	for jsu in js_urls[:8]:
 		try:
 			js = _fetch(jsu)
@@ -753,7 +781,6 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 	ops = OPS_STATIC
 	debug("ops", ops)
 	if not ops:
-		print('@@@@ OPS IS NONE @@@@')
 		return {"images": [], "text": None, "author": None}
 
 	# prefer TweetResultByRestId then TweetDetail
@@ -804,7 +831,7 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 		if check_quote_text:
 			quote_block = (
 				f'<div class="quote-container">'
-				f'<a href="https://nitter.space/{quote_ctx["quote_handle"]}/status/{quote_ctx["quote_tweet_id"]}" target="_blank">'
+				f'<a href="https://xcancel.com/{quote_ctx["quote_handle"]}/status/{quote_ctx["quote_tweet_id"]}" target="_blank">'
 				f"Quoting:</a> @{quote_ctx['quote_handle']} — ({quote_ctx['quote_author_name']})\n{quote_ctx['quote_full_text']}</div>"
 			)
 			text = f"{text}\n\n{quote_block}"

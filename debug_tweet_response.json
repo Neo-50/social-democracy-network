@@ -1,125 +1,205 @@
 {
   "data": {
     "tweet_result_by_rest_id": {
-      "id": "VHdlZXRSZXN1bHRzOjIwNjk0MTg2MDA5OTgzNTk1MjQ=",
-      "rest_id": "2069418600998359524",
+      "id": "VHdlZXRSZXN1bHRzOjIwNjk2NTkyODM3ODA3MzkzMjg=",
+      "rest_id": "2069659283780739328",
       "result": {
         "__typename": "Tweet",
         "cashtag_attachments": [],
         "conversation_muted": false,
         "core": {
           "user_results": {
-            "id": "VXNlclJlc3VsdHM6NzkwMjMwOTcyODk3Nzc5NzEz",
+            "id": "VXNlclJlc3VsdHM6MTc3NjI2OTIzMDE1OTE0NzAwOA==",
             "result": {
               "__typename": "User",
               "avatar": {
-                "image_url": "https://pbs.twimg.com/profile_images/2019046730805698560/uxLJNS_J_normal.jpg"
+                "image_url": "https://pbs.twimg.com/profile_images/2051584078982291464/B_QyEgqf_normal.jpg"
               },
               "core": {
-                "name": "Sammi🦋",
-                "screen_name": "StoriesBySammi"
+                "name": "Drop Site",
+                "screen_name": "DropSiteNews"
               },
               "follow_request_sent": false,
-              "id": "VXNlcjo3OTAyMzA5NzI4OTc3Nzk3MTM=",
+              "id": "VXNlcjoxNzc2MjY5MjMwMTU5MTQ3MDA4",
               "identity_profile_labels_highlighted_label": {},
               "privacy": {
                 "protected": false
               },
-              "profile_image_shape": "Circle",
+              "professional": {
+                "id": "UHJvZmVzc2lvbmFsOjIwMzczNDUzNDc4NDQ5Mzk4Njg=",
+                "rest_id": "2037345347844939868"
+              },
+              "profile_image_shape": "Square",
               "relationship_perspectives": {
                 "blocking": false,
                 "following": false,
                 "muting": false
               },
-              "rest_id": "790230972897779713",
+              "rest_id": "1776269230159147008",
               "super_follow_eligible": false,
               "super_followed_by": false,
               "super_following": false,
               "verification": {
-                "is_blue_verified": true
+                "is_blue_verified": true,
+                "verified_type": "Business"
               }
             }
           }
         },
         "counts": {
-          "bookmark_count": 57,
-          "favorite_count": 738,
-          "reply_count": 60,
-          "retweet_count": 779
+          "bookmark_count": 16,
+          "favorite_count": 528,
+          "reply_count": 3,
+          "retweet_count": 112
         },
         "details": {
           "cashtag_entities": [],
-          "created_at_ms": 1782222817000,
+          "created_at_ms": 1782280200000,
           "display_text_range": [
             0,
-            278
+            280
           ],
-          "full_text": "The Trump administration just made it legal to kill 400,000 wild animals a year in secret. No public notice. No comment period. Just done.\n\nThe USDA finalized rules this April gutting decades of public participation requirements on 193 million acres of national forest. Logging, https://t.co/M09AshkwDH",
+          "full_text": "Claire Valdez was arrested in 2025 during a protest outside the offices of U.S. Senators Chuck Schumer and Kirsten Gillibrand over their votes against a resolution to halt U.S. arms sales to Israel.  \n\nShe was also among elected officials detained during an ICE-related protest in",
           "hashtag_entities": [],
           "smarttags": []
         },
         "edit_control": {
           "__typename": "EditControlInitial",
           "edit_tweet_ids": [
-            "2069418600998359524"
+            "2069659283780739328"
           ]
         },
         "grok_translated_post_with_availability": {
           "is_available": false
         },
-        "id": "VHdlZXQ6MjA2OTQxODYwMDk5ODM1OTUyNA==",
+        "id": "VHdlZXQ6MjA2OTY1OTI4Mzc4MDczOTMyOA==",
         "legacy": {},
-        "media_entities2": [
-          {
-            "ext_alt_text": "A brown bear walks through dense green vegetation beside a deep blue mountain lake. Forested slopes and rugged peaks rise in the background beneath a clear summer sky, highlighting the wildlife and wilderness of public lands.",
-            "ext_playlists": [],
-            "id_str": "2069418589568831488",
-            "indices": [
-              279,
-              302
-            ],
-            "media_url_https": "https://pbs.twimg.com/media/HLgNPjLXEAAomsu.jpg",
-            "original_info": {
-              "height": 793,
-              "width": 906
-            },
-            "type": "photo"
-          }
-        ],
+        "media_entities2": [],
         "mention_entities": [],
         "note_tweet": {
           "is_expandable": true,
           "note_tweet_results": {
-            "id": "Tm90ZVR3ZWV0UmVzdWx0czoyMDY5NDE4NjAwODIyMTc3Nzky",
+            "id": "Tm90ZVR3ZWV0UmVzdWx0czoyMDY5NjU5MjgzNzI2MjE3MjE3",
             "result": {
               "__typename": "NoteTweet",
               "entity_set": {
-                "hashtags": [
-                  {
-                    "indices": [
-                      1140,
-                      1151
-                    ],
-                    "text": "DemsUnited"
-                  }
-                ],
+                "hashtags": [],
                 "smarttags": [],
                 "symbols": [],
                 "urls": [],
                 "user_mentions": []
               },
-              "id": "Tm90ZVR3ZWV0OjIwNjk0MTg2MDA4MjIxNzc3OTI=",
-              "text": "The Trump administration just made it legal to kill 400,000 wild animals a year in secret. No public notice. No comment period. Just done.\n\nThe USDA finalized rules this April gutting decades of public participation requirements on 193 million acres of national forest. Logging, drilling, mining, road building — all can now be approved before the public ever hears about it.\n\nThat includes Wildlife Services — the federal program that kills more than 400,000 native animals every year. Coyotes. Bears. Wolves. Beavers. Mountain lions. Killed on behalf of ranching interests, with your tax dollars, on your public land. Now completely out of public view.\n\n150,000 public comments opposing these rules were thrown out. Attorneys general from 17 states objected. Tribal governments objected. The administration didn't care.\n\n\"Information is power. Our voices are power. And the Trump administration is trying to strip both away so corporations can make a quick buck off our public lands.\" — Wendy Park, Center for Biological Diversity.\n\nWho gave the government permission to kill 400,000 wild animals a year and hide it from the rest of us?\n\n#DemsUnited"
+              "id": "Tm90ZVR3ZWV0OjIwNjk2NTkyODM3MjYyMTcyMTc=",
+              "text": "Claire Valdez was arrested in 2025 during a protest outside the offices of U.S. Senators Chuck Schumer and Kirsten Gillibrand over their votes against a resolution to halt U.S. arms sales to Israel.  \n\nShe was also among elected officials detained during an ICE-related protest in 2026."
             }
           }
         },
         "quick_promote_eligibility": {
           "eligibility": "IneligibleUserUnauthorized"
         },
-        "rest_id": "2069418600998359524",
+        "quoted_tweet_results": {
+          "id": "VHdlZXRSZXN1bHRzOjIwNjk2MzQ1MzE4MTcwMzgwMTM=",
+          "rest_id": "2069634531817038013",
+          "result": {
+            "__isTweetResult": "Tweet",
+            "__typename": "Tweet",
+            "core": {
+              "user_results": {
+                "id": "VXNlclJlc3VsdHM6NDM0MjU5NzU=",
+                "result": {
+                  "__typename": "User",
+                  "avatar": {
+                    "image_url": "https://pbs.twimg.com/profile_images/1630687586715942916/Q1-EhgXu_normal.png"
+                  },
+                  "core": {
+                    "name": "Spectrum News NY1",
+                    "screen_name": "NY1"
+                  },
+                  "id": "VXNlcjo0MzQyNTk3NQ==",
+                  "identity_profile_labels_highlighted_label": {},
+                  "privacy": {
+                    "protected": false
+                  },
+                  "profile_image_shape": "Square",
+                  "rest_id": "43425975",
+                  "super_followed_by": false,
+                  "verification": {
+                    "is_blue_verified": false,
+                    "verified_type": "Business"
+                  }
+                }
+              }
+            },
+            "details": {
+              "cashtag_entities": [],
+              "created_at_ms": 1782274298000,
+              "display_text_range": [
+                0,
+                184
+              ],
+              "full_text": "Claire Valdez said she will \"stand up to the genocide\" and \"continue to call for Palestinian liberation\" after winning the Democratic primary for New York's 7th Congressional District. https://t.co/tsbYsKje64",
+              "hashtag_entities": [],
+              "smarttags": []
+            },
+            "grok_translated_post_with_availability": {
+              "is_available": false
+            },
+            "id": "VHdlZXQ6MjA2OTYzNDUzMTgxNzAzODAxMw==",
+            "media_entities2": [
+              {
+                "additional_media_info": {},
+                "ext_playlists": [],
+                "id_str": "2069634432386879488",
+                "indices": [
+                  185,
+                  208
+                ],
+                "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/2069634432386879488/img/0Zuskofx0R-GJQnJ.jpg",
+                "original_info": {
+                  "height": 1920,
+                  "width": 1080
+                },
+                "type": "video",
+                "video_info": {
+                  "duration_millis": 17233,
+                  "variants": [
+                    {
+                      "content_type": "application/x-mpegURL",
+                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/pl/lnwUq499OAiFTPMb.m3u8?tag=28&v=c5f"
+                    },
+                    {
+                      "bitrate": 632000,
+                      "content_type": "video/mp4",
+                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/320x568/gJwN5Cxv0MlVxLo5.mp4?tag=28"
+                    },
+                    {
+                      "bitrate": 950000,
+                      "content_type": "video/mp4",
+                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/480x852/uYGAV0Xh1uCPYUxw.mp4?tag=28"
+                    },
+                    {
+                      "bitrate": 2176000,
+                      "content_type": "video/mp4",
+                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/720x1280/7tU1jTdcYj8JAZ2k.mp4?tag=28"
+                    },
+                    {
+                      "bitrate": 10368000,
+                      "content_type": "video/mp4",
+                      "url": "https://video.twimg.com/amplify_video/2069634432386879488/vid/avc1/1080x1920/kHRBbBI7uV43-KCm.mp4?tag=28"
+                    }
+                  ]
+                }
+              }
+            ],
+            "mention_entities": [],
+            "rest_id": "2069634531817038013",
+            "url_entities": []
+          }
+        },
+        "rest_id": "2069659283780739328",
         "url_entities": [],
         "views": {
-          "count": "8543"
+          "count": "18925"
         }
       }
     }
