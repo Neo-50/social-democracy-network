@@ -801,36 +801,36 @@ def well_known_matrix(filename):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        # flash('New registrations are temporarily disabled', 'danger')
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        confirm_password = request.form['confirm_password']
+        flash('New registrations are temporarily disabled', 'danger')
+        # username = request.form['username']
+        # email = request.form['email']
+        # password = request.form['password']
+        # confirm_password = request.form['confirm_password']
 
-        # Basic password rules
-        if len(password) < 8 or not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
-            flash('Password must be at least 8 characters long and contain both letters and numbers.', 'danger')
-            return redirect(url_for('register'))
+        # # Basic password rules
+        # if len(password) < 8 or not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
+        #     flash('Password must be at least 8 characters long and contain both letters and numbers.', 'danger')
+        #     return redirect(url_for('register'))
 
-        if password != confirm_password:
-            flash('Passwords do not match.', 'danger')
-            return redirect(url_for('register'))
+        # if password != confirm_password:
+        #     flash('Passwords do not match.', 'danger')
+        #     return redirect(url_for('register'))
 
-        # Check if user exists
-        if User.query.filter((User.username == username) | (User.email == email)).first():
-            flash('Username or email already taken.')
-            return redirect(url_for('register'))
+        # # Check if user exists
+        # if User.query.filter((User.username == username) | (User.email == email)).first():
+        #     flash('Username or email already taken.')
+        #     return redirect(url_for('register'))
 
-        user = User(username=username, email=email)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
+        # user = User(username=username, email=email)
+        # user.set_password(password)
+        # db.session.add(user)
+        # db.session.commit()
 
-        from utils.email_utils import send_verification_email
-        send_verification_email(user, mail)
+        # from utils.email_utils import send_verification_email
+        # send_verification_email(user, mail)
 
-        flash('Registration successful. Please check your email to verify your account.', 'info')
-        return redirect(url_for('login'))
+        # flash('Registration successful. Please check your email to verify your account.', 'info')
+        # return redirect(url_for('login'))
 
     return render_template('register.html')
 
