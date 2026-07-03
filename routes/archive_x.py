@@ -104,7 +104,7 @@ def archive_x_page():
 
 	month_name = calendar.month_name[month]
 	focused_tweet = next((it for it in items if str(it['tweet_id']) == str(focus)), None)
-	current_limit = 'All' if limit_int is None else str(limit_int)
+	current_limit = 'all' if limit_int is None else str(limit_int)
 
 	return render_template(
 		'archive_x.html',
