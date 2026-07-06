@@ -1,0 +1,147 @@
+{
+  "data": {
+    "tweet_result_by_rest_id": {
+      "id": "VHdlZXRSZXN1bHRzOjIwNzM0MjE5Njg2OTU1MDExNjg=",
+      "rest_id": "2073421968695501168",
+      "result": {
+        "__typename": "Tweet",
+        "cashtag_attachments": [],
+        "conversation_muted": false,
+        "core": {
+          "user_results": {
+            "id": "VXNlclJlc3VsdHM6NDMxNTkyNzk1",
+            "result": {
+              "__typename": "User",
+              "avatar": {
+                "image_url": "https://pbs.twimg.com/profile_images/1754215038326341632/no3GR1QK_normal.jpg"
+              },
+              "core": {
+                "name": "Mosab Abu Toha",
+                "screen_name": "MosabAbuToha"
+              },
+              "follow_request_sent": false,
+              "id": "VXNlcjo0MzE1OTI3OTU=",
+              "identity_profile_labels_highlighted_label": {},
+              "privacy": {
+                "protected": false
+              },
+              "professional": {
+                "id": "UHJvZmVzc2lvbmFsOjE2MDY3MjUxOTY2NzI1NTcwNTY=",
+                "rest_id": "1606725196672557056"
+              },
+              "profile_image_shape": "Circle",
+              "relationship_perspectives": {
+                "blocking": false,
+                "following": false,
+                "muting": false
+              },
+              "rest_id": "431592795",
+              "super_follow_eligible": false,
+              "super_followed_by": false,
+              "super_following": false,
+              "verification": {
+                "is_blue_verified": true
+              }
+            }
+          }
+        },
+        "counts": {
+          "bookmark_count": 216,
+          "favorite_count": 4322,
+          "reply_count": 100,
+          "retweet_count": 3036
+        },
+        "details": {
+          "cashtag_entities": [],
+          "created_at_ms": 1783177294000,
+          "display_text_range": [
+            0,
+            272
+          ],
+          "full_text": "For your information, this video was taken just an hour ago. It shows Israel blowing up buildings east of Khan Younis.\n\nAgain and again, shame on Western media that continues to call this a “ceasefire.”\n\nBy the Western media’s definition, an Israeli “ceasefire” apparently https://t.co/cKzuR8cLz4",
+          "hashtag_entities": [],
+          "smarttags": []
+        },
+        "edit_control": {
+          "__typename": "EditControlInitial",
+          "edit_tweet_ids": [
+            "2073421968695501168"
+          ]
+        },
+        "grok_translated_post_with_availability": {
+          "is_available": false
+        },
+        "id": "VHdlZXQ6MjA3MzQyMTk2ODY5NTUwMTE2OA==",
+        "legacy": {},
+        "media_entities2": [
+          {
+            "additional_media_info": {},
+            "ext_playlists": [],
+            "id_str": "2073421903881027585",
+            "indices": [
+              273,
+              296
+            ],
+            "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/2073421903881027585/img/07swKA2mcRBkq4FG.jpg",
+            "original_info": {
+              "height": 480,
+              "width": 848
+            },
+            "type": "video",
+            "video_info": {
+              "duration_millis": 40252,
+              "variants": [
+                {
+                  "content_type": "application/x-mpegURL",
+                  "url": "https://video.twimg.com/amplify_video/2073421903881027585/pl/5gdDyvq-nhe3rDeZ.m3u8?tag=28&v=cfc"
+                },
+                {
+                  "bitrate": 256000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2073421903881027585/vid/avc1/476x270/xKGhT8beL3lAAFgR.mp4?tag=28"
+                },
+                {
+                  "bitrate": 832000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2073421903881027585/vid/avc1/636x360/2Iz20vStbYFQRftW.mp4?tag=28"
+                },
+                {
+                  "bitrate": 2176000,
+                  "content_type": "video/mp4",
+                  "url": "https://video.twimg.com/amplify_video/2073421903881027585/vid/avc1/848x480/rjS4ucnwaTm0MDca.mp4?tag=28"
+                }
+              ]
+            }
+          }
+        ],
+        "mention_entities": [],
+        "note_tweet": {
+          "is_expandable": true,
+          "note_tweet_results": {
+            "id": "Tm90ZVR3ZWV0UmVzdWx0czoyMDczNDIxOTY4NTk0ODk4OTQ0",
+            "result": {
+              "__typename": "NoteTweet",
+              "entity_set": {
+                "hashtags": [],
+                "smarttags": [],
+                "symbols": [],
+                "urls": [],
+                "user_mentions": []
+              },
+              "id": "Tm90ZVR3ZWV0OjIwNzM0MjE5Njg1OTQ4OTg5NDQ=",
+              "text": "For your information, this video was taken just an hour ago. It shows Israel blowing up buildings east of Khan Younis.\n\nAgain and again, shame on Western media that continues to call this a “ceasefire.”\n\nBy the Western media’s definition, an Israeli “ceasefire” apparently includes the continued killing of families, especially those with very young children, blowing up residential buildings, burning tents sheltering displaced people, banning international journalists, blocking life-saving medical supplies, and restricting, and on many days completely preventing, patients from leaving Gaza for urgently needed medical treatment abroad."
+            }
+          }
+        },
+        "quick_promote_eligibility": {
+          "eligibility": "IneligibleUserUnauthorized"
+        },
+        "rest_id": "2073421968695501168",
+        "url_entities": [],
+        "views": {
+          "count": "70293"
+        }
+      }
+    }
+  }
+}
