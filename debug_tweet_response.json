@@ -1,0 +1,111 @@
+{
+  "data": {
+    "tweet_result_by_rest_id": {
+      "id": "VHdlZXRSZXN1bHRzOjIwNzQ0NzAzMjgzOTExMjMwMDY=",
+      "rest_id": "2074470328391123006",
+      "result": {
+        "__typename": "Tweet",
+        "cashtag_attachments": [],
+        "conversation_muted": false,
+        "core": {
+          "user_results": {
+            "id": "VXNlclJlc3VsdHM6NzU5MjUx",
+            "result": {
+              "__typename": "User",
+              "avatar": {
+                "image_url": "https://pbs.twimg.com/profile_images/1669780523911110656/K9gaaM1g_normal.jpg"
+              },
+              "core": {
+                "name": "CNN",
+                "screen_name": "CNN"
+              },
+              "follow_request_sent": false,
+              "id": "VXNlcjo3NTkyNTE=",
+              "identity_profile_labels_highlighted_label": {},
+              "privacy": {
+                "protected": false
+              },
+              "profile_image_shape": "Square",
+              "relationship_perspectives": {
+                "blocking": false,
+                "following": false,
+                "muting": false
+              },
+              "rest_id": "759251",
+              "super_follow_eligible": false,
+              "super_followed_by": false,
+              "super_following": false,
+              "verification": {
+                "is_blue_verified": true,
+                "verified_type": "Business"
+              }
+            }
+          }
+        },
+        "counts": {
+          "bookmark_count": 15,
+          "favorite_count": 220,
+          "reply_count": 84,
+          "retweet_count": 78
+        },
+        "details": {
+          "cashtag_entities": [],
+          "created_at_ms": 1783427242000,
+          "display_text_range": [
+            0,
+            166
+          ],
+          "full_text": "French court clears path for convicted far-right leader Marine Le Pen to run for president next year but rules she must wear an electronic tag https://t.co/TyXOCAUjBO https://t.co/7InQRCSGWJ",
+          "hashtag_entities": [],
+          "smarttags": []
+        },
+        "edit_control": {
+          "__typename": "EditControlInitial",
+          "edit_tweet_ids": [
+            "2074470328391123006"
+          ]
+        },
+        "grok_translated_post_with_availability": {
+          "is_available": false
+        },
+        "id": "VHdlZXQ6MjA3NDQ3MDMyODM5MTEyMzAwNg==",
+        "legacy": {},
+        "media_entities2": [
+          {
+            "ext_playlists": [],
+            "id_str": "2074470307318874112",
+            "indices": [
+              167,
+              190
+            ],
+            "media_url_https": "https://pbs.twimg.com/media/HMn_wOTWQAAX3bV.jpg",
+            "original_info": {
+              "height": 1350,
+              "width": 1080
+            },
+            "type": "photo"
+          }
+        ],
+        "mention_entities": [],
+        "quick_promote_eligibility": {
+          "eligibility": "IneligibleUserUnauthorized"
+        },
+        "rest_id": "2074470328391123006",
+        "url_entities": [
+          {
+            "display_url": "cnn.it/4gqpvs9",
+            "expanded_url": "https://cnn.it/4gqpvs9",
+            "indices": [
+              143,
+              166
+            ],
+            "url": "https://t.co/TyXOCAUjBO"
+          }
+        ],
+        "views": {
+          "count": "128049"
+        }
+      }
+    }
+  }
+}
