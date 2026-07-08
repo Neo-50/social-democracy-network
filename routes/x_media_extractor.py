@@ -787,9 +787,9 @@ def fetch_tweet_media(url_or_id: str) -> dict:
 	cands = [x for x in ops if x[1] == "TweetResultByRestId"] + [x for x in ops if x[1] == "TweetDetail"]
 	for hsh, op in cands or ops:
 		data = _call_with_backfill(bearer, guest, hsh, op, tid)
-		if data:
-			with open("debug_tweet_response.json", "w", encoding="utf-8") as f:
-				json.dump(data, f, indent=2, ensure_ascii=False)
+		# if data:
+		# 	with open("debug_tweet_response.json", "w", encoding="utf-8") as f:
+		# 		json.dump(data, f, indent=2, ensure_ascii=False)
 		if not data: continue
 		found = set()
 		_walk_media_urls(data, found)
