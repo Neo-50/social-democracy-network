@@ -4,9 +4,9 @@
 
 {% block content %}
     <h2>Register</h2>
-    <!-- <h4>New registrations are currently disabled.
-    <p>Please join us on <a href="https://element.social-democracy.net">matrix</a> instead.</h4> -->
-    <form method="POST">
+    <h4>New registrations are currently disabled.
+    <p>Please join us on <a href="https://element.social-democracy.net">matrix</a> instead.</h4>
+    <!-- <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>Username:</label><br>
         <input type="text" name="username" required><br>
@@ -26,8 +26,8 @@
             <li>Must contain at least one number</li>
         </ul>
 
-        <button type="submit">Register</button> -->
-    </form>
+        <button type="submit">Register</button>
+    </form> -->
 <br>
 <p>Didn't receive the verification email?</p>
 <form method="POST" action="{{ url_for('resend_verification_email') }}">
